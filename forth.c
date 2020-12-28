@@ -17,7 +17,8 @@ typedef int64_t dcell_t;
 
 #define DUP *++sp = tos
 #define DROP tos = *sp--
-#define NEXT w = *ip++; goto *(void **) w
+#define NEXT w = *ip++; goto **(void **) w
+#define CELL_LEN(n) (((n) + sizeof(cell_t) - 1) & ~(sizeof(cell_t) - 1))
 
 #define OPCODE_LIST \
   X("0=", OP_ZEQUAL, tos = !tos) \
@@ -51,11 +52,11 @@ typedef int64_t dcell_t;
   X("BRANCH", OP_BRANCH, ip = (cell_t *) *ip) \
   X("0BRANCH", OP_ZBRANCH, if (!tos) ip = (cell_t *) *ip; else ++ip; DROP) \
   X("DOLIT", OP_DOLIT, DUP; tos = *(cell_t *) ip++) \
-  X("FIND", OP_FIND, tos = find((cell_t *) *sp, tos, sp)) \
+  X("FIND", OP_FIND, tos = find(*(cell_t *) *sp, tos, sp)) \
   X("PARSE", OP_PARSE, DUP; tos = parse(tos, sp)) \
-  X("CREATE", OP_CREATE, t = parse(32, &w); \
-                         create((const char *) w, t, 0, && OP_DOCREATE)) \
-  X("IMMEDIATE", OP_IMMEDIATE, ) \
+  X("CREATE", OP_CREATE, t = parse(32, &tmp); \
+                         create((const char *) tmp, t, 0, && OP_DOCREATE)) \
+  X("IMMEDIATE", OP_IMMEDIATE, g_last[-1] |= 1) \
   X("DOES>", OP_DOES, *g_heap++ = (cell_t) && OP_DODOES /* TODO */) \
   X("HERE", OP_HERE, DUP; tos = (cell_t) g_heap) \
   X("ALLOT", OP_ALLOT, g_heap = (cell_t *) (tos + (cell_t) g_heap); tos = *sp--) \
@@ -65,15 +66,16 @@ typedef int64_t dcell_t;
   X("&TIB", OP_TIB, DUP; tos = (cell_t) &g_tib) \
   X("#TIB", OP_NTIB, DUP; tos = (cell_t) &g_ntib) \
   X(">IN", OP_TIN, DUP; tos = (cell_t) &g_tin) \
-  X(":", OP_COLON, t = parse(32, &w); \
-                   create((const char *) w, t, 0, && OP_DOCOL); \
+  X(":", OP_COLON, t = parse(32, &tmp); \
+                   create((const char *) tmp, t, 0, && OP_DOCOL); \
                    g_state = -1) \
   X("EXIT", OP_EXIT, ip = (void *) *rp--) \
+  X("QUIT", OP_QUIT, DUP; sp = quit(sp, &tmp); \
+            DROP; --ip; if (tmp) (w = tmp); \
+            if (tmp) goto **(void **) w) \
   X(";", OP_SEMICOLON, *g_heap++ = (cell_t) g_last; g_state = 0) \
-  X("QUIT", OP_QUIT, quit(); --ip) \
 
 static const char boot[] =
-" -123 "
 // Comments 
 " : (   41 parse drop drop ; immediate "
 
@@ -169,6 +171,7 @@ static cell_t g_ntib = sizeof(boot), g_tin = 0;
 static cell_t *g_last = 0;
 static cell_t g_base = 10;
 static cell_t g_state = 0;
+static cell_t g_DOLIT_XT;
 
 static cell_t convert(const char *pos, cell_t n, cell_t *ret) {
   *ret = 0;
@@ -190,19 +193,33 @@ static cell_t convert(const char *pos, cell_t n, cell_t *ret) {
   return -1;
 }
 
-static cell_t find(cell_t *name, cell_t len, cell_t *ret) {
+static cell_t same(const char *a, const char *b, cell_t len) {
+  for (;len && (*a & 95) == (*b & 95); --len, ++a, ++b);
+  return len;
+}
+
+static cell_t find(cell_t name, cell_t len, cell_t *ret) {
+  cell_t *pos = g_last;
+  cell_t clen = CELL_LEN(len);
+  while (pos) {
+    if (len == pos[-3] &&
+        same((const char *) name, (const char *) &pos[-3 - clen], len) == 0) {
+      *ret = (cell_t) pos;
+      return -1;
+    }
+    pos = (cell_t *) pos[-2];  // Follow link
+  }
   return 0;
 }
 
 static void create(const char *name, cell_t length, cell_t flags, void *op) {
-  cell_t *start = g_heap;
-  *g_heap++ = length;  // length
   memcpy(g_heap, name, length);  // name
-  g_heap += ((sizeof(name) + sizeof(cell_t) - 1) & ~(sizeof(cell_t)-1));
+  g_heap += CELL_LEN(length);
+  *g_heap++ = length;  // length
   *g_heap++ = (cell_t) g_last;  // link
   *g_heap++ = flags;  // flags
+  g_last = g_heap;
   *g_heap++ = (cell_t) op;  // code
-  g_last = start;
 }
 
 static cell_t parse(cell_t sep, cell_t *ret) {
@@ -212,32 +229,56 @@ static cell_t parse(cell_t sep, cell_t *ret) {
   return g_tin - (*ret - (cell_t) g_tib);
 }
 
-static void quit(void) {
+static cell_t *quit(cell_t *sp, cell_t *call) {
+  *call = 0;
   cell_t name;
   cell_t len = parse(' ', &name);
-  cell_t n;
-  cell_t ok = convert((const char *) name, len, &n);
-  if (ok) {
-    printf("NUM: %d\n", (int)n);
+  cell_t xt;
+  cell_t found = find(name, len, &xt);
+  if (found) {
+    if (g_state && !(((cell_t *) xt)[-1] & 1)) {  // bit 0 of flags is immediate
+      *g_heap++ = xt;
+    } else {
+      *call = xt;
+    }
   } else {
-    printf("WORD(%d): ", (int)len);
-    fwrite((const char *) name, 1, len, stdout);
-    printf("\n");
+    cell_t n;
+    cell_t ok = convert((const char *) name, len, &n);
+    if (ok) {
+      if (g_state) {
+        *g_heap++ = g_DOLIT_XT;
+        *g_heap++ = n;
+      } else {
+        *sp += n;
+      }
+    } else {
+      fprintf(stderr, "Bad Word: ");
+      fwrite((const char *) name, 1, len, stderr);
+      fprintf(stderr, "\n");
+      exit(1);
+    } 
   }
+  return sp;
 }
 
 int main(int argc, char *argv[]) {
   g_heap = malloc(HEAP_SIZE);
-  cell_t *sp = (g_heap += STACK_SIZE), *rp = (g_heap += STACK_SIZE);
-  cell_t tos = 0, t, w;
+  register cell_t *sp = g_heap; g_heap += STACK_SIZE;
+  register cell_t *rp = g_heap; g_heap += STACK_SIZE;
+  register cell_t tos = 0, *ip, t, w;
   dcell_t m, n, d;
-  cell_t *ip = g_heap;
-  *g_heap++ = (cell_t) && OP_QUIT;
-  g_tib = boot;
-#define X(name, op, code) create(name, sizeof(name), name[0] == ';', && op);
+  cell_t tmp;
+#define X(name, op, code) create(name, sizeof(name) - 1, name[0] == ';', && op);
   OPCODE_LIST
 #undef X
-#define X(name, op, code) op: code; NEXT;
+  g_last[-1] = 1;  // Make ; IMMEDIATE
+  find((cell_t) "DOLIT", 5, &g_DOLIT_XT);
+  ip = g_heap;
+  find((cell_t) "QUIT", 4, g_heap++);
+  g_tib = boot;
+fprintf(stderr, "right: %p\n", && OP_COLON);
+  NEXT;
+#define X(name, op, code) op: fprintf(stderr, name "\n"); code; NEXT;
   OPCODE_LIST
 #undef X
   OP_DOCREATE: DUP; tos = w + sizeof(cell_t) * 2; NEXT;
