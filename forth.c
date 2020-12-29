@@ -45,6 +45,9 @@ typedef int64_t dcell_t;
   X("R>", OP_FROMR, DUP; tos = *rp--) \
   X("R@", OP_RAT, DUP; tos = *rp) \
   X("CELL", OP_CELL, DUP; tos = sizeof(cell_t)) \
+  X(".", OP_DOT, printf("%d ", (int) tos); DROP) \
+  X("TYPE", OP_TYPE, fwrite((void *) *sp, 1, tos, stdout); DROP; DROP) \
+  X("KEY", OP_KEY, DUP; tos = fgetc(stdin)) \
   X("@", OP_AT, tos = *(cell_t *) tos) \
   X("C@", OP_CAT, tos = *(uint8_t *) tos) \
   X("!", OP_STORE, *(cell_t *) tos = *sp; --sp; DROP) \
@@ -52,6 +55,7 @@ typedef int64_t dcell_t;
   X("BRANCH", OP_BRANCH, ip = (cell_t *) *ip) \
   X("0BRANCH", OP_ZBRANCH, if (!tos) ip = (cell_t *) *ip; else ++ip; DROP) \
   X("DOLIT", OP_DOLIT, DUP; tos = *(cell_t *) ip++) \
+  X("ALITERAL", OP_ALITERAL, *g_heap++ = g_DOLIT_XT; *g_heap++ = tos; DROP) \
   X("FIND", OP_FIND, tos = find(*(cell_t *) *sp, tos, sp)) \
   X("PARSE", OP_PARSE, DUP; tos = parse(tos, sp)) \
   X("CREATE", OP_CREATE, t = parse(32, &tmp); \
@@ -69,11 +73,11 @@ typedef int64_t dcell_t;
   X(":", OP_COLON, t = parse(32, &tmp); \
                    create((const char *) tmp, t, 0, && OP_DOCOL); \
                    g_state = -1) \
-  X("EXIT", OP_EXIT, ip = (void *) *rp--) \
   X("QUIT", OP_QUIT, DUP; sp = quit(sp, &tmp); \
             DROP; --ip; if (tmp) (w = tmp); \
             if (tmp) goto **(void **) w) \
-  X(";", OP_SEMICOLON, *g_heap++ = (cell_t) g_last; g_state = 0) \
+  X("EXIT", OP_EXIT, ip = (void *) *rp--) \
+  X(";", OP_SEMICOLON, *g_heap++ = g_DOEXIT_XT; g_state = 0) \
 
 static const char boot[] =
 // Comments 
@@ -109,9 +113,9 @@ static const char boot[] =
 " : ] -1 state ! ; immediate "
 
 // Quoting Words
-" : ' parse-name find ; "
+" : ' parse find ; "
 " : ['] ' aliteral ; immediate "
-" : char parse-name drop c@ ; "
+" : char parse drop c@ ; "
 " : [char] char aliteral ; immediate "
 " : literal aliteral ; immediate "
 
@@ -172,6 +176,7 @@ static cell_t *g_last = 0;
 static cell_t g_base = 10;
 static cell_t g_state = 0;
 static cell_t g_DOLIT_XT;
+static cell_t g_DOEXIT_XT;
 
 static cell_t convert(const char *pos, cell_t n, cell_t *ret) {
   *ret = 0;
@@ -226,7 +231,11 @@ static cell_t parse(cell_t sep, cell_t *ret) {
   while (g_tin < g_ntib && g_tib[g_tin] == sep) { ++g_tin; }
   *ret = (cell_t) (g_tib + g_tin);
   while (g_tin < g_ntib && g_tib[g_tin] != sep) { ++g_tin; }
-  return g_tin - (*ret - (cell_t) g_tib);
+  cell_t len = g_tin - (*ret - (cell_t) g_tib);
+  if (g_tin < g_ntib) { ++g_tin; }
+fwrite((void*)*ret, 1, len, stdout);
+printf("\n");
+  return len;
 }
 
 static cell_t *quit(cell_t *sp, cell_t *call) {
@@ -273,12 +282,12 @@ int main(int argc, char *argv[]) {
 #undef X
   g_last[-1] = 1;  // Make ; IMMEDIATE
   find((cell_t) "DOLIT", 5, &g_DOLIT_XT);
+  find((cell_t) "EXIT", 4, &g_DOEXIT_XT);
   ip = g_heap;
   find((cell_t) "QUIT", 4, g_heap++);
   g_tib = boot;
-fprintf(stderr, "right: %p\n", && OP_COLON);
   NEXT;
-#define X(name, op, code) op: fprintf(stderr, name "\n"); code; NEXT;
+#define X(name, op, code) op: code; NEXT;
   OPCODE_LIST
 #undef X
   OP_DOCREATE: DUP; tos = w + sizeof(cell_t) * 2; NEXT;
