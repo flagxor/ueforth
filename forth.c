@@ -19,6 +19,7 @@ typedef int64_t dcell_t;
 #define DROP tos = *sp--
 #define NEXT w = *ip++; goto **(void **) w
 #define CELL_LEN(n) (((n) + sizeof(cell_t) - 1) & ~(sizeof(cell_t) - 1))
+#define FIND(name) find(name, sizeof(name) - 1)
 
 #define OPCODE_LIST \
   X("0=", OP_ZEQUAL, tos = !tos) \
@@ -56,14 +57,18 @@ typedef int64_t dcell_t;
   X("0BRANCH", OP_ZBRANCH, if (!tos) ip = (cell_t *) *ip; else ++ip; DROP) \
   X("DOLIT", OP_DOLIT, DUP; tos = *(cell_t *) ip++) \
   X("ALITERAL", OP_ALITERAL, *g_heap++ = g_DOLIT_XT; *g_heap++ = tos; DROP) \
-  X("FIND", OP_FIND, tos = find(*(cell_t *) *sp, tos, sp)) \
+  X("EXECUTE", OP_EXECUTE, w = tos; DROP; goto **(void **) w) \
+  X("FIND", OP_FIND, *sp = find((const char *) *sp, tos); DROP) \
   X("PARSE", OP_PARSE, DUP; tos = parse(tos, sp)) \
   X("CREATE", OP_CREATE, t = parse(32, &tmp); \
-                         create((const char *) tmp, t, 0, && OP_DOCREATE)) \
+                         create((const char *) tmp, t, 0, && OP_DOCREATE); \
+                         *g_heap++ = 0) \
   X("IMMEDIATE", OP_IMMEDIATE, g_last[-1] |= 1) \
-  X("DOES>", OP_DOES, *g_heap++ = (cell_t) && OP_DODOES /* TODO */) \
+  X("DOES>", OP_DOES, *g_last = (cell_t) && OP_DODOES; \
+                      g_last[1] = (cell_t) ip; goto OP_EXIT) \
   X("HERE", OP_HERE, DUP; tos = (cell_t) g_heap) \
-  X("ALLOT", OP_ALLOT, g_heap = (cell_t *) (tos + (cell_t) g_heap); tos = *sp--) \
+  X("ALLOT", OP_ALLOT, g_heap = (cell_t *) (tos + (cell_t) g_heap); \
+                       tos = *sp--) \
   X("STATE", OP_STATE, DUP; tos = (cell_t) &g_state) \
   X("BASE", OP_BASE, DUP; tos = (cell_t) &g_base) \
   X("LAST", OP_LAST, DUP; tos = (cell_t) &g_last) \
@@ -73,8 +78,8 @@ typedef int64_t dcell_t;
   X(":", OP_COLON, t = parse(32, &tmp); \
                    create((const char *) tmp, t, 0, && OP_DOCOL); \
                    g_state = -1) \
-  X("QUIT", OP_QUIT, DUP; sp = quit(sp, &tmp); \
-            DROP; --ip; if (tmp) (w = tmp); \
+  X("EVAL1", OP_EVAL1, DUP; sp = quit(sp, &tmp); \
+            DROP; if (tmp) (w = tmp); \
             if (tmp) goto **(void **) w) \
   X("EXIT", OP_EXIT, ip = (void *) *rp--) \
   X(";", OP_SEMICOLON, *g_heap++ = g_DOEXIT_XT; g_state = 0) \
@@ -98,8 +103,6 @@ static const char boot[] =
 " : - ( n n -- n ) negate + ; "
 " : rot ( a b c -- c a b ) >r swap r> swap ; "
 " : -rot ( a b c -- b c a ) swap >r swap r> ; "
-" : cell+ ( n -- n ) cell + ; "
-" : cells ( n -- n ) cell * ; "
 " : < ( a b -- a<b ) - 0< ; "
 " : > ( a b -- a>b ) swap - 0< ; "
 " : = ( a b -- a!=b ) - 0= ; "
@@ -107,15 +110,27 @@ static const char boot[] =
 " : emit ( n -- ) >r rp@ 1 type rdrop ; "
 " : bl 32 ;   : space bl emit ; "
 " : nl 10 ;   : cr nl emit ; "
+" : 1+ 1 + ;   : 1- 1 - ; "
+" : 2* 2 * ;   : 2/ 2 / ; "
+
+// System Dependent
+" : cell+ ( n -- n ) cell + ; "
+" : cells ( n -- n ) cell * ; "
+" : aligned ( a -- a ) cell 1 - + cell 1 - invert and ; "
+" : align   here aligned here - allot ; "
 
 // Compilation State
 " : [ 0 state ! ; immediate "
 " : ] -1 state ! ; immediate "
 
+// Compile to Dictionary
+" : , here ! cell allot ; "
+" : c, here c! 1 allot ; "
+
 // Quoting Words
-" : ' parse find ; "
+" : ' bl parse find ; "
 " : ['] ' aliteral ; immediate "
-" : char parse drop c@ ; "
+" : char bl parse drop c@ ; "
 " : [char] char aliteral ; immediate "
 " : literal aliteral ; immediate "
 
@@ -127,14 +142,16 @@ static const char boot[] =
 " : then here swap ! ; immediate "
 " : if ['] 0branch , here 0 , ; immediate "
 " : else ['] branch , here 0 , swap here swap ! ; immediate "
+" : while ['] 0branch , here 0 , swap ; immediate "
+" : repeat ['] branch , , here swap ! ; immediate "
 
 // Compound words requiring conditionals
 " : min 2dup < if drop else nip then ; "
 " : max 2dup < if nip else drop then ; "
 
 // Postpone - done here so we have ['] and IF
-" : >flags 2 cells - @ ; "
-" : immediate? >flags 1 and 1 - 0= ; "
+" : >flags ( xt -- flags ) cell - @ ; "
+" : immediate? ( xt -- f ) >flags 1 and 0= 0= ; "
 " : postpone ' dup immediate? if , else aliteral ['] , , then ; immediate "
 
 // Counted Loops
@@ -167,6 +184,25 @@ static const char boot[] =
 " : see-loop   >body begin see-one dup @ exit= until ; "
 " : see   cr ['] : see.  ' dup see.  see-loop drop  ['] ; see.  cr ; "
 " : words last @ begin dup >name type space >link dup 0= until drop cr ; "
+
+// ( Printing )
+" : $. r@ dup cell+ swap @ type r> dup @ + ; "
+" : .\" [char] \" parse postpone $. dup , 0 do dup c@ c, 1+ loop drop align ; immediate "
+
+// ( Input )
+" : accept ( a n -- n ) 0 swap begin 2dup < while key dup nl = if drop nip exit then >r >r over c! 1+ r> 1+ r> repeat drop nip ; "
+" 200 constant input-limit "
+" input-limit . cr "
+" 888888 . cr "
+" : tib &tib @ ;  here &tib ! input-limit allot "
+" : refill tib input-limit accept #tib ! 0 >in ! ; "
+
+// ( REPL )
+" : prompt .\"  ok\" cr ; "
+" : eval-line begin >in @ #tib @ < while eval1 repeat ; "
+" : boot begin ['] eval-line catch if .\" ERROR\" cr then prompt refill drop again ; "
+" : ok .\" uEForth\" cr prompt query ; "
+" ok "
 ;
 
 static cell_t *g_heap;
@@ -203,14 +239,13 @@ static cell_t same(const char *a, const char *b, cell_t len) {
   return len;
 }
 
-static cell_t find(cell_t name, cell_t len, cell_t *ret) {
+static cell_t find(const char *name, cell_t len) {
   cell_t *pos = g_last;
   cell_t clen = CELL_LEN(len);
   while (pos) {
     if (len == pos[-3] &&
-        same((const char *) name, (const char *) &pos[-3 - clen], len) == 0) {
-      *ret = (cell_t) pos;
-      return -1;
+        same(name, (const char *) &pos[-3 - clen], len) == 0) {
+      return (cell_t) pos;
     }
     pos = (cell_t *) pos[-2];  // Follow link
   }
@@ -233,8 +268,6 @@ static cell_t parse(cell_t sep, cell_t *ret) {
   while (g_tin < g_ntib && g_tib[g_tin] != sep) { ++g_tin; }
   cell_t len = g_tin - (*ret - (cell_t) g_tib);
   if (g_tin < g_ntib) { ++g_tin; }
-fwrite((void*)*ret, 1, len, stdout);
-printf("\n");
   return len;
 }
 
@@ -242,9 +275,8 @@ static cell_t *quit(cell_t *sp, cell_t *call) {
   *call = 0;
   cell_t name;
   cell_t len = parse(' ', &name);
-  cell_t xt;
-  cell_t found = find(name, len, &xt);
-  if (found) {
+  cell_t xt = find((const char *) name, len);
+  if (xt) {
     if (g_state && !(((cell_t *) xt)[-1] & 1)) {  // bit 0 of flags is immediate
       *g_heap++ = xt;
     } else {
@@ -281,10 +313,12 @@ int main(int argc, char *argv[]) {
   OPCODE_LIST
 #undef X
   g_last[-1] = 1;  // Make ; IMMEDIATE
-  find((cell_t) "DOLIT", 5, &g_DOLIT_XT);
-  find((cell_t) "EXIT", 4, &g_DOEXIT_XT);
+  g_DOLIT_XT = FIND("DOLIT");
+  g_DOEXIT_XT = FIND("EXIT");
   ip = g_heap;
-  find((cell_t) "QUIT", 4, g_heap++);
+  *g_heap++ = FIND("EVAL1");
+  *g_heap++ = FIND("BRANCH");
+  *g_heap++ = (cell_t) ip;
   g_tib = boot;
   NEXT;
 #define X(name, op, code) op: code; NEXT;
