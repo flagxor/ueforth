@@ -23,6 +23,7 @@ typedef uint64_t udcell_t;
 #define NEXT w = *ip++; goto **(void **) w
 #define CELL_LEN(n) (((n) + sizeof(cell_t) - 1) / sizeof(cell_t))
 #define FIND(name) find(name, sizeof(name) - 1)
+#define LOWER(ch) ((ch) & 95)
 
 #define OPCODE_LIST \
   X("0=", OP_ZEQUAL, tos = !tos ? -1 : 0) \
@@ -254,12 +255,8 @@ static const char boot[] =
 static cell_t *g_heap;
 static const char *g_tib;
 static cell_t g_ntib = sizeof(boot), g_tin = 0;
-static cell_t *g_last = 0;
-static cell_t g_base = 10;
-static cell_t g_state = 0;
-static cell_t g_throw = 0;
-static cell_t g_DOLIT_XT;
-static cell_t g_DOEXIT_XT;
+static cell_t *g_last = 0, g_base = 10, g_state = 0, g_throw = 0;
+static cell_t g_DOLIT_XT, g_DOEXIT_XT;
 
 static cell_t convert(const char *pos, cell_t n, cell_t *ret) {
   *ret = 0;
@@ -269,8 +266,7 @@ static cell_t convert(const char *pos, cell_t n, cell_t *ret) {
   for (; n; --n) {
     uintptr_t d = pos[0] - '0';
     if (d > 9) {
-      d &= 95;
-      d -= 7;
+      d = LOWER(d) - 7;
       if (d < 10) { return 0; }
     }
     if (d >= (uintptr_t) g_base) { return 0; }
@@ -282,7 +278,7 @@ static cell_t convert(const char *pos, cell_t n, cell_t *ret) {
 }
 
 static cell_t same(const char *a, const char *b, cell_t len) {
-  for (;len && (*a & 95) == (*b & 95); --len, ++a, ++b);
+  for (;len && LOWER(*a) == LOWER(*b); --len, ++a, ++b);
   return len;
 }
 
