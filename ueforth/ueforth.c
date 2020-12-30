@@ -53,7 +53,6 @@ typedef uint64_t udcell_t;
   X("R>", OP_FROMR, DUP; tos = *rp--) \
   X("R@", OP_RAT, DUP; tos = *rp) \
   X("CELL", OP_CELL, DUP; tos = sizeof(cell_t)) \
-  X(".", OP_DOT, printf("%"PRIiPTR" ", tos); DROP) \
   X("TYPE", OP_TYPE, fwrite((void *) *sp, 1, tos, stdout); --sp; DROP) \
   X("KEY", OP_KEY, DUP; tos = fgetc(stdin)) \
   X("SYSEXIT", OP_SYSEXIT, DUP; exit(tos)) \
@@ -338,12 +337,6 @@ static cell_t *eval1(cell_t *sp, cell_t *call) {
     } else {
       *++sp = -1;
       *call = g_throw;
-#if 0
-      fprintf(stderr, "Bad Word: ");
-      fwrite((const char *) name, 1, len, stderr);
-      fprintf(stderr, "\n");
-      exit(1);
-#endif
     }
   }
   return sp;
