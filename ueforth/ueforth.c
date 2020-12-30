@@ -198,18 +198,6 @@ static const char boot[] =
 " : throw   handler @ rp! r> handler ! r> swap >r sp! drop r> ; "
 " ' throw 'throw ! "
 
-// Examine Dictionary
-" : >name ( xt -- a n ) 3 cells - dup @ swap over aligned - swap ; "
-" : >link ( xt -- a ) 2 cells - @ ; "
-" : >body ( xt -- a ) cell+ ; "
-" : see. ( xt -- ) >name type space ; "
-" : see-one ( xt -- xt+1 ) "
-"    dup @ dup ['] DOLIT = if drop cell+ dup @ . else see. then cell+ ; "
-" : exit= ( xt -- ) ['] exit = ; "
-" : see-loop   >body begin see-one dup @ exit= until ; "
-" : see   cr ['] : see.  ' dup see.  see-loop drop  ['] ; see.  cr ; "
-" : words   last @ begin dup see. >link dup 0= until drop cr ; "
-
 // Numeric Output
 " variable hld "
 " : pad ( -- a ) here 80 + ; "
@@ -233,6 +221,18 @@ static const char boot[] =
 " : .\"   [char] \" parse postpone $. dup , 0 do dup c@ c, 1+ loop drop align ; immediate "
 " : $@   r@ dup cell+ swap @ r> dup @ aligned + cell+ >r ; "
 " : s\"   [char] \" parse postpone $@ dup , 0 do dup c@ c, 1+ loop drop align ; immediate "
+
+// Examine Dictionary
+" : >name ( xt -- a n ) 3 cells - dup @ swap over aligned - swap ; "
+" : >link ( xt -- a ) 2 cells - @ ; "
+" : >body ( xt -- a ) cell+ ; "
+" : see. ( xt -- ) >name type space ; "
+" : see-one ( xt -- xt+1 ) "
+"    dup @ dup ['] DOLIT = if drop cell+ dup @ . else see. then cell+ ; "
+" : exit= ( xt -- ) ['] exit = ; "
+" : see-loop   >body begin see-one dup @ exit= until ; "
+" : see   cr ['] : see.  ' dup see.  see-loop drop  ['] ; see.  cr ; "
+" : words   last @ begin dup see. >link dup 0= until drop cr ; "
 
 // ( Input )
 " : accept ( a n -- n ) 0 swap begin 2dup < while "

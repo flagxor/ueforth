@@ -1,3 +1,5 @@
+( EForth High Level Definitions )
+
 ( Variables and User Variables )
 
 : doVAR ( -- a ) R> ;
