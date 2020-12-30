@@ -49,6 +49,7 @@ typedef int64_t dcell_t;
   X(".", OP_DOT, printf("%d ", (int) tos); DROP) \
   X("TYPE", OP_TYPE, fwrite((void *) *sp, 1, tos, stdout); DROP; DROP) \
   X("KEY", OP_KEY, DUP; tos = fgetc(stdin)) \
+  X("SYSEXIT", OP_SYSEXIT, DUP; exit(tos)) \
   X("@", OP_AT, tos = *(cell_t *) tos) \
   X("C@", OP_CAT, tos = *(uint8_t *) tos) \
   X("!", OP_STORE, *(cell_t *) tos = *sp; --sp; DROP) \
@@ -75,6 +76,7 @@ typedef int64_t dcell_t;
   X("'TIB", OP_TIB, DUP; tos = (cell_t) &g_tib) \
   X("#TIB", OP_NTIB, DUP; tos = (cell_t) &g_ntib) \
   X(">IN", OP_TIN, DUP; tos = (cell_t) &g_tin) \
+  X("'THROW", OP_TTHROW, DUP; tos = (cell_t) &g_throw) \
   X(":", OP_COLON, t = parse(32, &tmp); \
                    create((const char *) tmp, t, 0, && OP_DOCOL); \
                    g_state = -1) \
@@ -116,8 +118,10 @@ static const char boot[] =
 // System Dependent
 " : cell+ ( n -- n ) cell + ; "
 " : cells ( n -- n ) cell * ; "
-" : aligned ( a -- a ) cell 1 - + cell 1 - invert and ; "
+" : cell/ ( n -- n ) cell / ; "
+" : aligned ( a -- a ) cell 1 - dup >r + r> invert and ; "
 " : align   here aligned here - allot ; "
+" : bye   0 sysexit ; "
 
 // Compilation State
 " : [ 0 state ! ; immediate "
@@ -150,8 +154,8 @@ static const char boot[] =
 " : max 2dup < if nip else drop then ; "
 
 // Postpone - done here so we have ['] and IF
-" : >flags ( xt -- flags ) cell - @ ; "
-" : immediate? ( xt -- f ) >flags 1 and 0= 0= ; "
+" : >flags ( xt -- flags ) cell - ; "
+" : immediate? ( xt -- f ) >flags @ 1 and 0= 0= ; "
 " : postpone ' dup immediate? if , else aliteral ['] , , then ; immediate "
 
 // Counted Loops
@@ -168,14 +172,20 @@ static const char boot[] =
 " : constant create , does> @ ; "
 " : variable create 0 , ; "
 
+// Stack Convience
+" sp@ constant sp0 "
+" rp@ constant rp0 "
+" : depth ( -- n ) sp@ sp0 - cell/ ; "
+
 // Exceptions
 " variable handler "
 " : catch   sp@ >r handler @ >r rp@ handler ! execute r> handler ! r> drop 0 ; "
 " : throw   handler @ rp! r> handler ! r> swap >r sp! drop r> ; "
+" ' throw 'throw ! "
 
 // Examine Dictionary
-" : >link ( xt -- a ) 1 cells - @ ;   : >flags 2 cells - ; "
-" : >name ( xt -- a n ) dup 3 cells - @ swap over - 3 cells - swap ; "
+" : >link ( xt -- a ) 2 cells - @ ; "
+" : >name ( xt -- a n ) 3 cells - dup @ swap over aligned - swap ; "
 " : >body ( xt -- a ) cell+ ; "
 " : see. ( xt -- ) >name type space ; "
 " : see-one ( xt -- xt+1 ) "
@@ -183,27 +193,27 @@ static const char boot[] =
 " : exit= ( xt -- ) ['] exit = ; "
 " : see-loop   >body begin see-one dup @ exit= until ; "
 " : see   cr ['] : see.  ' dup see.  see-loop drop  ['] ; see.  cr ; "
-" : words last @ begin dup >name type space >link dup 0= until drop cr ; "
+" : words   last @ begin dup >name type space >link dup 0= until drop cr ; "
 
 // ( Printing )
 " : $. r@ dup cell+ swap @ type r> dup @ aligned + cell+ >r ; "
 " : .\" [char] \" parse postpone $. dup , 0 do dup c@ c, 1+ loop drop align ; immediate "
 
 // ( Input )
-" : accept ( a n -- n ) 0 swap begin 2dup < while key dup nl = if 2drop nip exit then >r rot r> over c! 1+ -rot swap 1+ swap repeat drop nip ; "
+" : accept ( a n -- n ) 0 swap begin 2dup < while "
+"    key dup nl = if 2drop nip exit then "
+"    >r rot r> over c! 1+ -rot swap 1+ swap repeat drop nip ; "
 " 200 constant input-limit "
-" : tib 'tib @ ; "
+" : tib ( -- a ) 'tib @ ; "
 " create input-buffer input-limit allot "
 " : tib-setup   input-buffer 'tib ! ; "
-" : refill   tib-setup tib input-limit accept #tib ! 0 >in ! ; "
-
+" : refill   tib-setup tib input-limit accept #tib ! 0 >in ! -1 ; "
 
 // ( REPL )
 " : prompt .\"  ok\" cr ; "
 " : eval-line begin >in @ #tib @ < while eval1 repeat ; "
-/* " : query begin ['] eval-line catch if .\" ERROR\" cr then prompt refill drop again ; " */
-" : query begin refill eval-line again ; "
-" : ok .\" uEForth\" cr prompt query ; "
+" : query begin ['] eval-line catch if .\" ERROR\" cr then prompt refill drop again ; "
+" : ok .\" uEForth\" cr prompt refill drop query ; "
 " ok "
 ;
 
@@ -213,6 +223,7 @@ static cell_t g_ntib = sizeof(boot), g_tin = 0;
 static cell_t *g_last = 0;
 static cell_t g_base = 10;
 static cell_t g_state = 0;
+static cell_t g_throw = 0;
 static cell_t g_DOLIT_XT;
 static cell_t g_DOEXIT_XT;
 
@@ -295,10 +306,14 @@ static cell_t *eval1(cell_t *sp, cell_t *call) {
         *++sp = n;
       }
     } else {
+      *++sp = -1;
+      *call = g_throw;
+#if 0
       fprintf(stderr, "Bad Word: ");
       fwrite((const char *) name, 1, len, stderr);
       fprintf(stderr, "\n");
       exit(1);
+#endif
     } 
   }
   return sp;
