@@ -45,6 +45,12 @@ typedef uint64_t udcell_t;
   X("SWAP", OP_SWAP, t = tos; tos = *sp; *sp = t) \
   X("OVER", OP_OVER, DUP; tos = sp[-1]) \
   X("DROP", OP_DROP, DROP) \
+  X("@", OP_AT, tos = *(cell_t *) tos) \
+  X("C@", OP_CAT, tos = *(uint8_t *) tos) \
+  X("!", OP_STORE, *(cell_t *) tos = *sp; --sp; DROP) \
+  X("C!", OP_CSTORE, *(uint8_t *) tos = *sp; --sp; DROP) \
+  X("FILL", OP_FILL, memset((void *) sp[-1], tos, *sp); sp -= 2; DROP) \
+  X("MOVE", OP_MOVE, memmove((void *) sp[-1], (void *) *sp, tos); sp -= 2; DROP) \
   X("SP@", OP_SPAT, DUP; tos = (cell_t) sp) \
   X("SP!", OP_SPSTORE, sp = (cell_t *) tos; DROP) \
   X("RP@", OP_RPAT, DUP; tos = (cell_t) rp) \
@@ -52,21 +58,15 @@ typedef uint64_t udcell_t;
   X(">R", OP_TOR, *++rp = tos; DROP) \
   X("R>", OP_FROMR, DUP; tos = *rp--) \
   X("R@", OP_RAT, DUP; tos = *rp) \
-  X("CELL", OP_CELL, DUP; tos = sizeof(cell_t)) \
-  X("TYPE", OP_TYPE, fwrite((void *) *sp, 1, tos, stdout); --sp; DROP) \
-  X("KEY", OP_KEY, DUP; tos = fgetc(stdin)) \
-  X("SYSEXIT", OP_SYSEXIT, DUP; exit(tos)) \
-  X("FILL", OP_FILL, memset((void *) sp[-1], tos, *sp); sp -= 2; DROP) \
-  X("MOVE", OP_MOVE, memmove((void *) sp[-1], (void *) *sp, tos); sp -= 2; DROP) \
-  X("@", OP_AT, tos = *(cell_t *) tos) \
-  X("C@", OP_CAT, tos = *(uint8_t *) tos) \
-  X("!", OP_STORE, *(cell_t *) tos = *sp; --sp; DROP) \
-  X("C!", OP_CSTORE, *(uint8_t *) tos = *sp; --sp; DROP) \
   X("BRANCH", OP_BRANCH, ip = (cell_t *) *ip) \
   X("0BRANCH", OP_ZBRANCH, if (!tos) ip = (cell_t *) *ip; else ++ip; DROP) \
   X("DONEXT", OP_DONEXT, if ((*rp)--) ip = (cell_t *) *ip; else (--rp, ++ip)) \
   X("DOLIT", OP_DOLIT, DUP; tos = *(cell_t *) ip++) \
   X("ALITERAL", OP_ALITERAL, *g_heap++ = g_DOLIT_XT; *g_heap++ = tos; DROP) \
+  X("CELL", OP_CELL, DUP; tos = sizeof(cell_t)) \
+  X("TYPE", OP_TYPE, fwrite((void *) *sp, 1, tos, stdout); --sp; DROP) \
+  X("KEY", OP_KEY, DUP; tos = fgetc(stdin)) \
+  X("SYSEXIT", OP_SYSEXIT, DUP; exit(tos)) \
   X("EXECUTE", OP_EXECUTE, w = tos; DROP; goto **(void **) w) \
   X("FIND", OP_FIND, *sp = find((const char *) *sp, tos); DROP) \
   X("PARSE", OP_PARSE, DUP; tos = parse(tos, sp)) \
