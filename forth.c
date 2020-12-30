@@ -1,5 +1,6 @@
-#include <stdio.h>
+#include <inttypes.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -46,7 +47,7 @@ typedef int64_t dcell_t;
   X("R>", OP_FROMR, DUP; tos = *rp--) \
   X("R@", OP_RAT, DUP; tos = *rp) \
   X("CELL", OP_CELL, DUP; tos = sizeof(cell_t)) \
-  X(".", OP_DOT, printf("%d ", (int) tos); DROP) \
+  X(".", OP_DOT, printf("%"PRIiPTR" ", tos); DROP) \
   X("TYPE", OP_TYPE, fwrite((void *) *sp, 1, tos, stdout); DROP; DROP) \
   X("KEY", OP_KEY, DUP; tos = fgetc(stdin)) \
   X("SYSEXIT", OP_SYSEXIT, DUP; exit(tos)) \
@@ -193,7 +194,7 @@ static const char boot[] =
 " : exit= ( xt -- ) ['] exit = ; "
 " : see-loop   >body begin see-one dup @ exit= until ; "
 " : see   cr ['] : see.  ' dup see.  see-loop drop  ['] ; see.  cr ; "
-" : words   last @ begin dup >name type space >link dup 0= until drop cr ; "
+" : words   last @ begin dup see. >link dup 0= until drop cr ; "
 
 // ( Printing )
 " : $. r@ dup cell+ swap @ type r> dup @ aligned + cell+ >r ; "
