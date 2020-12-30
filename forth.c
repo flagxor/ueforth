@@ -19,7 +19,7 @@ typedef int64_t dcell_t;
 #define DUP *++sp = tos
 #define DROP tos = *sp--
 #define NEXT w = *ip++; goto **(void **) w
-#define CELL_LEN(n) (((n) + sizeof(cell_t) - 1) & ~(sizeof(cell_t) - 1))
+#define CELL_LEN(n) (((n) + sizeof(cell_t) - 1) / sizeof(cell_t))
 #define FIND(name) find(name, sizeof(name) - 1)
 
 #define OPCODE_LIST \
@@ -185,20 +185,20 @@ static const char boot[] =
 " ' throw 'throw ! "
 
 // Examine Dictionary
-" : >link ( xt -- a ) 2 cells - @ ; "
 " : >name ( xt -- a n ) 3 cells - dup @ swap over aligned - swap ; "
+" : >link ( xt -- a ) 2 cells - @ ; "
 " : >body ( xt -- a ) cell+ ; "
 " : see. ( xt -- ) >name type space ; "
 " : see-one ( xt -- xt+1 ) "
-"    dup @ dup ['] dolit: = if drop cell+ dup @ . else see. then cell+ ; "
+"    dup @ dup ['] DOLIT = if drop cell+ dup @ . else see. then cell+ ; "
 " : exit= ( xt -- ) ['] exit = ; "
 " : see-loop   >body begin see-one dup @ exit= until ; "
 " : see   cr ['] : see.  ' dup see.  see-loop drop  ['] ; see.  cr ; "
 " : words   last @ begin dup see. >link dup 0= until drop cr ; "
 
 // ( Printing )
-" : $. r@ dup cell+ swap @ type r> dup @ aligned + cell+ >r ; "
-" : .\" [char] \" parse postpone $. dup , 0 do dup c@ c, 1+ loop drop align ; immediate "
+" : $.   r@ dup cell+ swap @ type r> dup @ aligned + cell+ >r ; "
+" : .\"   [char] \" parse postpone $. dup , 0 do dup c@ c, 1+ loop drop align ; immediate "
 
 // ( Input )
 " : accept ( a n -- n ) 0 swap begin 2dup < while "
@@ -206,15 +206,15 @@ static const char boot[] =
 "    >r rot r> over c! 1+ -rot swap 1+ swap repeat drop nip ; "
 " 200 constant input-limit "
 " : tib ( -- a ) 'tib @ ; "
-" create input-buffer input-limit allot "
+" create input-buffer   input-limit allot "
 " : tib-setup   input-buffer 'tib ! ; "
 " : refill   tib-setup tib input-limit accept #tib ! 0 >in ! -1 ; "
 
 // ( REPL )
-" : prompt .\"  ok\" cr ; "
-" : eval-line begin >in @ #tib @ < while eval1 repeat ; "
-" : query begin ['] eval-line catch if .\" ERROR\" cr then prompt refill drop again ; "
-" : ok .\" uEForth\" cr prompt refill drop query ; "
+" : prompt   .\"  ok\" cr ; "
+" : eval-line   begin >in @ #tib @ < while eval1 repeat ; "
+" : query   begin ['] eval-line catch if .\" ERROR\" cr then prompt refill drop again ; "
+" : ok   .\" uEForth\" cr prompt refill drop query ; "
 " ok "
 ;
 
