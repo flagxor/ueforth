@@ -76,9 +76,7 @@ typedef uint64_t udcell_t;
   X("IMMEDIATE", OP_IMMEDIATE, g_last[-1] |= 1) \
   X("DOES>", OP_DOES, *g_last = (cell_t) && OP_DODOES; \
                       g_last[1] = (cell_t) ip; goto OP_EXIT) \
-  X("HERE", OP_HERE, DUP; tos = (cell_t) g_heap) \
-  X("ALLOT", OP_ALLOT, g_heap = (cell_t *) (tos + (cell_t) g_heap); \
-                       tos = *sp--) \
+  X("'HEAP", OP_HEAP, DUP; tos = (cell_t) &g_heap) \
   X("STATE", OP_STATE, DUP; tos = (cell_t) &g_state) \
   X("BASE", OP_BASE, DUP; tos = (cell_t) &g_base) \
   X("LAST", OP_LAST, DUP; tos = (cell_t) &g_last) \
@@ -123,22 +121,23 @@ static const char boot[] =
 " : nl 10 ;   : cr nl emit ; "
 " : 1+ 1 + ;   : 1- 1 - ; "
 " : 2* 2 * ;   : 2/ 2 / ; "
+" : +! ( n a -- ) swap over @ + swap ! ; "
+" : bye   0 sysexit ; "
 
-// System Dependent
+// Dictionary and Cells
+" : here ( -- a ) 'heap @ ; "
+" : allot ( n -- ) 'heap +! ; "
 " : cell+ ( n -- n ) cell + ; "
 " : cells ( n -- n ) cell * ; "
 " : cell/ ( n -- n ) cell / ; "
 " : aligned ( a -- a ) cell 1 - dup >r + r> invert and ; "
 " : align   here aligned here - allot ; "
-" : bye   0 sysexit ; "
+" : , ( n --  ) here ! cell allot ; "
+" : c, ( ch -- ) here c! 1 allot ; "
 
 // Compilation State
 " : [ 0 state ! ; immediate "
 " : ] -1 state ! ; immediate "
-
-// Compile to Dictionary
-" : , here ! cell allot ; "
-" : c, here c! 1 allot ; "
 
 // Quoting Words
 " : ' bl parse find ; "
