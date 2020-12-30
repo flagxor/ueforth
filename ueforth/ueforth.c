@@ -58,6 +58,7 @@ typedef uint64_t udcell_t;
   X(">R", OP_TOR, *++rp = tos; DROP) \
   X("R>", OP_FROMR, DUP; tos = *rp--) \
   X("R@", OP_RAT, DUP; tos = *rp) \
+  X("EXECUTE", OP_EXECUTE, w = tos; DROP; goto **(void **) w) \
   X("BRANCH", OP_BRANCH, ip = (cell_t *) *ip) \
   X("0BRANCH", OP_ZBRANCH, if (!tos) ip = (cell_t *) *ip; else ++ip; DROP) \
   X("DONEXT", OP_DONEXT, if ((*rp)--) ip = (cell_t *) *ip; else (--rp, ++ip)) \
@@ -67,15 +68,16 @@ typedef uint64_t udcell_t;
   X("TYPE", OP_TYPE, fwrite((void *) *sp, 1, tos, stdout); --sp; DROP) \
   X("KEY", OP_KEY, DUP; tos = fgetc(stdin)) \
   X("SYSEXIT", OP_SYSEXIT, DUP; exit(tos)) \
-  X("EXECUTE", OP_EXECUTE, w = tos; DROP; goto **(void **) w) \
   X("FIND", OP_FIND, *sp = find((const char *) *sp, tos); DROP) \
   X("PARSE", OP_PARSE, DUP; tos = parse(tos, sp)) \
+  X("S>NUMBER?", OP_CONVERT, tos = convert((const char *) *sp, tos, sp); \
+                             if (!tos) DROP) \
   X("CREATE", OP_CREATE, t = parse(32, &tmp); \
                          create((const char *) tmp, t, 0, && OP_DOCREATE); \
                          *g_heap++ = 0) \
-  X("IMMEDIATE", OP_IMMEDIATE, g_last[-1] |= 1) \
   X("DOES>", OP_DOES, *g_last = (cell_t) && OP_DODOES; \
                       g_last[1] = (cell_t) ip; goto OP_EXIT) \
+  X("IMMEDIATE", OP_IMMEDIATE, g_last[-1] |= 1) \
   X("'HEAP", OP_HEAP, DUP; tos = (cell_t) &g_heap) \
   X("STATE", OP_STATE, DUP; tos = (cell_t) &g_state) \
   X("BASE", OP_BASE, DUP; tos = (cell_t) &g_base) \
