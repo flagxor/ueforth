@@ -32,7 +32,6 @@ typedef uint64_t udcell_t;
   X("UM/MOD", OP_UMSMOD, ud = *(udcell_t *) &sp[-1]; \
                          *--sp = (cell_t) (ud % tos); \
                          tos = (cell_t) (ud / tos)) \
-  X("DONEXT", OP_DONEXT, if ((*rp)--) ip = (cell_t *) *ip; else (--rp, ++ip)) \
   X("*/MOD", OP_SSMOD, d = (dcell_t) tos; \
                        m = (dcell_t) *sp; \
                        n = (dcell_t) sp[-1]; \
@@ -66,6 +65,7 @@ typedef uint64_t udcell_t;
   X("C!", OP_CSTORE, *(uint8_t *) tos = *sp; --sp; DROP) \
   X("BRANCH", OP_BRANCH, ip = (cell_t *) *ip) \
   X("0BRANCH", OP_ZBRANCH, if (!tos) ip = (cell_t *) *ip; else ++ip; DROP) \
+  X("DONEXT", OP_DONEXT, if ((*rp)--) ip = (cell_t *) *ip; else (--rp, ++ip)) \
   X("DOLIT", OP_DOLIT, DUP; tos = *(cell_t *) ip++) \
   X("ALITERAL", OP_ALITERAL, *g_heap++ = g_DOLIT_XT; *g_heap++ = tos; DROP) \
   X("EXECUTE", OP_EXECUTE, w = tos; DROP; goto **(void **) w) \
