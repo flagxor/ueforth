@@ -1,6 +1,6 @@
 forth: forth.c
 
-CFLAGS=-Wall -Werror
+CFLAGS=-O2 -Wall -Werror
 
 clean:
 	rm -f forth

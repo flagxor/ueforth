@@ -10,8 +10,10 @@
 typedef intptr_t cell_t;
 #if __SIZEOF_POINTER__ == 8
 typedef __int128_t dcell_t;
+typedef __uint128_t udcell_t;
 #elif __SIZEOF_POINTER__ == 4
 typedef int64_t dcell_t;
+typedef uint64_t udcell_t;
 #else
 # error "unsupported cell size"
 #endif
@@ -23,9 +25,13 @@ typedef int64_t dcell_t;
 #define FIND(name) find(name, sizeof(name) - 1)
 
 #define OPCODE_LIST \
-  X("0=", OP_ZEQUAL, tos = !tos) \
-  X("0<", OP_ZLESS, tos = tos < 0) \
+  X("0=", OP_ZEQUAL, tos = !tos ? -1 : 0) \
+  X("0<", OP_ZLESS, tos = tos < 0 ? -1 : 0) \
   X("+", OP_PLUS, tos += *sp--) \
+  X("UM/MOD", OP_UMSMOD, ud = *(udcell_t *) &sp[-1]; \
+                         *--sp = (cell_t) (ud % tos); \
+                         tos = (cell_t) (ud / tos)) \
+  X("DONEXT", OP_DONEXT, if ((*rp)--) ip = (cell_t *) *ip; else (--rp, ++ip)) \
   X("*/MOD", OP_SSMOD, d = (dcell_t) tos; \
                        m = (dcell_t) *sp; \
                        n = (dcell_t) sp[-1]; \
@@ -88,7 +94,7 @@ typedef int64_t dcell_t;
   X(";", OP_SEMICOLON, *g_heap++ = g_DOEXIT_XT; g_state = 0) \
 
 static const char boot[] =
-// Comments 
+// Comments
 " : (   41 parse drop drop ; immediate "
 
 // Useful Basic Compound Words
@@ -140,19 +146,21 @@ static const char boot[] =
 " : literal aliteral ; immediate "
 
 // Core Control Flow
-" : begin here ; immediate "
-" : again ['] branch , , ; immediate "
-" : until ['] 0branch , , ; immediate "
-" : ahead ['] branch , here 0 , ; immediate "
-" : then here swap ! ; immediate "
-" : if ['] 0branch , here 0 , ; immediate "
-" : else ['] branch , here 0 , swap here swap ! ; immediate "
-" : while ['] 0branch , here 0 , swap ; immediate "
-" : repeat ['] branch , , here swap ! ; immediate "
+" : begin   here ; immediate "
+" : again   ['] branch , , ; immediate "
+" : until   ['] 0branch , , ; immediate "
+" : ahead   ['] branch , here 0 , ; immediate "
+" : then   here swap ! ; immediate "
+" : if   ['] 0branch , here 0 , ; immediate "
+" : else   ['] branch , here 0 , swap here swap ! ; immediate "
+" : while   ['] 0branch , here 0 , swap ; immediate "
+" : repeat   ['] branch , , here swap ! ; immediate "
+" : aft   drop ['] branch , here 0 , here swap ; immediate "
 
 // Compound words requiring conditionals
 " : min 2dup < if drop else nip then ; "
 " : max 2dup < if nip else drop then ; "
+" : abs ( n -- +n ) dup 0< if negate then ; "
 
 // Postpone - done here so we have ['] and IF
 " : >flags ( xt -- flags ) cell - ; "
@@ -160,14 +168,16 @@ static const char boot[] =
 " : postpone ' dup immediate? if , else aliteral ['] , , then ; immediate "
 
 // Counted Loops
-" : do postpone swap postpone >r postpone >r here ; immediate "
-" : i postpone r@ ; immediate "
-" : unloop postpone rdrop postpone rdrop ; immediate "
-" : +loop postpone r> postpone + postpone r> "
-"         postpone 2dup postpone >r postpone >r "
-"         postpone < postpone 0= postpone until "
-"         postpone unloop ; immediate "
-" : loop 1 aliteral postpone +loop ; immediate "
+" : for   postpone >r postpone begin ; immediate "
+" : next   postpone donext , ; immediate "
+" : do   postpone swap postpone >r postpone >r here ; immediate "
+" : i   postpone r@ ; immediate "
+" : unloop   postpone rdrop postpone rdrop ; immediate "
+" : +loop   postpone r> postpone + postpone r> "
+"           postpone 2dup postpone >r postpone >r "
+"           postpone < postpone 0= postpone until "
+"           postpone unloop ; immediate "
+" : loop   1 aliteral postpone +loop ; immediate "
 
 // Constants and Variables
 " : constant create , does> @ ; "
@@ -196,9 +206,51 @@ static const char boot[] =
 " : see   cr ['] : see.  ' dup see.  see-loop drop  ['] ; see.  cr ; "
 " : words   last @ begin dup see. >link dup 0= until drop cr ; "
 
-// ( Printing )
+// Memory Access
+" : COUNT ( b -- b +n ) DUP 1 + SWAP C@ ; "
+//" : HERE ( -- a ) CP @ ; "
+" : PAD ( -- a ) HERE 80 + ; "
+" : CMOVE ( b b u -- ) "
+"    FOR AFT >R DUP C@ R@ C! 1 + R> 1 + THEN NEXT 2DROP ; "
+" : FILL ( b u c -- ) "
+"    SWAP FOR SWAP AFT 2DUP C! 1 + THEN NEXT 2DROP ; "
+" : -TRAILING ( b u -- b u ) "
+"    FOR AFT BL OVER R@ + C@ < "
+"        IF R> 1 + EXIT THEN THEN "
+"    NEXT 0 ; "
+
+// Numeric Output
+" VARIABLE HLD "
+" : DIGIT ( u -- c ) 9 OVER < 7 AND + 48 + ; "
+" : EXTRACT ( n base -- n c ) 0 SWAP UM/MOD SWAP DIGIT ; "
+" : <# ( -- ) PAD HLD ! ; "
+" : HOLD ( c -- ) HLD @ 1 - DUP HLD ! C! ; "
+" : # ( u -- u ) BASE @ EXTRACT HOLD ; "
+" : #S ( u -- 0 ) BEGIN # DUP WHILE REPEAT ; "
+" : SIGN ( n -- ) 0< IF 45 HOLD THEN ; "
+" : #> ( w -- b u ) DROP HLD @ PAD OVER - ; "
+" : str ( n -- b u ) DUP >R ABS <# #S R> SIGN #> ; "
+" : HEX ( -- ) 16 BASE ! ; "
+" : DECIMAL ( -- ) 10 BASE ! ; "
+" : U. ( u -- ) "
+"    ( Display an unsigned integer in free format.) "
+"    <# #S #> ( convert unsigned number) "
+"    SPACE ( print one leading space) "
+"    TYPE ; ( print number) "
+" : . ( w -- ) "
+"    ( Display an integer in free format, preceeded by a space.) "
+"    BASE @ 10 XOR ( if not in decimal mode) "
+"    IF U. EXIT THEN ( print unsigned number) "
+"    str SPACE TYPE ; ( print signed number if decimal) "
+" : ? ( a -- ) "
+"    ( Display the contents in a memory cell.) "
+"    @ . ; ( very simple but useful command) "
+
+// ( Strings )
 " : $.   r@ dup cell+ swap @ type r> dup @ aligned + cell+ >r ; "
 " : .\"   [char] \" parse postpone $. dup , 0 do dup c@ c, 1+ loop drop align ; immediate "
+" : $@   r@ dup cell+ swap @ r> dup @ aligned + cell+ >r ; "
+" : s\"   [char] \" parse postpone $@ dup , 0 do dup c@ c, 1+ loop drop align ; immediate "
 
 // ( Input )
 " : accept ( a n -- n ) 0 swap begin 2dup < while "
@@ -315,7 +367,7 @@ static cell_t *eval1(cell_t *sp, cell_t *call) {
       fprintf(stderr, "\n");
       exit(1);
 #endif
-    } 
+    }
   }
   return sp;
 }
@@ -326,6 +378,7 @@ int main(int argc, char *argv[]) {
   register cell_t *rp = g_heap; g_heap += STACK_SIZE;
   register cell_t tos = 0, *ip, t, w;
   dcell_t m, n, d;
+  udcell_t ud;
   cell_t tmp;
 #define X(name, op, code) create(name, sizeof(name) - 1, name[0] == ';', && op);
   OPCODE_LIST
