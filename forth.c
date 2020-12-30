@@ -72,13 +72,13 @@ typedef int64_t dcell_t;
   X("STATE", OP_STATE, DUP; tos = (cell_t) &g_state) \
   X("BASE", OP_BASE, DUP; tos = (cell_t) &g_base) \
   X("LAST", OP_LAST, DUP; tos = (cell_t) &g_last) \
-  X("&TIB", OP_TIB, DUP; tos = (cell_t) &g_tib) \
+  X("'TIB", OP_TIB, DUP; tos = (cell_t) &g_tib) \
   X("#TIB", OP_NTIB, DUP; tos = (cell_t) &g_ntib) \
   X(">IN", OP_TIN, DUP; tos = (cell_t) &g_tin) \
   X(":", OP_COLON, t = parse(32, &tmp); \
                    create((const char *) tmp, t, 0, && OP_DOCOL); \
                    g_state = -1) \
-  X("EVAL1", OP_EVAL1, DUP; sp = quit(sp, &tmp); \
+  X("EVAL1", OP_EVAL1, DUP; sp = eval1(sp, &tmp); \
             DROP; if (tmp) (w = tmp); \
             if (tmp) goto **(void **) w) \
   X("EXIT", OP_EXIT, ip = (void *) *rp--) \
@@ -186,21 +186,23 @@ static const char boot[] =
 " : words last @ begin dup >name type space >link dup 0= until drop cr ; "
 
 // ( Printing )
-" : $. r@ dup cell+ swap @ type r> dup @ + ; "
+" : $. r@ dup cell+ swap @ type r> dup @ aligned + cell+ >r ; "
 " : .\" [char] \" parse postpone $. dup , 0 do dup c@ c, 1+ loop drop align ; immediate "
 
 // ( Input )
-" : accept ( a n -- n ) 0 swap begin 2dup < while key dup nl = if drop nip exit then >r >r over c! 1+ r> 1+ r> repeat drop nip ; "
+" : accept ( a n -- n ) 0 swap begin 2dup < while key dup nl = if 2drop nip exit then >r rot r> over c! 1+ -rot swap 1+ swap repeat drop nip ; "
 " 200 constant input-limit "
-" input-limit . cr "
-" 888888 . cr "
-" : tib &tib @ ;  here &tib ! input-limit allot "
-" : refill tib input-limit accept #tib ! 0 >in ! ; "
+" : tib 'tib @ ; "
+" create input-buffer input-limit allot "
+" : tib-setup   input-buffer 'tib ! ; "
+" : refill   tib-setup tib input-limit accept #tib ! 0 >in ! ; "
+
 
 // ( REPL )
 " : prompt .\"  ok\" cr ; "
 " : eval-line begin >in @ #tib @ < while eval1 repeat ; "
-" : boot begin ['] eval-line catch if .\" ERROR\" cr then prompt refill drop again ; "
+/* " : query begin ['] eval-line catch if .\" ERROR\" cr then prompt refill drop again ; " */
+" : query begin refill eval-line again ; "
 " : ok .\" uEForth\" cr prompt query ; "
 " ok "
 ;
@@ -271,7 +273,7 @@ static cell_t parse(cell_t sep, cell_t *ret) {
   return len;
 }
 
-static cell_t *quit(cell_t *sp, cell_t *call) {
+static cell_t *eval1(cell_t *sp, cell_t *call) {
   *call = 0;
   cell_t name;
   cell_t len = parse(' ', &name);
@@ -290,7 +292,7 @@ static cell_t *quit(cell_t *sp, cell_t *call) {
         *g_heap++ = g_DOLIT_XT;
         *g_heap++ = n;
       } else {
-        *sp += n;
+        *++sp = n;
       }
     } else {
       fprintf(stderr, "Bad Word: ");
@@ -326,6 +328,6 @@ int main(int argc, char *argv[]) {
 #undef X
   OP_DOCREATE: DUP; tos = w + sizeof(cell_t) * 2; NEXT;
   OP_DODOES: DUP; tos = w + sizeof(cell_t) * 2;
-             *++rp = (cell_t) ip; ip = (cell_t *) (w + sizeof(cell_t)); NEXT;
+             *++rp = (cell_t) ip; ip = (cell_t *) *(cell_t *) (w + sizeof(cell_t)); NEXT;
   OP_DOCOL: *++rp = (cell_t) ip; ip = (cell_t *) (w + sizeof(cell_t)); NEXT;
 }
