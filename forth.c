@@ -54,9 +54,11 @@ typedef uint64_t udcell_t;
   X("R@", OP_RAT, DUP; tos = *rp) \
   X("CELL", OP_CELL, DUP; tos = sizeof(cell_t)) \
   X(".", OP_DOT, printf("%"PRIiPTR" ", tos); DROP) \
-  X("TYPE", OP_TYPE, fwrite((void *) *sp, 1, tos, stdout); DROP; DROP) \
+  X("TYPE", OP_TYPE, fwrite((void *) *sp, 1, tos, stdout); --sp; DROP) \
   X("KEY", OP_KEY, DUP; tos = fgetc(stdin)) \
   X("SYSEXIT", OP_SYSEXIT, DUP; exit(tos)) \
+  X("FILL", OP_FILL, memset((void *) sp[-1], tos, *sp); sp -= 2; DROP) \
+  X("MOVE", OP_MOVE, memmove((void *) sp[-1], (void *) *sp, tos); sp -= 2; DROP) \
   X("@", OP_AT, tos = *(cell_t *) tos) \
   X("C@", OP_CAT, tos = *(uint8_t *) tos) \
   X("!", OP_STORE, *(cell_t *) tos = *sp; --sp; DROP) \
@@ -172,6 +174,7 @@ static const char boot[] =
 " : next   postpone donext , ; immediate "
 " : do   postpone swap postpone >r postpone >r here ; immediate "
 " : i   postpone r@ ; immediate "
+" : j   rp@ 3 cells - @ ; "
 " : unloop   postpone rdrop postpone rdrop ; immediate "
 " : +loop   postpone r> postpone + postpone r> "
 "           postpone 2dup postpone >r postpone >r "
@@ -206,45 +209,23 @@ static const char boot[] =
 " : see   cr ['] : see.  ' dup see.  see-loop drop  ['] ; see.  cr ; "
 " : words   last @ begin dup see. >link dup 0= until drop cr ; "
 
-// Memory Access
-" : COUNT ( b -- b +n ) DUP 1 + SWAP C@ ; "
-//" : HERE ( -- a ) CP @ ; "
-" : PAD ( -- a ) HERE 80 + ; "
-" : CMOVE ( b b u -- ) "
-"    FOR AFT >R DUP C@ R@ C! 1 + R> 1 + THEN NEXT 2DROP ; "
-" : FILL ( b u c -- ) "
-"    SWAP FOR SWAP AFT 2DUP C! 1 + THEN NEXT 2DROP ; "
-" : -TRAILING ( b u -- b u ) "
-"    FOR AFT BL OVER R@ + C@ < "
-"        IF R> 1 + EXIT THEN THEN "
-"    NEXT 0 ; "
-
 // Numeric Output
-" VARIABLE HLD "
-" : DIGIT ( u -- c ) 9 OVER < 7 AND + 48 + ; "
-" : EXTRACT ( n base -- n c ) 0 SWAP UM/MOD SWAP DIGIT ; "
-" : <# ( -- ) PAD HLD ! ; "
-" : HOLD ( c -- ) HLD @ 1 - DUP HLD ! C! ; "
-" : # ( u -- u ) BASE @ EXTRACT HOLD ; "
-" : #S ( u -- 0 ) BEGIN # DUP WHILE REPEAT ; "
-" : SIGN ( n -- ) 0< IF 45 HOLD THEN ; "
-" : #> ( w -- b u ) DROP HLD @ PAD OVER - ; "
-" : str ( n -- b u ) DUP >R ABS <# #S R> SIGN #> ; "
-" : HEX ( -- ) 16 BASE ! ; "
-" : DECIMAL ( -- ) 10 BASE ! ; "
-" : U. ( u -- ) "
-"    ( Display an unsigned integer in free format.) "
-"    <# #S #> ( convert unsigned number) "
-"    SPACE ( print one leading space) "
-"    TYPE ; ( print number) "
-" : . ( w -- ) "
-"    ( Display an integer in free format, preceeded by a space.) "
-"    BASE @ 10 XOR ( if not in decimal mode) "
-"    IF U. EXIT THEN ( print unsigned number) "
-"    str SPACE TYPE ; ( print signed number if decimal) "
-" : ? ( a -- ) "
-"    ( Display the contents in a memory cell.) "
-"    @ . ; ( very simple but useful command) "
+" variable hld "
+" : pad ( -- a ) here 80 + ; "
+" : digit ( u -- c ) 9 over < 7 and + 48 + ; "
+" : extract ( n base -- n c ) 0 swap um/mod swap digit ; "
+" : <# ( -- ) pad hld ! ; "
+" : hold ( c -- ) hld @ 1 - dup hld ! c! ; "
+" : # ( u -- u ) base @ extract hold ; "
+" : #s ( u -- 0 ) begin # dup while repeat ; "
+" : sign ( n -- ) 0< if 45 hold then ; "
+" : #> ( w -- b u ) drop hld @ pad over - ; "
+" : str ( n -- b u ) dup >r abs <# #s r> sign #> ; "
+" : hex ( -- ) 16 base ! ; "
+" : decimal ( -- ) 10 base ! ; "
+" : u. ( u -- ) <# #s #> space type ; "
+" : . ( w -- ) base @ 10 xor if u. exit then str space type ; "
+" : ? ( a -- ) @ . ; "
 
 // ( Strings )
 " : $.   r@ dup cell+ swap @ type r> dup @ aligned + cell+ >r ; "
