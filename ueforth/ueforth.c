@@ -32,12 +32,9 @@ typedef uint64_t udcell_t;
   X("UM/MOD", OP_UMSMOD, ud = *(udcell_t *) &sp[-1]; \
                          *--sp = (cell_t) (ud % tos); \
                          tos = (cell_t) (ud / tos)) \
-  X("*/MOD", OP_SSMOD, d = (dcell_t) tos; \
-                       m = (dcell_t) *sp; \
-                       n = (dcell_t) sp[-1]; \
-                       n *= m; \
-                       tos = (cell_t) (n / d); \
-                       *--sp = (cell_t) (n % d)) \
+  X("*/MOD", OP_SSMOD, d = (dcell_t) *sp * (dcell_t) sp[-1]; \
+                       *--sp = (cell_t) (d % tos); \
+                       tos = (cell_t) (d / tos)) \
   X("AND", OP_AND, tos &= *sp--) \
   X("OR", OP_OR, tos |= *sp--) \
   X("XOR", OP_XOR, tos ^= *sp--) \
@@ -348,7 +345,7 @@ int main(int argc, char *argv[]) {
   register cell_t *sp = g_heap; g_heap += STACK_SIZE;
   register cell_t *rp = g_heap; g_heap += STACK_SIZE;
   register cell_t tos = 0, *ip, t, w;
-  dcell_t m, n, d;
+  dcell_t d;
   udcell_t ud;
   cell_t tmp;
 #define X(name, op, code) create(name, sizeof(name) - 1, name[0] == ';', && op);
