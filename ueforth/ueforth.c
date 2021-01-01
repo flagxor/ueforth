@@ -1,3 +1,4 @@
+#include <dlfcn.h>
 #include <inttypes.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -65,10 +66,10 @@ typedef uint64_t udcell_t;
   X("TYPE", OP_TYPE, fwrite((void *) *sp, 1, tos, stdout); --sp; DROP) \
   X("KEY", OP_KEY, DUP; tos = fgetc(stdin)) \
   X("SYSEXIT", OP_SYSEXIT, DUP; exit(tos)) \
-  X("FIND", OP_FIND, *sp = find((const char *) *sp, tos); DROP) \
+  X("FIND", OP_FIND, tos = find((const char *) *sp, tos); --sp) \
   X("PARSE", OP_PARSE, DUP; tos = parse(tos, sp)) \
   X("S>NUMBER?", OP_CONVERT, tos = convert((const char *) *sp, tos, sp); \
-                             if (!tos) DROP) \
+                             if (!tos) --sp) \
   X("CREATE", OP_CREATE, t = parse(32, &tmp); \
                          create((const char *) tmp, t, 0, && OP_DOCREATE); \
                          *g_heap++ = 0) \
@@ -83,6 +84,14 @@ typedef uint64_t udcell_t;
   X("#TIB", OP_NTIB, DUP; tos = (cell_t) &g_ntib) \
   X(">IN", OP_TIN, DUP; tos = (cell_t) &g_tin) \
   X("'THROW", OP_TTHROW, DUP; tos = (cell_t) &g_throw) \
+  X("DLSYM", OP_DLSYM, tos = (cell_t) dlsym((void *) *sp, (void *) tos); --sp) \
+  X("CALL0", OP_CALL0, tos = ((cell_t (*)()) tos)()) \
+  X("CALL1", OP_CALL1, tos = ((cell_t (*)()) tos)(*sp); --sp) \
+  X("CALL2", OP_CALL2, tos = ((cell_t (*)()) tos)(sp[-1], *sp); sp -= 2) \
+  X("CALL3", OP_CALL3, tos = ((cell_t (*)()) tos)(sp[-2], sp[-1], *sp); sp -= 3) \
+  X("CALL4", OP_CALL4, tos = ((cell_t (*)()) tos)(sp[-3], sp[-2], sp[-1], *sp); sp -= 4) \
+  X("CALL5", OP_CALL5, tos = ((cell_t (*)()) tos)(sp[-4], sp[-3], sp[-2], sp[-1], *sp); sp -= 5) \
+  X("CALL6", OP_CALL6, tos = ((cell_t (*)()) tos)(sp[-5], sp[-4], sp[-3], sp[-2], sp[-1], *sp); sp -= 6) \
   X(":", OP_COLON, t = parse(32, &tmp); \
                    create((const char *) tmp, t, 0, && OP_DOCOL); \
                    g_state = -1) \
@@ -218,6 +227,8 @@ static const char boot[] =
 " : .\"   [char] \" parse postpone $. dup , 0 do dup c@ c, 1+ loop drop align ; immediate "
 " : $@   r@ dup cell+ swap @ r> dup @ aligned + cell+ >r ; "
 " : s\"   [char] \" parse postpone $@ dup , 0 do dup c@ c, 1+ loop drop align ; immediate "
+" : z$@   r@ cell+ r> dup @ aligned + cell+ >r ; "
+" : z\"   [char] \" parse postpone z$@ dup 1+ , 0 do dup c@ c, 1+ loop drop 0 c, align ; immediate "
 
 // Examine Dictionary
 " : >name ( xt -- a n ) 3 cells - dup @ swap over aligned - swap ; "
