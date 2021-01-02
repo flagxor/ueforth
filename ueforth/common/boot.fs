@@ -27,12 +27,24 @@
 : +! ( n a -- ) swap over @ + swap ! ;
 : bye   0 sysexit ;
 
-( Dictionary and Cells )
-: here ( -- a ) 'heap @ ;
-: allot ( n -- ) 'heap +! ;
+( Cells )
 : cell+ ( n -- n ) cell + ;
 : cells ( n -- n ) cell * ;
 : cell/ ( n -- n ) cell / ;
+
+( System Variables )
+: 'tib ( -- a ) 'sys 0 cells + ;
+: #tib ( -- a ) 'sys 1 cells + ;
+: >in ( -- a ) 'sys 2 cells + ;
+: state ( -- a ) 'sys 3 cells + ;
+: base ( -- a ) 'sys 4 cells + ;
+: 'heap ( -- a ) 'sys 5 cells + ;
+: last ( -- a ) 'sys 6 cells + ;
+: 'throw ( -- a ) 'sys 7 cells + ;
+
+( Dictionary )
+: here ( -- a ) 'heap @ ;
+: allot ( n -- ) 'heap +! ;
 : aligned ( a -- a ) cell 1 - dup >r + r> invert and ;
 : align   here aligned here - allot ;
 : , ( n --  ) here ! cell allot ;

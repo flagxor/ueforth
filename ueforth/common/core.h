@@ -3,11 +3,12 @@
 #define FIND(name) find(name, sizeof(name) - 1)
 #define LOWER(ch) ((ch) & 95)
 
-static cell_t *g_heap;
-static const char *g_tib;
-static cell_t g_ntib, g_tin = 0;
-static cell_t *g_last = 0, g_base = 10, g_state = 0, g_throw = 0;
-static cell_t g_DOLIT_XT, g_DOEXIT_XT;
+static struct {
+  const char *tib;
+  cell_t ntib, tin, state, base;
+  cell_t *heap, *last, tthrow;
+  cell_t DOLIT_XT, DOEXIT_XT;
+} g_sys;
 
 static cell_t convert(const char *pos, cell_t n, cell_t *ret) {
   *ret = 0;
@@ -20,8 +21,8 @@ static cell_t convert(const char *pos, cell_t n, cell_t *ret) {
       d = LOWER(d) - 7;
       if (d < 10) { return 0; }
     }
-    if (d >= (uintptr_t) g_base) { return 0; }
-    *ret = *ret * g_base + d;
+    if (d >= (uintptr_t) g_sys.base) { return 0; }
+    *ret = *ret * g_sys.base + d;
     ++pos;
   }
   if (negate) { *ret = -*ret; }
@@ -34,7 +35,7 @@ static cell_t same(const char *a, const char *b, cell_t len) {
 }
 
 static cell_t find(const char *name, cell_t len) {
-  cell_t *pos = g_last;
+  cell_t *pos = g_sys.last;
   cell_t clen = CELL_LEN(len);
   while (pos) {
     if (len == pos[-3] &&
@@ -47,21 +48,21 @@ static cell_t find(const char *name, cell_t len) {
 }
 
 static void create(const char *name, cell_t length, cell_t flags, void *op) {
-  memcpy(g_heap, name, length);  // name
-  g_heap += CELL_LEN(length);
-  *g_heap++ = length;  // length
-  *g_heap++ = (cell_t) g_last;  // link
-  *g_heap++ = flags;  // flags
-  g_last = g_heap;
-  *g_heap++ = (cell_t) op;  // code
+  memcpy(g_sys.heap, name, length);  // name
+  g_sys.heap += CELL_LEN(length);
+  *g_sys.heap++ = length;  // length
+  *g_sys.heap++ = (cell_t) g_sys.last;  // link
+  *g_sys.heap++ = flags;  // flags
+  g_sys.last = g_sys.heap;
+  *g_sys.heap++ = (cell_t) op;  // code
 }
 
 static cell_t parse(cell_t sep, cell_t *ret) {
-  while (g_tin < g_ntib && g_tib[g_tin] == sep) { ++g_tin; }
-  *ret = (cell_t) (g_tib + g_tin);
-  while (g_tin < g_ntib && g_tib[g_tin] != sep) { ++g_tin; }
-  cell_t len = g_tin - (*ret - (cell_t) g_tib);
-  if (g_tin < g_ntib) { ++g_tin; }
+  while (g_sys.tin < g_sys.ntib && g_sys.tib[g_sys.tin] == sep) { ++g_sys.tin; }
+  *ret = (cell_t) (g_sys.tib + g_sys.tin);
+  while (g_sys.tin < g_sys.ntib && g_sys.tib[g_sys.tin] != sep) { ++g_sys.tin; }
+  cell_t len = g_sys.tin - (*ret - (cell_t) g_sys.tib);
+  if (g_sys.tin < g_sys.ntib) { ++g_sys.tin; }
   return len;
 }
 
@@ -71,8 +72,8 @@ static cell_t *eval1(cell_t *sp, cell_t *call) {
   cell_t len = parse(' ', &name);
   cell_t xt = find((const char *) name, len);
   if (xt) {
-    if (g_state && !(((cell_t *) xt)[-1] & 1)) {  // bit 0 of flags is immediate
-      *g_heap++ = xt;
+    if (g_sys.state && !(((cell_t *) xt)[-1] & 1)) {  // bit 0 of flags is immediate
+      *g_sys.heap++ = xt;
     } else {
       *call = xt;
     }
@@ -80,24 +81,24 @@ static cell_t *eval1(cell_t *sp, cell_t *call) {
     cell_t n;
     cell_t ok = convert((const char *) name, len, &n);
     if (ok) {
-      if (g_state) {
-        *g_heap++ = g_DOLIT_XT;
-        *g_heap++ = n;
+      if (g_sys.state) {
+        *g_sys.heap++ = g_sys.DOLIT_XT;
+        *g_sys.heap++ = n;
       } else {
         *++sp = n;
       }
     } else {
       *++sp = -1;
-      *call = g_throw;
+      *call = g_sys.tthrow;
     }
   }
   return sp;
 }
 
 static void ueforth(const char *src, cell_t src_len) {
-  g_heap = malloc(HEAP_SIZE);
-  register cell_t *sp = g_heap; g_heap += STACK_SIZE;
-  register cell_t *rp = g_heap; g_heap += STACK_SIZE;
+  g_sys.heap = malloc(HEAP_SIZE);
+  register cell_t *sp = g_sys.heap; g_sys.heap += STACK_SIZE;
+  register cell_t *rp = g_sys.heap; g_sys.heap += STACK_SIZE;
   register cell_t tos = 0, *ip, t, w;
   dcell_t d;
   udcell_t ud;
@@ -106,15 +107,16 @@ static void ueforth(const char *src, cell_t src_len) {
   PLATFORM_OPCODE_LIST
   OPCODE_LIST
 #undef X
-  g_last[-1] = 1;  // Make ; IMMEDIATE
-  g_DOLIT_XT = FIND("DOLIT");
-  g_DOEXIT_XT = FIND("EXIT");
-  ip = g_heap;
-  *g_heap++ = FIND("EVAL1");
-  *g_heap++ = FIND("BRANCH");
-  *g_heap++ = (cell_t) ip;
-  g_tib = src;
-  g_ntib = src_len;
+  g_sys.last[-1] = 1;  // Make ; IMMEDIATE
+  g_sys.DOLIT_XT = FIND("DOLIT");
+  g_sys.DOEXIT_XT = FIND("EXIT");
+  ip = g_sys.heap;
+  *g_sys.heap++ = FIND("EVAL1");
+  *g_sys.heap++ = FIND("BRANCH");
+  *g_sys.heap++ = (cell_t) ip;
+  g_sys.base = 10;
+  g_sys.tib = src;
+  g_sys.ntib = src_len;
   NEXT;
 #define X(name, op, code) op: code; NEXT;
   PLATFORM_OPCODE_LIST

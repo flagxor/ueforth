@@ -52,7 +52,8 @@ typedef uint64_t udcell_t;
   X("0BRANCH", OP_ZBRANCH, if (!tos) ip = (cell_t *) *ip; else ++ip; DROP) \
   X("DONEXT", OP_DONEXT, if ((*rp)--) ip = (cell_t *) *ip; else (--rp, ++ip)) \
   X("DOLIT", OP_DOLIT, DUP; tos = *(cell_t *) ip++) \
-  X("ALITERAL", OP_ALITERAL, *g_heap++ = g_DOLIT_XT; *g_heap++ = tos; DROP) \
+  X("ALITERAL", OP_ALITERAL, *g_sys.heap++ = g_sys.DOLIT_XT; \
+                             *g_sys.heap++ = tos; DROP) \
   X("CELL", OP_CELL, DUP; tos = sizeof(cell_t)) \
   X("FIND", OP_FIND, tos = find((const char *) *sp, tos); --sp) \
   X("PARSE", OP_PARSE, DUP; tos = parse(tos, sp)) \
@@ -60,24 +61,17 @@ typedef uint64_t udcell_t;
                              if (!tos) --sp) \
   X("CREATE", OP_CREATE, t = parse(32, &tmp); \
                          create((const char *) tmp, t, 0, && OP_DOCREATE); \
-                         *g_heap++ = 0) \
-  X("DOES>", OP_DOES, *g_last = (cell_t) && OP_DODOES; \
-                      g_last[1] = (cell_t) ip; goto OP_EXIT) \
-  X("IMMEDIATE", OP_IMMEDIATE, g_last[-1] |= 1) \
-  X("'HEAP", OP_HEAP, DUP; tos = (cell_t) &g_heap) \
-  X("STATE", OP_STATE, DUP; tos = (cell_t) &g_state) \
-  X("BASE", OP_BASE, DUP; tos = (cell_t) &g_base) \
-  X("LAST", OP_LAST, DUP; tos = (cell_t) &g_last) \
-  X("'TIB", OP_TIB, DUP; tos = (cell_t) &g_tib) \
-  X("#TIB", OP_NTIB, DUP; tos = (cell_t) &g_ntib) \
-  X(">IN", OP_TIN, DUP; tos = (cell_t) &g_tin) \
-  X("'THROW", OP_TTHROW, DUP; tos = (cell_t) &g_throw) \
+                         *g_sys.heap++ = 0) \
+  X("DOES>", OP_DOES, *g_sys.last = (cell_t) && OP_DODOES; \
+                      g_sys.last[1] = (cell_t) ip; goto OP_EXIT) \
+  X("IMMEDIATE", OP_IMMEDIATE, g_sys.last[-1] |= 1) \
+  X("'SYS", OP_SYS, DUP; tos = (cell_t) &g_sys) \
   X(":", OP_COLON, t = parse(32, &tmp); \
                    create((const char *) tmp, t, 0, && OP_DOCOL); \
-                   g_state = -1) \
+                   g_sys.state = -1) \
   X("EVAL1", OP_EVAL1, DUP; sp = eval1(sp, &tmp); \
             DROP; if (tmp) (w = tmp); \
             if (tmp) goto **(void **) w) \
   X("EXIT", OP_EXIT, ip = (void *) *rp--) \
-  X(";", OP_SEMICOLON, *g_heap++ = g_DOEXIT_XT; g_state = 0) \
+  X(";", OP_SEMICOLON, *g_sys.heap++ = g_sys.DOEXIT_XT; g_sys.state = 0) \
 
