@@ -1,4 +1,3 @@
-( Comments )
 : (   41 parse drop drop ; immediate
 
 ( Useful Basic Compound Words )

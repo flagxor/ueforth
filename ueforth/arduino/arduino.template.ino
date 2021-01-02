@@ -1,9 +1,10 @@
-
+{{opcodes}}
+{{core}}
 const char boot[] =
-{{boot}}
-;
+{{boot}};
 
-void start() {
+void setup() {
+  ueforth(boot, sizeof(boot));
 }
 
 void loop() {
