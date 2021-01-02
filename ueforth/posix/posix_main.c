@@ -1,7 +1,7 @@
 #include <dlfcn.h>
 #include <stdio.h>
 
-#include "opcodes.h"
+#include "common/opcodes.h"
 
 #define HEAP_SIZE (10 * 1024 * 1024)
 #define STACK_SIZE (16 * 1024)
@@ -19,8 +19,10 @@
   X("KEY", OP_KEY, DUP; tos = fgetc(stdin)) \
   X("SYSEXIT", OP_SYSEXIT, DUP; exit(tos)) \
 
-#include "core.h"
+#include "common/core.h"
+
+#include "gen/boot.h"
 
 int main(int argc, char *argv[]) {
-  ueforth(0, 0);
+  ueforth(boot, sizeof(boot));
 }

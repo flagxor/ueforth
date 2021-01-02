@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "opcodes.h"
+#include "common/opcodes.h"
 
 #define PLATFORM_OPCODE_LIST \
   X("CALL", OP_CALL, sp = jscall(sp, tos); DROP) \

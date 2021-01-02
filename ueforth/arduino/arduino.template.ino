@@ -1,7 +1,6 @@
 {{opcodes}}
 {{core}}
-const char boot[] =
-{{boot}};
+{{boot}}
 
 void setup() {
   ueforth(boot, sizeof(boot));
