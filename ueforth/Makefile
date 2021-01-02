@@ -40,7 +40,11 @@ out/web/ueforth.js: \
 out/posix:
 	mkdir -p out/posix
 
-out/posix/ueforth: posix/posix_main.c common/opcodes.h | out/posix
+out/posix/ueforth: \
+    posix/posix_main.c \
+    common/opcodes.h \
+    common/core.h \
+    out/gen/boot.h | out/posix
 	$(CC) $(CFLAGS) $< -o $@ $(LIBS)
 
 out/arduino:

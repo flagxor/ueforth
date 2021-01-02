@@ -118,12 +118,13 @@ variable hld
 : ? ( a -- ) @ . ;
 
 ( Strings )
-: $.   r@ dup cell+ swap @ type r> dup @ aligned + cell+ >r ;
-: ."   [char] " parse postpone $. dup , 0 do dup c@ c, 1+ loop drop align ; immediate
-: $@   r@ dup cell+ swap @ r> dup @ aligned + cell+ >r ;
-: s"   [char] " parse postpone $@ dup , 0 do dup c@ c, 1+ loop drop align ; immediate
-: z$@   r@ cell+ r> dup @ aligned + cell+ >r ;
-: z"   [char] " parse postpone z$@ dup 1+ , 0 do dup c@ c, 1+ loop drop 0 c, align ; immediate
+: parse-quote ( -- a n ) [char] " parse ;
+: $place ( a n -- ) 0 do dup c@ c, 1+ loop drop 0 c, align ;
+: $@   r@ dup cell+ swap @ r> dup @ 1+ aligned + cell+ >r ;
+: s"   parse-quote state @ if postpone $@ dup , $place
+       else dup here swap >r >r $place r> r> then ; immediate
+: ."   postpone s" state @ if postpone type else type then ; immediate
+: z"   postpone s" state @ if postpone drop else drop then ; immediate
 
 ( Examine Dictionary )
 : >name ( xt -- a n ) 3 cells - dup @ swap over aligned - swap ;
