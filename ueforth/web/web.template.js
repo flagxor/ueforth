@@ -10,6 +10,26 @@ const boot = `
 {{boot}}
 `;
 
+var buffer = new ArrayBuffer(HEAP_SIZE);
+var i32 = new Int32Array(buffer);
+var u8 = new Uint8Array(buffer);
+var objects = [SetEval];
+
+function SetEval(sp) {
+  var index = i32[sp--];
+  var len = i32[sp--];
+  var code_addr = i32[sp--];
+  var code = '';
+  for (var i = 0; i < len; ++i) {
+    code += String.fromCharCode(u8[name_addr + i]);
+  }
+  objects[index] = eval(code);
+}
+
+function Call(sp, tos) {
+  return objects[tos](sp); 
+}
+
 function create(name, opcode) {
 }
 
@@ -22,12 +42,7 @@ function Interpreter(stdlib, foreign, heap) {
 
   var imul = stdlib.Math.imul;
 
-  var exit = foreign.exit;
-  var emit = foreign.emit;
-  var qkey = foreign.qkey;
-  var color = foreign.color;
-  var print_decimal = foreign.print_decimal;
-  var print_hexadecimal = foreign.print_hexadecimal;
+  var Call = foreign.Call;
 
   var u8 = new stdlib.Uint8Array(heap);
   var i32 = new stdlib.Int32Array(heap);

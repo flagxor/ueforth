@@ -4,7 +4,7 @@
 #include "common/opcodes.h"
 
 #define PLATFORM_OPCODE_LIST \
-  X("CALL", OP_CALL, sp = jscall(sp, tos); DROP) \
+  X("CALL", OP_CALL, sp = Call(sp, tos); DROP) \
 
 enum {
   OP_NONE = -1,
