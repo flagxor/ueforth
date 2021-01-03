@@ -52,7 +52,7 @@
 : ] -1 state ! ; immediate
 
 ( Quoting Words )
-: ' bl parse find ;
+: ' bl parse find dup 0= 'throw @ execute ;
 : ['] ' aliteral ; immediate
 : char bl parse drop c@ ;
 : [char] char aliteral ; immediate
@@ -110,8 +110,10 @@ rp@ constant rp0
 
 ( Exceptions )
 variable handler
-: catch   sp@ >r handler @ >r rp@ handler ! execute r> handler ! r> drop 0 ;
-: throw   handler @ rp! r> handler ! r> swap >r sp! drop r> ;
+: catch ( xt -- n )
+  sp@ >r handler @ >r rp@ handler ! execute r> handler ! r> drop 0 ;
+: throw ( n -- )
+  dup if handler @ rp! r> handler !  r> swap >r sp! drop r> else drop then ;
 ' throw 'throw !
 
 ( Values )
@@ -120,7 +122,7 @@ variable handler
                       else ' >body ! then ; immediate
 
 ( Deferred Words )
-: defer ( "name" -- ) create 0 , does> @ execute ;
+: defer ( "name" -- ) create 0 , does> @ dup 0= throw execute ;
 : is ( xt "name -- ) postpone to ; immediate
 
 ( Defer I/O to platform specific )
@@ -185,4 +187,3 @@ create input-buffer   input-limit allot
 : query   begin ['] eval-buffer catch
           if ." ERROR" cr then prompt refill drop again ;
 : ok   ." uEForth" cr prompt refill drop query ;
-

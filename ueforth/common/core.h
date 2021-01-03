@@ -111,6 +111,7 @@ static void ueforth(const char *src, cell_t src_len) {
   g_sys.last[-1] = 1;  // Make ; IMMEDIATE
   g_sys.DOLIT_XT = FIND("DOLIT");
   g_sys.DOEXIT_XT = FIND("EXIT");
+  g_sys.tthrow = FIND("DROP");
   ip = g_sys.heap;
   *g_sys.heap++ = FIND("EVAL1");
   *g_sys.heap++ = FIND("BRANCH");

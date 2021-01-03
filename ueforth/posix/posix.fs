@@ -5,23 +5,32 @@
 create calls
 ' call0 , ' call1 , ' call2 , ' call3 , ' call4 ,
 ' call5 , ' call6 , ' call7 , ' call8 , ' call9 ,
-: sofunc ( z n a "name" -- ) swap >r swap dlsym create , r> cells calls + @ ,
-                      does> dup @ swap cell+ @ execute ;
+: sofunc ( z n a "name" -- )
+   swap >r swap dlsym dup 0= throw create , r> cells calls + @ ,
+   does> dup @ swap cell+ @ execute ;
 : sysfunc ( z n "name" -- ) 0 sofunc ;
-: shared-library ( z "name" -- ) RTLD_NOW dlopen create , does> @ sofunc ;
+: shared-library ( z "name" -- )
+   RTLD_NOW dlopen 0= throw create , does> @ sofunc ;
 
 ( Major Syscalls )
+z" open" 3 sysfunc open
+z" creat" 2 sysfunc creat
 z" close" 1 sysfunc close
 z" read" 3 sysfunc read
 z" write" 3 sysfunc write
-z" open" 3 sysfunc open
-z" creat" 2 sysfunc creat
+z" lseek" 3 sysfunc lseek
 z" exit" 1 sysfunc sysexit
+z" fork" 0 sysfunc fork
 
 ( Default Pipes )
 0 constant stdin
 1 constant stdout
 2 constant stderr
+
+( Seek )
+0 constant SEEK_SET
+1 constant SEEK_CUR
+2 constant SEEK_END
 
 ( Terminal handling )
 : n. ( n -- ) base @ swap decimal <# #s #> type base ! ;
