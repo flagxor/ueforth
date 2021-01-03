@@ -13,7 +13,9 @@ static struct {
 static cell_t convert(const char *pos, cell_t n, cell_t *ret) {
   *ret = 0;
   cell_t negate = 0;
+  cell_t base = g_sys.base;
   if (!n) { return 0; }
+  if (pos[0] == '$') { base = 16; ++pos; --n; }
   if (pos[0] == '-') { negate = -1; ++pos; --n; }
   for (; n; --n) {
     uintptr_t d = pos[0] - '0';
@@ -22,7 +24,7 @@ static cell_t convert(const char *pos, cell_t n, cell_t *ret) {
       if (d < 10) { return 0; }
     }
     if (d >= (uintptr_t) g_sys.base) { return 0; }
-    *ret = *ret * g_sys.base + d;
+    *ret = *ret * base + d;
     ++pos;
   }
   if (negate) { *ret = -*ret; }

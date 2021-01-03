@@ -38,6 +38,14 @@ z" __errno_location" 0 sysfunc __errno_location
 1 constant SEEK_CUR
 2 constant SEEK_END
 
+( mmap )
+0 constant PROT_NONE
+1 constant PROT_READ
+2 constant PROT_WRITE
+4 constant PROT_EXEC
+$10 constant MAP_FIXED
+$20 constant MAP_ANONYMOUS
+
 ( Terminal handling )
 : n. ( n -- ) base @ swap decimal <# #s #> type base ! ;
 : esc   27 emit ;
