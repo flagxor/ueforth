@@ -35,8 +35,10 @@ typedef uint64_t udcell_t;
   X("OVER", OP_OVER, DUP; tos = sp[-1]) \
   X("DROP", OP_DROP, DROP) \
   X("@", OP_AT, tos = *(cell_t *) tos) \
+  X("L@", OP_LAT, tos = *(int32_t *) tos) \
   X("C@", OP_CAT, tos = *(uint8_t *) tos) \
   X("!", OP_STORE, *(cell_t *) tos = *sp; --sp; DROP) \
+  X("L!", OP_LSTORE, *(int32_t *) tos = *sp; --sp; DROP) \
   X("C!", OP_CSTORE, *(uint8_t *) tos = *sp; --sp; DROP) \
   X("FILL", OP_FILL, memset((void *) sp[-1], tos, *sp); sp -= 2; DROP) \
   X("MOVE", OP_MOVE, memmove((void *) sp[-1], (void *) *sp, tos); sp -= 2; DROP) \

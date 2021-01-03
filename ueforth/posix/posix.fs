@@ -21,6 +21,12 @@ z" write" 3 sysfunc write
 z" lseek" 3 sysfunc lseek
 z" exit" 1 sysfunc sysexit
 z" fork" 0 sysfunc fork
+z" mmap" 6 sysfunc mmap
+z" munmap" 2 sysfunc munmap
+
+( Errno )
+z" __errno_location" 0 sysfunc __errno_location
+: errno ( -- n ) __errno_location l@ ;
 
 ( Default Pipes )
 0 constant stdin
@@ -56,3 +62,13 @@ z" fork" 0 sysfunc fork
 : posix-bye   0 sysexit ;
 ' posix-bye is bye
 
+( I/O Error Helpers )
+: 0ior ( n -- n ior ) dup 0= if errno else 0 then ;
+
+( Words with OS assist )
+z" malloc" 1 sysfunc malloc
+z" free" 1 sysfunc sysfree
+z" realloc" 2 sysfunc realloc
+: allocate ( n -- a ior ) malloc 0ior ;
+: free ( a -- ior ) sysfree 0 ;
+: resize ( a n -- a ior ) realloc 0ior ;
