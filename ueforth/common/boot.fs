@@ -178,7 +178,11 @@ create input-buffer   input-limit allot
 
 ( REPL )
 : prompt   ."  ok" cr ;
-: eval-line   begin >in @ #tib @ < while eval1 repeat ;
-: query   begin ['] eval-line catch if ." ERROR" cr then prompt refill drop again ;
+: eval-buffer   begin >in @ #tib @ < while eval1 repeat ;
+: eval ( a n -- ) 'tib @ >r #tib @ >r >in @ >r
+                  #tib ! 'tib ! 0 >in ! eval-buffer
+                  r> >in ! r> #tib ! r> 'tib ! ;
+: query   begin ['] eval-buffer catch
+          if ." ERROR" cr then prompt refill drop again ;
 : ok   ." uEForth" cr prompt refill drop query ;
 
