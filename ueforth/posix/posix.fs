@@ -21,6 +21,8 @@ z" write" 3 sysfunc write
 z" lseek" 3 sysfunc lseek
 z" exit" 1 sysfunc sysexit
 z" fork" 0 sysfunc fork
+z" wait" 1 sysfunc wait
+z" waitpid" 3 sysfunc waitpid
 z" mmap" 6 sysfunc mmap
 z" munmap" 2 sysfunc munmap
 
