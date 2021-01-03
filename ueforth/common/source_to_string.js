@@ -2,8 +2,8 @@
 
 var fs = require('fs');
 
-var source = fs.readFileSync(process.argv[2]).toString();
-var name = process.argv[3];
+var source = fs.readFileSync(process.stdin.fd).toString();
+var name = process.argv[2];
 
 source = source.replace(/["]/g, '\\"');
 source = '" ' + source.split('\n').join(' "\n" ') + ' "';

@@ -19,13 +19,10 @@
 : > ( a b -- a>b ) swap - 0< ;
 : = ( a b -- a!=b ) - 0= ;
 : <> ( a b -- a!=b ) = 0= ;
-: emit ( n -- ) >r rp@ 1 type rdrop ;
-: bl 32 ;   : space bl emit ;
-: nl 10 ;   : cr nl emit ;
+: bl 32 ;   : nl 10 ;
 : 1+ 1 + ;   : 1- 1 - ;
 : 2* 2 * ;   : 2/ 2 / ;
 : +! ( n a -- ) swap over @ + swap ! ;
-: bye   0 sysexit ;
 
 ( Cells )
 : cell+ ( n -- n ) cell + ;
@@ -78,8 +75,14 @@
 : max 2dup < if nip else drop then ;
 : abs ( n -- +n ) dup 0< if negate then ;
 
-( Postpone - done here so we have ['] and IF )
+( Dictionary Format )
+: >name ( xt -- a n ) 3 cells - dup @ swap over aligned - swap ;
+: >link ( xt -- a ) 2 cells - @ ;
 : >flags ( xt -- flags ) cell - ;
+: >body ( xt -- a ) 2 cells + ;
+: >:body ( xt -- a ) cell+ ;
+
+( Postpone - done here so we have ['] and IF )
 : immediate? ( xt -- f ) >flags @ 1 and 0= 0= ;
 : postpone ' dup immediate? if , else aliteral ['] , , then ; immediate
 
@@ -111,6 +114,22 @@ variable handler
 : throw   handler @ rp! r> handler ! r> swap >r sp! drop r> ;
 ' throw 'throw !
 
+( Deferred Words )
+: defer   create 0 , does> @ execute ;
+: is    ' >body ! ;
+
+( Values )
+: value ( n -- ) create , does> @ ;
+: to ( n -- ) state @ if postpone ['] postpone >body postpone !
+                      else ' >body ! then ; immediate
+
+( Defer I/O to platform specific )
+defer type
+defer key
+defer bye
+: emit ( n -- ) >r rp@ 1 type rdrop ;
+: space bl emit ;   : cr nl emit ;
+
 ( Numeric Output )
 variable hld
 : pad ( -- a ) here 80 + ;
@@ -125,8 +144,8 @@ variable hld
 : str ( n -- b u ) dup >r abs <# #s r> sign #> ;
 : hex ( -- ) 16 base ! ;
 : decimal ( -- ) 10 base ! ;
-: u. ( u -- ) <# #s #> space type ;
-: . ( w -- ) base @ 10 xor if u. exit then str space type ;
+: u. ( u -- ) <# #s #> type space ;
+: . ( w -- ) base @ 10 xor if u. exit then str type space ;
 : ? ( a -- ) @ . ;
 
 ( Strings )
@@ -139,14 +158,11 @@ variable hld
 : z"   postpone s" state @ if postpone drop else drop then ; immediate
 
 ( Examine Dictionary )
-: >name ( xt -- a n ) 3 cells - dup @ swap over aligned - swap ;
-: >link ( xt -- a ) 2 cells - @ ;
-: >body ( xt -- a ) cell+ ;
 : see. ( xt -- ) >name type space ;
 : see-one ( xt -- xt+1 )
    dup @ dup ['] DOLIT = if drop cell+ dup @ . else see. then cell+ ;
 : exit= ( xt -- ) ['] exit = ;
-: see-loop   >body begin see-one dup @ exit= until ;
+: see-loop   >:body begin see-one dup @ exit= until ;
 : see   cr ['] : see.  ' dup see.  see-loop drop  ['] ; see.  cr ;
 : words   last @ begin dup see. >link dup 0= until drop cr ;
 
@@ -165,4 +181,4 @@ create input-buffer   input-limit allot
 : eval-line   begin >in @ #tib @ < while eval1 repeat ;
 : query   begin ['] eval-line catch if ." ERROR" cr then prompt refill drop again ;
 : ok   ." uEForth" cr prompt refill drop query ;
-ok
+

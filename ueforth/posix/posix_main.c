@@ -18,13 +18,10 @@
   X("CALL7", OP_CALL7, tos = ((cell_t (*)()) tos)(sp[-6], sp[-5], sp[-4], sp[-3], sp[-2], sp[-1], *sp); sp -= 7) \
   X("CALL8", OP_CALL8, tos = ((cell_t (*)()) tos)(sp[-7], sp[-6], sp[-5], sp[-4], sp[-3], sp[-2], sp[-1], *sp); sp -= 8) \
   X("CALL9", OP_CALL9, tos = ((cell_t (*)()) tos)(sp[-8], sp[-7], sp[-6], sp[-5], sp[-4], sp[-3], sp[-2], sp[-1], *sp); sp -= 9) \
-  X("TYPE", OP_TYPE, fwrite((void *) *sp, 1, tos, stdout); --sp; DROP) \
-  X("KEY", OP_KEY, DUP; tos = fgetc(stdin)) \
-  X("SYSEXIT", OP_SYSEXIT, DUP; exit(tos)) \
 
 #include "common/core.h"
 
-#include "gen/boot.h"
+#include "gen/posix_boot.h"
 
 int main(int argc, char *argv[]) {
   ueforth(boot, sizeof(boot));
