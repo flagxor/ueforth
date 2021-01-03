@@ -100,8 +100,8 @@
 : loop   1 aliteral postpone +loop ; immediate
 
 ( Constants and Variables )
-: constant create , does> @ ;
-: variable create 0 , ;
+: constant ( n "name" -- ) create , does> @ ;
+: variable ( "name" -- ) create 0 , ;
 
 ( Stack Convience )
 sp@ constant sp0
@@ -114,14 +114,14 @@ variable handler
 : throw   handler @ rp! r> handler ! r> swap >r sp! drop r> ;
 ' throw 'throw !
 
-( Deferred Words )
-: defer   create 0 , does> @ execute ;
-: is    ' >body ! ;
-
 ( Values )
 : value ( n -- ) create , does> @ ;
 : to ( n -- ) state @ if postpone ['] postpone >body postpone !
                       else ' >body ! then ; immediate
+
+( Deferred Words )
+: defer ( "name" -- ) create 0 , does> @ execute ;
+: is ( xt "name -- ) postpone to ; immediate
 
 ( Defer I/O to platform specific )
 defer type
