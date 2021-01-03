@@ -15,7 +15,7 @@ POSIX_BOOT = common/boot.fs posix/posix.fs
 out/gen/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | out/gen
 	echo "ok" | cat $(POSIX_BOOT) - | $< boot >$@
 
-ARDUINO_BOOT = common/boot.fs posix/posix.fs
+ARDUINO_BOOT = common/boot.fs
 out/gen/arduino_boot.h: common/source_to_string.js $(ARDUINO_BOOT) | out/gen
 	echo "ok" | cat $(ARDUINO_BOOT) - | $< boot >$@
 

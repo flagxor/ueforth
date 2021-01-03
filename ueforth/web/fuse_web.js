@@ -16,8 +16,8 @@ function ReplaceAll(haystack, needle, replacement) {
   }
 }
 
-code = code.replace('{{boot}}', boot);
-code = code.replace('{{dict}}', dict);
-code = code.replace('{{cases}}', cases);
+code = code.replace('{{boot}}', function() { return boot; });
+code = code.replace('{{dict}}', function() { return dict; });
+code = code.replace('{{cases}}', function() { return cases; });
 
 console.log(code);
