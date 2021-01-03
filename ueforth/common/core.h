@@ -96,8 +96,8 @@ static cell_t *eval1(cell_t *sp, cell_t *call) {
   return sp;
 }
 
-static void ueforth(const char *src, cell_t src_len) {
-  g_sys.heap = malloc(HEAP_SIZE);
+static void ueforth(void *heap, const char *src, cell_t src_len) {
+  g_sys.heap = (cell_t *) heap;
   register cell_t *sp = g_sys.heap; g_sys.heap += STACK_SIZE;
   register cell_t *rp = g_sys.heap; g_sys.heap += STACK_SIZE;
   register cell_t tos = 0, *ip, t, w;

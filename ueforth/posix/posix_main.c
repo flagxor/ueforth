@@ -1,9 +1,8 @@
 #include <dlfcn.h>
-#include <stdio.h>
+#include <sys/mman.h>
 
 #include "common/opcodes.h"
 
-#define HEAP_SIZE (10 * 1024 * 1024)
 #define STACK_SIZE (16 * 1024)
 
 #define PLATFORM_OPCODE_LIST \
@@ -23,6 +22,9 @@
 
 #include "gen/posix_boot.h"
 
+#define HEAP_SIZE (10 * 1024 * 1024)
+
 int main(int argc, char *argv[]) {
-  ueforth(boot, sizeof(boot));
+  void *heap = mmap(0, HEAP_SIZE, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+  ueforth(heap, boot, sizeof(boot));
 }
