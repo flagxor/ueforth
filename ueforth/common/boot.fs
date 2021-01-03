@@ -163,7 +163,7 @@ variable hld
    dup @ dup ['] DOLIT = if drop cell+ dup @ . else see. then cell+ ;
 : exit= ( xt -- ) ['] exit = ;
 : see-loop   >:body begin see-one dup @ exit= until ;
-: see   cr ['] : see.  ' dup see.  see-loop drop  ['] ; see.  cr ;
+: see   cr ['] : see.  ' dup see.  space see-loop drop  ['] ; see.  cr ;
 : words   last @ begin dup see. >link dup 0= until drop cr ;
 
 ( Input )
