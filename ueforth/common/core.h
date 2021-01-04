@@ -90,7 +90,7 @@ static cell_t *eval1(cell_t *sp, cell_t *call) {
         *++sp = n;
       }
     } else {
-      //fwrite((void *) name, 1, len, stderr);
+      //write(2, (void *) name, len);
       *++sp = -1;
       *call = g_sys.tthrow;
     }

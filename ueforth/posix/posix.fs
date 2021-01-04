@@ -25,6 +25,8 @@ z" wait" 1 sysfunc wait
 z" waitpid" 3 sysfunc waitpid
 z" mmap" 6 sysfunc mmap
 z" munmap" 2 sysfunc munmap
+z" unlink" 1 sysfunc unlink
+z" rename" 2 sysfunc rename
 
 ( Errno )
 z" __errno_location" 0 sysfunc __errno_location
@@ -47,6 +49,14 @@ z" __errno_location" 0 sysfunc __errno_location
 4 constant PROT_EXEC
 $10 constant MAP_FIXED
 $20 constant MAP_ANONYMOUS
+
+( open )
+0 constant O_RDONLY
+1 constant O_WRONLY
+2 constant O_RDWR
+$100 constant O_CREAT
+$200 constant O_TRUNC
+$2000 constant O_APPEND
 
 ( Terminal handling )
 : n. ( n -- ) base @ swap decimal <# #s #> type base ! ;
@@ -74,6 +84,7 @@ $20 constant MAP_ANONYMOUS
 
 ( I/O Error Helpers )
 : 0ior ( n -- n ior ) dup 0= if errno else 0 then ;
+: 0<ior ( n -- n ior ) dup 0< if errno else 0 then ;
 
 ( Words with OS assist )
 z" malloc" 1 sysfunc malloc
@@ -82,3 +93,18 @@ z" realloc" 2 sysfunc realloc
 : allocate ( n -- a ior ) malloc 0ior ;
 : free ( a -- ior ) sysfree 0 ;
 : resize ( a n -- a ior ) realloc 0ior ;
+
+( Generic Files )
+O_RDONLY constant r/o
+O_WRONLY constant w/o
+O_RDWR constant r/w
+octal 777 constant 0777 decimal
+: s>z ( a n -- z ) here >r $place r> ;
+: open-file ( a n fam -- fh ior ) >r s>z r> 0777 open 0<ior ;
+: create-file ( a n fam -- fh ior ) >r s>z r> O_CREAT or 0777 open 0<ior ;
+: close-file ( fh -- ior ) close 0<ior ;
+: delete-file ( a n -- ior ) s>z unlink 0<ior ;
+: rename-file ( a n a n -- ior ) s>z -rot s>z swap rename 0<ior ;
+: read-file ( a n fh -- n ior ) -rot read 0<ior ;
+: write-file ( a n fh -- ior ) -rot dup >r write r> = 0ior ;
+

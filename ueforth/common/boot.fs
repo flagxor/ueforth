@@ -144,7 +144,7 @@ variable hld
 : sign ( n -- ) 0< if 45 hold then ;
 : #> ( w -- b u ) drop hld @ pad over - ;
 : str ( n -- b u ) dup >r abs <# #s r> sign #> ;
-: hex ( -- ) 16 base ! ;
+: hex ( -- ) 16 base ! ;   : octal ( -- ) 8 base ! ;
 : decimal ( -- ) 10 base ! ;
 : u. ( u -- ) <# #s #> type space ;
 : . ( w -- ) base @ 10 xor if u. exit then str type space ;
