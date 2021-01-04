@@ -6,7 +6,14 @@ TARGETS = out/web/terminal.html \
           out/posix/ueforth \
           out/arduino/ueforth.ino
 
-all: $(TARGETS)
+all: $(TARGETS) tests
+
+tests: core_test
+
+core_test: out/posix/ueforth common/core_test.fs \
+        common/core_test.fs.golden
+	echo "include common/core_test.fs" | $< | \
+        diff - common/core_test.fs.golden
 
 out/gen:
 	mkdir -p out/gen

@@ -107,4 +107,20 @@ octal 777 constant 0777 decimal
 : rename-file ( a n a n -- ior ) s>z -rot s>z swap rename 0<ior ;
 : read-file ( a n fh -- n ior ) -rot read 0<ior ;
 : write-file ( a n fh -- ior ) -rot dup >r write r> = 0ior ;
+: file-position ( fh -- n ior ) dup 0 SEEK_CUR lseek 0<ior ;
+: file-size ( fh -- n ior )
+   dup 0 SEEK_CUR lseek >r
+   dup 0 SEEK_END lseek r> swap >r
+         SEEK_SET lseek drop r> 0<ior ;
 
+( Including Files )
+: included ( a n -- )
+   r/o open-file throw
+   dup file-size throw
+   dup allocate throw
+   swap 2dup >r >r
+   rot dup >r read-file throw drop
+   r> close-file throw
+   r> r> over >r dup . cr evaluate
+   r> free throw ;
+: include ( "name" -- ) bl parse included ;
