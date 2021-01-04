@@ -1,12 +1,18 @@
+#define PRINT_ERRORS 0
+
 #define NEXT w = *ip++; goto **(void **) w
 #define CELL_LEN(n) (((n) + sizeof(cell_t) - 1) / sizeof(cell_t))
 #define FIND(name) find(name, sizeof(name) - 1)
 #define LOWER(ch) ((ch) & 95)
 
+#if PRINT_ERRORS
+#include <unistd.h>
+#endif
+
 static struct {
   const char *tib;
   cell_t ntib, tin, state, base;
-  cell_t *heap, *last, tthrow;
+  cell_t *heap, *last, notfound;
   cell_t DOLIT_XT, DOEXIT_XT;
 } g_sys;
 
@@ -68,7 +74,7 @@ static cell_t parse(cell_t sep, cell_t *ret) {
   return len;
 }
 
-static cell_t *eval1(cell_t *sp, cell_t *call) {
+static cell_t *evaluate1(cell_t *sp, cell_t *call) {
   *call = 0;
   cell_t name;
   cell_t len = parse(' ', &name);
@@ -90,9 +96,13 @@ static cell_t *eval1(cell_t *sp, cell_t *call) {
         *++sp = n;
       }
     } else {
-      //write(2, (void *) name, len);
+#if PRINT_ERRORS
+      write(2, (void *) name, len);
+#endif
+      *++sp = name;
+      *++sp = len;
       *++sp = -1;
-      *call = g_sys.tthrow;
+      *call = g_sys.notfound;
     }
   }
   return sp;
@@ -113,9 +123,9 @@ static void ueforth(void *heap, const char *src, cell_t src_len) {
   g_sys.last[-1] = 1;  // Make ; IMMEDIATE
   g_sys.DOLIT_XT = FIND("DOLIT");
   g_sys.DOEXIT_XT = FIND("EXIT");
-  g_sys.tthrow = FIND("DROP");
+  g_sys.notfound = FIND("DROP");
   ip = g_sys.heap;
-  *g_sys.heap++ = FIND("EVAL1");
+  *g_sys.heap++ = FIND("EVALUATE1");
   *g_sys.heap++ = FIND("BRANCH");
   *g_sys.heap++ = (cell_t) ip;
   g_sys.base = 10;

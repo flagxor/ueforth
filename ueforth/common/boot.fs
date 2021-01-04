@@ -37,7 +37,7 @@
 : base ( -- a ) 'sys 4 cells + ;
 : 'heap ( -- a ) 'sys 5 cells + ;
 : last ( -- a ) 'sys 6 cells + ;
-: 'throw ( -- a ) 'sys 7 cells + ;
+: 'notfound ( -- a ) 'sys 7 cells + ;
 
 ( Dictionary )
 : here ( -- a ) 'heap @ ;
@@ -52,7 +52,7 @@
 : ] -1 state ! ; immediate
 
 ( Quoting Words )
-: ' bl parse find dup 0= 'throw @ execute ;
+: ' bl parse 2dup find dup >r -rot r> 0= 'notfound @ execute 2drop ;
 : ['] ' aliteral ; immediate
 : char bl parse drop c@ ;
 : [char] char aliteral ; immediate
@@ -114,7 +114,7 @@ variable handler
   sp@ >r handler @ >r rp@ handler ! execute r> handler ! r> drop 0 ;
 : throw ( n -- )
   dup if handler @ rp! r> handler !  r> swap >r sp! drop r> else drop then ;
-' throw 'throw !
+' throw 'notfound !
 
 ( Values )
 : value ( n -- ) create , does> @ ;
@@ -159,6 +159,11 @@ variable hld
 : ."   postpone s" state @ if postpone type else type then ; immediate
 : z"   postpone s" state @ if postpone drop else drop then ; immediate
 
+( Better Errors )
+: notfound ( a n n -- )
+   if cr ." ERROR: " type ."  NOT FOUND!" cr -1 throw then ;
+' notfound 'notfound !
+
 ( Examine Dictionary )
 : see. ( xt -- ) >name type space ;
 : see-one ( xt -- xt+1 )
@@ -180,10 +185,10 @@ create input-buffer   input-limit allot
 
 ( REPL )
 : prompt   ."  ok" cr ;
-: eval-buffer   begin >in @ #tib @ < while eval1 repeat ;
-: eval ( a n -- ) 'tib @ >r #tib @ >r >in @ >r
-                  #tib ! 'tib ! 0 >in ! eval-buffer
-                  r> >in ! r> #tib ! r> 'tib ! ;
-: query   begin ['] eval-buffer catch
+: evaluate-buffer   begin >in @ #tib @ < while evaluate1 repeat ;
+: evaluate ( a n -- ) 'tib @ >r #tib @ >r >in @ >r
+                      #tib ! 'tib ! 0 >in ! evaluate-buffer
+                      r> >in ! r> #tib ! r> 'tib ! ;
+: query   begin ['] evaluate-buffer catch
           if ." ERROR" cr then prompt refill drop again ;
 : ok   ." uEForth" cr prompt refill drop query ;

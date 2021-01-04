@@ -71,9 +71,9 @@ typedef uint64_t udcell_t;
   X(":", OP_COLON, t = parse(32, &tmp); \
                    create((const char *) tmp, t, 0, && OP_DOCOL); \
                    g_sys.state = -1) \
-  X("EVAL1", OP_EVAL1, DUP; sp = eval1(sp, &tmp); \
-            DROP; if (tmp) (w = tmp); \
-            if (tmp) goto **(void **) w) \
+  X("EVALUATE1", OP_EVALUATE1, DUP; sp = evaluate1(sp, &tmp); \
+                               DROP; if (tmp) (w = tmp); \
+                               if (tmp) goto **(void **) w) \
   X("EXIT", OP_EXIT, ip = (void *) *rp--) \
   X(";", OP_SEMICOLON, *g_sys.heap++ = g_sys.DOEXIT_XT; g_sys.state = 0) \
 
