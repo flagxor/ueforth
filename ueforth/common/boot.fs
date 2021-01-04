@@ -22,6 +22,7 @@
 : bl 32 ;   : nl 10 ;
 : 1+ 1 + ;   : 1- 1 - ;
 : 2* 2 * ;   : 2/ 2 / ;
+: 4* 4 * ;   : 2/ 4 / ;
 : +! ( n a -- ) swap over @ + swap ! ;
 
 ( Cells )
@@ -174,6 +175,10 @@ variable hld
 : see-loop   >:body begin see-one dup @ exit= until ;
 : see   cr ['] : see.  ' dup see.  space see-loop drop  ['] ; see.  cr ;
 : words   last @ begin dup see. >link dup 0= until drop cr ;
+
+( Examine Memory )
+: dump ( a n -- )
+   cr 0 do i 16 mod 0= if cr then dup i + c@ . loop drop cr ;
 
 ( Input )
 : accept ( a n -- n ) 0 swap begin 2dup < while

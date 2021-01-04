@@ -1,16 +1,17 @@
 ( Shared Library Handling )
 1 constant RTLD_LAZY
 2 constant RTLD_NOW
-: dlopen ( n z -- a ) [ 0 z" dlopen" dlsym aliteral ] call2 ;
+0 z" dlopen" dlsym constant 'dlopen
+: dlopen ( z n -- a ) 'dlopen call2 ;
 create calls
-' call0 , ' call1 , ' call2 , ' call3 , ' call4 ,
-' call5 , ' call6 , ' call7 , ' call8 , ' call9 ,
+' call0 , ' call1 , ' call2 , ' call3 , ' call4 , ' call5 ,
+' call6 , ' call7 , ' call8 , ' call9 , ' call10 ,
 : sofunc ( z n a "name" -- )
    swap >r swap dlsym dup 0= throw create , r> cells calls + @ ,
    does> dup @ swap cell+ @ execute ;
 : sysfunc ( z n "name" -- ) 0 sofunc ;
 : shared-library ( z "name" -- )
-   RTLD_NOW dlopen 0= throw create , does> @ sofunc ;
+   RTLD_NOW dlopen dup 0= throw create , does> @ sofunc ;
 
 ( Major Syscalls )
 z" open" 3 sysfunc open
@@ -92,7 +93,7 @@ z" malloc" 1 sysfunc malloc
 z" free" 1 sysfunc sysfree
 z" realloc" 2 sysfunc realloc
 : allocate ( n -- a ior ) malloc 0ior ;
-: free ( a -- ior ) sysfree 0 ;
+: free ( a -- ior ) sysfree drop 0 ;
 : resize ( a n -- a ior ) realloc 0ior ;
 
 ( String Handling )
@@ -110,11 +111,11 @@ O_RDWR constant r/w
 octal 777 constant 0777 decimal
 : open-file ( a n fam -- fh ior ) >r s>z r> 0777 open 0<ior ;
 : create-file ( a n fam -- fh ior ) >r s>z r> O_CREAT or 0777 open 0<ior ;
-: close-file ( fh -- ior ) close 0<ior ;
-: delete-file ( a n -- ior ) s>z unlink 0<ior ;
-: rename-file ( a n a n -- ior ) s>z -rot s>z swap rename 0<ior ;
+: close-file ( fh -- ior ) close ;
+: delete-file ( a n -- ior ) s>z unlink ;
+: rename-file ( a n a n -- ior ) s>z -rot s>z swap rename ;
 : read-file ( a n fh -- n ior ) -rot read 0<ior ;
-: write-file ( a n fh -- ior ) -rot dup >r write r> = 0ior ;
+: write-file ( a n fh -- ior ) -rot dup >r write r> = 0= ;
 : file-position ( fh -- n ior ) dup 0 SEEK_CUR lseek 0<ior ;
 : file-size ( fh -- n ior )
    dup 0 SEEK_CUR lseek >r
@@ -129,6 +130,9 @@ octal 777 constant 0777 decimal
    swap 2dup >r >r
    rot dup >r read-file throw drop
    r> close-file throw
-   r> r> over >r dup . cr evaluate
+   r> r> over >r evaluate
    r> free throw ;
 : include ( "name" -- ) bl parse included ;
+
+( Load Libraries )
+: xlib   s" posix/xlib_test.fs" included ;
