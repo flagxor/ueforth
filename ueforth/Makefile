@@ -3,17 +3,44 @@ GEN = $(OUT)/gen
 RES = $(OUT)/resources
 WEB = $(OUT)/web
 POSIX = $(OUT)/posix
+WINDOWS = $(OUT)/windows
 ARDUINO = $(OUT)/arduino
 
-CFLAGS=-O2 -Wall -Werror -I ./ -I $(OUT)
+CFLAGS = -Wall -Werror \
+         -O2 \
+         -fno-exceptions \
+         -s \
+         -fomit-frame-pointer \
+         -fno-stack-protector \
+         -fno-ident -Wl,--build-id=none \
+         -ffunction-sections -fdata-sections \
+         -Wl,--gc-sections \
+         -fmerge-all-constants \
+         -I ./ -I $(OUT)
+STRIP_ARGS = -S \
+             --strip-unneeded \
+             --remove-section=.note.gnu.gold-version \
+             --remove-section=.comment \
+             --remove-section=.note \
+             --remove-section=.note.gnu.build-id \
+             --remove-section=.note.ABI-tag
 LIBS=-ldl
+
+WIN_ARCH=i686
+WINFLAGS = -mwindows -luser32
 
 TARGETS = $(WEB)/terminal.html \
           $(WEB)/ueforth.js \
           $(POSIX)/ueforth \
+          $(WINDOWS)/uEforth.exe \
           $(ARDUINO)/ueforth.ino
 
-all: $(TARGETS) $(RES)/eforth.ico tests
+all: $(TARGETS) tests
+
+clean:
+	rm -rf $(OUT)
+
+# ---- TESTS ----
 
 tests: core_test
 
@@ -22,12 +49,18 @@ core_test: $(POSIX)/ueforth common/core_test.fs \
 	echo "include common/core_test.fs" | $< | \
         diff - common/core_test.fs.golden
 
+# ---- GENERATED ----
+
 $(GEN):
 	mkdir -p $@
 
 POSIX_BOOT = common/boot.fs posix/posix.fs
 $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 	echo "ok" | cat $(POSIX_BOOT) - | $< boot >$@
+
+WINDOWS_BOOT = common/boot.fs
+$(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
+	echo "ok" | cat $(WINDOWS_BOOT) - | $< boot >$@
 
 ARDUINO_BOOT = common/boot.fs
 $(GEN)/arduino_boot.h: common/source_to_string.js $(ARDUINO_BOOT) | $(GEN)
@@ -41,6 +74,8 @@ $(GEN)/web_cases.js: $(GEN)/dump_web_opcodes | $(GEN)
 
 $(GEN)/web_dict.js: $(GEN)/dump_web_opcodes | $(GEN)
 	$< dict >$@
+
+# ---- RESOURCES ----
 
 $(RES):
 	mkdir -p $@
@@ -65,6 +100,13 @@ ICON_SIZES = $(RES)/eforth256x256.png \
 $(RES)/eforth.ico: $(ICON_SIZES)
 	convert $^ $< $@
 
+WINDOWS_RESOURCES = $(RES)/ueforth_res.o
+
+$(WINDOWS_RESOURCES): windows/ueforth.rc $(RES)/eforth.ico
+	$(WIN_ARCH)-w64-mingw32-windres $< $@
+
+# ---- WEB ----
+
 $(WEB):
 	mkdir -p $(WEB)
 
@@ -79,6 +121,8 @@ $(WEB)/ueforth.js: \
         $(GEN)/web_cases.js | $(WEB)
 	$^ >$@
 
+# ---- POSIX ----
+
 $(POSIX):
 	mkdir -p $@
 
@@ -88,6 +132,22 @@ $(POSIX)/ueforth: \
     common/core.h \
     $(GEN)/posix_boot.h | $(POSIX)
 	$(CC) $(CFLAGS) $< -o $@ $(LIBS)
+
+# ---- WINDOWS ----
+
+$(WINDOWS):
+	mkdir -p $@
+
+$(WINDOWS)/uEforth.exe: \
+    windows/windows_main.c \
+    common/opcodes.h \
+    common/core.h \
+    $(GEN)/windows_boot.h \
+    $(WINDOWS_RESOURCES) | $(WINDOWS)
+	$(WIN_ARCH)-w64-mingw32-gcc \
+    $(CFLAGS) $(WINFLAGS) $< $(WINDOWS_RESOURCES) -o $@
+
+# ---- ARDUINO ----
 
 $(ARDUINO):
 	mkdir -p $@
@@ -100,5 +160,3 @@ $(ARDUINO)/ueforth.ino: \
         $(GEN)/arduino_boot.h | $(ARDUINO)
 	$^ >$@
 
-clean:
-	rm -rf $(OUT)
