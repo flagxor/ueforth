@@ -13,6 +13,8 @@ static struct {
   const char *tib;
   cell_t ntib, tin, state, base;
   cell_t *heap, *last, notfound;
+  int argc;
+  char **argv;
   cell_t DOLIT_XT, DOEXIT_XT;
 } g_sys;
 
@@ -114,7 +116,8 @@ static cell_t *evaluate1(cell_t *sp, cell_t *call) {
   return sp;
 }
 
-static void ueforth(void *heap, const char *src, cell_t src_len) {
+static void ueforth(int argc, char *argv[], void *heap,
+                    const char *src, cell_t src_len) {
   g_sys.heap = (cell_t *) heap;
   register cell_t *sp = g_sys.heap; g_sys.heap += STACK_SIZE;
   register cell_t *rp = g_sys.heap; g_sys.heap += STACK_SIZE;
@@ -134,6 +137,8 @@ static void ueforth(void *heap, const char *src, cell_t src_len) {
   *g_sys.heap++ = FIND("EVALUATE1");
   *g_sys.heap++ = FIND("BRANCH");
   *g_sys.heap++ = (cell_t) ip;
+  g_sys.argc = argc;
+  g_sys.argv = argv;
   g_sys.base = 10;
   g_sys.tib = src;
   g_sys.ntib = src_len;

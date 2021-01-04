@@ -38,6 +38,8 @@
 : 'heap ( -- a ) 'sys 5 cells + ;
 : last ( -- a ) 'sys 6 cells + ;
 : 'notfound ( -- a ) 'sys 7 cells + ;
+: 'argc ( -- a ) 'sys 8 cells + ;
+: 'argv ( -- a ) 'sys 9 cells + ;
 
 ( Dictionary )
 : here ( -- a ) 'heap @ ;

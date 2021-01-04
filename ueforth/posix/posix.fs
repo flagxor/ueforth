@@ -27,6 +27,7 @@ z" mmap" 6 sysfunc mmap
 z" munmap" 2 sysfunc munmap
 z" unlink" 1 sysfunc unlink
 z" rename" 2 sysfunc rename
+z" strlen" 1 sysfunc strlen
 
 ( Errno )
 z" __errno_location" 0 sysfunc __errno_location
@@ -94,12 +95,19 @@ z" realloc" 2 sysfunc realloc
 : free ( a -- ior ) sysfree 0 ;
 : resize ( a n -- a ior ) realloc 0ior ;
 
+( String Handling )
+: s>z ( a n -- z ) here >r $place r> ;
+: z>s ( z -- a n ) dup strlen ;
+
+( Arguments )
+: argc ( -- n ) 'argc @ ;
+: argv ( n -- a n ) cells 'argv @ + @ z>s ;
+
 ( Generic Files )
 O_RDONLY constant r/o
 O_WRONLY constant w/o
 O_RDWR constant r/w
 octal 777 constant 0777 decimal
-: s>z ( a n -- z ) here >r $place r> ;
 : open-file ( a n fam -- fh ior ) >r s>z r> 0777 open 0<ior ;
 : create-file ( a n fam -- fh ior ) >r s>z r> O_CREAT or 0777 open 0<ior ;
 : close-file ( fh -- ior ) close 0<ior ;
