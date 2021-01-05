@@ -82,8 +82,8 @@ static cell_t parse(cell_t sep, cell_t *ret) {
   return len;
 }
 
-static cell_t *evaluate1(cell_t *sp, cell_t *call) {
-  *call = 0;
+static cell_t *evaluate1(cell_t *sp) {
+  cell_t call = 0;
   cell_t name;
   cell_t len = parse(' ', &name);
   cell_t xt = find((const char *) name, len);
@@ -91,7 +91,7 @@ static cell_t *evaluate1(cell_t *sp, cell_t *call) {
     if (g_sys.state && !(((cell_t *) xt)[-1] & 1)) {  // bit 0 of flags is immediate
       *g_sys.heap++ = xt;
     } else {
-      *call = xt;
+      call = xt;
     }
   } else {
     cell_t n;
@@ -110,9 +110,10 @@ static cell_t *evaluate1(cell_t *sp, cell_t *call) {
       *++sp = name;
       *++sp = len;
       *++sp = -1;
-      *call = g_sys.notfound;
+      call = g_sys.notfound;
     }
   }
+  *++sp = call;
   return sp;
 }
 
@@ -124,7 +125,6 @@ static void ueforth(int argc, char *argv[], void *heap,
   register cell_t tos = 0, *ip, w;
   dcell_t d;
   udcell_t ud;
-  cell_t tmp;
 #define X(name, op, code) create(name, sizeof(name) - 1, name[0] == ';', && op);
   PLATFORM_OPCODE_LIST
   OPCODE_LIST
