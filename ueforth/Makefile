@@ -132,6 +132,7 @@ $(POSIX)/ueforth: \
     common/core.h \
     $(GEN)/posix_boot.h | $(POSIX)
 	$(CC) $(CFLAGS) $< -o $@ $(LIBS)
+	strip $(STRIP_ARGS) $@
 
 # ---- WINDOWS ----
 
