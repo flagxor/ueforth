@@ -35,6 +35,10 @@ cases = ReplaceAll(cases, '(void *) ', '');
 cases = ReplaceAll(cases, '(const char *) ', '');
 cases = ReplaceAll(cases, '(cell_t *) ', '');
 cases = ReplaceAll(cases, '(cell_t) ', '');
+cases = ReplaceAll(cases, 'g_sys.state', 'i32[(i32[g_sys>>2] + (3 * 4))>>2]');
+cases = ReplaceAll(cases, 'g_sys.DOLIT_XT', 'i32[(i32[g_sys>>2] + (10 * 4))>>2]');
+cases = ReplaceAll(cases, 'g_sys.DOEXIT_XT', 'i32[(i32[g_sys>>2] + (11 * 4))>>2]');
+cases = ReplaceAll(cases, '&g_sys', 'g_sys');
 
 code = code.replace('{{boot}}', function() { return boot; });
 code = code.replace('{{dict}}', function() { return dict; });
