@@ -27,6 +27,7 @@ STRIP_ARGS = -S \
 LIBS=-ldl
 
 WIN_ARCH=i686
+#WIN_ARCH=x86_64
 WINFLAGS = -mwindows -luser32
 
 TARGETS = $(WEB)/terminal.html \
@@ -54,11 +55,11 @@ core_test: $(POSIX)/ueforth common/core_test.fs \
 $(GEN):
 	mkdir -p $@
 
-POSIX_BOOT = common/boot.fs posix/posix.fs
+POSIX_BOOT = common/boot.fs common/terminal.fs posix/posix.fs
 $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 	echo "ok" | cat $(POSIX_BOOT) - | $< boot >$@
 
-WINDOWS_BOOT = common/boot.fs
+WINDOWS_BOOT = common/boot.fs common/terminal.fs windows/windows.fs
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 	echo "ok" | cat $(WINDOWS_BOOT) - | $< boot >$@
 

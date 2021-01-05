@@ -1,5 +1,7 @@
 #include "windows.h"
 
+#define CALLTYPE WINAPI
+
 #include "common/opcodes.h"
 #include "common/calling.h"
 
@@ -7,8 +9,10 @@
 #define STACK_SIZE (16 * 1024)
 
 #define PLATFORM_OPCODE_LIST \
-  X("GETPROCADDRES", OP_GETPROCADDRESS, \
+  X("GETPROCADDRESS", OP_GETPROCADDRESS, \
       tos = (cell_t) GetProcAddress((HMODULE) *sp, (LPCSTR) tos); --sp) \
+  X("LOADLIBRARYA", OP_LOADLIBRARYA, \
+      tos = (cell_t) LoadLibraryA((LPCSTR) tos)) \
   CALLING_OPCODE_LIST \
 
 #include "common/core.h"
