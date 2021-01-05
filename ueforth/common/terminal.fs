@@ -1,6 +1,6 @@
 ( Terminal handling )
 : n. ( n -- ) base @ swap decimal <# #s #> type base ! ;
-: esc   27 emit ;
+: esc   27 emit ;   : bel   7 emit ;
 : at-xy ( x y -- ) esc ." [" 1+ n. ." ;" 1+ n. ." H" ;
 : page   esc ." [2J" esc ." [H" ;
 : normal   esc ." [0m" ;

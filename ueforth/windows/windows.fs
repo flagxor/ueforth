@@ -65,3 +65,5 @@ stdout console-mode @ ENABLE_VIRTUAL_TERMINAL_PROCESSING or SetConsoleMode drop
 : win-bye ( -- ) 0 ExitProcess drop ;
 ' win-bye is bye
 
+: set-title ( a n -- ) esc ." ]0;" type bel ;
+s" uEforth" set-title

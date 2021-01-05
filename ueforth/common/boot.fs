@@ -197,5 +197,6 @@ create input-buffer   input-limit allot
                       #tib ! 'tib ! 0 >in ! evaluate-buffer
                       r> >in ! r> #tib ! r> 'tib ! ;
 : query   begin ['] evaluate-buffer catch
-          if ." ERROR" cr then prompt refill drop again ;
+          if 0 state ! sp0 sp! rp0 rp! ." ERROR" cr then
+          prompt refill drop again ;
 : ok   ." uEForth" cr prompt refill drop query ;
