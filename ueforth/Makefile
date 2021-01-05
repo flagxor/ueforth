@@ -26,15 +26,29 @@ STRIP_ARGS = -S \
              --remove-section=.note.ABI-tag
 LIBS=-ldl
 
-WIN_ARCH=i686
-#WIN_ARCH=x86_64
 WINFLAGS = -mwindows -luser32
+
+# Default to 32-bit Windows for maximum portability.
+ifeq ($(WIN_ARCH),)
+  WIN_ARCH:=i686
+  #WIN_ARCH=x86_64
+endif
 
 TARGETS = $(WEB)/terminal.html \
           $(WEB)/ueforth.js \
           $(POSIX)/ueforth \
-          $(WINDOWS)/uEforth.exe \
           $(ARDUINO)/ueforth.ino
+
+# Selectively enable windows if tools available
+ifneq (, $(shell which $(WIN_ARCH)-w64-mingw32-windres))
+  ifneq (, $(shell which $(WIN_ARCH)-w64-mingw32-gcc))
+    TARGETS += $(WINDOWS)/uEforth.exe
+  else
+    $(warning "Missing $(WIN_ARCH)-w64-mingw32-gcc skipping Windows.")
+  endif
+else
+  $(warning "Missing $(WIN_ARCH)-w64-mingw32-windres skipping Windows.")
+endif
 
 all: $(TARGETS) tests
 
