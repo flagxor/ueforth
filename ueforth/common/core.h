@@ -3,7 +3,7 @@
 #define NEXT w = *ip++; goto **(void **) w
 #define CELL_LEN(n) (((n) + sizeof(cell_t) - 1) / sizeof(cell_t))
 #define FIND(name) find(name, sizeof(name) - 1)
-#define LOWER(ch) ((ch) & 95)
+#define LOWER(ch) ((ch) & 0x5F)
 
 #if PRINT_ERRORS
 #include <unistd.h>
@@ -23,15 +23,15 @@ static cell_t convert(const char *pos, cell_t n, cell_t *ret) {
   cell_t negate = 0;
   cell_t base = g_sys.base;
   if (!n) { return 0; }
-  if (pos[0] == '$') { base = 16; ++pos; --n; }
   if (pos[0] == '-') { negate = -1; ++pos; --n; }
+  if (pos[0] == '$') { base = 16; ++pos; --n; }
   for (; n; --n) {
     uintptr_t d = pos[0] - '0';
     if (d > 9) {
       d = LOWER(d) - 7;
       if (d < 10) { return 0; }
     }
-    if (d >= (uintptr_t) g_sys.base) { return 0; }
+    if (d >= base) { return 0; }
     *ret = *ret * base + d;
     ++pos;
   }

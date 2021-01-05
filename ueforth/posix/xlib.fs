@@ -24,6 +24,9 @@ z" XNextEvent" 2 xlib XNextEvent ( a a -- void )
 z" XPutImage" 10 xlib XPutImage ( a n a a n n n n n n -- void )
 z" XSelectInput" 3 xlib XSelectInput ( a n n -- void )
 z" XDrawString" 7 xlib XDrawString ( a n n n n a n -- void )
+z" XSetForeground" 3 xlib XSetForeground ( a a n -- void )
+z" XSetBackground" 3 xlib XSetBackground ( a a n -- void )
+z" XFillRectangle" 7 xlib XFillRectangle ( a n n n n n n -- void )
 
 0 constant NULL
 32 cells constant xevent-size
