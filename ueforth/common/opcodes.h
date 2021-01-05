@@ -34,7 +34,7 @@ typedef uint64_t udcell_t;
   X("OR", OP_OR, tos = tos | *sp; --sp) \
   X("XOR", OP_XOR, tos = tos ^ *sp; --sp) \
   X("DUP", OP_DUP, DUP) \
-  X("SWAP", OP_SWAP, t = tos; tos = *sp; *sp = t) \
+  X("SWAP", OP_SWAP, w = tos; tos = *sp; *sp = w) \
   X("OVER", OP_OVER, DUP; tos = sp[-1]) \
   X("DROP", OP_DROP, DROP) \
   X("@", OP_AT, tos = *(cell_t *) tos) \
@@ -56,22 +56,22 @@ typedef uint64_t udcell_t;
   X("BRANCH", OP_BRANCH, ip = (cell_t *) *ip) \
   X("0BRANCH", OP_ZBRANCH, if (!tos) ip = (cell_t *) *ip; else ++ip; DROP) \
   X("DONEXT", OP_DONEXT, *rp = (*rp - 1) | 0; if (*rp) ip = (cell_t *) *ip; else (--rp, ++ip)) \
-  X("DOLIT", OP_DOLIT, DUP; tos = *(cell_t *) ip; ++ip) \
+  X("DOLIT", OP_DOLIT, DUP; tos = *ip; ++ip) \
   X("ALITERAL", OP_ALITERAL, COMMA(g_sys.DOLIT_XT); COMMA(tos); DROP) \
   X("CELL", OP_CELL, DUP; tos = sizeof(cell_t)) \
   X("FIND", OP_FIND, tos = find((const char *) *sp, tos); --sp) \
   X("PARSE", OP_PARSE, DUP; tos = parse(tos, sp)) \
   X("S>NUMBER?", OP_CONVERT, tos = convert((const char *) *sp, tos, sp); \
                              if (!tos) --sp) \
-  X("CREATE", OP_CREATE, t = parse(32, &tmp); \
-                         create((const char *) tmp, t, 0, && OP_DOCREATE); \
-                         COMMA(0)) \
+  X("CREATE", OP_CREATE, DUP; DUP; tos = parse(32, sp); \
+                         create((const char *) *sp, tos, 0, && OP_DOCREATE); \
+                         COMMA(0); --sp; DROP) \
   X("DOES>", OP_DOES, DOES(ip); ip = (void *) *rp; --rp) \
   X("IMMEDIATE", OP_IMMEDIATE, g_sys.last[-1] |= 1) \
   X("'SYS", OP_SYS, DUP; tos = (cell_t) &g_sys) \
-  X(":", OP_COLON, t = parse(32, &tmp); \
-                   create((const char *) tmp, t, 0, && OP_DOCOL); \
-                   g_sys.state = -1) \
+  X(":", OP_COLON, DUP; DUP; tos = parse(32, sp); \
+                   create((const char *) *sp, tos, 0, && OP_DOCOL); \
+                   g_sys.state = -1; --sp; DROP) \
   X("EVALUATE1", OP_EVALUATE1, DUP; sp = evaluate1(sp, &tmp); \
                                DROP; if (tmp) (w = tmp); \
                                if (tmp) goto **(void **) w) \

@@ -121,7 +121,7 @@ static void ueforth(int argc, char *argv[], void *heap,
   g_sys.heap = (cell_t *) heap;
   register cell_t *sp = g_sys.heap; g_sys.heap += STACK_SIZE;
   register cell_t *rp = g_sys.heap; g_sys.heap += STACK_SIZE;
-  register cell_t tos = 0, *ip, t, w;
+  register cell_t tos = 0, *ip, w;
   dcell_t d;
   udcell_t ud;
   cell_t tmp;
