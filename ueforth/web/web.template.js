@@ -60,7 +60,6 @@ function Interpreter(stdlib, foreign, heap) {
     var sp = 0;
     var rp = 0;
     var w = 0;
-    var t = 0;
     var ir = 0;
     rp = initrp;
     ip = i32[rp>>2]|0; rp = (rp - 4)|0;
