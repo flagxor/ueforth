@@ -67,10 +67,10 @@ function Interpreter(stdlib, foreign, heap) {
     tos = i32[sp>>2]|0; sp = (sp - 4)|0;
     for (;;) {
       w = i32[ip>>2]|0;
-      for (;;) {
-        ir = i32[((ip + (w<<2))|0)>>2]|0;
+      decode: for (;;) {
+        ir = u8[w]|0;
         ip = (ip + 4)|0;
-        switch (ir & 0xff) {
+        switch (ir) {
           case 0:  // OP_DOCOLON
             rp = (rp + 4) | 0; i32[rp] = ip; ip = (w + 4) | 0;
             break;

@@ -22,16 +22,19 @@ variable width
 variable height
 
 create event xevent-size allot
+: draw
+  width @ . height @ .
+  display gc black XSetForeground drop
+  display gc black XSetBackground drop
+  display window gc 0 0 width @ height @ XFillRectangle drop
+  display gc white XSetForeground drop
+  display gc white XSetBackground drop
+  display window gc 0 0 width @ 2/ height @ 2/ XFillRectangle drop
+;
 : de event xevent-size
   event c@ .
-  event c@ Expose = if =
-    width @ . height @ .
-    display gc black XSetForeground drop
-    display gc black XSetBackground drop
-    display window gc 0 0 width @ height @ XFillRectangle drop
-    display gc white XSetForeground drop
-    display gc white XSetBackground drop
-    display window gc 0 0 width @ 2/ height @ 2/ XFillRectangle drop
+  event c@ Expose = if
+    draw
     ." Expose"
   then
   event c@ ButtonPress = if ." ButtonPress" then
@@ -43,10 +46,10 @@ create event xevent-size allot
   event c@ ConfigureNotify = if
     event 3 16 * 8 + + l@ width !
     event 3 16 * 12 + + l@ height !
-    width @ . height @ .
+    ." width & height: " width @ . height @ .
     ." ConfigureNotify"
   then
   event c@ MapNotify = if ." MapNotify" then
 cr ;
 : 1e display event XNextEvent drop de ;
-: gg begin 1e again ;
+: gg begin draw 1e again ;

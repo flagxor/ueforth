@@ -41,6 +41,7 @@ cases = ReplaceAll(cases, 'g_sys.DOEXIT_XT', 'i32[(i32[g_sys>>2] + (11 * 4))>>2]
 cases = ReplaceAll(cases, '&g_sys', 'g_sys');
 cases = ReplaceAll(cases, '&& OP_DOCOLON', '0');
 cases = ReplaceAll(cases, '&& OP_DOCREATE', '1');
+cases = ReplaceAll(cases, 'goto **(void **) w', 'break decode');
 
 code = code.replace('{{boot}}', function() { return boot; });
 code = code.replace('{{dict}}', function() { return dict; });
