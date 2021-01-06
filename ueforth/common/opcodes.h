@@ -28,8 +28,8 @@ typedef uint64_t udcell_t;
                          --sp; *sp = (cell_t) (ud % tos); \
                          tos = (cell_t) (ud / tos)) \
   X("*/MOD", OP_SSMOD, d = (dcell_t) *sp * (dcell_t) sp[-1]; \
-                       --sp; *sp = (cell_t) (d % tos); \
-                       tos = (cell_t) (d / tos)) \
+                       --sp; *sp = (cell_t) (((udcell_t) d) % tos); \
+                       tos = (cell_t) (d < 0 ? ~(~d / tos) : d / tos)) \
   X("AND", OP_AND, tos = tos & *sp; --sp) \
   X("OR", OP_OR, tos = tos | *sp; --sp) \
   X("XOR", OP_XOR, tos = tos ^ *sp; --sp) \
@@ -70,7 +70,7 @@ typedef uint64_t udcell_t;
   X("IMMEDIATE", OP_IMMEDIATE, g_sys.last[-1] |= 1) \
   X("'SYS", OP_SYS, DUP; tos = (cell_t) &g_sys) \
   X(":", OP_COLON, DUP; DUP; tos = parse(32, sp); \
-                   create((const char *) *sp, tos, 0, && OP_DOCOL); \
+                   create((const char *) *sp, tos, 0, && OP_DOCOLON); \
                    g_sys.state = -1; --sp; DROP) \
   X("EVALUATE1", OP_EVALUATE1, DUP; sp = evaluate1(sp); \
                                w = *sp; --sp; DROP; \

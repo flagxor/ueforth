@@ -147,8 +147,8 @@ static void ueforth(int argc, char *argv[], void *heap,
   PLATFORM_OPCODE_LIST
   OPCODE_LIST
 #undef X
+  OP_DOCOLON: ++rp; *rp = (cell_t) ip; ip = (cell_t *) (w + sizeof(cell_t)); NEXT;
   OP_DOCREATE: DUP; tos = w + sizeof(cell_t) * 2; NEXT;
   OP_DODOES: DUP; tos = w + sizeof(cell_t) * 2;
-             *++rp = (cell_t) ip; ip = (cell_t *) *(cell_t *) (w + sizeof(cell_t)); NEXT;
-  OP_DOCOL: *++rp = (cell_t) ip; ip = (cell_t *) (w + sizeof(cell_t)); NEXT;
+             ++rp; *rp = (cell_t) ip; ip = (cell_t *) *(cell_t *) (w + sizeof(cell_t)); NEXT;
 }

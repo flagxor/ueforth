@@ -7,7 +7,9 @@
   X("CALL", OP_CALL, sp = Call(sp, tos); DROP) \
 
 enum {
-  OP_NONE = -1,
+  OP_DOCOLON = 0,
+  OP_DOCREATE = 1,
+  OP_DODOES = 2,
 #define X(name, op, code) op,
   PLATFORM_OPCODE_LIST
   OPCODE_LIST

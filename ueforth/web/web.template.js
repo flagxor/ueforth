@@ -71,6 +71,16 @@ function Interpreter(stdlib, foreign, heap) {
         ir = i32[((ip + (w<<2))|0)>>2]|0;
         ip = (ip + 4)|0;
         switch (ir & 0xff) {
+          case 0:  // OP_DOCOLON
+            rp = (rp + 4) | 0; i32[rp] = ip; ip = (w + 4) | 0;
+            break;
+          case 1:  // OP_DOCREATE
+            sp = (sp + 4) | 0; i32[sp] = tos; tos = (w + 8) | 0;  // 4 * 2
+            break;
+          case 2:  // OP_DODOES
+            sp = (sp + 4) | 0; i32[sp] = tos; tos = (w + 8) | 0;  // 4 * 2
+            rp = (rp + 4) | 0; i32[rp] = ip; ip = i32[(w + 4) >> 2];
+            break;
 {{cases}}
         }
       }
