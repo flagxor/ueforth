@@ -16,7 +16,7 @@ function ReplaceAll(haystack, needle, replacement) {
   }
 }
 
-cases = ReplaceAll(cases, 'DROP', 'tos = i32[sp>>2]; sp = (sp - 4) | 0');
+cases = ReplaceAll(cases, 'DROP', 'tos = i32[sp>>2] | 0; sp = (sp - 4) | 0');
 cases = ReplaceAll(cases, 'DUP', 'sp = (sp + 4) | 0; i32[sp>>2] = tos');
 cases = ReplaceAll(cases, '*(cell_t *) tos', 'i32[tos>>2]');
 cases = ReplaceAll(cases, '*(int32_t *) tos', 'i32[tos>>2]');
@@ -30,7 +30,8 @@ cases = ReplaceAll(cases, '++sp', 'sp = (sp + 4) | 0');
 cases = ReplaceAll(cases, '++rp', 'rp = (rp + 4) | 0');
 cases = ReplaceAll(cases, '--sp', 'sp = (sp - 4) | 0');
 cases = ReplaceAll(cases, '--rp', 'rp = (rp - 4) | 0');
-cases = ReplaceAll(cases, 'sizeof(cell_t) ', '4');
+cases = ReplaceAll(cases, 'sp -= 2', 'sp = (sp - 8) | 0');
+cases = ReplaceAll(cases, 'sizeof(cell_t)', '4');
 cases = ReplaceAll(cases, '(void *) ', '');
 cases = ReplaceAll(cases, '(const char *) ', '');
 cases = ReplaceAll(cases, '(cell_t *) ', '');
@@ -42,6 +43,8 @@ cases = ReplaceAll(cases, '&g_sys', 'g_sys');
 cases = ReplaceAll(cases, '&& OP_DOCOLON', '0');
 cases = ReplaceAll(cases, '&& OP_DOCREATE', '1');
 cases = ReplaceAll(cases, 'goto **(void **) w', 'break decode');
+cases = ReplaceAll(cases, 'UMSMOD', '');
+cases = ReplaceAll(cases, 'SSMOD', '');
 
 code = code.replace('{{boot}}', function() { return boot; });
 code = code.replace('{{dict}}', function() { return dict; });

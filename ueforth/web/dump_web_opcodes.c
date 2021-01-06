@@ -4,7 +4,7 @@
 #include "common/opcodes.h"
 
 #define PLATFORM_OPCODE_LIST \
-  X("CALL", OP_CALL, sp = Call(sp, tos); DROP) \
+  X("CALL", OP_CALL, sp = Call(sp|0, tos|0) | 0; DROP) \
 
 enum {
   OP_DOCOLON = 0,
