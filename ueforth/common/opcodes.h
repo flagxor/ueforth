@@ -70,7 +70,7 @@ typedef uint64_t udcell_t;
   X("CREATE", OP_CREATE, DUP; DUP; tos = parse(32, (cell_t *) ((cell_t) sp | 0))|0; \
                          create((const char *) (*sp | 0), tos|0, 0, && OP_DOCREATE); \
                          COMMA(0); --sp; DROP) \
-  X("DOES>", OP_DOES, DOES((cell_t *) ((cell_t) ip|0)); ip = (void *) (*rp | 0); --rp) \
+  X("DOES>", OP_DOES, DOES((cell_t *) ((cell_t) ip|0)); ip = (cell_t *) (*rp | 0); --rp) \
   X("IMMEDIATE", OP_IMMEDIATE, IMMEDIATE()) \
   X("'SYS", OP_SYS, DUP; tos = (cell_t) &g_sys) \
   X(":", OP_COLON, DUP; DUP; tos = parse(32, (cell_t *) ((cell_t) sp | 0))|0; \
@@ -80,6 +80,6 @@ typedef uint64_t udcell_t;
       DUP; sp = (cell_t *) ((cell_t) evaluate1((cell_t *) ((cell_t) sp | 0))|0); \
       w = (*sp | 0); --sp; DROP; \
       if (w) goto **(void **) w) \
-  X("EXIT", OP_EXIT, ip = (void *) (*rp | 0); --rp) \
+  X("EXIT", OP_EXIT, ip = (cell_t *) (*rp | 0); --rp) \
   X(";", OP_SEMICOLON, COMMA(g_sys.DOEXIT_XT | 0); g_sys.state = 0) \
 

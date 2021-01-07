@@ -4,7 +4,7 @@ RES = $(OUT)/resources
 WEB = $(OUT)/web
 POSIX = $(OUT)/posix
 WINDOWS = $(OUT)/windows
-ARDUINO = $(OUT)/arduino
+ARDUINO = $(OUT)/arduino/ueforth
 
 CFLAGS = -Wall -Werror \
          -O2 \
