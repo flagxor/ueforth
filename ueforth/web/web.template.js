@@ -102,6 +102,16 @@ var ffi = {
   create: function() {},
   parse: function() {},
   COMMA: function() {},
+  UMSMOD: function() {},
+  SSMOD: function() {},
+  DOES: function() {},
+  IMMEDIATE: function() {},
+  parse: function() {},
+  find: function() {},
+  memset: function() {},
+  memmove: function() {},
+  convert: function() {},
+  evaluate1: function() {},
 };
 
 heap[128 + 6] = 256 * 4;  // set g_sys.heap = 256 * 4;
