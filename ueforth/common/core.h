@@ -125,7 +125,7 @@ static void ueforth(int argc, char *argv[], void *heap,
   register cell_t tos = 0, *ip, w;
   dcell_t d;
   udcell_t ud;
-#define X(name, op, code) create(name, sizeof(name) - 1, name[0] == ';', && op);
+#define X(name, op, code) create(name, sizeof(name) - 1, name[0] == ';', && OP_ ## op);
   PLATFORM_OPCODE_LIST
   OPCODE_LIST
 #undef X
@@ -143,7 +143,7 @@ static void ueforth(int argc, char *argv[], void *heap,
   g_sys.tib = src;
   g_sys.ntib = src_len;
   NEXT;
-#define X(name, op, code) op: code; NEXT;
+#define X(name, op, code) OP_ ## op: { code; } NEXT;
   PLATFORM_OPCODE_LIST
   OPCODE_LIST
 #undef X

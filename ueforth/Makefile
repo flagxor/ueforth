@@ -77,7 +77,7 @@ WINDOWS_BOOT = common/boot.fs common/terminal.fs windows/windows.fs
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 	echo "ok" | cat $(WINDOWS_BOOT) - | $< boot >$@
 
-ARDUINO_BOOT = common/boot.fs
+ARDUINO_BOOT = common/boot.fs arduino/arduino.fs
 $(GEN)/arduino_boot.h: common/source_to_string.js $(ARDUINO_BOOT) | $(GEN)
 	echo "ok" | cat $(ARDUINO_BOOT) - | $< boot >$@
 

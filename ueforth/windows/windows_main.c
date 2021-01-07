@@ -9,9 +9,9 @@
 #define STACK_SIZE (16 * 1024)
 
 #define PLATFORM_OPCODE_LIST \
-  X("GETPROCADDRESS", OP_GETPROCADDRESS, \
+  X("GETPROCADDRESS", GETPROCADDRESS, \
       tos = (cell_t) GetProcAddress((HMODULE) *sp, (LPCSTR) tos); --sp) \
-  X("LOADLIBRARYA", OP_LOADLIBRARYA, \
+  X("LOADLIBRARYA", LOADLIBRARYA, \
       tos = (cell_t) LoadLibraryA((LPCSTR) tos)) \
   CALLING_OPCODE_LIST \
 
