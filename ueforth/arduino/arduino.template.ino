@@ -1,5 +1,9 @@
 {{opcodes}}
 
+#include "SPIFFS.h"
+#include <WiFi.h>
+#include <WebServer.h>
+
 #include <errno.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -19,6 +23,13 @@
 #endif
 
 #define PLATFORM_OPCODE_LIST \
+  /* Serial */ \
+  X("Serial.begin", SERIAL_BEGIN, Serial.begin(tos); DROP) \
+  X("Serial.end", SERIAL_END, Serial.end()) \
+  X("Serial.available", SERIAL_AVAILABLE, DUP; tos = Serial.available()) \
+  X("Serial.readBytes", SERIAL_READ_BYTES, tos = Serial.readBytes((uint8_t *) *sp, tos); --sp) \
+  X("Serial.write", SERIAL_WRITE, tos = Serial.write((const uint8_t *) *sp, tos); --sp) \
+  /* Pins and PWM */ \
   X("pinMode", PIN_MODE, pinMode(*sp, tos); --sp; DROP) \
   X("digitalWrite", DIGITAL_WRITE, digitalWrite(*sp, tos); --sp; DROP) \
   X("analogRead", ANALOG_READ, tos = (cell_t) analogRead(tos)) \
@@ -33,7 +44,7 @@
       tos = (cell_t) (1000000 * ledcWriteTone(*sp, tos / 1000.0)); --sp) \
   X("ledcWriteNote", LEDC_WRITE_NOTE, \
       tos = (cell_t) (1000000 * ledcWriteNote(sp[-1], (note_t) *sp, tos)); sp -=2) \
-  X("MS", MS, mspause(tos); DROP) \
+  X("MS", MS, delay(tos); DROP) \
   X("TERMINATE", TERMINATE, exit(tos)) \
   /* File words */ \
   X("R/O", R_O, *++sp = O_RDONLY) \
@@ -60,6 +71,28 @@
     tos = (cell_t) lseek(fd, tos, SEEK_SET); tos = tos < 0 ? errno : 0) \
   X("FILE-SIZE", FILE_SIZE, struct stat st; w = fstat(tos, &st); \
     tos = (cell_t) st.st_size; PUSH w < 0 ? errno : 0) \
+  /* WiFi */ \
+  X("WiFi.config", WIFI_CONFIG, \
+      WiFi.config(ToIP(sp[-1]), ToIP(*sp), ToIP(tos)); sp -= 2; DROP) \
+  X("WiFi.begin", WIFI_BEGIN, \
+      WiFi.begin((const char *) *sp, (const char *) tos); --sp; DROP) \
+  X("WiFi.disconnect", WIFI_DISCONNECT, WiFi.disconnect()) \
+  X("WiFi.status", WIFI_STATUS, DUP; tos = WiFi.status()) \
+  X("WiFi.macAddress", WIFI_MAC_ADDRESS, WiFi.macAddress((uint8_t *) tos); DROP) \
+  X("WiFi.localIP", WIFI_LOCAL_IPS, DUP; tos = FromIP(WiFi.localIP())) \
+  /* SPIFFS */ \
+  X("SPIFFS.begin", SPIFFS_BEGIN, tos = SPIFFS.begin(tos)) \
+  X("SPIFFS.end", SPIFFS_END, SPIFFS.end()) \
+  X("SPIFFS.format", SPIFFS_FORMAT, DUP; tos = SPIFFS.format()) \
+  X("SPIFFS.totalBytes", SPIFFS_TOTAL_BYTES, DUP; tos = SPIFFS.totalBytes()) \
+  X("SPIFFS.usedBytes", SPIFFS_USED_BYTES, DUP; tos = SPIFFS.usedBytes()) \
+  /* WebServer */ \
+  X("WebServer.new", WEBSERVER_NEW, DUP; tos = (cell_t) new WebServer(tos)) \
+  X("WebServer.delete", WEBSERVER_DELETE, delete (WebServer *) tos; DROP) \
+  X("WebServer.begin", WEBSERVER_BEGIN, \
+      WebServer *ws = (WebServer *) tos; DROP; ws->begin(tos); DROP) \
+  X("WebServer.stop", WEBSERVER_STOP, \
+      WebServer *ws = (WebServer *) tos; DROP; ws->stop()) \
 
 // TODO: Why doesn't ftruncate exist?
 //  X("RESIZE-FILE", RESIZE_FILE, cell_t fd = tos; DROP; \
@@ -70,8 +103,17 @@ static char filename[PATH_MAX];
 {{core}}
 {{boot}}
 
-static void mspause(cell_t ms) {
-  vTaskDelay(ms / portTICK_PERIOD_MS);
+static IPAddress ToIP(cell_t ip) {
+  return IPAddress(ip & 0xff, ((ip >> 8) & 0xff), ((ip >> 16) & 0xff), ((ip >> 24) & 0xff));
+}
+
+static cell_t FromIP(IPAddress ip) {
+  cell_t ret = 0;
+  ret = (ret << 8) | ip[3];
+  ret = (ret << 8) | ip[2];
+  ret = (ret << 8) | ip[1];
+  ret = (ret << 8) | ip[0];
+  return ret;
 }
 
 void setup() {

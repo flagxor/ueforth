@@ -119,6 +119,7 @@ static cell_t *evaluate1(cell_t *sp) {
 
 static void ueforth(int argc, char *argv[], void *heap,
                     const char *src, cell_t src_len) {
+  memset(&g_sys, 0, sizeof(g_sys));
   g_sys.heap = (cell_t *) heap;
   register cell_t *sp = g_sys.heap; g_sys.heap += STACK_SIZE;
   register cell_t *rp = g_sys.heap; g_sys.heap += STACK_SIZE;

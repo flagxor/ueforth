@@ -161,6 +161,7 @@ variable hld
        else dup here swap >r >r $place r> r> then ; immediate
 : ."   postpone s" state @ if postpone type else type then ; immediate
 : z"   postpone s" state @ if postpone drop else drop then ; immediate
+: r"   parse-quote state @ if swap aliteral aliteral then ; immediate
 
 ( Better Errors )
 : notfound ( a n n -- )
