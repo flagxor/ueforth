@@ -22,7 +22,13 @@
 # define STACK_SIZE 32
 #endif
 
+#define PUSH(v) (DUP, tos = (v))
+
 #define PLATFORM_OPCODE_LIST \
+  /* Allocation and Strings */ \
+  X("MALLOC", MALLOC, tos = (cell_t) malloc(tos)) \
+  X("SYSFREE", FREE, free((void *) tos); DROP) \
+  X("REALLOC", REALLOC, tos = (cell_t) realloc((void *) *sp, tos); --sp) \
   /* Serial */ \
   X("Serial.begin", SERIAL_BEGIN, Serial.begin(tos); DROP) \
   X("Serial.end", SERIAL_END, Serial.end()) \
@@ -47,30 +53,30 @@
   X("MS", MS, delay(tos); DROP) \
   X("TERMINATE", TERMINATE, exit(tos)) \
   /* File words */ \
-  X("R/O", R_O, *++sp = O_RDONLY) \
-  X("R/W", R_W, *++sp = O_RDWR) \
-  X("W/O", W_O, *++sp = O_WRONLY) \
+  X("R/O", R_O, PUSH(O_RDONLY)) \
+  X("R/W", R_W, PUSH(O_RDWR)) \
+  X("W/O", W_O, PUSH(O_WRONLY)) \
   X("BIN", BIN, ) \
   X("CLOSE-FILE", CLOSE_FILE, tos = close(tos); tos = tos ? errno : 0) \
   X("OPEN-FILE", OPEN_FILE, cell_t mode = tos; DROP; cell_t len = tos; DROP; \
     memcpy(filename, (void *) tos, len); filename[len] = 0; \
-    tos = open(filename, mode, 0777); PUSH tos < 0 ? errno : 0) \
+    tos = open(filename, mode, 0777); PUSH(tos < 0 ? errno : 0)) \
   X("CREATE-FILE", CREATE_FILE, cell_t mode = tos; DROP; cell_t len = tos; DROP; \
     memcpy(filename, (void *) tos, len); filename[len] = 0; \
-    tos = open(filename, mode | O_CREAT | O_TRUNC); PUSH tos < 0 ? errno : 0) \
+    tos = open(filename, mode | O_CREAT | O_TRUNC); PUSH(tos < 0 ? errno : 0)) \
   X("DELETE-FILE", DELETE_FILE, cell_t len = tos; DROP; \
     memcpy(filename, (void *) tos, len); filename[len] = 0; \
     tos = unlink(filename); tos = tos ? errno : 0) \
   X("WRITE-FILE", WRITE_FILE, cell_t fd = tos; DROP; cell_t len = tos; DROP; \
     tos = write(fd, (void *) tos, len); tos = tos != len ? errno : 0) \
   X("READ-FILE", READ_FILE, cell_t fd = tos; DROP; cell_t len = tos; DROP; \
-    tos = read(fd, (void *) tos, len); PUSH tos != len ? errno : 0) \
+    tos = read(fd, (void *) tos, len); PUSH(tos != len ? errno : 0)) \
   X("FILE-POSITION", FILE_POSITION, \
-    tos = (cell_t) lseek(tos, 0, SEEK_CUR); PUSH tos < 0 ? errno : 0) \
+    tos = (cell_t) lseek(tos, 0, SEEK_CUR); PUSH(tos < 0 ? errno : 0)) \
   X("REPOSITION-FILE", REPOSITION_FILE, cell_t fd = tos; DROP; \
     tos = (cell_t) lseek(fd, tos, SEEK_SET); tos = tos < 0 ? errno : 0) \
   X("FILE-SIZE", FILE_SIZE, struct stat st; w = fstat(tos, &st); \
-    tos = (cell_t) st.st_size; PUSH w < 0 ? errno : 0) \
+    tos = (cell_t) st.st_size; PUSH(w < 0 ? errno : 0)) \
   /* WiFi */ \
   X("WiFi.config", WIFI_CONFIG, \
       WiFi.config(ToIP(sp[-1]), ToIP(*sp), ToIP(tos)); sp -= 2; DROP) \
@@ -81,7 +87,8 @@
   X("WiFi.macAddress", WIFI_MAC_ADDRESS, WiFi.macAddress((uint8_t *) tos); DROP) \
   X("WiFi.localIP", WIFI_LOCAL_IPS, DUP; tos = FromIP(WiFi.localIP())) \
   /* SPIFFS */ \
-  X("SPIFFS.begin", SPIFFS_BEGIN, tos = SPIFFS.begin(tos)) \
+  X("SPIFFS.begin", SPIFFS_BEGIN, \
+      tos = SPIFFS.begin(sp[-1], (const char *) *sp, tos); sp -=2) \
   X("SPIFFS.end", SPIFFS_END, SPIFFS.end()) \
   X("SPIFFS.format", SPIFFS_FORMAT, DUP; tos = SPIFFS.format()) \
   X("SPIFFS.totalBytes", SPIFFS_TOTAL_BYTES, DUP; tos = SPIFFS.totalBytes()) \

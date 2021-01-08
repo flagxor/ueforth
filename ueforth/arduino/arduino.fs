@@ -15,6 +15,8 @@
 : freq ( n n -- ) 1000 * 13 ledcSetup drop ;
 : tone ( n n -- ) 1000 * ledcWriteTone drop ;
 
-( Startup Serial )
+( Startup Setup )
+-1 echo !
 115200 Serial.begin
 100 ms
+-1 z" /" 10 SPIFFS.begin drop

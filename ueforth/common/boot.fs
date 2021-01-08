@@ -39,8 +39,6 @@
 : 'heap ( -- a ) 'sys 5 cells + ;
 : last ( -- a ) 'sys 6 cells + ;
 : 'notfound ( -- a ) 'sys 7 cells + ;
-: 'argc ( -- a ) 'sys 8 cells + ;
-: 'argv ( -- a ) 'sys 9 cells + ;
 
 ( Dictionary )
 : here ( -- a ) 'heap @ ;
@@ -162,6 +160,8 @@ variable hld
 : ."   postpone s" state @ if postpone type else type then ; immediate
 : z"   postpone s" state @ if postpone drop else drop then ; immediate
 : r"   parse-quote state @ if swap aliteral aliteral then ; immediate
+: s>z ( a n -- z ) here >r $place r> ;
+: z>s ( z -- a n ) 0 over begin dup c@ while 1+ swap 1+ swap repeat drop ;
 
 ( Better Errors )
 : notfound ( a n n -- )
@@ -182,8 +182,11 @@ variable hld
    cr 0 do i 16 mod 0= if cr then dup i + c@ . loop drop cr ;
 
 ( Input )
-: accept ( a n -- n ) 0 swap begin 2dup < while
-   key dup nl = if 2drop nip exit then
+variable echo
+: ?echo ( n -- ) echo @ if emit else drop then ;
+: ?echo-prompt   echo @ if ." --> " then ;
+: accept ( a n -- n ) ?echo-prompt 0 swap begin 2dup < while
+   key dup ?echo dup nl = if 2drop nip exit then
    >r rot r> over c! 1+ -rot swap 1+ swap repeat drop nip ;
 200 constant input-limit
 : tib ( -- a ) 'tib @ ;

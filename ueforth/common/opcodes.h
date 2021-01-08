@@ -14,7 +14,6 @@ typedef uint64_t udcell_t;
 # error "unsupported cell size"
 #endif
 
-#define PUSH DUP; tos =
 #define DUP *++sp = tos
 #define DROP tos = *sp--
 #define COMMA(n) *g_sys.heap++ = (n)

@@ -69,7 +69,10 @@ core_test: $(POSIX)/ueforth common/core_test.fs \
 $(GEN):
 	mkdir -p $@
 
-POSIX_BOOT = common/boot.fs common/terminal.fs posix/posix.fs
+POSIX_BOOT =  common/boot.fs common/terminal.fs \
+              posix/posix.fs posix/posix_highlevel.fs \
+              common/filetools.fs posix/posix_desktop.fs \
+              common/autoboot.fs
 $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 	echo "ok" | cat $(POSIX_BOOT) - | $< boot >$@
 

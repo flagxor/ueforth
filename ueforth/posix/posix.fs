@@ -12,6 +12,7 @@ create calls
 : sysfunc ( z n "name" -- ) 0 sofunc ;
 : shared-library ( z "name" -- )
    RTLD_NOW dlopen dup 0= throw create , does> @ sofunc ;
+: sign-extend ( n -- n ) >r rp@ l@ rdrop ;
 
 ( Major Syscalls )
 z" open" 3 sysfunc open
@@ -28,7 +29,9 @@ z" mmap" 6 sysfunc mmap
 z" munmap" 2 sysfunc munmap
 z" unlink" 1 sysfunc unlink
 z" rename" 2 sysfunc rename
-z" strlen" 1 sysfunc strlen
+z" malloc" 1 sysfunc malloc
+z" free" 1 sysfunc sysfree
+z" realloc" 2 sysfunc realloc
 
 ( Errno )
 z" __errno_location" 0 sysfunc __errno_location
@@ -53,12 +56,14 @@ $10 constant MAP_FIXED
 $20 constant MAP_ANONYMOUS
 
 ( open )
+octal
 0 constant O_RDONLY
 1 constant O_WRONLY
 2 constant O_RDWR
-$100 constant O_CREAT
-$200 constant O_TRUNC
-$2000 constant O_APPEND
+100 constant O_CREAT
+200 constant O_TRUNC
+2000 constant O_APPEND
+decimal
 
 ( Hookup I/O )
 : stdout-write ( a n -- ) stdout -rot write drop ;
@@ -72,32 +77,17 @@ $2000 constant O_APPEND
 : 0ior ( n -- n ior ) dup 0= if errno else 0 then ;
 : 0<ior ( n -- n ior ) dup 0< if errno else 0 then ;
 
-( Words with OS assist )
-z" malloc" 1 sysfunc malloc
-z" free" 1 sysfunc sysfree
-z" realloc" 2 sysfunc realloc
-: allocate ( n -- a ior ) malloc 0ior ;
-: free ( a -- ior ) sysfree drop 0 ;
-: resize ( a n -- a ior ) realloc 0ior ;
-
-( String Handling )
-: s>z ( a n -- z ) here >r $place r> ;
-: z>s ( z -- a n ) dup strlen ;
-
-( Arguments )
-: argc ( -- n ) 'argc @ ;
-: argv ( n -- a n ) cells 'argv @ + @ z>s ;
-
 ( Generic Files )
 O_RDONLY constant r/o
 O_WRONLY constant w/o
 O_RDWR constant r/w
 octal 777 constant 0777 decimal
-: open-file ( a n fam -- fh ior ) >r s>z r> 0777 open 0<ior ;
-: create-file ( a n fam -- fh ior ) >r s>z r> O_CREAT or 0777 open 0<ior ;
-: close-file ( fh -- ior ) close ;
-: delete-file ( a n -- ior ) s>z unlink ;
-: rename-file ( a n a n -- ior ) s>z -rot s>z swap rename ;
+: open-file ( a n fam -- fh ior ) >r s>z r> 0777 open sign-extend 0<ior ;
+: create-file ( a n fam -- fh ior )
+   >r s>z r> O_CREAT or 0777 open sign-extend 0<ior ;
+: close-file ( fh -- ior ) close sign-extend ;
+: delete-file ( a n -- ior ) s>z unlink sign-extend ;
+: rename-file ( a n a n -- ior ) s>z -rot s>z swap rename sign-extend ;
 : read-file ( a n fh -- n ior ) -rot read 0<ior ;
 : write-file ( a n fh -- ior ) -rot dup >r write r> = 0= ;
 : file-position ( fh -- n ior ) dup 0 SEEK_CUR lseek 0<ior ;
@@ -105,18 +95,3 @@ octal 777 constant 0777 decimal
    dup 0 SEEK_CUR lseek >r
    dup 0 SEEK_END lseek r> swap >r
          SEEK_SET lseek drop r> 0<ior ;
-
-( Including Files )
-: included ( a n -- )
-   r/o open-file throw
-   dup file-size throw
-   dup allocate throw
-   swap 2dup >r >r
-   rot dup >r read-file throw drop
-   r> close-file throw
-   r> r> over >r evaluate
-   r> free throw ;
-: include ( "name" -- ) bl parse included ;
-
-( Load Libraries )
-: xlib   s" posix/xlib_test.fs" included ;
