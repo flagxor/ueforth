@@ -15,7 +15,7 @@ static struct {
   cell_t *heap, *last, notfound;
   int argc;
   char **argv;
-  cell_t DOLIT_XT, DOEXIT_XT;
+  cell_t DOLIT_XT, DOEXIT_XT, YIELD_XT;
   cell_t *ip, *sp, *rp;  // Parked alternates
 } g_sys;
 
@@ -148,6 +148,7 @@ static void ueforth(int argc, char *argv[], void *heap,
   g_sys.last[-1] = 1;  // Make ; IMMEDIATE
   g_sys.DOLIT_XT = FIND("DOLIT");
   g_sys.DOEXIT_XT = FIND("EXIT");
+  g_sys.YIELD_XT = FIND("YIELD");
   g_sys.notfound = FIND("DROP");
   g_sys.ip = g_sys.heap;
   *g_sys.heap++ = FIND("EVALUATE1");

@@ -100,6 +100,10 @@
       WebServer *ws = (WebServer *) tos; DROP; ws->begin(tos); DROP) \
   X("WebServer.stop", WEBSERVER_STOP, \
       WebServer *ws = (WebServer *) tos; DROP; ws->stop()) \
+  X("WebServer.on", WEBSERVER_ON, \
+      WebServer *ws = (WebServer *) tos; DROP; \
+      const char *url = (const char *) tos; DROP; \
+      InvokeWebServerOn(ws, url, tos); DROP) \
 
 // TODO: Why doesn't ftruncate exist?
 //  X("RESIZE-FILE", RESIZE_FILE, cell_t fd = tos; DROP; \
@@ -121,6 +125,26 @@ static cell_t FromIP(IPAddress ip) {
   ret = (ret << 8) | ip[1];
   ret = (ret << 8) | ip[0];
   return ret;
+}
+
+static void InvokeWebServerOn(WebServer *ws, const char *url, cell_t xt) {
+  ws->on(url, [xt]() {
+    cell_t *old_ip = g_sys.ip;
+    cell_t *old_rp = g_sys.rp;
+    cell_t *old_sp = g_sys.sp;
+    cell_t stack[16];
+    cell_t rstack[16];
+    g_sys.sp = stack + 1;
+    g_sys.rp = rstack;
+    cell_t code[2];
+    code[0] = xt;
+    code[1] = g_sys.YIELD_XT;
+    g_sys.ip = code;
+    ueforth_run();
+    g_sys.ip = old_ip;
+    g_sys.rp = old_rp;
+    g_sys.sp = old_sp;
+  });
 }
 
 void setup() {
