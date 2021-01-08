@@ -1,8 +1,11 @@
 {{opcodes}}
 
-#include "SPIFFS.h"
+
 #include <WiFi.h>
+#include <WiFiClient.h>
 #include <WebServer.h>
+#include <ESPmDNS.h>
+#include "SPIFFS.h"
 
 #include <errno.h>
 #include <unistd.h>
@@ -12,7 +15,8 @@
 #include <sys/select.h>
 
 #if defined(ESP32)
-# define HEAP_SIZE (100 * 1024)
+//# define HEAP_SIZE (100 * 1024)
+# define HEAP_SIZE (50 * 1024)
 # define STACK_SIZE 512
 #elif defined(ESP8266)
 # define HEAP_SIZE (40 * 1024)
@@ -22,7 +26,7 @@
 # define STACK_SIZE 32
 #endif
 
-#define PUSH(v) (DUP, tos = (v))
+#define PUSH(v) (DUP, tos = (cell_t) (v))
 
 #define PLATFORM_OPCODE_LIST \
   /* Allocation and Strings */ \
@@ -86,6 +90,7 @@
   X("WiFi.status", WIFI_STATUS, DUP; tos = WiFi.status()) \
   X("WiFi.macAddress", WIFI_MAC_ADDRESS, WiFi.macAddress((uint8_t *) tos); DROP) \
   X("WiFi.localIP", WIFI_LOCAL_IPS, DUP; tos = FromIP(WiFi.localIP())) \
+  X("WiFi.mode", WIFI_MODE, WiFi.mode((wifi_mode_t) tos); DROP) \
   /* SPIFFS */ \
   X("SPIFFS.begin", SPIFFS_BEGIN, \
       tos = SPIFFS.begin(sp[-1], (const char *) *sp, tos); sp -=2) \
@@ -101,9 +106,37 @@
   X("WebServer.stop", WEBSERVER_STOP, \
       WebServer *ws = (WebServer *) tos; DROP; ws->stop()) \
   X("WebServer.on", WEBSERVER_ON, \
-      WebServer *ws = (WebServer *) tos; DROP; \
-      const char *url = (const char *) tos; DROP; \
-      InvokeWebServerOn(ws, url, tos); DROP) \
+      InvokeWebServerOn((WebServer *) tos, (const char *) sp[-1], *sp); \
+      sp -= 2; DROP) \
+  X("WebServer.hasArg", WEBSERVER_HAS_ARG, \
+      tos = ((WebServer *) tos)->hasArg((const char *) *sp); DROP) \
+  X("WebServer.arg", WEBSERVER_ARG, \
+      String v = ((WebServer *) tos)->arg((const char *) *sp); \
+Serial.println(v); \
+Serial.println(v.length()); \
+      *sp = (cell_t) v.c_str(); tos = v.length()) \
+  X("WebServer.argi", WEBSERVER_ARGI, \
+      String v = ((WebServer *) tos)->arg(*sp); \
+      *sp = (cell_t) v.c_str(); tos = v.length()) \
+  X("WebServer.argName", WEBSERVER_ARG_NAME, \
+      String v = ((WebServer *) tos)->argName(*sp); \
+      *sp = (cell_t) v.c_str(); tos = v.length()) \
+  X("WebServer.args", WEBSERVER_ARGS, tos = ((WebServer *) tos)->args()) \
+  X("WebServer.setContentLength", WEBSERVER_SET_CONTENT_LENGTH, \
+      ((WebServer *) tos)->setContentLength(*sp); --sp; DROP) \
+  X("WebServer.sendHeader", WEBSERVER_SEND_HEADER, \
+      ((WebServer *) tos)->sendHeader((const char *) sp[-2], (const char *) sp[-1], *sp); \
+      sp -= 3; DROP) \
+  X("WebServer.send", WEBSERVER_SEND, \
+      ((WebServer *) tos)->send(sp[-2], (const char *) sp[-1], (const char *) *sp); \
+      sp -= 3; DROP) \
+  X("WebServer.sendContent", WEBSERVER_SEND_CONTENT, \
+      WebServerSendContent((WebServer *) tos, (const char *) sp[-1], *sp); \
+      sp -= 2; DROP) \
+  X("WebServer.method", WEBSERVER_METHOD, \
+      tos = (cell_t) ((WebServer *) tos)->method()) \
+  X("WebServer.handleClient", WEBSERVER_HANDLE_CLIENT, \
+      ((WebServer *) tos)->handleClient(); DROP) \
 
 // TODO: Why doesn't ftruncate exist?
 //  X("RESIZE-FILE", RESIZE_FILE, cell_t fd = tos; DROP; \
@@ -147,10 +180,28 @@ static void InvokeWebServerOn(WebServer *ws, const char *url, cell_t xt) {
   });
 }
 
+static void WebServerSendContent(WebServer *ws, const char *data, cell_t len) {
+  char buffer[256];
+  while (len) {
+    if (len < sizeof(buffer) - 1) {
+      memcpy(buffer, data, len);
+      buffer[len] = 0;
+      ws->sendContent(buffer);
+      len = 0;
+    } else {
+      memcpy(buffer, data, sizeof(buffer) - 1);
+      buffer[sizeof(buffer)] = 0;
+      ws->sendContent(buffer);
+      len -= (sizeof(buffer) - 1);
+    }
+  }
+}
+
 void setup() {
   cell_t *heap = (cell_t *) malloc(HEAP_SIZE);
   ueforth(0, 0, heap, boot, sizeof(boot));
 }
 
 void loop() {
+  ueforth_run();
 }

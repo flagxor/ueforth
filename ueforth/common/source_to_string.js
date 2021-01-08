@@ -6,7 +6,7 @@ var source = fs.readFileSync(process.stdin.fd).toString();
 var name = process.argv[2];
 
 source = source.replace(/["]/g, '\\"');
-source = '" ' + source.split('\n').join(' "\n" ') + ' "';
+source = '"' + source.split('\n').join('\\n"\n"') + '\\n"';
 source = source.replace(/["]  ["]/g, '');
 source = source.replace(/["] [(] ([^)]*)[)] ["]/g, '// $1');
 

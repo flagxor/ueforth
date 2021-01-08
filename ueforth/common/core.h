@@ -107,6 +107,7 @@ static cell_t *evaluate1(cell_t *sp) {
     } else {
 #if PRINT_ERRORS
       write(2, (void *) name, len);
+      write(2, "\n", 1);
 #endif
       *++sp = name;
       *++sp = len;

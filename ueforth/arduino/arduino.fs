@@ -15,6 +15,12 @@
 : freq ( n n -- ) 1000 * 13 ledcSetup drop ;
 : tone ( n n -- ) 1000 * ledcWriteTone drop ;
 
+( WiFi Modes )
+0 constant WIFI_MODE_NULL
+1 constant WIFI_MODE_STA
+2 constant WIFI_MODE_AP
+3 constant WIFI_MODE_APSTA
+
 ( Startup Setup )
 -1 echo !
 115200 Serial.begin

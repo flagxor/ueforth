@@ -81,6 +81,7 @@ $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 
 ARDUINO_BOOT = common/boot.fs arduino/arduino.fs \
                posix/posix_highlevel.fs common/filetools.fs \
+               arduino/arduino_server.fs \
                arduino/autoboot.fs
 $(GEN)/arduino_boot.h: common/source_to_string.js $(ARDUINO_BOOT) | $(GEN)
 	echo "ok" | cat $(ARDUINO_BOOT) - | $< boot >$@
