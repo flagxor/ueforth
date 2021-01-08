@@ -26,7 +26,7 @@ body {
 }
 </style>
 </head>
-<h2>uEforth 1</h2>
+<h2>uEforth</h2>
 <link rel="icon" href="data:,">
 <body>
 Upload File: <input id="filepick" type="file" name="files[]"></input><br/>
@@ -142,5 +142,8 @@ variable webserver
    again
 ;
 
-: wifi ( z z -- ) WIFI_MODE_STA Wifi.mode   WiFi.begin 1000 ms WiFi.localIP ip. ;
+: wifi ( z z -- )
+   WIFI_MODE_STA Wifi.mode
+   WiFi.begin 1000 ms WiFi.localIP ip. cr
+   z" ueforth" MDNS.begin if ." MDNS started" else ." MDNS failed" then cr ;
 : webui ( z z -- ) wifi serve ; 

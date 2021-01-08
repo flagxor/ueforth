@@ -15,8 +15,7 @@
 #include <sys/select.h>
 
 #if defined(ESP32)
-//# define HEAP_SIZE (100 * 1024)
-# define HEAP_SIZE (50 * 1024)
+# define HEAP_SIZE (100 * 1024)
 # define STACK_SIZE 512
 #elif defined(ESP8266)
 # define HEAP_SIZE (40 * 1024)
@@ -91,6 +90,8 @@
   X("WiFi.macAddress", WIFI_MAC_ADDRESS, WiFi.macAddress((uint8_t *) tos); DROP) \
   X("WiFi.localIP", WIFI_LOCAL_IPS, DUP; tos = FromIP(WiFi.localIP())) \
   X("WiFi.mode", WIFI_MODE, WiFi.mode((wifi_mode_t) tos); DROP) \
+  /* mDNS */ \
+  X("MDNS.begin", MDNS_BEGIN, tos = MDNS.begin((const char *) tos)) \
   /* SPIFFS */ \
   X("SPIFFS.begin", SPIFFS_BEGIN, \
       tos = SPIFFS.begin(sp[-1], (const char *) *sp, tos); sp -=2) \
@@ -111,16 +112,14 @@
   X("WebServer.hasArg", WEBSERVER_HAS_ARG, \
       tos = ((WebServer *) tos)->hasArg((const char *) *sp); DROP) \
   X("WebServer.arg", WEBSERVER_ARG, \
-      String v = ((WebServer *) tos)->arg((const char *) *sp); \
-Serial.println(v); \
-Serial.println(v.length()); \
-      *sp = (cell_t) v.c_str(); tos = v.length()) \
+      string_value = ((WebServer *) tos)->arg((const char *) *sp); \
+      *sp = (cell_t) string_value.c_str(); tos = string_value.length()) \
   X("WebServer.argi", WEBSERVER_ARGI, \
-      String v = ((WebServer *) tos)->arg(*sp); \
-      *sp = (cell_t) v.c_str(); tos = v.length()) \
+      string_value = ((WebServer *) tos)->arg(*sp); \
+      *sp = (cell_t) string_value.c_str(); tos = string_value.length()) \
   X("WebServer.argName", WEBSERVER_ARG_NAME, \
-      String v = ((WebServer *) tos)->argName(*sp); \
-      *sp = (cell_t) v.c_str(); tos = v.length()) \
+      string_value = ((WebServer *) tos)->argName(*sp); \
+      *sp = (cell_t) string_value.c_str(); tos = string_value.length()) \
   X("WebServer.args", WEBSERVER_ARGS, tos = ((WebServer *) tos)->args()) \
   X("WebServer.setContentLength", WEBSERVER_SET_CONTENT_LENGTH, \
       ((WebServer *) tos)->setContentLength(*sp); --sp; DROP) \
@@ -143,6 +142,7 @@ Serial.println(v.length()); \
 //    tos = ftruncate(fd, tos); tos = tos < 0 ? errno : 0) \
 
 static char filename[PATH_MAX];
+static String string_value;
 
 {{core}}
 {{boot}}
