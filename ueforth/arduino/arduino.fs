@@ -19,4 +19,4 @@
 -1 echo !
 115200 Serial.begin
 100 ms
--1 z" /" 10 SPIFFS.begin drop
+-1 z" /spiffs" 10 SPIFFS.begin drop

@@ -71,8 +71,7 @@ $(GEN):
 
 POSIX_BOOT =  common/boot.fs common/terminal.fs \
               posix/posix.fs posix/posix_highlevel.fs \
-              common/filetools.fs posix/posix_desktop.fs \
-              common/autoboot.fs
+              common/filetools.fs posix/posix_desktop.fs
 $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 	echo "ok" | cat $(POSIX_BOOT) - | $< boot >$@
 
@@ -80,7 +79,9 @@ WINDOWS_BOOT = common/boot.fs common/terminal.fs windows/windows.fs
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 	echo "ok" | cat $(WINDOWS_BOOT) - | $< boot >$@
 
-ARDUINO_BOOT = common/boot.fs arduino/arduino.fs
+ARDUINO_BOOT = common/boot.fs arduino/arduino.fs \
+               posix/posix_highlevel.fs common/filetools.fs \
+               arduino/autoboot.fs
 $(GEN)/arduino_boot.h: common/source_to_string.js $(ARDUINO_BOOT) | $(GEN)
 	echo "ok" | cat $(ARDUINO_BOOT) - | $< boot >$@
 
