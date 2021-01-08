@@ -32,6 +32,7 @@ z" rename" 2 sysfunc rename
 z" malloc" 1 sysfunc malloc
 z" free" 1 sysfunc sysfree
 z" realloc" 2 sysfunc realloc
+z" usleep" 1 sysfunc usleep
 
 ( Errno )
 z" __errno_location" 0 sysfunc __errno_location
@@ -95,3 +96,6 @@ octal 777 constant 0777 decimal
    dup 0 SEEK_CUR lseek >r
    dup 0 SEEK_END lseek r> swap >r
          SEEK_SET lseek drop r> 0<ior ;
+
+( Other Utils )
+: ms ( n -- ) 1000 * usleep drop ;
