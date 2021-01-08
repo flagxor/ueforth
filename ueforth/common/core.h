@@ -16,6 +16,7 @@ static struct {
   int argc;
   char **argv;
   cell_t DOLIT_XT, DOEXIT_XT;
+  cell_t *ip, *sp, *rp;  // Parked alternates
 } g_sys;
 
 static cell_t convert(const char *pos, cell_t n, cell_t *ret) {
@@ -117,33 +118,16 @@ static cell_t *evaluate1(cell_t *sp) {
   return sp;
 }
 
-static void ueforth(int argc, char *argv[], void *heap,
-                    const char *src, cell_t src_len) {
-  memset(&g_sys, 0, sizeof(g_sys));
-  g_sys.heap = (cell_t *) heap;
-  register cell_t *sp = g_sys.heap; g_sys.heap += STACK_SIZE;
-  register cell_t *rp = g_sys.heap; g_sys.heap += STACK_SIZE;
-  register cell_t tos = 0, *ip, w;
-  dcell_t d;
-  udcell_t ud;
+static void ueforth_run() {
+  if (!g_sys.ip) {
 #define X(name, op, code) create(name, sizeof(name) - 1, name[0] == ';', && OP_ ## op);
-  PLATFORM_OPCODE_LIST
-  OPCODE_LIST
+    PLATFORM_OPCODE_LIST
+    OPCODE_LIST
 #undef X
-  g_sys.last[-1] = 1;  // Make ; IMMEDIATE
-  g_sys.DOLIT_XT = FIND("DOLIT");
-  g_sys.DOEXIT_XT = FIND("EXIT");
-  g_sys.notfound = FIND("DROP");
-  ip = g_sys.heap;
-  *g_sys.heap++ = FIND("EVALUATE1");
-  *g_sys.heap++ = FIND("BRANCH");
-  *g_sys.heap++ = (cell_t) ip;
-  g_sys.argc = argc;
-  g_sys.argv = argv;
-  g_sys.base = 10;
-  g_sys.tib = src;
-  g_sys.ntib = src_len;
-  NEXT;
+    return;
+  }
+  register cell_t *ip = g_sys.ip, *rp = g_sys.rp, *sp = g_sys.sp, tos, w;
+  DROP; NEXT;
 #define X(name, op, code) OP_ ## op: { code; } NEXT;
   PLATFORM_OPCODE_LIST
   OPCODE_LIST
@@ -152,4 +136,29 @@ static void ueforth(int argc, char *argv[], void *heap,
   OP_DOCREATE: DUP; tos = w + sizeof(cell_t) * 2; NEXT;
   OP_DODOES: DUP; tos = w + sizeof(cell_t) * 2;
              ++rp; *rp = (cell_t) ip; ip = (cell_t *) *(cell_t *) (w + sizeof(cell_t)); NEXT;
+}
+
+static void ueforth(int argc, char *argv[], void *heap,
+                    const char *src, cell_t src_len) {
+  memset(&g_sys, 0, sizeof(g_sys));
+  g_sys.heap = (cell_t *) heap;
+  ueforth_run();
+  g_sys.sp = g_sys.heap + sizeof(cell_t); g_sys.heap += STACK_SIZE;
+  g_sys.rp = g_sys.heap; g_sys.heap += STACK_SIZE;
+  g_sys.last[-1] = 1;  // Make ; IMMEDIATE
+  g_sys.DOLIT_XT = FIND("DOLIT");
+  g_sys.DOEXIT_XT = FIND("EXIT");
+  g_sys.notfound = FIND("DROP");
+  g_sys.ip = g_sys.heap;
+  *g_sys.heap++ = FIND("EVALUATE1");
+  *g_sys.heap++ = FIND("BRANCH");
+  *g_sys.heap++ = (cell_t) g_sys.ip;
+  g_sys.argc = argc;
+  g_sys.argv = argv;
+  g_sys.base = 10;
+  g_sys.tib = src;
+  g_sys.ntib = src_len;
+  for (;;) {
+    ueforth_run();
+  }
 }

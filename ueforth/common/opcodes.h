@@ -19,12 +19,13 @@ typedef uint64_t udcell_t;
 #define COMMA(n) *g_sys.heap++ = (n)
 #define IMMEDIATE() g_sys.last[-1] |= 1
 #define DOES(ip) *g_sys.last = (cell_t) && OP_DODOES; g_sys.last[1] = (cell_t) ip
-#define UMSMOD ud = *(udcell_t *) &sp[-1]; \
+#define UMSMOD udcell_t ud = *(udcell_t *) &sp[-1]; \
                --sp; *sp = (cell_t) (ud % tos); \
                tos = (cell_t) (ud / tos)
-#define SSMOD d = (dcell_t) *sp * (dcell_t) sp[-1]; \
+#define SSMOD dcell_t d = (dcell_t) *sp * (dcell_t) sp[-1]; \
               --sp; *sp = (cell_t) (((udcell_t) d) % tos); \
               tos = (cell_t) (d < 0 ? ~(~d / tos) : d / tos)
+#define PARK DUP; g_sys.ip = ip; g_sys.rp = rp; g_sys.sp = sp
 
 #define OPCODE_LIST \
   X("0=", ZEQUAL, tos = !tos ? -1 : 0) \
@@ -73,6 +74,7 @@ typedef uint64_t udcell_t;
   X("DOES>", DOES, DOES((cell_t *) ((cell_t) ip|0)); ip = (cell_t *) (*rp | 0); --rp) \
   X("IMMEDIATE", IMMEDIATE, IMMEDIATE()) \
   X("'SYS", SYS, DUP; tos = (cell_t) &g_sys) \
+  X("YIELD", YIELD, PARK; return) \
   X(":", COLON, DUP; DUP; tos = parse(32, (cell_t *) ((cell_t) sp | 0))|0; \
                 create((const char *) (*sp | 0), tos|0, 0, && OP_DOCOLON); \
                    g_sys.state = -1; --sp; DROP) \
