@@ -57,7 +57,7 @@ typedef uint64_t udcell_t;
   X("BRANCH", BRANCH, ip = (cell_t *) (*ip | 0)) \
   X("0BRANCH", ZBRANCH, if (!tos) ip = (cell_t *) (*ip | 0); else ++ip; DROP) \
   X("DONEXT", DONEXT, *rp = ((*rp|0) - 1) | 0; \
-                      if ((*rp|0)) ip = (cell_t *) (*ip | 0); else (--rp, ++ip)) \
+                      if (~(*rp|0)) ip = (cell_t *) (*ip | 0); else (--rp, ++ip)) \
   X("DOLIT", DOLIT, DUP; tos = (*ip | 0); ++ip) \
   X("ALITERAL", ALITERAL, COMMA(g_sys.DOLIT_XT | 0); COMMA(tos | 0); DROP) \
   X("CELL", CELL, DUP; tos = sizeof(cell_t)) \
