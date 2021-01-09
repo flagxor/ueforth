@@ -196,7 +196,7 @@ $(DEPLOY):
 	mkdir -p $@
 
 $(DEPLOY)/app.yaml: $(ARDUINO)/ueforth-arduino-esp32.zip \
-                    site/static/index.html \
+                    site/index.html \
                     site/app.yaml \
                     site/eforth.go \
                     $(TARGETS) | $(DEPLOY)

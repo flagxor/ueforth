@@ -14,8 +14,8 @@ handlers:
   secure: always
 
 - url: /
-  static_files: static/index.html
-  upload: static/index.html
+  static_files: index.html
+  upload: index.html
   secure: always
 
 - url: /static/uEforth.exe
