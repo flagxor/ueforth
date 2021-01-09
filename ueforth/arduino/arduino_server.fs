@@ -33,17 +33,8 @@ Upload File: <input id="filepick" type="file" name="files[]"></input><br/>
 <button onclick="ask('hex')">hex</button>
 <button onclick="ask('decimal')">decimal</button>
 <button onclick="ask('words')">words</button>
-<button onclick="ask('$100 init hush')">init</button>
-<button onclick="ask('ride')">ride</button>
-<button onclick="ask('blow')">blow</button>
-<button onclick="ask('$50000 p0')">fore</button>
-<button onclick="ask('$a0000 p0')">back</button>
-<button onclick="ask('$10000 p0')">left</button>
-<button onclick="ask('$40000 p0')">right</button>
-<button onclick="ask('$90000 p0')">spin</button>
-<button onclick="ask('0 p0')">stop</button>
-<button onclick="ask('4 p0s')">LED</button>
-<button onclick="ask('$24 ADC . $27 ADC . $22 ADC . $23 ADC .')">ADC</button>
+<button onclick="ask('low led pin')">LED OFF</button>
+<button onclick="ask('high led pin')">LED ON</button>
 <br/>
 <textarea id="output" readonly></textarea>
 <input id="prompt" type="prompt"></input><br/>
