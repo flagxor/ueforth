@@ -106,7 +106,7 @@ window.onload = function() {
 | constant index-html
 
 variable webserver
-500 constant out-size
+20000 constant out-size
 200 stream input-stream
 out-size dup stream output-stream
 create out-string out-size 1+ allot align
@@ -118,8 +118,9 @@ create out-string out-size 1+ allot align
 
 : handle-input
    z" cmd" webserver @ WebServer.hasArg if
-     z" cmd" webserver @ WebServer.arg input-stream >stream
+     z" cmd" webserver @ WebServer.arg input-stream >stream pause
      out-string out-size output-stream stream>
+     out-string z>s arduino-type
      200 z" text/plain" out-string webserver @ WebServer.send
    else
      500 z" text/plain" z" Missing Input" webserver @ WebServer.send
@@ -141,7 +142,7 @@ create out-string out-size 1+ allot align
    again
 ;
 
-' do-serve 10 10 task webserver-task
+' do-serve 1000 1000 task webserver-task
 
 : serve
    ['] serve-type is type
@@ -151,6 +152,6 @@ create out-string out-size 1+ allot align
 
 : wifi ( z z -- )
    WIFI_MODE_STA Wifi.mode
-   WiFi.begin 1000 ms WiFi.localIP ip. cr
+   WiFi.begin begin WiFi.localIP 0= while 100 ms repeat WiFi.localIP ip. cr
    z" ueforth" MDNS.begin if ." MDNS started" else ." MDNS failed" then cr ;
 : webui ( z z -- ) wifi serve ; 
