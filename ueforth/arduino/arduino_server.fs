@@ -37,7 +37,11 @@ Upload File: <input id="filepick" type="file" name="files[]"></input><br/>
 <br/>
 <textarea id="output" readonly></textarea>
 <input id="prompt" type="prompt"></input><br/>
-<script>
+<script src="terminal1.js"></script>
+<script src="terminal2.js"></script>
+| s>z constant index-html
+
+r|
 var prompt = document.getElementById('prompt');
 var filepick = document.getElementById('filepick');
 var output = document.getElementById('output');
@@ -67,6 +71,9 @@ function ask(cmd, callback) {
     if (callback !== undefined) { callback(); }
   });
 }
+| s>z constant terminal1-js
+
+r|
 prompt.onkeyup = function(event) {
   if (event.keyCode === 13) {
     event.preventDefault();
@@ -93,7 +100,7 @@ window.onload = function() {
   prompt.focus();
 };
 </script>
-| s>z constant index-html
+| s>z constant terminal2-js
 
 variable webserver
 20000 constant out-size
@@ -104,6 +111,16 @@ create out-string out-size 1+ allot align
 : handle-index
    index-html z>s nip webserver @ WebServer.setContentLength
    200 z" text/html" index-html webserver @ WebServer.send
+;
+
+: handle-terminal1
+   terminal1-js z>s nip webserver @ WebServer.setContentLength
+   200 z" text/html" terminal1-js webserver @ WebServer.send
+;
+
+: handle-terminal2
+   terminal2-js z>s nip webserver @ WebServer.setContentLength
+   200 z" text/html" terminal2-js webserver @ WebServer.send
 ;
 
 : handle-input
@@ -122,8 +139,9 @@ create out-string out-size 1+ allot align
 
 : do-serve
    80 WebServer.new webserver !
-   z" /webui" ['] handle-index webserver @ WebServer.on
    z" /" ['] handle-index webserver @ WebServer.on
+   z" /terminal1.js" ['] handle-terminal1 webserver @ WebServer.on
+   z" /terminal2.js" ['] handle-terminal2 webserver @ WebServer.on
    z" /input" ['] handle-input webserver @ WebServer.on
    webserver @ WebServer.begin
    begin
