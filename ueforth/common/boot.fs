@@ -179,7 +179,10 @@ variable hld
 : exit= ( xt -- ) ['] exit = ;
 : see-loop   >:body begin see-one dup @ exit= until ;
 : see   cr ['] : see.  ' dup see.  space see-loop drop  ['] ; see.  cr ;
-: words   last @ begin dup see. >link dup 0= until drop cr ;
+75 value line-width
+: onlines ( n xt -- n xt )
+   swap dup line-width > if drop 0 cr then over >name nip + 1+ swap ;
+: words   0 last @ begin onlines dup see. >link dup 0= until 2drop cr ;
 
 ( Examine Memory )
 : dump ( a n -- )
