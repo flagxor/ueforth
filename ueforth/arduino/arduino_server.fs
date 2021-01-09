@@ -1,7 +1,6 @@
 ( Server Terminal )
 : n. ( n -- ) <# #s #> type ;  : ip# dup 255 and n. [char] . emit 256 / ;
 : ip. ( n -- ) ip# ip# ip# 255 and . ;
-: r| ( -- z ) [char] | parse s>z ;
 
 r|
 <!html>
@@ -94,7 +93,7 @@ window.onload = function() {
   prompt.focus();
 };
 </script>
-| constant index-html
+| s>z constant index-html
 
 variable webserver
 20000 constant out-size
