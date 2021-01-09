@@ -15,6 +15,13 @@
 : freq ( n n -- ) 1000 * 13 ledcSetup drop ;
 : tone ( n n -- ) 1000 * ledcWriteTone drop ;
 
+( Basic Ardiuno Constants )
+0 constant LOW
+1 constant HIGH
+1 constant INPUT
+2 constant OUTPUT
+2 constant LED
+
 ( WiFi Modes )
 0 constant WIFI_MODE_NULL
 1 constant WIFI_MODE_STA
@@ -26,3 +33,5 @@
 115200 Serial.begin
 100 ms
 -1 z" /spiffs" 10 SPIFFS.begin drop
+led OUTPUT pinMode
+high led pin

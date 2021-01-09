@@ -136,6 +136,10 @@
       tos = (cell_t) ((WebServer *) tos)->method()) \
   X("WebServer.handleClient", WEBSERVER_HANDLE_CLIENT, \
       ((WebServer *) tos)->handleClient(); DROP) \
+  X("OUTPUT", OUTPUT, DUP; tos = OUTPUT) \
+  X("INPUT", INPUT, DUP; tos = INPUT) \
+  X("LOW", LOW, DUP; tos = LOW) \
+  X("HIGH", HIGH, DUP; tos = HIGH) \
 
 // TODO: Why doesn't ftruncate exist?
 //  X("RESIZE-FILE", RESIZE_FILE, cell_t fd = tos; DROP; \
