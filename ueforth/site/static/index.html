@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<body>
+<h1>EForth</h1>
+
+<p>
+EForth is delightfully minimalist approach to Forth originated by Bill Muench and Dr. C. H. Ting.
+</p>
+
+<p>
+In its original form metacompilation is avoided.
+</p>
+
+<h2>Download</h2>
+<p>
+<ul>
+  <li><a href="static/eEforth.exe">uEforth.exe</a> - Window EXE uEforth</li>
+  <li><a href="static/eforth.linux">eforth.linux</a> - Linux Executable uEforth</li>
+  <li><a href="static/ueforth.zip">ueforth-arduino-esp32.zip</a> - Arudino Source Code</li>
+  <li><a href="https://github.com/flagxor/eforth">http://github.com/flagxor/eforth</a>
+     - Complete Source Code (under ueforth)</li>
+</ul>
+</p>
+
+<h2>EForth Quirks</h2>
+
+<p>
+EForth uses <code>FOR..NEXT</code> in favor of <code>DO..LOOP</code>.
+<a href="https://github.com/TG9541/stm8ef/wiki/eForth-FOR-..-NEXT">Details</a>
+</p>
+
+<p>
+This construct has the odd property that it iterates one "extra" time for zero.
+</p>
+
+<pre>
+: FOO 10 FOR R@ . NEXT ; FOO
+ 10 9 8 7 6 5 4 3 2 1 0  ok
+</pre>
+
+<p>
+To permit a more ordinary loop the <code>AFT</code> word is used in the sequence
+<code>FOR..AFT..THEN..NEXT</code>.
+</p>
+
+<pre>
+: FOO 10 FOR ( 1st time only ) AFT R@ . THEN NEXT ; FOO
+ 9 8 7 6 5 4 3 2 1 0  ok
+</pre>
+
+<p>
+The even more enigmatic <code>FOR..WHILE..NEXT..ELSE..THEN</code>
+is used in place of <code>DO..LEAVE..LOOP</code>.
+It allows a while condition to early out of a counted loop.
+</p>
+

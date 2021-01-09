@@ -1,0 +1,27 @@
+runtime: go115
+
+default_expiration: "1m"
+
+handlers:
+- url: /robots.txt
+  static_files: static/robots.txt
+  upload: static/robots.txt
+  secure: always
+
+- url: /favicon(.*)
+  static_files: static/favicon\1
+  upload: static/favicon.*
+  secure: always
+
+- url: /
+  static_files: static/index.html
+  upload: static/index.html
+  secure: always
+
+- url: /static
+  static_dir: static
+  secure: always
+
+- url: /.*
+  script: auto
+  secure: always

@@ -5,6 +5,7 @@ WEB = $(OUT)/web
 POSIX = $(OUT)/posix
 WINDOWS = $(OUT)/windows
 ARDUINO = $(OUT)/arduino/ueforth
+DEPLOY = $(OUT)/deploy
 
 CFLAGS = -Wall -Werror \
          -O2 \
@@ -37,7 +38,7 @@ endif
 TARGETS = $(WEB)/terminal.html \
           $(WEB)/ueforth.js \
           $(POSIX)/ueforth \
-          $(ARDUINO)/ueforth.ino
+          $(ARDUINO)/ueforth/ueforth.ino
 
 # Selectively enable windows if tools available
 ifneq (, $(shell which $(WIN_ARCH)-w64-mingw32-windres))
@@ -50,7 +51,7 @@ else
   $(warning "Missing $(WIN_ARCH)-w64-mingw32-windres skipping Windows.")
 endif
 
-all: $(TARGETS) tests
+all: $(TARGETS) tests $(DEPLOY)/app.yaml
 
 clean:
 	rm -rf $(OUT)
@@ -171,14 +172,34 @@ $(WINDOWS)/uEforth.exe: \
 
 # ---- ARDUINO ----
 
-$(ARDUINO):
+$(ARDUINO)/ueforth:
 	mkdir -p $@
 
-$(ARDUINO)/ueforth.ino: \
+$(ARDUINO)/ueforth/ueforth.ino: \
         arduino/fuse_ino.js \
         arduino/arduino.template.ino \
         common/opcodes.h \
         common/core.h \
-        $(GEN)/arduino_boot.h | $(ARDUINO)
+        $(GEN)/arduino_boot.h | $(ARDUINO)/ueforth
 	$^ >$@
 
+# ---- PACKAGE ----
+
+$(ARDUINO)/ueforth-arduino-esp32.zip: $(ARDUINO)/ueforth/ueforth.ino
+	cd $(ARDUINO) && zip -r ueforth-arduino-esp32.zip ueforth
+
+# ---- DEPLOY ----
+
+$(DEPLOY):
+	mkdir -p $@
+
+$(DEPLOY)/app.yaml: $(ARDUINO)/ueforth-arduino-esp32.zip $(TARGETS) | $(DEPLOY)
+	mkdir -p $(DEPLOY)/static
+	cp -r $(ARDUINO)/ueforth-arduino-esp32.zip $(DEPLOY)/static
+	cp -r $(POSIX)/ueforth $(DEPLOY)/static/ueforth.linux
+	cp -r $(WINDOWS)/uEforth.exe $(DEPLOY)/static
+	cp -r $(RES)/eforth.ico $(DEPLOY)/static/favicon.ico
+	cp -r site/* $(DEPLOY)
+
+deploy:
+	cd $(DEPLOY) && ./deploy.sh
