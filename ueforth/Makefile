@@ -203,9 +203,7 @@ $(DEPLOY)/app.yaml: $(ARDUINO)/ueforth-arduino-esp32.zip \
 	mkdir -p $(DEPLOY)/static
 	cp -r $(ARDUINO)/ueforth-arduino-esp32.zip $(DEPLOY)/static
 	cp -r $(POSIX)/ueforth $(DEPLOY)/static/ueforth.linux
-	cp -r $(WINDOWS)/uEforth.exe $(DEPLOY)/static/ueforth.windows
+	cp -r $(WINDOWS)/uEforth.exe $(DEPLOY)/static/uEforth.exe
 	cp -r $(RES)/eforth.ico $(DEPLOY)/static/favicon.ico
 	cp -r site/* $(DEPLOY)
-
-deploy:
-	cd $(DEPLOY) && ./deploy.sh
+	cp -r site/.gcloudignore $(DEPLOY)

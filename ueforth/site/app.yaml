@@ -18,11 +18,6 @@ handlers:
   upload: index.html
   secure: always
 
-- url: /static/uEforth.exe
-  static_files: static/ueforth.windows
-  upload: static/ueforth.windows
-  secure: always
-
 - url: /static
   static_dir: static
   secure: always
