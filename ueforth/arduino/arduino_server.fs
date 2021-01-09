@@ -106,31 +106,30 @@ window.onload = function() {
 | constant index-html
 
 variable webserver
+500 constant out-size
+200 stream input-stream
+out-size dup stream output-stream
+create out-string out-size 1+ allot align
 
 : handle-index
-   ( ." Handling index.html content length" cr
-     index-html z>s nip webserver @ WebServer.setContentLength )
-   ." Handling index.html content length" cr
+   index-html z>s nip webserver @ WebServer.setContentLength
    200 z" text/html" index-html webserver @ WebServer.send
-   ." Done! Handling index.html" cr
 ;
 
 : handle-input
-   ." Handling input" cr
    z" cmd" webserver @ WebServer.hasArg if
-     ." hasarg" cr
-     z" cmd" webserver @ WebServer.arg
-     ." Got: " cr dup .
-     2dup type cr
-     ['] evaluate catch drop
-     200 z" text/plain" z" nop" webserver @ WebServer.send
+     z" cmd" webserver @ WebServer.arg input-stream >stream
+     out-string out-size output-stream stream>
+     200 z" text/plain" out-string webserver @ WebServer.send
    else
-     ." not hasarg" cr
      500 z" text/plain" z" Missing Input" webserver @ WebServer.send
    then
 ;
 
-: serve
+: serve-type ( a n -- ) output-stream >stream ;
+: serve-key ( -- n ) input-stream stream>ch ;
+
+: do-serve
    80 WebServer.new webserver !
    z" /" ['] handle-index webserver @ WebServer.on
    z" /input" ['] handle-input webserver @ WebServer.on
@@ -140,6 +139,14 @@ variable webserver
      1 ms
      yield
    again
+;
+
+' do-serve 10 10 task webserver-task
+
+: serve
+   ['] serve-type is type
+   ['] serve-key is key
+   webserver-task start-task
 ;
 
 : wifi ( z z -- )
