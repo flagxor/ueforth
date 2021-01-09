@@ -123,6 +123,7 @@ create out-string out-size 1+ allot align
 
 : do-serve
    80 WebServer.new webserver !
+   z" /webui" ['] handle-index webserver @ WebServer.on
    z" /" ['] handle-index webserver @ WebServer.on
    z" /input" ['] handle-input webserver @ WebServer.on
    webserver @ WebServer.begin

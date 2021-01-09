@@ -90,6 +90,8 @@
   X("WiFi.macAddress", WIFI_MAC_ADDRESS, WiFi.macAddress((uint8_t *) tos); DROP) \
   X("WiFi.localIP", WIFI_LOCAL_IPS, DUP; tos = FromIP(WiFi.localIP())) \
   X("WiFi.mode", WIFI_MODE, WiFi.mode((wifi_mode_t) tos); DROP) \
+  X("WiFi.setTxPower", WIFI_SET_TX_POWER, WiFi.setTxPower((wifi_power_t) tos); DROP) \
+  X("WiFi.getTxPower", WIFI_GET_TX_POWER, DUP; tos = (cell_t) WiFi.getTxPower()) \
   /* mDNS */ \
   X("MDNS.begin", MDNS_BEGIN, tos = MDNS.begin((const char *) tos)) \
   /* SPIFFS */ \
