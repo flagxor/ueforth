@@ -163,6 +163,10 @@ variable hld
 : s>z ( a n -- z ) here >r $place r> ;
 : z>s ( z -- a n ) 0 over begin dup c@ while 1+ swap 1+ swap repeat drop ;
 
+( Fill, Move )
+: cmove ( a a n -- ) for aft >r dup c@ r@ c! 1+ r> 1+ then next 2drop ;
+: fill ( a a n -- ) swap for swap aft 2dup c! 1 + then next 2drop ;
+
 ( Better Errors )
 : notfound ( a n n -- )
    if cr ." ERROR: " type ."  NOT FOUND!" cr -1 throw then ;

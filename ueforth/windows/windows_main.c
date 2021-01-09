@@ -6,7 +6,7 @@
 #include "common/calling.h"
 
 #define HEAP_SIZE (10 * 1024 * 1024)
-#define STACK_SIZE (16 * 1024)
+#define STACK_SIZE (64 * 1024)
 
 #define PLATFORM_OPCODE_LIST \
   X("GETPROCADDRESS", GETPROCADDRESS, \

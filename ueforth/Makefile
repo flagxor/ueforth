@@ -27,7 +27,9 @@ STRIP_ARGS = -S \
              --remove-section=.note.ABI-tag
 LIBS=-ldl
 
-WINFLAGS = -mwindows -luser32
+WINFLAGS = -ffreestanding -fno-stack-check \
+           -fno-stack-protector -mno-stack-arg-probe \
+           -mwindows -lkernel32
 
 # Default to 32-bit Windows for maximum portability.
 ifeq ($(WIN_ARCH),)
@@ -201,7 +203,7 @@ $(DEPLOY)/app.yaml: $(ARDUINO)/ueforth-arduino-esp32.zip \
 	mkdir -p $(DEPLOY)/static
 	cp -r $(ARDUINO)/ueforth-arduino-esp32.zip $(DEPLOY)/static
 	cp -r $(POSIX)/ueforth $(DEPLOY)/static/ueforth.linux
-	cp -r $(WINDOWS)/uEforth.exe $(DEPLOY)/static
+	cp -r $(WINDOWS)/uEforth.exe $(DEPLOY)/static/ueforth.windows
 	cp -r $(RES)/eforth.ico $(DEPLOY)/static/favicon.ico
 	cp -r site/* $(DEPLOY)
 

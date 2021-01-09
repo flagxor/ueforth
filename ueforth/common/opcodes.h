@@ -46,8 +46,6 @@ typedef uint64_t udcell_t;
   X("!", STORE, *(cell_t *) tos = (*sp)|0; --sp; DROP) \
   X("L!", LSTORE, *(int32_t *) tos = (*sp)|0; --sp; DROP) \
   X("C!", CSTORE, *(uint8_t *) tos = (*sp)|0; --sp; DROP) \
-  X("FILL", FILL, memset((void *) (sp[-1] | 0), tos | 0, (*sp | 0)); sp -= 2; DROP) \
-  X("MOVE", MOVE, memmove((void *) (sp[-1] | 0), (void *) (*sp | 0), tos | 0); sp -= 2; DROP) \
   X("SP@", SPAT, DUP; tos = (cell_t) sp) \
   X("SP!", SPSTORE, sp = (cell_t *) tos; DROP) \
   X("RP@", RPAT, DUP; tos = (cell_t) rp) \

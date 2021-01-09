@@ -59,7 +59,8 @@ static cell_t find(const char *name, cell_t len) {
 }
 
 static void create(const char *name, cell_t length, cell_t flags, void *op) {
-  memcpy(g_sys.heap, name, length);  // name
+  char *pos = (char *) g_sys.heap;
+  for (cell_t n = length; n; --n) { *pos++ = *name++; }  // name
   g_sys.heap += CELL_LEN(length);
   *g_sys.heap++ = length;  // length
   *g_sys.heap++ = (cell_t) g_sys.last;  // link
@@ -141,11 +142,11 @@ static void ueforth_run() {
 
 static void ueforth(int argc, char *argv[], void *heap,
                     const char *src, cell_t src_len) {
-  memset(&g_sys, 0, sizeof(g_sys));
-  g_sys.heap = (cell_t *) heap;
+  g_sys.ip = 0;
+  g_sys.heap = (cell_t *) heap + 4;  // Leave a little room.
   ueforth_run();
-  g_sys.sp = g_sys.heap + sizeof(cell_t); g_sys.heap += STACK_SIZE;
-  g_sys.rp = g_sys.heap; g_sys.heap += STACK_SIZE;
+  g_sys.sp = g_sys.heap + 1; g_sys.heap += STACK_SIZE;
+  g_sys.rp = g_sys.heap + 1; g_sys.heap += STACK_SIZE;
   g_sys.last[-1] = 1;  // Make ; IMMEDIATE
   g_sys.DOLIT_XT = FIND("DOLIT");
   g_sys.DOEXIT_XT = FIND("EXIT");
