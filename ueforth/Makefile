@@ -193,7 +193,11 @@ $(ARDUINO)/ueforth-arduino-esp32.zip: $(ARDUINO)/ueforth/ueforth.ino
 $(DEPLOY):
 	mkdir -p $@
 
-$(DEPLOY)/app.yaml: $(ARDUINO)/ueforth-arduino-esp32.zip $(TARGETS) | $(DEPLOY)
+$(DEPLOY)/app.yaml: $(ARDUINO)/ueforth-arduino-esp32.zip \
+                    site/static/index.html \
+                    site/app.yaml \
+                    site/eforth.go \
+                    $(TARGETS) | $(DEPLOY)
 	mkdir -p $(DEPLOY)/static
 	cp -r $(ARDUINO)/ueforth-arduino-esp32.zip $(DEPLOY)/static
 	cp -r $(POSIX)/ueforth $(DEPLOY)/static/ueforth.linux

@@ -1,9 +1,2 @@
 User-agent: *
-Disallow: /haiku-editor
-Disallow: /haiku-submit
-Disallow: /haiku-view
-Disallow: /haiku-print
-Disallow: /haiku-vote
-Disallow: /haiku-bare
-Disallow: /haiku-search
-Disallow: /haiku-slideshow
+Disallow: /terminal
