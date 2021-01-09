@@ -1,6 +1,6 @@
 # The many faces of EForth
 
-EForth is delightfully minimalist approach to Forth originated by Bill Muench and Dr. C. H. Ting.
+EForth is a delightfully minimalist approach to Forth originated by Bill Muench and Dr. C. H. Ting.
 
 In its original form metacompilation is avoided.
 
