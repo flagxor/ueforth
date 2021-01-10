@@ -42,7 +42,6 @@ function VM(stdlib, foreign, heap) {
 
   var imul = stdlib.Math.imul;
 
-  var UMSMOD = foreign.UMSMOD;
   var SSMOD = foreign.SSMOD;
   var Call = foreign.Call;
   var COMMA = foreign.COMMA;
@@ -102,7 +101,6 @@ var ffi = {
   create: function() {},
   parse: function() {},
   COMMA: function() {},
-  UMSMOD: function() {},
   SSMOD: function() {},
   DOES: function() {},
   IMMEDIATE: function() {},

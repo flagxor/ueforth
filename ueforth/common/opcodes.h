@@ -19,10 +19,7 @@ typedef uint64_t udcell_t;
 #define COMMA(n) *g_sys.heap++ = (n)
 #define IMMEDIATE() g_sys.last[-1] |= 1
 #define DOES(ip) *g_sys.last = (cell_t) && OP_DODOES; g_sys.last[1] = (cell_t) ip
-#ifndef UMSMOD_FUNC
-#define UMSMOD_FUNC udcell_t ud = *(udcell_t *) &sp[-1]; \
-                    --sp; *sp = (cell_t) (ud % tos); \
-                    tos = (cell_t) (ud / tos)
+#ifndef SSMOD_FUNC
 #define SSMOD_FUNC dcell_t d = (dcell_t) *sp * (dcell_t) sp[-1]; \
                    --sp; *sp = (cell_t) (((udcell_t) d) % tos); \
                    tos = (cell_t) (d < 0 ? ~(~d / tos) : d / tos)
@@ -33,7 +30,8 @@ typedef uint64_t udcell_t;
   X("0=", ZEQUAL, tos = !tos ? -1 : 0) \
   X("0<", ZLESS, tos = (tos|0) < 0 ? -1 : 0) \
   X("+", PLUS, tos = (tos + *sp) | 0; --sp) \
-  X("UM/MOD", UMSMOD, UMSMOD_FUNC) \
+  X("U/MOD", USMOD, w = *sp; *sp = (uintptr_t) w % (uintptr_t) tos; \
+                    tos = (uintptr_t) w / tos) \
   X("*/MOD", SSMOD, SSMOD_FUNC) \
   X("AND", AND, tos = tos & *sp; --sp) \
   X("OR", OR, tos = tos | *sp; --sp) \

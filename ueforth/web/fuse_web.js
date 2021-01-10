@@ -43,7 +43,6 @@ cases = ReplaceAll(cases, '&g_sys', 'g_sys');
 cases = ReplaceAll(cases, '&& OP_DOCOLON', '0');
 cases = ReplaceAll(cases, '&& OP_DOCREATE', '1');
 cases = ReplaceAll(cases, 'goto **(void **) w', 'break decode');
-cases = ReplaceAll(cases, 'UMSMOD', '');
 cases = ReplaceAll(cases, 'SSMOD', '');
 
 code = code.replace('{{boot}}', function() { return boot; });

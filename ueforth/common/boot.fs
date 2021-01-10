@@ -137,7 +137,7 @@ defer bye
 variable hld
 : pad ( -- a ) here 80 + ;
 : digit ( u -- c ) 9 over < 7 and + 48 + ;
-: extract ( n base -- n c ) 0 swap um/mod swap digit ;
+: extract ( n base -- n c ) u/mod swap digit ;
 : <# ( -- ) pad hld ! ;
 : hold ( c -- ) hld @ 1 - dup hld ! c! ;
 : # ( u -- u ) base @ extract hold ;

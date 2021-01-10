@@ -2,11 +2,6 @@
 
 #define CALLTYPE WINAPI
 
-# define UMSMOD_FUNC \
-  asm("div %2" \
-      : "=a" (tos), "=d" (sp[-1]) \
-      : "r" (tos), "a" (sp[-1]), "d" (*sp)); --sp
-
 # define SSMOD_FUNC \
   w = tos; asm("imul %4\n\t" \
       "idiv %2" \
