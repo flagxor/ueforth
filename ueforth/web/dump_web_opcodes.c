@@ -31,4 +31,5 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "USAGE: %s cases/dict\n", argv[1]);
     return 1;
   }
+  return 0;
 }

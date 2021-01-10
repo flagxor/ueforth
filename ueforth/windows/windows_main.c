@@ -2,6 +2,17 @@
 
 #define CALLTYPE WINAPI
 
+# define UMSMOD_FUNC \
+  asm("div %2" \
+      : "=a" (tos), "=d" (sp[-1]) \
+      : "r" (tos), "a" (sp[-1]), "d" (*sp)); --sp
+
+# define SSMOD_FUNC \
+  w = tos; asm("imul %4\n\t" \
+      "idiv %2" \
+      : "=a" (tos), "=d" (sp[-1]) \
+      : "r" (w), "a" (sp[-1]), "d" (*sp)); --sp; if (*sp < 0) { *sp += w; --tos; }
+
 #include "common/opcodes.h"
 #include "common/calling.h"
 
@@ -19,8 +30,7 @@
 
 #include "gen/windows_boot.h"
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrev,
-                   PSTR pCmdLine, int nCmdShow) {
+int WINAPI WinMainCRTStartup(void) {
   void *heap = VirtualAlloc(
       NULL, HEAP_SIZE, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
   ueforth(0, 0, heap, boot, sizeof(boot));

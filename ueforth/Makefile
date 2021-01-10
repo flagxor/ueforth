@@ -7,17 +7,22 @@ WINDOWS = $(OUT)/windows
 ARDUINO = $(OUT)/arduino
 DEPLOY = $(OUT)/deploy
 
-CFLAGS = -Wall -Werror \
-         -O2 \
-         -fno-exceptions \
-         -s \
-         -fomit-frame-pointer \
-         -fno-stack-protector \
-         -fno-ident -Wl,--build-id=none \
-         -ffunction-sections -fdata-sections \
-         -Wl,--gc-sections \
-         -fmerge-all-constants \
-         -I ./ -I $(OUT)
+CFLAGS_COMMON = -Wall -Werror \
+                -O2 \
+                -s \
+                -ffreestanding \
+                -fno-exceptions \
+                -fno-stack-check \
+                -fno-stack-protector \
+                -fno-stack-protector \
+                -fomit-frame-pointer \
+                -mno-stack-arg-probe \
+                -fno-ident -Wl,--build-id=none \
+                -ffunction-sections -fdata-sections \
+                -fmerge-all-constants \
+                -I ./ -I $(OUT)
+CFLAGS = $(CFLAGS_COMMON) \
+         -Wl,--gc-sections
 STRIP_ARGS = -S \
              --strip-unneeded \
              --remove-section=.note.gnu.gold-version \
@@ -27,9 +32,9 @@ STRIP_ARGS = -S \
              --remove-section=.note.ABI-tag
 LIBS=-ldl
 
-WINFLAGS = -ffreestanding -fno-stack-check \
-           -fno-stack-protector -mno-stack-arg-probe \
-           -mwindows -lkernel32
+WIN_CFLAGS = $(CFLAGS_COMMON) -mwindows -nostdlib \
+
+WIN_LIBS = -lkernel32
 
 # Default to 32-bit Windows for maximum portability.
 ifeq ($(WIN_ARCH),)
@@ -43,14 +48,23 @@ TARGETS = $(WEB)/terminal.html \
           $(ARDUINO)/ueforth/ueforth.ino
 
 # Selectively enable windows if tools available
-ifneq (, $(shell which $(WIN_ARCH)-w64-mingw32-windres))
-  ifneq (, $(shell which $(WIN_ARCH)-w64-mingw32-gcc))
-    TARGETS += $(WINDOWS)/uEforth.exe
+ifneq (, $(shell which i686-w64-mingw32-windres))
+  ifneq (, $(shell which i686-w64-mingw32-gcc))
+    TARGETS += $(WINDOWS)/uEforth32.exe
   else
-    $(warning "Missing $(WIN_ARCH)-w64-mingw32-gcc skipping Windows.")
+    $(warning "Missing i686-w64-mingw32-gcc skipping 32-bit Windows.")
   endif
 else
-  $(warning "Missing $(WIN_ARCH)-w64-mingw32-windres skipping Windows.")
+  $(warning "Missing i686-w64-mingw32-windres skipping 32-bit Windows.")
+endif
+ifneq (, $(shell which x86_64-w64-mingw32-windres))
+  ifneq (, $(shell which x86_64-w64-mingw32-gcc))
+    TARGETS += $(WINDOWS)/uEforth64.exe
+  else
+    $(warning "Missing i686-w64-mingw32-gcc skipping 64-bit Windows.")
+  endif
+else
+  $(warning "Missing i686-w64-mingw32-windres skipping 64-bit Windows.")
 endif
 
 all: $(TARGETS) tests $(DEPLOY)/app.yaml
@@ -124,10 +138,11 @@ ICON_SIZES = $(RES)/eforth256x256.png \
 $(RES)/eforth.ico: $(ICON_SIZES)
 	convert $^ $< $@
 
-WINDOWS_RESOURCES = $(RES)/ueforth_res.o
+$(RES)/ueforth_res32.o: windows/ueforth.rc $(RES)/eforth.ico
+	i686-w64-mingw32-windres $< $@
 
-$(WINDOWS_RESOURCES): windows/ueforth.rc $(RES)/eforth.ico
-	$(WIN_ARCH)-w64-mingw32-windres $< $@
+$(RES)/ueforth_res64.o: windows/ueforth.rc $(RES)/eforth.ico
+	x86_64-w64-mingw32-windres $< $@
 
 # ---- WEB ----
 
@@ -163,14 +178,23 @@ $(POSIX)/ueforth: \
 $(WINDOWS):
 	mkdir -p $@
 
-$(WINDOWS)/uEforth.exe: \
+$(WINDOWS)/uEforth32.exe: \
     windows/windows_main.c \
     common/opcodes.h \
     common/core.h \
     $(GEN)/windows_boot.h \
-    $(WINDOWS_RESOURCES) | $(WINDOWS)
-	$(WIN_ARCH)-w64-mingw32-gcc \
-    $(CFLAGS) $(WINFLAGS) $< $(WINDOWS_RESOURCES) -o $@
+    $(RES)/ueforth_res32.o | $(WINDOWS)
+	i686-w64-mingw32-gcc \
+    $(WIN_CFLAGS) $< $(RES)/ueforth_res32.o -o $@ $(WIN_LIBS)
+
+$(WINDOWS)/uEforth64.exe: \
+    windows/windows_main.c \
+    common/opcodes.h \
+    common/core.h \
+    $(GEN)/windows_boot.h \
+    $(RES)/ueforth_res64.o | $(WINDOWS)
+	x86_64-w64-mingw32-gcc \
+    $(WIN_CFLAGS) $< $(RES)/ueforth_res64.o -o $@ $(WIN_LIBS)
 
 # ---- ARDUINO ----
 
@@ -203,7 +227,8 @@ $(DEPLOY)/app.yaml: $(ARDUINO)/ueforth-arduino-esp32.zip \
 	mkdir -p $(DEPLOY)/static
 	cp -r $(ARDUINO)/ueforth-arduino-esp32.zip $(DEPLOY)/static
 	cp -r $(POSIX)/ueforth $(DEPLOY)/static/ueforth.linux
-	cp -r $(WINDOWS)/uEforth.exe $(DEPLOY)/static/uEforth.exe
+	cp -r $(WINDOWS)/uEforth32.exe $(DEPLOY)/static/uEforth32.exe
+	cp -r $(WINDOWS)/uEforth64.exe $(DEPLOY)/static/uEforth64.exe
 	cp -r $(RES)/eforth.ico $(DEPLOY)/static/favicon.ico
 	cp -r site/* $(DEPLOY)
 	cp -r site/.gcloudignore $(DEPLOY)
