@@ -36,38 +36,44 @@ WIN_CFLAGS = $(CFLAGS_COMMON) -mwindows -nostdlib \
 
 WIN_LIBS = -lkernel32
 
-# Default to 32-bit Windows for maximum portability.
-ifeq ($(WIN_ARCH),)
-  WIN_ARCH:=i686
-  #WIN_ARCH=x86_64
-endif
-
 TARGETS = $(WEB)/terminal.html \
           $(WEB)/ueforth.js \
           $(POSIX)/ueforth \
           $(ARDUINO)/ueforth/ueforth.ino
 
 # Selectively enable windows if tools available
+DEPLOYABLE = 1
 ifneq (, $(shell which i686-w64-mingw32-windres))
   ifneq (, $(shell which i686-w64-mingw32-gcc))
     TARGETS += $(WINDOWS)/uEforth32.exe
   else
     $(warning "Missing i686-w64-mingw32-gcc skipping 32-bit Windows.")
+    DEPLOYABLE := 0
   endif
 else
   $(warning "Missing i686-w64-mingw32-windres skipping 32-bit Windows.")
+  DEPLOYABLE := 0
 endif
 ifneq (, $(shell which x86_64-w64-mingw32-windres))
   ifneq (, $(shell which x86_64-w64-mingw32-gcc))
     TARGETS += $(WINDOWS)/uEforth64.exe
   else
-    $(warning "Missing i686-w64-mingw32-gcc skipping 64-bit Windows.")
+    $(warning "Missing x86_64-w64-mingw32-gcc skipping 64-bit Windows.")
+    DEPLOYABLE := 0
   endif
 else
-  $(warning "Missing i686-w64-mingw32-windres skipping 64-bit Windows.")
+  $(warning "Missing x86_64-w64-mingw32-windres skipping 64-bit Windows.")
+  DEPLOYABLE := 0
+endif
+# Decide if we can deploy.
+DEPLOY_TARGETS =
+ifeq (1, $(DEPLOYABLE))
+  DEPLOY_TARGETS := $(DEPLOY)/app.yaml
+else
+  $(warning "Missing some platforms skipping deployment build.")
 endif
 
-all: $(TARGETS) tests $(DEPLOY)/app.yaml
+all: $(TARGETS) tests $(DEPLOY_TARGETS)
 
 clean:
 	rm -rf $(OUT)
