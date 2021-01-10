@@ -14,5 +14,5 @@ typedef CALLTYPE cell_t (*call_t)();
   X("CALL7", OP_CALL7, tos = ((call_t) tos)(sp[-6], sp[-5], sp[-4], sp[-3], sp[-2], sp[-1], *sp); sp -= 7) \
   X("CALL8", OP_CALL8, tos = ((call_t) tos)(sp[-7], sp[-6], sp[-5], sp[-4], sp[-3], sp[-2], sp[-1], *sp); sp -= 8) \
   X("CALL9", OP_CALL9, tos = ((call_t) tos)(sp[-8], sp[-7], sp[-6], sp[-5], sp[-4], sp[-3], sp[-2], sp[-1], *sp); sp -= 9) \
-  X("CALL10", OP_CALL10, tos = ((call_t) tos) (sp[-9], sp[-8], sp[-7], sp[-6], sp[-5], sp[-4], sp[-3], sp[-2], sp[-1], *sp); sp -= 10) \
+  X("CALL10", OP_CALL10, tos = ((call_t) tos)(sp[-9], sp[-8], sp[-7], sp[-6], sp[-5], sp[-4], sp[-3], sp[-2], sp[-1], *sp); sp -= 10) \
 
