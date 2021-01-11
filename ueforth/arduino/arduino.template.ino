@@ -1,6 +1,5 @@
 {{opcodes}}
 
-
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
@@ -82,7 +81,7 @@
     tos = (cell_t) st.st_size; PUSH(w < 0 ? errno : 0)) \
   /* WiFi */ \
   X("WiFi.config", WIFI_CONFIG, \
-      WiFi.config(ToIP(sp[-1]), ToIP(*sp), ToIP(tos)); sp -= 2; DROP) \
+      WiFi.config(ToIP(sp[-2], ToIP(sp[-1]), ToIP(*sp), ToIP(tos)); sp -= 3; DROP) \
   X("WiFi.begin", WIFI_BEGIN, \
       WiFi.begin((const char *) *sp, (const char *) tos); --sp; DROP) \
   X("WiFi.disconnect", WIFI_DISCONNECT, WiFi.disconnect()) \
