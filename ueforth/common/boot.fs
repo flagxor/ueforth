@@ -90,14 +90,16 @@
 ( Counted Loops )
 : for   postpone >r postpone begin ; immediate
 : next   postpone donext , ; immediate
-: do   postpone swap postpone >r postpone >r here ; immediate
+: do   postpone swap postpone >r postpone >r 0 here ; immediate
+: ?do   postpone swap postpone 2dup postpone < postpone if
+        postpone >r postpone >r here ; immediate
 : i   postpone r@ ; immediate
 : j   rp@ 3 cells - @ ;
 : unloop   postpone rdrop postpone rdrop ; immediate
 : +loop   postpone r> postpone + postpone r>
           postpone 2dup postpone >r postpone >r
           postpone < postpone 0= postpone until
-          postpone unloop ; immediate
+          postpone unloop dup if postpone then then ; immediate
 : loop   1 aliteral postpone +loop ; immediate
 
 ( Constants and Variables )
