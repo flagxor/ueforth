@@ -90,15 +90,15 @@
 ( Counted Loops )
 : for   postpone >r postpone begin ; immediate
 : next   postpone donext , ; immediate
-: dostart ( n n -- .. ) swap r> -rot >r >r >r ;
-: docheck ( n -- f .. ) r> r> rot + dup r@ < -rot >r >r ;
-: do   postpone dostart here 0 ; immediate
-: ?do   postpone dostart 0 aliteral postpone ahead here swap ; immediate
+: (do) ( n n -- .. ) swap r> -rot >r >r >r ;
+: (+loop) ( n -- f .. ) r> r> rot + dup r@ < -rot >r >r ;
+: do   postpone (do) here 0 ; immediate
+: ?do   postpone (do) 0 aliteral postpone ahead here swap ; immediate
 : i   postpone r@ ; immediate
 : j   rp@ 3 cells - @ ;
 : unloop   postpone rdrop postpone rdrop ; immediate
 : +loop   dup if postpone then else drop then
-          postpone docheck postpone 0= postpone until
+          postpone (+loop) postpone 0= postpone until
           postpone unloop ; immediate
 : loop   1 aliteral postpone +loop ; immediate
 
