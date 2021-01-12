@@ -87,21 +87,6 @@
 : immediate? ( xt -- f ) >flags @ 1 and 0= 0= ;
 : postpone ' dup immediate? if , else aliteral ['] , , then ; immediate
 
-( Counted Loops )
-: for   postpone >r postpone begin ; immediate
-: next   postpone donext , ; immediate
-: (do) ( n n -- .. ) swap r> -rot >r >r >r ;
-: (+loop) ( n -- f .. ) r> r> rot + dup r@ < -rot >r >r ;
-: do   postpone (do) here 0 ; immediate
-: ?do   postpone (do) 0 aliteral postpone ahead here swap ; immediate
-: i   postpone r@ ; immediate
-: j   rp@ 3 cells - @ ;
-: unloop   postpone rdrop postpone rdrop ; immediate
-: +loop   dup if postpone then else drop then
-          postpone (+loop) postpone 0= postpone until
-          postpone unloop ; immediate
-: loop   1 aliteral postpone +loop ; immediate
-
 ( Constants and Variables )
 : constant ( n "name" -- ) create , does> @ ;
 : variable ( "name" -- ) create 0 , ;
@@ -110,6 +95,30 @@
 sp@ constant sp0
 rp@ constant rp0
 : depth ( -- n ) sp@ sp0 - cell/ ;
+
+( FOR..NEXT )
+: for   postpone >r postpone begin ; immediate
+: next   postpone donext , ; immediate
+
+( DO..LOOP )
+variable leaving
+: leaving,   here leaving @ , leaving ! ;
+: leaving(   leaving @ 0 leaving ! ;
+: )leaving   leaving @ swap leaving !
+             begin dup while dup @ swap here swap ! repeat drop ;
+: (do) ( n n -- .. ) swap r> -rot >r >r >r ;
+: do ( lim s -- ) leaving( postpone (do) here ; immediate
+: (?do) ( n n -- n n f .. ) 2dup = if 2drop 0 else -1 then ;
+: ?do ( lim s -- ) leaving( postpone (?do) postpone 0branch leaving,
+                   postpone (do) here ; immediate
+: unloop   postpone rdrop postpone rdrop ; immediate
+: leave   postpone unloop postpone branch leaving, ; immediate
+: (+loop) ( n -- f .. ) dup 0< swap r> r> rot + dup r@ < -rot >r >r xor 0= ;
+: +loop ( n -- ) postpone (+loop) postpone until
+                 postpone unloop )leaving ; immediate
+: loop   1 aliteral postpone +loop ; immediate
+: i ( -- n ) postpone r@ ; immediate
+: j ( -- n ) rp@ 3 cells - @ ;
 
 ( Exceptions )
 variable handler
@@ -155,7 +164,7 @@ variable hld
 
 ( Strings )
 : parse-quote ( -- a n ) [char] " parse ;
-: $place ( a n -- ) 0 do dup c@ c, 1+ loop drop 0 c, align ;
+: $place ( a n -- ) for aft dup c@ c, 1+ then next drop 0 c, align ;
 : $@   r@ dup cell+ swap @ r> dup @ 1+ aligned + cell+ >r ;
 : s"   parse-quote state @ if postpone $@ dup , $place
        else dup here swap >r >r $place r> r> then ; immediate
