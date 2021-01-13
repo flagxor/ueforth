@@ -80,8 +80,7 @@
 : >name ( xt -- a n ) 3 cells - dup @ swap over aligned - swap ;
 : >link ( xt -- a ) 2 cells - @ ;
 : >flags ( xt -- flags ) cell - ;
-: >body ( xt -- a ) 2 cells + ;
-: >:body ( xt -- a ) cell+ ;
+: >body ( xt -- a ) dup @ [ ' >flags @ ] literal = 2 + cells + ;
 
 ( Postpone - done here so we have ['] and IF )
 : immediate? ( xt -- f ) >flags @ 1 and 0= 0= ;
@@ -189,7 +188,7 @@ variable hld
 : see-one ( xt -- xt+1 )
    dup @ dup ['] DOLIT = if drop cell+ dup @ . else see. then cell+ ;
 : exit= ( xt -- ) ['] exit = ;
-: see-loop   >:body begin see-one dup @ exit= until ;
+: see-loop   >body begin see-one dup @ exit= until ;
 : see   cr ['] : see.  ' dup see.  space see-loop drop  ['] ; see.  cr ;
 75 value line-width
 : onlines ( n xt -- n xt )

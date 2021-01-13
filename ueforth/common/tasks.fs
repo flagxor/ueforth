@@ -4,7 +4,7 @@
    create here >r 0 , 0 , 0 ,
    here cell+ r@ cell+ ! cells allot
    here r@ 2 cells + ! cells allot
-   dup 0= if drop else >:body r@ 2 cells + @ ! then rdrop ;
+   dup 0= if drop else >body r@ 2 cells + @ ! then rdrop ;
 
 variable task-list
 
