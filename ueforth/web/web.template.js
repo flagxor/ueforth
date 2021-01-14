@@ -14,6 +14,20 @@ var heap = new ArrayBuffer(HEAP_SIZE);
 var i32 = new Int32Array(heap);
 var u8 = new Uint8Array(heap);
 var objects = [SetEval];
+var g_sys = 256;  // Placed past a gap.
+var g_tib = g_sys + 0 * 4;
+var g_ntib = g_sys + 1 * 4;
+var g_tin = g_sys + 2 * 4;
+var g_state = g_sys + 3 * 4;
+var g_base = g_sys + 4 * 4;
+var g_heap = g_sys + 5 * 4;
+var g_last = g_sys + 6 * 4;
+var g_notfound = g_sys + 7 * 4;
+var g_argc = g_sys + 8 * 4;
+var g_argv = g_sys + 9 * 4;
+var g_ip = g_sys + 10 * 4;
+var g_sp = g_sys + 11 * 4;
+var g_rp = g_sys + 12 * 4;
 
 function SetEval(sp) {
   var index = i32[sp--];
@@ -30,11 +44,48 @@ function Call(sp, tos) {
   return objects[tos](sp); 
 }
 
+function Load(addr, content) {
+  for (var i = 0; i < content.length; ++i) {
+    u8[addr++] = content.charCodeAt(i);
+  }
+  return addr;
+}
+
 function create(name, opcode) {
 }
 
 function InitDictionary() {
 {{dict}}
+}
+
+function Init() {
+  i32[g_heap>>2] = g_sys + 16 * 4;
+  var source = g_heap;
+  i32[g_heap>>2] = Load(i32[g_heap>>2], boot);
+  var source_len = g_heap - source;
+
+  i32[g_ip>>2] = 0;
+  InitDictionary();
+  i32[g_sp>>2] = i32[g_heap>>2] + 1;
+  i32[g_heap>>2] += STACK_SIZE;
+  i32[g_rp>>2] = i32[g_heap>>2] + 1;
+  i32[g_heap>>2] += STACK_SIZE;
+  i32[(g_last - 4)>>2] = 1;  // Make ; IMMMEDIATE
+  g_DOLIT_XT = Find('DOLIT');
+  g_DOEXIT_XT = Find('EXIT');
+  g_YIELD_XT = Find('YIELD');
+  i32[g_notfound>>2] = Find('DROP');
+  i32[g_ip>>2] = i32[g_heap>>2];
+  i32[g_heap>>2] = Find('EVALUATE1');
+  i32[g_heap>>2] += 4;
+  i32[g_heap>>2] = Find('BRANCH');
+  i32[g_heap>>2] += 4;
+  i32[g_heap>>2] = g_ip;
+  // argc, argv would have gone here.
+  i32[g_heap>>2] += 4;
+  i32[g_base>>2] = 10;
+  i32[g_tib>>2] = source;
+  i32[g_ntib>>2] = source_len;
 }
 
 function VM(stdlib, foreign, heap) {
@@ -58,19 +109,21 @@ function VM(stdlib, foreign, heap) {
   var u8 = new stdlib.Uint8Array(heap);
   var i32 = new stdlib.Int32Array(heap);
 
-  var g_sys = 128;
+  var g_sys = 256;
+  var g_ip = g_sys + 10 * 4;
+  var g_sp = g_sys + 11 * 4;
+  var g_rp = g_sys + 12 * 4;
 
-  function run(initrp) {
-    initrp = initrp | 0;
+  function run() {
     var tos = 0;
     var ip = 0;
     var sp = 0;
     var rp = 0;
     var w = 0;
     var ir = 0;
-    rp = initrp;
-    ip = i32[rp>>2]|0; rp = (rp - 4)|0;
-    sp = i32[rp>>2]|0; rp = (rp - 4)|0;
+    sp = i32[g_sp>>2]|0;
+    rp = i32[g_rp>>2]|0;
+    ip = i32[g_ip>>2]|0;
     tos = i32[sp>>2]|0; sp = (sp - 4)|0;
     for (;;) {
       w = i32[ip>>2]|0;
@@ -123,5 +176,9 @@ var ffi = {
 heap[128 + 6] = 256 * 4;  // set g_sys.heap = 256 * 4;
 
 var module = VM(window, ffi, heap);
+Init();
+setTimeout(function() {
+  module.run();
+}, 10);
 
 })();

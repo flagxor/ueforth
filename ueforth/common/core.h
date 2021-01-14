@@ -15,8 +15,8 @@ static struct {
   cell_t *heap, *last, notfound;
   int argc;
   char **argv;
-  cell_t DOLIT_XT, DOEXIT_XT, YIELD_XT;
   cell_t *ip, *sp, *rp;  // Parked alternates
+  cell_t DOLIT_XT, DOEXIT_XT, YIELD_XT;
 } g_sys;
 
 static cell_t convert(const char *pos, cell_t n, cell_t *ret) {
