@@ -18,7 +18,8 @@ enum {
 
 int main(int argc, char *argv[]) {
   if (argc == 2 && strcmp(argv[1], "cases") == 0) {
-#define X(name, op, code) printf("          case %d: %s; break;\n", OP_ ## op, #code);
+#define X(name, op, code) \
+    printf("          case %d:  // %s\n            %s; break;\n", OP_ ## op, name, #code);
     PLATFORM_OPCODE_LIST
     OPCODE_LIST
 #undef X
