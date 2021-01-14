@@ -3,8 +3,7 @@
 (function() {
 
 const HEAP_SIZE = (1024 * 1024);
-const DSTACK_SIZE = 4096;
-const RSTACK_SIZE = 4096;
+const STACK_SIZE = 4096;
 
 const boot = `
 {{boot}}
@@ -41,7 +40,7 @@ function SetEval(sp) {
 }
 
 function Call(sp, tos) {
-  return objects[tos](sp); 
+  return objects[tos](sp);
 }
 
 function Load(addr, content) {
@@ -51,7 +50,46 @@ function Load(addr, content) {
   return addr;
 }
 
+function Same(a, b) {
+  if (a.length != b.length) {
+    return false;
+  }
+  for (var i = 0; i < a.length; ++i) {
+    if ((a.charCodeAt(i) & 95) != (b.charCodeAt(i) & 95)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function GetName(xt) {
+  var clen = i32[(xt - 3*4)>>2];
+  var ret = '';
+  for (var i = 0; i < clen; ++i) {
+    ret += String.fromCharCode(u8[xt - 3 * 4 - clen + i]);
+  }
+  return ret;
+}
+
+function Find(name) {
+  var pos = i32[g_last>>2];
+  while (pos) {
+    if (Same(GetName(pos), name)) {
+      return pos;
+    }
+    pos = i32[(pos - 2*4)>>2];
+  }
+  return 0;
+}
+
 function create(name, opcode) {
+  i32[g_heap>>2] = Load(i32[g_heap>>2], name);  // name
+  g_heap = (g_heap + 3) & ~3;
+  i32[g_heap>>2] = name.length;  // length
+  i32[g_heap>>2] = i32[g_last>>2];  // link
+  i32[g_heap>>2] = 0;  // flags
+  i32[g_last>>2] = i32[g_heap>>2];
+  i32[g_last>>2] = opcode;  // code
 }
 
 function InitDictionary() {
@@ -71,9 +109,7 @@ function Init() {
   i32[g_rp>>2] = i32[g_heap>>2] + 1;
   i32[g_heap>>2] += STACK_SIZE;
   i32[(g_last - 4)>>2] = 1;  // Make ; IMMMEDIATE
-  g_DOLIT_XT = Find('DOLIT');
-  g_DOEXIT_XT = Find('EXIT');
-  g_YIELD_XT = Find('YIELD');
+  // Do not need DOLIT_XT, DOEXIT_XT, YIELD_XT (do by convention)
   i32[g_notfound>>2] = Find('DROP');
   i32[g_ip>>2] = i32[g_heap>>2];
   i32[g_heap>>2] = Find('EVALUATE1');
@@ -109,10 +145,10 @@ function VM(stdlib, foreign, heap) {
   var u8 = new stdlib.Uint8Array(heap);
   var i32 = new stdlib.Int32Array(heap);
 
-  var g_sys = 256;
-  var g_ip = g_sys + 10 * 4;
-  var g_sp = g_sys + 11 * 4;
-  var g_rp = g_sys + 12 * 4;
+  const g_sys = 256;
+  const g_ip = 296;  // g_sys + 10 * 4
+  const g_sp = 300;  // g_sys + 11 * 4
+  const g_rp = 304;  // g_sys + 12 * 4
 
   function run() {
     var tos = 0;
