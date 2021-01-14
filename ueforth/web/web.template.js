@@ -85,11 +85,20 @@ function Find(name) {
 function create(name, opcode) {
   i32[g_heap>>2] = Load(i32[g_heap>>2], name);  // name
   g_heap = (g_heap + 3) & ~3;
-  i32[g_heap>>2] = name.length;  // length
-  i32[g_heap>>2] = i32[g_last>>2];  // link
-  i32[g_heap>>2] = 0;  // flags
+
+  i32[i32[g_heap>>2]>>2] = name.length;  // length
+  i32[g_heap>>2] += 4;
+
+  i32[i32[g_heap>>2]>>2] = i32[g_last>>2];  // link
+  i32[g_heap>>2] += 4;
+
+  i32[i32[g_heap>>2]>>2] = 0;  // flags
+  i32[g_heap>>2] += 4;
+
   i32[g_last>>2] = i32[g_heap>>2];
-  i32[g_last>>2] = opcode;  // code
+
+  i32[i32[g_last>>2]>>2] = opcode;  // code
+  i32[g_heap>>2] += 4;
 }
 
 function InitDictionary() {
@@ -102,7 +111,6 @@ function Init() {
   i32[g_heap>>2] = Load(i32[g_heap>>2], boot);
   var source_len = g_heap - source;
 
-  i32[g_ip>>2] = 0;
   InitDictionary();
   i32[g_sp>>2] = i32[g_heap>>2] + 1;
   i32[g_heap>>2] += STACK_SIZE;
@@ -112,11 +120,12 @@ function Init() {
   // Do not need DOLIT_XT, DOEXIT_XT, YIELD_XT (do by convention)
   i32[g_notfound>>2] = Find('DROP');
   i32[g_ip>>2] = i32[g_heap>>2];
-  i32[g_heap>>2] = Find('EVALUATE1');
+  i32[i32[g_heap>>2]>>2] = Find('EVALUATE1');
   i32[g_heap>>2] += 4;
-  i32[g_heap>>2] = Find('BRANCH');
+  i32[i32[g_heap>>2]>>2] = Find('BRANCH');
   i32[g_heap>>2] += 4;
-  i32[g_heap>>2] = g_ip;
+  i32[i32[g_heap>>2]>>2] = g_ip;
+  i32[g_heap>>2] += 4;
   // argc, argv would have gone here.
   i32[g_heap>>2] += 4;
   i32[g_base>>2] = 10;
@@ -141,6 +150,7 @@ function VM(stdlib, foreign, heap) {
   var memmove = foreign.memmove;
   var convert = foreign.convert;
   var evaluate1 = foreign.evaluate1;
+  var log = foreign.log;
 
   var u8 = new stdlib.Uint8Array(heap);
   var i32 = new stdlib.Int32Array(heap);
@@ -163,9 +173,11 @@ function VM(stdlib, foreign, heap) {
     tos = i32[sp>>2]|0; sp = (sp - 4)|0;
     for (;;) {
       w = i32[ip>>2]|0;
+      log(ip|0);
+      ip = (ip + 4)|0;
       decode: for (;;) {
         ir = u8[w]|0;
-        ip = (ip + 4)|0;
+        log(ir|0);
         switch (ir&0xff) {
           case 0:  // OP_DOCOLON
             rp = (rp + 4) | 0;
@@ -186,7 +198,10 @@ function VM(stdlib, foreign, heap) {
             ip = i32[(w + 4)>>2] | 0;
             break;
 {{cases}}
+          default:
+            return;
         }
+        break;
       }
     }
   }
@@ -195,23 +210,28 @@ function VM(stdlib, foreign, heap) {
 
 var ffi = {
   Call: Call,
-  create: function() {},
-  parse: function() {},
-  COMMA: function() {},
-  SSMOD: function() {},
-  DOES: function() {},
-  IMMEDIATE: function() {},
-  parse: function() {},
-  find: function() {},
-  memset: function() {},
-  memmove: function() {},
-  convert: function() {},
-  evaluate1: function() {},
+  create: function() { console.log('create'); },
+  parse: function() { console.log('parse'); },
+  COMMA: function(n) { i32[i32[g_heap>>2]] = n; i32[g_heap>>2] += 4; console.log('comma'); },
+  SSMOD: function() { console.log('ssmod'); },
+  DOES: function() { console.log('does'); },
+  IMMEDIATE: function() { console.log('immediate'); },
+  parse: function() { console.log('parse'); },
+  find: function() { console.log('find'); },
+  convert: function() { console.log('convert'); },
+  evaluate1: function() { console.log('evaluate1'); },
+  log: function(n) { console.log(n); }
 };
 
 heap[128 + 6] = 256 * 4;  // set g_sys.heap = 256 * 4;
 
-var module = VM(window, ffi, heap);
+var globalObj;
+if (typeof window === 'undefined') {
+  globalObj = global;
+} else {
+  globalObj = window;
+}
+var module = VM(globalObj, ffi, heap);
 Init();
 setTimeout(function() {
   module.run();
