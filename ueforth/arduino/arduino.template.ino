@@ -140,8 +140,7 @@
   X("WebServer.handleClient", WEBSERVER_HANDLE_CLIENT, \
       ((WebServer *) tos)->handleClient(); DROP) \
   /* Wire */ \
-  X("Wire.begin", WIRE_BEGIN, DUP; tos = (cell_t) Wire.begin()) \
-  X("Wire.setPins", WIRE_SET_PINS, tos = (cell_t) Wire.begin(*sp, tos); --sp) \
+  X("Wire.begin", WIRE_BEGIN, tos = (cell_t) Wire.begin(*sp, tos); --sp) \
   X("Wire.setClock", WIRE_SET_CLOCK, Wire.setClock(tos); DROP) \
   X("Wire.getClock", WIRE_GET_CLOCK, DUP; tos = (cell_t) Wire.getClock()) \
   X("Wire.setTimeout", WIRE_SET_TIMEOUT, Wire.setTimeout(tos); DROP) \
