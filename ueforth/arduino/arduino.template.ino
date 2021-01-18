@@ -1,5 +1,6 @@
 {{opcodes}}
 
+#include "esp_camera.h"
 #include <Wire.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
@@ -151,15 +152,26 @@
   X("Wire.endTransmission", WIRE_END_TRANSMISSION, tos = (cell_t) Wire.endTransmission(tos)) \
   X("Wire.requestFrom", WIRE_REQUEST_FROM, tos = (cell_t) Wire.requestFrom(sp[-1], *sp, tos); sp -= 2) \
   X("Wire.writeTransmission", WIRE_WRITE_TRANSMISSION, \
-          tos = (cell_t) Wire.writeTransmission(sp[-2], (uint8_t *) sp[-1], *sp, tos); sp -=3) \
+      tos = (cell_t) Wire.writeTransmission(sp[-2], (uint8_t *) sp[-1], *sp, tos); sp -=3) \
   X("Wire.readTransmission", WIRE_READ_TRANSMISSION, \
-          tos = (cell_t) Wire.readTransmission(sp[-3], (uint8_t *) sp[-2], sp[-1], *sp, (uint32_t *) tos); sp -=4) \
+      tos = (cell_t) Wire.readTransmission(sp[-3], (uint8_t *) sp[-2], sp[-1], *sp, (uint32_t *) tos); sp -=4) \
   X("Wire.write", WIRE_WRITE, tos = Wire.write((uint8_t *) *sp, tos); --sp) \
   X("Wire.available", WIRE_AVAILABLE, DUP; tos = Wire.available()) \
   X("Wire.read", WIRE_READ, DUP; tos = Wire.read()) \
   X("Wire.peek", WIRE_PEEK, DUP; tos = Wire.peek()) \
   X("Wire.busy", WIRE_BUSY, DUP; tos = Wire.busy()) \
   X("Wire.flush", WIRE_FLUSH, Wire.flush()) \
+  /* Camera */ \
+  X("esp_camera_init", ESP_CAMERA_INIT, \
+      tos = esp_camera_init((const camera_config_t *) tos)) \
+  X("esp_camera_deinit", ESP_CAMERA_DEINIT, \
+      DUP; tos = esp_camera_deinit()) \
+  X("esp_camera_fb_get", ESP_CAMERA_FB_GET, \
+      DUP; tos = (cell_t) esp_camera_fb_get()) \
+  X("esp_camera_db_return", ESP_CAMERA_FB_RETURN, \
+      esp_camera_fb_return((camera_fb_t *) tos); DROP) \
+  X("esp_camera_sensor_get", ESP_CAMERA_SENSOR_GET, \
+      DUP; tos = (cell_t) esp_camera_sensor_get()) \
 
 // TODO: Why doesn't ftruncate exist?
 //  X("RESIZE-FILE", RESIZE_FILE, cell_t fd = tos; DROP; \
