@@ -22,7 +22,7 @@ create camera-config
   20000000 , ( xclk_freq_hz )
   0 , ( ledc_timer ) 0 , ( ledc_channel )
   here
-  PIXFORMAT_RGB565 , ( pixel_format )
+  PIXFORMAT_JPEG , ( pixel_format )
   FRAMESIZE_VGA , ( frame_size ) 12 , ( jpeg_quality 0-63 low good )
   here
   1 , ( fb_count )
