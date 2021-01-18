@@ -170,6 +170,28 @@ Serial.end ( -- )   End serial port
 Serial.available ( -- f )   Is serial data available
 Serial.readBytes ( a n -- n )   Read serial bytes, return number gotten
 Serial.write ( a n -- )   Write serial bytes
+Serial.flush ( -- )   Flush serial buffer
+</pre>
+
+<h5>Serial Bluetooth</h5>
+<pre>
+SerialBT.new ( -- bt )   Allocate new BT object
+SerialBT.delete ( bt -- )   Free BT object
+SerialBT.begin ( localname ismaster bt -- f )
+SerialBT.end ( bt -- )
+SerialBT.available ( bt -- f )
+SerialBT.readBytes ( a n bt -- n )
+SerialBT.write ( a n bt -- )
+SerialBT.flush ( bt -- )
+SerialBT.hasClient ( bt -- f )
+SerialBT.enableSSP ( bt -- )
+SerialBT.setPin ( z bt -- f )
+SerialBT.unpairDevice ( addr bt -- f )
+SerialBT.connect ( remotename bt -- f )
+SerialBT.connectAddr ( addr bt -- f )
+SerialBT.disconnect ( bt -- f )
+SerialBT.connected ( timeout bt -- f )
+SerialBT.isReady ( checkMaster timeout -- f )   Default checkMaster=false, timeout=0
 </pre>
 
 <h5>GPIO</h5>
@@ -278,6 +300,24 @@ Wire.read ( -- ch )
 Wire.peek ( -- ch )
 Wire.busy ( -- f )
 Wire.flush ( -- )
+</pre>
+
+<h5>Camera</h5>
+<pre>
+esp_camera_init ( config -- f )
+esp_camera_deinit ( -- f )
+esp_camera_fb_get ( -- fb )
+esp_camera_fb_return ( fb -- )
+esp_camera_sensor_get ( -- sensor )
+</pre>
+
+<h5>SD_MMC</h5>
+<pre>
+SD_MMC.begin ( mount mode1bit )   default mode1bit=false
+SD_MMC.end ( -- )
+SD_MMC.cardType ( -- n )
+SD_MMC.totalBytes ( -- n )
+SD_MMC.usedBytes ( -- n )
 </pre>
 
 <h4>Arduino ESP32 WebUI</h4>

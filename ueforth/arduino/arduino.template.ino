@@ -8,6 +8,7 @@
 #include <ESPmDNS.h>
 #include "SPIFFS.h"
 #include "SD_MMC.h"
+#include "BluetoothSerial.h"
 
 #include <errno.h>
 #include <unistd.h>
@@ -40,6 +41,30 @@
   X("Serial.available", SERIAL_AVAILABLE, DUP; tos = Serial.available()) \
   X("Serial.readBytes", SERIAL_READ_BYTES, tos = Serial.readBytes((uint8_t *) *sp, tos); --sp) \
   X("Serial.write", SERIAL_WRITE, tos = Serial.write((const uint8_t *) *sp, tos); --sp) \
+  X("Serial.flush", SERIAL_FLUSH, Serial.flush()) \
+  /* SerialBT */ \
+  X("SerialBT.new", SERIALBT_NEW, DUP; tos = (cell_t) new BluetoothSerial()) \
+  X("SerialBT.delete", SERIALBT_DELETE, delete (BluetoothSerial *) tos; DROP) \
+  X("SerialBT.begin", SERIALBT_BEGIN, \
+      tos = ((BluetoothSerial *) tos)->begin((const char *) sp[-1], *sp); sp -= 2) \
+  X("SerialBT.end", SERIALBT_END, ((BluetoothSerial *) tos)->end(); DROP) \
+  X("SerialBT.available", SERIALBT_AVAILABLE, tos = ((BluetoothSerial *) tos)->available()) \
+  X("SerialBT.readBytes", SERIALBT_READ_BYTES, \
+      tos = ((BluetoothSerial *) tos)->readBytes((uint8_t *) sp[-1], *sp); sp -= 2) \
+  X("SerialBT.write", SERIALBT_WRITE, \
+      tos = ((BluetoothSerial *) tos)->write((const uint8_t *) sp[-1], *sp); sp -= 2) \
+  X("SerialBT.flush", SERIALBT_FLUSH, ((BluetoothSerial *) tos)->flush(); DROP) \
+  X("SerialBT.hasClient", SERIALBT_HAS_CLIENT, tos = ((BluetoothSerial *) tos)->hasClient()) \
+  X("SerialBT.enableSSP", SERIALBT_ENABLE_SSP, ((BluetoothSerial *) tos)->enableSSP(); DROP) \
+  X("SerialBT.setPin", SERIALBT_SET_PIN, tos = ((BluetoothSerial *) tos)->setPin((const char *) *sp); --sp) \
+  X("SerialBT.unpairDevice", SERIALBT_UNPAIR_DEVICE, \
+      tos = ((BluetoothSerial *) tos)->unpairDevice((uint8_t *) *sp); --sp) \
+  X("SerialBT.connect", SERIALBT_CONNECT, tos = ((BluetoothSerial *) tos)->connect((const char *) *sp); --sp) \
+  X("SerialBT.connectAddr", SERIALBT_CONNECT_ADDR, \
+      tos = ((BluetoothSerial *) tos)->connect((uint8_t *) *sp); --sp) \
+  X("SerialBT.disconnect", SERIALBT_DISCONNECT, tos = ((BluetoothSerial *) tos)->disconnect()) \
+  X("SerialBT.connected", SERIALBT_CONNECTED, tos = ((BluetoothSerial *) tos)->connected(*sp); --sp) \
+  X("SerialBT.isReady", SERIALBT_IS_READY, tos = ((BluetoothSerial *) tos)->isReady(sp[-1], *sp); sp -= 2) \
   /* Pins and PWM */ \
   X("pinMode", PIN_MODE, pinMode(*sp, tos); --sp; DROP) \
   X("digitalWrite", DIGITAL_WRITE, digitalWrite(*sp, tos); --sp; DROP) \
@@ -173,6 +198,7 @@
       esp_camera_fb_return((camera_fb_t *) tos); DROP) \
   X("esp_camera_sensor_get", ESP_CAMERA_SENSOR_GET, \
       DUP; tos = (cell_t) esp_camera_sensor_get()) \
+  /* SD_MMC */ \
   X("SD_MMC.begin", SD_MMC_BEGIN, \
       tos = SD_MMC.begin((const char *) *sp, tos); --sp) \
   X("SD_MMC.end", SD_MMC_END, SD_MMC.end()) \
