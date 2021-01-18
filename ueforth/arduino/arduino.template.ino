@@ -7,6 +7,7 @@
 #include <WebServer.h>
 #include <ESPmDNS.h>
 #include "SPIFFS.h"
+#include "SD_MMC.h"
 
 #include <errno.h>
 #include <unistd.h>
@@ -172,6 +173,12 @@
       esp_camera_fb_return((camera_fb_t *) tos); DROP) \
   X("esp_camera_sensor_get", ESP_CAMERA_SENSOR_GET, \
       DUP; tos = (cell_t) esp_camera_sensor_get()) \
+  X("SD_MMC.begin", SD_MMC_BEGIN, \
+      tos = SD_MMC.begin((const char *) *sp, tos); --sp) \
+  X("SD_MMC.end", SD_MMC_END, SD_MMC.end()) \
+  X("SD_MMC.cardType", SD_MMC_CARD_TYPE, DUP; tos = SD_MMC.cardType()) \
+  X("SD_MMC.totalBytes", SD_MMC_TOTAL_BYTES, DUP; tos = SD_MMC.totalBytes()) \
+  X("SD_MMC.usedBytes", SD_MMC_USED_BYTES, DUP; tos = SD_MMC.usedBytes()) \
 
 // TODO: Why doesn't ftruncate exist?
 //  X("RESIZE-FILE", RESIZE_FILE, cell_t fd = tos; DROP; \
