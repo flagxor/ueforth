@@ -40,6 +40,7 @@
   /* Pins and PWM */ \
   X("pinMode", PIN_MODE, pinMode(*sp, tos); --sp; DROP) \
   X("digitalWrite", DIGITAL_WRITE, digitalWrite(*sp, tos); --sp; DROP) \
+  X("digitalRead", DIGITAL_READ, tos = (cell_t) digitalRead(tos)) \
   X("analogRead", ANALOG_READ, tos = (cell_t) analogRead(tos)) \
   X("ledcSetup", LEDC_SETUP, \
       tos = (cell_t) (1000000 * ledcSetup(sp[-1], *sp / 1000.0, tos)); sp -= 2) \
