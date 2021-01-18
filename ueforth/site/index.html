@@ -257,6 +257,29 @@ WebServer.sendContent ( a n ws -- )
 WebServer.method ( ws -- n )   GET / POST etc.
 </pre>
 
+<h5>Wire</h5>
+<pre>
+Wire.begin ( -- f )
+Wire.setPins ( sda scl -- f )
+Wire.setClock ( frequency -- )
+Wire.getClock ( -- frequency )
+Wire.setTimeout ( ms -- ) Default is 50ms
+Wire.getTimeout ( -- ms )
+Wire.lastError ( -- n )
+Wire.getErrorText ( n -- z )
+Wire.beginTransmission ( n -- )
+Wire.endTransmission ( sendstop -- f )
+Wire.requestFrom ( address quantity sendstop -- n )
+Wire.writeTransmission ( addr a n sendstop -- err )
+Wire.readTransmission ( addr a n sendstop acount -- err )
+Wire.write ( a n -- n )
+Wire.available ( -- f )
+Wire.read ( -- ch )
+Wire.peek ( -- ch )
+Wire.busy ( -- f )
+Wire.flush ( -- )
+</pre>
+
 <h4>Arduino ESP32 WebUI</h4>
 
 <p>

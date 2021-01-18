@@ -1,5 +1,6 @@
 {{opcodes}}
 
+#include <Wire.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
@@ -138,6 +139,28 @@
       tos = (cell_t) ((WebServer *) tos)->method()) \
   X("WebServer.handleClient", WEBSERVER_HANDLE_CLIENT, \
       ((WebServer *) tos)->handleClient(); DROP) \
+  /* Wire */ \
+  X("Wire.begin", WIRE_BEGIN, DUP; tos = (cell_t) Wire.begin()) \
+  X("Wire.setPins", WIRE_SET_PINS, tos = (cell_t) Wire.begin(*sp, tos); --sp) \
+  X("Wire.setClock", WIRE_SET_CLOCK, Wire.setClock(tos); DROP) \
+  X("Wire.getClock", WIRE_GET_CLOCK, DUP; tos = (cell_t) Wire.getClock()) \
+  X("Wire.setTimeout", WIRE_SET_TIMEOUT, Wire.setTimeout(tos); DROP) \
+  X("Wire.getTimeout", WIRE_GET_TIMEOUT, DUP; tos = (cell_t) Wire.getTimeout()) \
+  X("Wire.lastError", WIRE_LAST_ERROR, DUP; tos = (cell_t) Wire.lastError()) \
+  X("Wire.getErrorText", WIRE_GET_ERROR_TEXT, tos = (cell_t) Wire.getErrorText(tos)) \
+  X("Wire.beginTransmission", WIRE_BEGIN_TRANSMISSION, Wire.beginTransmission(tos); DROP) \
+  X("Wire.endTransmission", WIRE_END_TRANSMISSION, tos = (cell_t) Wire.endTransmission(tos)) \
+  X("Wire.requestFrom", WIRE_REQUEST_FROM, tos = (cell_t) Wire.requestFrom(sp[-1], *sp, tos); sp -= 2) \
+  X("Wire.writeTransmission", WIRE_WRITE_TRANSMISSION, \
+          tos = (cell_t) Wire.writeTransmission(sp[-2], (uint8_t *) sp[-1], *sp, tos); sp -=3) \
+  X("Wire.readTransmission", WIRE_READ_TRANSMISSION, \
+          tos = (cell_t) Wire.readTransmission(sp[-3], (uint8_t *) sp[-2], sp[-1], *sp, (uint32_t *) tos); sp -=4) \
+  X("Wire.write", WIRE_WRITE, tos = Wire.write((uint8_t *) *sp, tos); --sp) \
+  X("Wire.available", WIRE_AVAILABLE, DUP; tos = Wire.available()) \
+  X("Wire.read", WIRE_READ, DUP; tos = Wire.read()) \
+  X("Wire.peek", WIRE_PEEK, DUP; tos = Wire.peek()) \
+  X("Wire.busy", WIRE_BUSY, DUP; tos = Wire.busy()) \
+  X("Wire.flush", WIRE_FLUSH, Wire.flush()) \
 
 // TODO: Why doesn't ftruncate exist?
 //  X("RESIZE-FILE", RESIZE_FILE, cell_t fd = tos; DROP; \
