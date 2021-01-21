@@ -65,7 +65,7 @@ RC64 = "$(shell find "${PROGFILES}/Windows Kits" -name rc.exe | grep /x64/ | hea
 DEPLOYABLE = 1
 ifneq (, $(CL32))
   ifneq (, $(RC32))
-    TARGETS += $(WINDOWS)/uEforth32.exe
+    TARGETS += $(WINDOWS)/uE32.exe
   else
     $(warning "Missing Visual Studio rc.exe skipping 32-bit Windows.")
     DEPLOYABLE := 0
@@ -76,7 +76,7 @@ else
 endif
 ifneq (, $(CL64))
   ifneq (, $(RC64))
-    TARGETS += $(WINDOWS)/uEforth64.exe
+    TARGETS += $(WINDOWS)/uE64.exe
   else
     $(warning "Missing Visual Studio rc.exe skipping 64-bit Windows.")
     DEPLOYABLE := 0
@@ -207,7 +207,7 @@ $(POSIX)/ueforth: \
 $(WINDOWS):
 	mkdir -p $@
 
-$(WINDOWS)/uEforth32.obj: \
+$(WINDOWS)/uE32.obj: \
     windows/windows_main.c \
     common/opcodes.h \
     common/core.h \
@@ -215,12 +215,12 @@ $(WINDOWS)/uEforth32.obj: \
     $(GEN)/windows_boot.h | $(WINDOWS)
 	$(CL32) /c /Fo$@ $(WIN_CFLAGS) $<
 
-$(WINDOWS)/uEforth32.exe: \
-    $(WINDOWS)/uEforth32.obj \
+$(WINDOWS)/uE32.exe: \
+    $(WINDOWS)/uE32.obj \
     $(RES)/ueforth_res32.res | $(WINDOWS)
 	$(LINK32) /OUT:$@ $(WIN_LFLAGS32) $^
 
-$(WINDOWS)/uEforth64.obj: \
+$(WINDOWS)/uE64.obj: \
     windows/windows_main.c \
     common/opcodes.h \
     common/core.h \
@@ -228,8 +228,8 @@ $(WINDOWS)/uEforth64.obj: \
     $(GEN)/windows_boot.h | $(WINDOWS)
 	$(CL64) /c /Fo$@ $(WIN_CFLAGS) $<
 
-$(WINDOWS)/uEforth64.exe: \
-    $(WINDOWS)/uEforth64.obj \
+$(WINDOWS)/uE64.exe: \
+    $(WINDOWS)/uE64.obj \
     $(RES)/ueforth_res64.res | $(WINDOWS)
 	$(LINK64) /OUT:$@ $(WIN_LFLAGS64) $^
 
@@ -265,8 +265,8 @@ $(DEPLOY)/app.yaml: $(ARDUINO)/ueforth-arduino-esp32.zip \
 	mkdir -p $(DEPLOY)/static
 	cp -r $(ARDUINO)/ueforth-arduino-esp32.zip $(DEPLOY)/static
 	cp -r $(POSIX)/ueforth $(DEPLOY)/static/ueforth.linux
-	cp -r $(WINDOWS)/uEforth32.exe $(DEPLOY)/static/uEforth32.exe
-	cp -r $(WINDOWS)/uEforth64.exe $(DEPLOY)/static/uEforth64.exe
+	cp -r $(WINDOWS)/uE32.exe $(DEPLOY)/static/uE32.exe
+	cp -r $(WINDOWS)/uE64.exe $(DEPLOY)/static/uE64.exe
 	cp -r $(RES)/eforth.ico $(DEPLOY)/static/favicon.ico
 	cp -r site/* $(DEPLOY)
 	cp -r site/.gcloudignore $(DEPLOY)
