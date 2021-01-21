@@ -65,7 +65,7 @@ RC64 = "$(shell find "${PROGFILES}/Windows Kits" -name rc.exe | grep /x64/ | hea
 DEPLOYABLE = 1
 ifneq (, $(CL32))
   ifneq (, $(RC32))
-    TARGETS += $(WINDOWS)/uE32.exe
+    TARGETS += $(WINDOWS)/uEf32.exe
   else
     $(warning "Missing Visual Studio rc.exe skipping 32-bit Windows.")
     DEPLOYABLE := 0
@@ -76,7 +76,7 @@ else
 endif
 ifneq (, $(CL64))
   ifneq (, $(RC64))
-    TARGETS += $(WINDOWS)/uE64.exe
+    TARGETS += $(WINDOWS)/uEf64.exe
   else
     $(warning "Missing Visual Studio rc.exe skipping 64-bit Windows.")
     DEPLOYABLE := 0
@@ -207,7 +207,7 @@ $(POSIX)/ueforth: \
 $(WINDOWS):
 	mkdir -p $@
 
-$(WINDOWS)/uE32.obj: \
+$(WINDOWS)/uEf32.obj: \
     windows/windows_main.c \
     common/opcodes.h \
     common/core.h \
@@ -215,12 +215,12 @@ $(WINDOWS)/uE32.obj: \
     $(GEN)/windows_boot.h | $(WINDOWS)
 	$(CL32) /c /Fo$@ $(WIN_CFLAGS) $<
 
-$(WINDOWS)/uE32.exe: \
-    $(WINDOWS)/uE32.obj \
+$(WINDOWS)/uEf32.exe: \
+    $(WINDOWS)/uEf32.obj \
     $(RES)/ueforth_res32.res | $(WINDOWS)
 	$(LINK32) /OUT:$@ $(WIN_LFLAGS32) $^
 
-$(WINDOWS)/uE64.obj: \
+$(WINDOWS)/uEf64.obj: \
     windows/windows_main.c \
     common/opcodes.h \
     common/core.h \
@@ -228,8 +228,8 @@ $(WINDOWS)/uE64.obj: \
     $(GEN)/windows_boot.h | $(WINDOWS)
 	$(CL64) /c /Fo$@ $(WIN_CFLAGS) $<
 
-$(WINDOWS)/uE64.exe: \
-    $(WINDOWS)/uE64.obj \
+$(WINDOWS)/uEf64.exe: \
+    $(WINDOWS)/uEf64.obj \
     $(RES)/ueforth_res64.res | $(WINDOWS)
 	$(LINK64) /OUT:$@ $(WIN_LFLAGS64) $^
 
@@ -265,8 +265,8 @@ $(DEPLOY)/app.yaml: $(ARDUINO)/ueforth-arduino-esp32.zip \
 	mkdir -p $(DEPLOY)/static
 	cp -r $(ARDUINO)/ueforth-arduino-esp32.zip $(DEPLOY)/static
 	cp -r $(POSIX)/ueforth $(DEPLOY)/static/ueforth.linux
-	cp -r $(WINDOWS)/uE32.exe $(DEPLOY)/static/uE32.exe
-	cp -r $(WINDOWS)/uE64.exe $(DEPLOY)/static/uE64.exe
+	cp -r $(WINDOWS)/uEf32.exe $(DEPLOY)/static/uEf32.exe
+	cp -r $(WINDOWS)/uEf64.exe $(DEPLOY)/static/uEf64.exe
 	cp -r $(RES)/eforth.ico $(DEPLOY)/static/favicon.ico
 	cp -r site/* $(DEPLOY)
 	cp -r site/.gcloudignore $(DEPLOY)
