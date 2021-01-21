@@ -1,7 +1,7 @@
 #ifndef CALLTYPE
 # define CALLTYPE
 #endif
-typedef CALLTYPE cell_t (*call_t)();
+typedef cell_t (CALLTYPE *call_t)();
 
 #define CALLING_OPCODE_LIST \
   X("CALL0", OP_CALL0, tos = ((call_t) tos)()) \

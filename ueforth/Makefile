@@ -7,11 +7,13 @@ WINDOWS = $(OUT)/windows
 ARDUINO = $(OUT)/arduino
 DEPLOY = $(OUT)/deploy
 
-CFLAGS_COMMON = -Wall -Werror \
-                -O2 \
+CFLAGS_COMMON = -O2 -I ./ -I $(OUT)
+
+CFLAGS_MINIMIZE = \
                 -s \
-                -ffreestanding \
+                -DUEFORTH_MINIMAL \
                 -fno-exceptions \
+                -ffreestanding \
                 -fno-stack-check \
                 -fno-stack-protector \
                 -fno-stack-protector \
@@ -19,9 +21,10 @@ CFLAGS_COMMON = -Wall -Werror \
                 -mno-stack-arg-probe \
                 -fno-ident -Wl,--build-id=none \
                 -ffunction-sections -fdata-sections \
-                -fmerge-all-constants \
-                -I ./ -I $(OUT)
+                -fmerge-all-constants
 CFLAGS = $(CFLAGS_COMMON) \
+         -Wall \
+         -Werror \
          -Wl,--gc-sections
 STRIP_ARGS = -S \
              --strip-unneeded \
@@ -32,39 +35,57 @@ STRIP_ARGS = -S \
              --remove-section=.note.ABI-tag
 LIBS=-ldl
 
-WIN_CFLAGS = $(CFLAGS_COMMON) -mwindows -nostdlib \
+WIN_CFLAGS = $(CFLAGS_COMMON) \
+             -I "c:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Include" \
+             -I "c:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.28.29333/include" \
+             -I "c:/Program Files (x86)/Windows Kits/10/Include/10.0.19041.0/ucrt"
 
-WIN_LIBS = -lkernel32
+WIN_LFLAGS32 = /LIBPATH:"c:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib" \
+               /LIBPATH:"c:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.28.29333/lib/x86" \
+               /LIBPATH:"c:/Program Files (x86)/Windows Kits/10/Lib/10.0.19041.0/ucrt/x86"
+
+WIN_LFLAGS64 = /LIBPATH:"c:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64" \
+               /LIBPATH:"c:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.28.29333/lib/x64" \
+               /LIBPATH:"c:/Program Files (x86)/Windows Kits/10/Lib/10.0.19041.0/ucrt/x64" \
 
 TARGETS = $(WEB)/terminal.html \
           $(WEB)/ueforth.js \
           $(POSIX)/ueforth \
           $(ARDUINO)/ueforth/ueforth.ino
 
+PROGFILES = /mnt/c/Program Files (x86)
+CL32 = "$(shell find "${PROGFILES}/Microsoft Visual Studio" -name cl.exe | grep /Hostx86/x86/ | head -n 1)"
+CL64 = "$(shell find "${PROGFILES}/Microsoft Visual Studio" -name cl.exe | grep /Hostx86/x64/ | head -n 1)"
+LINK32 = "$(shell find "${PROGFILES}/Microsoft Visual Studio" -name link.exe | grep /Hostx86/x86/ | head -n 1)"
+LINK64 = "$(shell find "${PROGFILES}/Microsoft Visual Studio" -name link.exe | grep /Hostx86/x64/ | head -n 1)"
+RC32 = "$(shell find "${PROGFILES}/Windows Kits" -name rc.exe | grep /x86/ | head -n 1)"
+RC64 = "$(shell find "${PROGFILES}/Windows Kits" -name rc.exe | grep /x64/ | head -n 1)"
+
 # Selectively enable windows if tools available
 DEPLOYABLE = 1
-ifneq (, $(shell which i686-w64-mingw32-windres))
-  ifneq (, $(shell which i686-w64-mingw32-gcc))
+ifneq (, $(CL32))
+  ifneq (, $(RC32))
     TARGETS += $(WINDOWS)/uEforth32.exe
   else
-    $(warning "Missing i686-w64-mingw32-gcc skipping 32-bit Windows.")
+    $(warning "Missing Visual Studio rc.exe skipping 32-bit Windows.")
     DEPLOYABLE := 0
   endif
 else
-  $(warning "Missing i686-w64-mingw32-windres skipping 32-bit Windows.")
+  $(warning "Missing Visual Studio cl.exe skipping 32-bit Windows.")
   DEPLOYABLE := 0
 endif
-ifneq (, $(shell which x86_64-w64-mingw32-windres))
-  ifneq (, $(shell which x86_64-w64-mingw32-gcc))
+ifneq (, $(CL64))
+  ifneq (, $(RC64))
     TARGETS += $(WINDOWS)/uEforth64.exe
   else
-    $(warning "Missing x86_64-w64-mingw32-gcc skipping 64-bit Windows.")
+    $(warning "Missing Visual Studio rc.exe skipping 64-bit Windows.")
     DEPLOYABLE := 0
   endif
 else
-  $(warning "Missing x86_64-w64-mingw32-windres skipping 64-bit Windows.")
+  $(warning "Missing Visual Studio cl.exe skipping 64-bit Windows.")
   DEPLOYABLE := 0
 endif
+
 # Decide if we can deploy.
 DEPLOY_TARGETS =
 ifeq (1, $(DEPLOYABLE))
@@ -145,11 +166,11 @@ ICON_SIZES = $(RES)/eforth256x256.png \
 $(RES)/eforth.ico: $(ICON_SIZES)
 	convert $^ $< $@
 
-$(RES)/ueforth_res32.o: windows/ueforth.rc $(RES)/eforth.ico
-	i686-w64-mingw32-windres $< $@
+$(RES)/ueforth_res32.res: windows/ueforth.rc $(RES)/eforth.ico
+	$(RC32) /fo $@ $<
 
-$(RES)/ueforth_res64.o: windows/ueforth.rc $(RES)/eforth.ico
-	x86_64-w64-mingw32-windres $< $@
+$(RES)/ueforth_res64.res: windows/ueforth.rc $(RES)/eforth.ico
+	$(RC64) /fo $@ $<
 
 # ---- WEB ----
 
@@ -175,6 +196,7 @@ $(POSIX):
 $(POSIX)/ueforth: \
     posix/posix_main.c \
     common/opcodes.h \
+    common/interp.h \
     common/core.h \
     $(GEN)/posix_boot.h | $(POSIX)
 	$(CC) $(CFLAGS) $< -o $@ $(LIBS)
@@ -185,23 +207,31 @@ $(POSIX)/ueforth: \
 $(WINDOWS):
 	mkdir -p $@
 
-$(WINDOWS)/uEforth32.exe: \
+$(WINDOWS)/uEforth32.obj: \
     windows/windows_main.c \
     common/opcodes.h \
     common/core.h \
-    $(GEN)/windows_boot.h \
-    $(RES)/ueforth_res32.o | $(WINDOWS)
-	i686-w64-mingw32-gcc \
-    $(WIN_CFLAGS) $< $(RES)/ueforth_res32.o -o $@ $(WIN_LIBS)
+    windows/windows_interp.h \
+    $(GEN)/windows_boot.h | $(WINDOWS)
+	$(CL32) /c /Fo$@ $(WIN_CFLAGS) $<
+
+$(WINDOWS)/uEforth32.exe: \
+    $(WINDOWS)/uEforth32.obj \
+    $(RES)/ueforth_res32.res | $(WINDOWS)
+	$(LINK32) /OUT:$@ $(WIN_LFLAGS32) $^
+
+$(WINDOWS)/uEforth64.obj: \
+    windows/windows_main.c \
+    common/opcodes.h \
+    common/core.h \
+    windows/windows_interp.h \
+    $(GEN)/windows_boot.h | $(WINDOWS)
+	$(CL64) /c /Fo$@ $(WIN_CFLAGS) $<
 
 $(WINDOWS)/uEforth64.exe: \
-    windows/windows_main.c \
-    common/opcodes.h \
-    common/core.h \
-    $(GEN)/windows_boot.h \
-    $(RES)/ueforth_res64.o | $(WINDOWS)
-	x86_64-w64-mingw32-gcc \
-    $(WIN_CFLAGS) $< $(RES)/ueforth_res64.o -o $@ $(WIN_LIBS)
+    $(WINDOWS)/uEforth64.obj \
+    $(RES)/ueforth_res64.res | $(WINDOWS)
+	$(LINK64) /OUT:$@ $(WIN_LFLAGS64) $^
 
 # ---- ARDUINO ----
 
@@ -213,6 +243,7 @@ $(ARDUINO)/ueforth/ueforth.ino: \
         arduino/arduino.template.ino \
         common/opcodes.h \
         common/core.h \
+        common/interp.h \
         $(GEN)/arduino_boot.h | $(ARDUINO)/ueforth
 	$^ >$@
 

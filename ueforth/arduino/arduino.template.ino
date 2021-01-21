@@ -214,6 +214,7 @@ static char filename[PATH_MAX];
 static String string_value;
 
 {{core}}
+{{interp}}
 {{boot}}
 
 static IPAddress ToIP(cell_t ip) {

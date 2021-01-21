@@ -5,27 +5,28 @@
 
 typedef intptr_t cell_t;
 typedef uintptr_t ucell_t;
-#if __SIZEOF_POINTER__ == 8
-typedef __int128_t dcell_t;
-typedef __uint128_t udcell_t;
-#elif __SIZEOF_POINTER__ == 4
-typedef int64_t dcell_t;
-typedef uint64_t udcell_t;
-#else
-# error "unsupported cell size"
-#endif
 
 #define DUP *++sp = tos
 #define DROP tos = *sp--
 #define COMMA(n) *g_sys.heap++ = (n)
 #define IMMEDIATE() g_sys.last[-1] |= 1
-#define DOES(ip) *g_sys.last = (cell_t) && OP_DODOES; g_sys.last[1] = (cell_t) ip
-#ifndef SSMOD_FUNC
-#define SSMOD_FUNC dcell_t d = (dcell_t) *sp * (dcell_t) sp[-1]; \
-                   --sp; *sp = (cell_t) (((udcell_t) d) % tos); \
-                   tos = (cell_t) (d < 0 ? ~(~d / tos) : d / tos)
-#endif
+#define DOES(ip) *g_sys.last = (cell_t) ADDR_DODOES; g_sys.last[1] = (cell_t) ip
 #define PARK DUP; g_sys.ip = ip; g_sys.rp = rp; g_sys.sp = sp
+
+#ifndef SSMOD_FUNC
+# if __SIZEOF_POINTER__ == 8
+typedef __int128_t dcell_t;
+typedef __uint128_t udcell_t;
+# elif __SIZEOF_POINTER__ == 4 || defined(_M_IX86)
+typedef int64_t dcell_t;
+typedef uint64_t udcell_t;
+# else
+#  error "unsupported cell size"
+# endif
+# define SSMOD_FUNC dcell_t d = (dcell_t) *sp * (dcell_t) sp[-1]; \
+                    --sp; *sp = (cell_t) (((udcell_t) d) % tos); \
+                    tos = (cell_t) (d < 0 ? ~(~d / tos) : d / tos)
+#endif
 
 #define OPCODE_LIST \
   X("0=", ZEQUAL, tos = !tos ? -1 : 0) \
@@ -54,7 +55,7 @@ typedef uint64_t udcell_t;
   X(">R", TOR, *++rp = tos; DROP) \
   X("R>", FROMR, DUP; tos = *rp; --rp) \
   X("R@", RAT, DUP; tos = *rp) \
-  X("EXECUTE", EXECUTE, w = tos; DROP; goto **(void **) w) \
+  X("EXECUTE", EXECUTE, w = tos; DROP; JMPW) \
   X("BRANCH", BRANCH, ip = (cell_t *) *ip) \
   X("0BRANCH", ZBRANCH, if (!tos) ip = (cell_t *) *ip; else ++ip; DROP) \
   X("DONEXT", DONEXT, *rp = *rp - 1; \
@@ -67,17 +68,17 @@ typedef uint64_t udcell_t;
   X("S>NUMBER?", CONVERT, tos = convert((const char *) *sp, tos, sp); \
                           if (!tos) --sp) \
   X("CREATE", CREATE, DUP; DUP; tos = parse(32, sp); \
-                      create((const char *) *sp, tos, 0, && OP_DOCREATE); \
+                      create((const char *) *sp, tos, 0, ADDR_DOCREATE); \
                       COMMA(0); --sp; DROP) \
   X("DOES>", DOES, DOES(ip); ip = (cell_t *) *rp; --rp) \
   X("IMMEDIATE", IMMEDIATE, IMMEDIATE()) \
   X("'SYS", SYS, DUP; tos = (cell_t) &g_sys) \
   X("YIELD", YIELD, PARK; return) \
   X(":", COLON, DUP; DUP; tos = parse(32, sp); \
-                create((const char *) *sp, tos, 0, && OP_DOCOLON); \
+                create((const char *) *sp, tos, 0, ADDR_DOCOLON); \
                 g_sys.state = -1; --sp; DROP) \
   X("EVALUATE1", EVALUATE1, DUP; sp = evaluate1(sp); w = *sp--; DROP; \
-                            if (w) goto **(void **) w) \
+                            if (w) JMPW) \
   X("EXIT", EXIT, ip = (cell_t *) *rp--) \
   X(";", SEMICOLON, COMMA(g_sys.DOEXIT_XT); g_sys.state = 0) \
 

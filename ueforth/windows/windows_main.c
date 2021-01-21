@@ -1,12 +1,13 @@
+#define _USING_V110_SDK71_ 1
 #include "windows.h"
+#include <immintrin.h>
 
 #define CALLTYPE WINAPI
-
-# define SSMOD_FUNC \
-  w = tos; asm("imul %4\n\t" \
-      "idiv %2" \
-      : "=a" (tos), "=d" (sp[-1]) \
-      : "r" (w), "a" (sp[-1]), "d" (*sp)); --sp; if (*sp < 0) { *sp += w; --tos; }
+#if defined(_M_X64)
+# define SSMOD_FUNC --sp; cell_t b, a = _mul128(*sp, sp[1], &b); tos = _div128(b, a, tos, sp)
+#elif defined(_M_IX86)
+# define SSMOD_FUNC --sp; __int64 a = (__int64) *sp * (__int64) sp[1]; tos = _div64(a, tos, sp)
+#endif
 
 #include "common/opcodes.h"
 #include "common/calling.h"
@@ -22,13 +23,17 @@
   CALLING_OPCODE_LIST \
 
 #include "common/core.h"
+#include "windows/windows_interp.h"
 
 #include "gen/windows_boot.h"
 
+#ifdef UEFORTH_MINIMAL
 int WINAPI WinMainCRTStartup(void) {
+#else
+int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmd, int show) {
+#endif
   void *heap = VirtualAlloc(
       NULL, HEAP_SIZE, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
   ueforth(0, 0, heap, boot, sizeof(boot));
-  return 1;
 }
 

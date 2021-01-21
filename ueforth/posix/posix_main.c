@@ -12,6 +12,7 @@
   CALLING_OPCODE_LIST \
 
 #include "common/core.h"
+#include "common/interp.h"
 
 #include "gen/posix_boot.h"
 

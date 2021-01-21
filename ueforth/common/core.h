@@ -1,6 +1,5 @@
 #define PRINT_ERRORS 0
 
-#define NEXT w = *ip++; goto **(void **) w
 #define CELL_LEN(n) (((n) + sizeof(cell_t) - 1) / sizeof(cell_t))
 #define FIND(name) find(name, sizeof(name) - 1)
 #define LOWER(ch) ((ch) & 0x5F)
@@ -120,25 +119,7 @@ static cell_t *evaluate1(cell_t *sp) {
   return sp;
 }
 
-static void ueforth_run() {
-  if (!g_sys.ip) {
-#define X(name, op, code) create(name, sizeof(name) - 1, name[0] == ';', && OP_ ## op);
-    PLATFORM_OPCODE_LIST
-    OPCODE_LIST
-#undef X
-    return;
-  }
-  register cell_t *ip = g_sys.ip, *rp = g_sys.rp, *sp = g_sys.sp, tos, w;
-  DROP; NEXT;
-#define X(name, op, code) OP_ ## op: { code; } NEXT;
-  PLATFORM_OPCODE_LIST
-  OPCODE_LIST
-#undef X
-  OP_DOCOLON: ++rp; *rp = (cell_t) ip; ip = (cell_t *) (w + sizeof(cell_t)); NEXT;
-  OP_DOCREATE: DUP; tos = w + sizeof(cell_t) * 2; NEXT;
-  OP_DODOES: DUP; tos = w + sizeof(cell_t) * 2;
-             ++rp; *rp = (cell_t) ip; ip = (cell_t *) *(cell_t *) (w + sizeof(cell_t)); NEXT;
-}
+static void ueforth_run(void);
 
 static void ueforth(int argc, char *argv[], void *heap,
                     const char *src, cell_t src_len) {
