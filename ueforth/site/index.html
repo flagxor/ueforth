@@ -169,7 +169,7 @@ Serial.begin ( baud -- )   Start serial port
 Serial.end ( -- )   End serial port
 Serial.available ( -- f )   Is serial data available
 Serial.readBytes ( a n -- n )   Read serial bytes, return number gotten
-Serial.write ( a n -- )   Write serial bytes
+Serial.write ( a n -- n )   Write serial bytes
 Serial.flush ( -- )   Flush serial buffer
 </pre>
 
@@ -181,7 +181,7 @@ SerialBT.begin ( localname ismaster bt -- f )
 SerialBT.end ( bt -- )
 SerialBT.available ( bt -- f )
 SerialBT.readBytes ( a n bt -- n )
-SerialBT.write ( a n bt -- )
+SerialBT.write ( a n bt -- n )
 SerialBT.flush ( bt -- )
 SerialBT.hasClient ( bt -- f )
 SerialBT.enableSSP ( bt -- )
@@ -192,6 +192,11 @@ SerialBT.connectAddr ( addr bt -- f )
 SerialBT.disconnect ( bt -- f )
 SerialBT.connected ( timeout bt -- f )
 SerialBT.isReady ( checkMaster timeout -- f )   Default checkMaster=false, timeout=0
+</pre>
+
+<h5>Bluetooth</h5>
+<pre>
+esp_bt_dev_get_address ( -- a ) addr of 6 byte mac address
 </pre>
 
 <h5>GPIO</h5>

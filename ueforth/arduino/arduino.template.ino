@@ -65,6 +65,8 @@
   X("SerialBT.disconnect", SERIALBT_DISCONNECT, tos = ((BluetoothSerial *) tos)->disconnect()) \
   X("SerialBT.connected", SERIALBT_CONNECTED, tos = ((BluetoothSerial *) tos)->connected(*sp); --sp) \
   X("SerialBT.isReady", SERIALBT_IS_READY, tos = ((BluetoothSerial *) tos)->isReady(sp[-1], *sp); sp -= 2) \
+  /* Bluetooth */ \
+  X("esp_bt_dev_get_address", ESP_BT_DEV_GET_ADDRESS, DUP; tos = (cell_t) esp_bt_dev_get_address()) \
   /* Pins and PWM */ \
   X("pinMode", PIN_MODE, pinMode(*sp, tos); --sp; DROP) \
   X("digitalWrite", DIGITAL_WRITE, digitalWrite(*sp, tos); --sp; DROP) \
