@@ -48,7 +48,30 @@ A reduced cross-platform EForth version
 </p>
 <ul>
   <li><a href="static/ueforth-arduino-esp32.zip">ueforth-arduino-esp32.zip</a>
-     - <b>ESP32 Arduino</b> Source Code <b>&larr; SVFIG & Forth2020 folks start here!</b></li>
+     - <b>ESP32 Arduino</b> Source Code <b>&larr; SVFIG & Forth2020 folks start here!</b>
+    <ul>
+       <li><b>Regular ESP32 (may work better with your particular board)</b>
+         <ul>
+           <li><b>Board:</b> ESP32 Dev Module</li>
+           <li><b>Partition Scheme:</b> No OTA (2M APP, 2M SPIFFS) <b>&larr; Non-default</b></li>
+           <small>
+           <li><b>Upload Speed:</b> 921600</li>
+           <li><b>CPU Frequency:</b> 240MHz</li>
+           <li><b>Flash Frequency:</b> 80MHz</li>
+           <li><b>Flash Mode:</b> QIO</li>
+           <li><b>Flash Size:</b> 4MB</li>
+           <li><b>Core Debug Level:</b> None</li>
+           <li><b>PSRAM:</b> Disabled</li>
+           </small>
+         </ul>
+       </li>
+       <li><b>ESP32-CAM</b>
+         <ul>
+           <li><b>Board:</b> AI Thinker ESP32-CAM</li>
+         </ul>
+       </li>
+    </ul>
+  </li>
   <li><a href="static/uEf32.exe">uEf32.exe</a> - Window 32-bit EXE µEforth</li>
   <li><a href="static/uEf64.exe">uEf64.exe</a> - Window 64-bit EXE µEforth</li>
   <li><a href="static/ueforth.linux">ueforth.linux</a> - Linux 64-bit Executable µEforth</li>
