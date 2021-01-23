@@ -1,5 +1,6 @@
 {{opcodes}}
 
+#include "esp_bt_device.h"
 #include "esp_camera.h"
 #include <Wire.h>
 #include <WiFi.h>
