@@ -16,16 +16,14 @@ typedef uintptr_t ucell_t;
 #ifndef SSMOD_FUNC
 # if __SIZEOF_POINTER__ == 8
 typedef __int128_t dcell_t;
-typedef __uint128_t udcell_t;
 # elif __SIZEOF_POINTER__ == 4 || defined(_M_IX86)
 typedef int64_t dcell_t;
-typedef uint64_t udcell_t;
 # else
 #  error "unsupported cell size"
 # endif
 # define SSMOD_FUNC dcell_t d = (dcell_t) *sp * (dcell_t) sp[-1]; \
-                    --sp; *sp = (cell_t) (((udcell_t) d) % tos); \
-                    tos = (cell_t) (d < 0 ? ~(~d / tos) : d / tos)
+                    --sp; cell_t a = (cell_t) (d < 0 ? ~(~d / tos) : d / tos); \
+                    *sp = (cell_t) (d - ((dcell_t) a) * tos); tos = a
 #endif
 
 #define OPCODE_LIST \
