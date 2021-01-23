@@ -48,7 +48,7 @@ A reduced cross-platform EForth version
 </p>
 <ul>
   <li><a href="static/ueforth-arduino-esp32.zip">ueforth-arduino-esp32.zip</a>
-     - <b>Arduino ESP32</b> Source Code <b>&larr; SVFIG & Forth2020 folks start here!</b></li>
+     - <b>ESP32 Arduino</b> Source Code <b>&larr; SVFIG & Forth2020 folks start here!</b></li>
   <li><a href="static/uEf32.exe">uEf32.exe</a> - Window 32-bit EXE µEforth</li>
   <li><a href="static/uEf64.exe">uEf64.exe</a> - Window 64-bit EXE µEforth</li>
   <li><a href="static/ueforth.linux">ueforth.linux</a> - Linux 64-bit Executable µEforth</li>
@@ -140,9 +140,9 @@ their use is supported in Forth by way of
 <code>Z"</code>, <code>Z&gt;S</code>, and <code>S&gt;Z</code>.
 </p>
 
-<h3>Arduino</h3>
+<h3>ESP32 Arduino</h3>
 
-<h4>Arduino Opcodes</h4>
+<h4>ESP32 Arduino Opcodes</h4>
 
 <p>
 Because Arduino builds a statically linked image for flashing into ESP32 devices,
@@ -325,7 +325,7 @@ SD_MMC.totalBytes ( -- n )
 SD_MMC.usedBytes ( -- n )
 </pre>
 
-<h4>Arduino ESP32 WebUI</h4>
+<h4>ESP32 WebUI</h4>
 
 <p>
 A terminal over the web can be activated.
@@ -338,6 +338,17 @@ webui ( network-z password-z -- )
 
 <p>
 See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/arduino/arduino_server.fs">arduino_server.fs</a>.
+</p>
+
+<h4>Autoexec.fs</h4>
+
+<p>
+The system will automatically attempt to mount SPIFFS filesystem at <code>/spiffs</code>.
+It will then at start attempt to load <code>/spiffs/autoexec.fs</code>
+</p>
+
+<p>
+See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/arduino/autoboot.fs">autoboot.fs</a>.
 </p>
 
 <h3>Windows</h3>
