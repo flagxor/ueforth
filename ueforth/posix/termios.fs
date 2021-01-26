@@ -3,6 +3,7 @@
 z" tcgetattr" 2 sysfunc tcgetattr
 z" tcsetattr" 3 sysfunc tcsetattr
 z" fcntl" 3 sysfunc fcntl
+z" ioctl" 3 sysfunc ioctl
 
 ( Blocking )
 4 constant F_SETFL
@@ -30,3 +31,10 @@ old-termios termios@
              0 VMIN new-termios .c_cc[] c!
              new-termios termios! ;
 : normal-mode   old-termios termios! ;
+
+( Screen Size )
+$5413 constant TIOCGWINSZ
+4 2 * constant sizeof(winsize)
+create winsize sizeof(winsize) allot
+: form ( -- h w ) stdin TIOCGWINSZ winsize ioctl throw
+                  winsize l@ dup $ffff and swap $10000 / ;
