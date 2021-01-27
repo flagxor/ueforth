@@ -77,6 +77,7 @@
   X("W/O", W_O, PUSH(O_WRONLY)) \
   X("BIN", BIN, ) \
   X("CLOSE-FILE", CLOSE_FILE, tos = close(tos); tos = tos ? errno : 0) \
+  X("FLUSH-FILE", FLUSH_FILE, fsync(tos); /* fsync has no impl and returns ENOSYS :-( */ tos = 0) \
   X("OPEN-FILE", OPEN_FILE, cell_t mode = tos; DROP; cell_t len = tos; DROP; \
     memcpy(filename, (void *) tos, len); filename[len] = 0; \
     tos = open(filename, mode, 0777); PUSH(tos < 0 ? errno : 0)) \
@@ -89,11 +90,12 @@
   X("WRITE-FILE", WRITE_FILE, cell_t fd = tos; DROP; cell_t len = tos; DROP; \
     tos = write(fd, (void *) tos, len); tos = tos != len ? errno : 0) \
   X("READ-FILE", READ_FILE, cell_t fd = tos; DROP; cell_t len = tos; DROP; \
-    tos = read(fd, (void *) tos, len); PUSH(tos != len ? errno : 0)) \
+    tos = read(fd, (void *) tos, len); PUSH(tos < 0 ? errno : 0)) \
   X("FILE-POSITION", FILE_POSITION, \
     tos = (cell_t) lseek(tos, 0, SEEK_CUR); PUSH(tos < 0 ? errno : 0)) \
   X("REPOSITION-FILE", REPOSITION_FILE, cell_t fd = tos; DROP; \
     tos = (cell_t) lseek(fd, tos, SEEK_SET); tos = tos < 0 ? errno : 0) \
+  X("RESIZE-FILE", RESIZE_FILE, cell_t fd = tos; DROP; tos = ResizeFile(fd, tos)) \
   X("FILE-SIZE", FILE_SIZE, struct stat st; w = fstat(tos, &st); \
     tos = (cell_t) st.st_size; PUSH(w < 0 ? errno : 0)) \
   OPTIONAL_SPIFFS_SUPPORT \
@@ -300,14 +302,43 @@ static cell_t FromIP(IPAddress ip) {
       ((WebServer *) tos)->handleClient(); DROP)
 #endif
 
-// TODO: Support RESIZE-FILE (ftruncate is missing?)
-
 static char filename[PATH_MAX];
 static String string_value;
 
 {{core}}
 {{interp}}
 {{boot}}
+
+// Work around lack of ftruncate
+static cell_t ResizeFile(cell_t fd, cell_t size) {
+  struct stat st;
+  char buf[256];
+  cell_t t = fstat(fd, &st);
+  if (t < 0) { return errno; }
+  if (size < st.st_size) {
+    // TODO: Implement truncation
+    return ENOSYS;
+  }
+  cell_t oldpos = lseek(fd, 0, SEEK_CUR);
+  if (oldpos < 0) { return errno; }
+  t = lseek(fd, 0, SEEK_END);
+  if (t < 0) { return errno; }
+  memset(buf, 0, sizeof(buf));
+  while (st.st_size < size) {
+    cell_t len = sizeof(buf);
+    if (size - st.st_size < len) {
+      len = size - st.st_size;
+    }
+    t = write(fd, buf, len);
+    if (t != len) {
+      return errno;
+    }
+    st.st_size += t;
+  }
+  t = lseek(fd, oldpos, SEEK_SET);
+  if (t < 0) { return errno; }
+  return 0;
+}
 
 #ifdef ENABLE_WEBSERVER_SUPPORT
 static void InvokeWebServerOn(WebServer *ws, const char *url, cell_t xt) {

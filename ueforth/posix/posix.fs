@@ -21,6 +21,7 @@ z" close" 1 sysfunc close
 z" read" 3 sysfunc read
 z" write" 3 sysfunc write
 z" lseek" 3 sysfunc lseek
+z" ftruncate" 2 sysfunc ftruncate
 z" fsync" 1 sysfunc fsync
 z" exit" 1 sysfunc sysexit
 z" fork" 0 sysfunc fork
@@ -95,6 +96,7 @@ octal 777 constant 0777 decimal
 : write-file ( a n fh -- ior ) -rot dup >r write r> = 0= ;
 : file-position ( fh -- n ior ) dup 0 SEEK_CUR lseek 0<ior ;
 : reposition-file ( n fh -- ior ) swap SEEK_SET lseek 0< ;
+: resize-file ( n fh -- ior ) swap ftruncate 0< ;
 : file-size ( fh -- n ior )
    dup 0 SEEK_CUR lseek >r
    dup 0 SEEK_END lseek r> swap >r

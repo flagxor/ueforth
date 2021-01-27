@@ -5,9 +5,10 @@ create block-data 1024 allot
    block-fid 0< 0= if block-fid close-file throw -1 to block-fid then
    2dup r/w open-file if drop r/w create-file throw else nip nip then to block-fid ;
 : use ( "name" -- ) bl parse open-blocks ;
+: grow-blocks ( n -- ) 1024 * block-fid file-size throw max block-fid resize-file throw ;
 : save-buffers
    block-dirty if
-     block-id 1024 * block-fid reposition-file throw
+     block-id grow-blocks block-id 1024 * block-fid reposition-file throw
      block-data 1024 block-fid write-file throw
      block-fid flush-file throw
      0 to block-dirty
@@ -15,7 +16,8 @@ create block-data 1024 allot
 : clobber-line ( a -- a' ) dup 63 bl fill 63 + nl over c! 1+ ;
 : clobber ( a -- ) 15 for clobber-line next drop ;
 : block ( n -- a ) dup block-id = if drop block-data exit then
-                   save-buffers dup 1024 * block-fid reposition-file throw
+                   save-buffers dup grow-blocks
+                   dup 1024 * block-fid reposition-file throw
                    block-data clobber
                    block-data 1024 block-fid read-file throw drop
                    to block-id block-data ;

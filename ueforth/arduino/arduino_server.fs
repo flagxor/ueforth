@@ -110,7 +110,6 @@ create out-string out-size 1+ allot align
    z" cmd" webserver @ WebServer.hasArg if
      z" cmd" webserver @ WebServer.arg input-stream >stream pause
      out-string out-size output-stream stream>
-     out-string z>s arduino-type
      200 z" text/plain" out-string webserver @ WebServer.send
    else
      500 z" text/plain" z" Missing Input" webserver @ WebServer.send
