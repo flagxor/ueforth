@@ -116,7 +116,7 @@ $(GEN):
 POSIX_BOOT =  common/boot.fs common/terminal.fs \
               posix/posix.fs posix/posix_highlevel.fs \
               common/filetools.fs posix/posix_desktop.fs \
-              common/tasks.fs common/streams.fs
+              common/tasks.fs common/streams.fs common/blocks.fs
 $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 	echo "ok" | cat $(POSIX_BOOT) - | $< boot >$@
 

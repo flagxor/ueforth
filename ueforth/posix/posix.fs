@@ -21,6 +21,7 @@ z" close" 1 sysfunc close
 z" read" 3 sysfunc read
 z" write" 3 sysfunc write
 z" lseek" 3 sysfunc lseek
+z" fsync" 1 sysfunc fsync
 z" exit" 1 sysfunc sysexit
 z" fork" 0 sysfunc fork
 z" wait" 1 sysfunc wait
@@ -87,11 +88,13 @@ octal 777 constant 0777 decimal
 : create-file ( a n fam -- fh ior )
    >r s>z r> O_CREAT or 0777 open sign-extend 0<ior ;
 : close-file ( fh -- ior ) close sign-extend ;
+: flush-file ( fh -- ior ) fsync sign-extend ;
 : delete-file ( a n -- ior ) s>z unlink sign-extend ;
 : rename-file ( a n a n -- ior ) s>z -rot s>z swap rename sign-extend ;
 : read-file ( a n fh -- n ior ) -rot read 0<ior ;
 : write-file ( a n fh -- ior ) -rot dup >r write r> = 0= ;
 : file-position ( fh -- n ior ) dup 0 SEEK_CUR lseek 0<ior ;
+: reposition-file ( n fh -- ior ) swap SEEK_SET lseek 0< ;
 : file-size ( fh -- n ior )
    dup 0 SEEK_CUR lseek >r
    dup 0 SEEK_END lseek r> swap >r

@@ -176,6 +176,7 @@ variable hld
 
 ( Fill, Move )
 : cmove ( a a n -- ) for aft >r dup c@ r@ c! 1+ r> 1+ then next 2drop ;
+: cmove> ( a a n -- ) for aft 2dup swap r@ + c@ swap r@ + c! then next 2drop ;
 : fill ( a a n -- ) swap for swap aft 2dup c! 1 + then next 2drop ;
 
 ( Better Errors )

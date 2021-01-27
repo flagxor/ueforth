@@ -87,6 +87,7 @@ static cell_t *evaluate1(cell_t *sp) {
   cell_t call = 0;
   cell_t name;
   cell_t len = parse(' ', &name);
+  if (len == 0) { *++sp = 0; return sp; }  // ignore empty
   cell_t xt = find((const char *) name, len);
   if (xt) {
     if (g_sys.state && !(((cell_t *) xt)[-1] & 1)) {  // bit 0 of flags is immediate
