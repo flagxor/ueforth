@@ -80,84 +80,54 @@ A reduced cross-platform EForth version
 
 <h2>µEforth</h2>
 
+<h3>µEforth Specific Words</h3>
+
+<h5>Null Terminated Strings</h5>
 <p>
-µEforth (micro-Eforth) simplifies EForth even futher, by building just enough
-of the core of the system in C to allow the rest to be be built in proper Forth.
-</p>
-
-<p>
-A handful of "tricky" words that involve internal loops or many steps are built in their own
-functions:
-</p>
-
-<pre>
-FIND ( a n -- xt | 0 )
-PARSE ( ch -- a n )
-S&gt;NUMBER? ( a n -- n f | 0 )
-CREATE ( "name" -- )
-EVALUATE1 ( -- )
-</pre>
-
-<p>
-This includes <code>EVALUATE1</code> which parses a single word and
-interprets or compiles it (reusing <code>PARSE</code>,
-<code>FIND</code>, and <code>S&gt;NUMBER?</code>).
-</p>
-
-<p>
-See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/common/core.h">core.h</a>.
-</p>
-
-<p>
-A few global variables connect parsing and compilation state between
-C and Forth (by way of a memory region accessed via <code>'SYS</code>):
-</p>
-
-<pre>
-'TIB      --- Pointer to the Translation Input Buffer
-#TIB      --- Length of the Translation Input Buffer
-&gt;IN       --- Number of characters consumed from TIB
-
-BASE      --- Numeric base for printing and parsing
-
-STATE     --- State of compiling, -1 for compiling, 0 for interpreting
-LAST      --- Execution token of last word defined
-
-'NOTFOUND --- Execution token of a handler to call on word not found
-</pre>
-
-<p>
-Error handling is routed via a deferred callback in <code>'NOTFOUND</code>
-used when a word is absent from the dictionary.
-This is eventually directed to an error routing that prints
-a proper error, once I/O and exceptions are available.
-</p>
-
-<p>
-<a href="https://en.wikipedia.org/wiki/X_Macro">X-Macros</a>
-are then used to build up a small set of core opcodes defined in 1-3 lines each:
-</p>
-
-<pre>
-0= 0&lt; + U/MOD */MOD   AND OR XOR
-DUP SWAP OVER DROP    @ L@ C@ ! L! C!
-SP@ SP! RP@ RP!       &gt;R R&gt; R@   : ; EXIT
-EXECUTE BRANCH 0BRANCH DONEXT DOLIT
-ALITERAL CELL DOES&gt; IMMEDIATE 'SYS
-</pre>
-
-<p>
-See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/common/opcodes.h">opcodes.h</a>.
-</p>
-
-<p>
-I/O and access to systems outside Forth are connected via a few per platform words.
-Typically this set of words should be minimal, while still allowing relevant parts
-of the host system to be available to Forth.
 As null terminated strings are used by virtually all platforms,
-their use is supported in Forth by way of
-<code>Z"</code>, <code>Z&gt;S</code>, and <code>S&gt;Z</code>.
+their use is supported in Forth by way of several non-standard
+words with the convention of using Z/z to refer to such strings
+in names and stack comments.
 </p>
+<pre>
+Z" ( "string" -- z ) Creates a null terminated string on the heap
+Z&gt;S ( z -- a n ) Convert a null terminated string to a counted string
+S&gt;Z ( a n -- z ) Conver a counted string string to null terminated (copies string to heap)
+</pre>
+
+<h5>Raw Strings</h5>
+<p>
+Raw strings are provided better support using a string
+for the duration of the current command, without consuming heap memory.
+</p>
+<pre>
+R" ( "string" -- a n ) Creates a temporary counted string
+R| ( string| -- a n ) Creates a temporary counted string ending with |
+</pre>
+
+<h5>Utilities</h5>
+<pre>
+DUMP ( a n -- ) Dump a memory region
+SEE ( "name" -- ) Attempt to decompile a word
+VARIABLE ECHO -- Determines if commands are echoed
+</pre>
+
+<h5>Block Editor</h5>
+<pre>
+USE ( "name" -- ) Use "name" as the blockfile, e.g. USE /spiffs/foo
+OPEN-BLOCKS ( a n -- ) Open a file as the block file
+LOAD ( n -- ) Evaluate a block
+THRU ( a b -- ) Load blocks a thru b
+LIST ( n -- ) List a block
+L ( -- ) List the current block
+WIPE ( -- ) Blank out the current block
+D ( n -- ) Delete a line in the current block
+E ( n -- ) Clear a line in the current block
+R ( n "text" -- ) Replace a line in the current block
+A ( n "text" -- ) Add (insert) a line in the current block
+SEE ( "name" -- ) Attempt to decompile a word
+VARIABLE ECHO -- Determines if commands are echoed
+</pre>
 
 <h3>ESP32 Arduino</h3>
 
@@ -473,6 +443,84 @@ See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/common/calling.
 <h3>Web</h3>
 
 <font style="font-size: 18pt; color: #C00;">Work in Progress - Coming Soon</font>
+
+<h3>µEforth Internals</h3>
+
+<p>
+µEforth (micro-Eforth) simplifies EForth even futher, by building just enough
+of the core of the system in C to allow the rest to be be built in proper Forth.
+</p>
+
+<p>
+A handful of "tricky" words that involve internal loops or many steps are built in their own
+functions:
+</p>
+
+<pre>
+FIND ( a n -- xt | 0 )
+PARSE ( ch -- a n )
+S&gt;NUMBER? ( a n -- n f | 0 )
+CREATE ( "name" -- )
+EVALUATE1 ( -- )
+</pre>
+
+<p>
+This includes <code>EVALUATE1</code> which parses a single word and
+interprets or compiles it (reusing <code>PARSE</code>,
+<code>FIND</code>, and <code>S&gt;NUMBER?</code>).
+</p>
+
+<p>
+See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/common/core.h">core.h</a>.
+</p>
+
+<p>
+A few global variables connect parsing and compilation state between
+C and Forth (by way of a memory region accessed via <code>'SYS</code>):
+</p>
+
+<pre>
+'TIB      --- Pointer to the Translation Input Buffer
+#TIB      --- Length of the Translation Input Buffer
+&gt;IN       --- Number of characters consumed from TIB
+
+BASE      --- Numeric base for printing and parsing
+
+STATE     --- State of compiling, -1 for compiling, 0 for interpreting
+LAST      --- Execution token of last word defined
+
+'NOTFOUND --- Execution token of a handler to call on word not found
+</pre>
+
+<p>
+Error handling is routed via a deferred callback in <code>'NOTFOUND</code>
+used when a word is absent from the dictionary.
+This is eventually directed to an error routing that prints
+a proper error, once I/O and exceptions are available.
+</p>
+
+<p>
+<a href="https://en.wikipedia.org/wiki/X_Macro">X-Macros</a>
+are then used to build up a small set of core opcodes defined in 1-3 lines each:
+</p>
+
+<pre>
+0= 0&lt; + U/MOD */MOD   AND OR XOR
+DUP SWAP OVER DROP    @ L@ C@ ! L! C!
+SP@ SP! RP@ RP!       &gt;R R&gt; R@   : ; EXIT
+EXECUTE BRANCH 0BRANCH DONEXT DOLIT
+ALITERAL CELL DOES&gt; IMMEDIATE 'SYS
+</pre>
+
+<p>
+See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/common/opcodes.h">opcodes.h</a>.
+</p>
+
+<p>
+I/O and access to systems outside Forth are connected via a few per platform words.
+Typically this set of words should be minimal, while still allowing relevant parts
+of the host system to be available to Forth.
+</p>
 
 <h2>Classic esp32Forth</h2>
 
