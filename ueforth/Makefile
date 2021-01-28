@@ -120,7 +120,9 @@ POSIX_BOOT =  common/boot.fs common/terminal.fs \
 $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 	echo "ok" | cat $(POSIX_BOOT) - | $< boot >$@
 
-WINDOWS_BOOT = common/boot.fs common/terminal.fs windows/windows.fs
+WINDOWS_BOOT = common/boot.fs common/terminal.fs \
+               windows/windows.fs \
+               common/tasks.fs common/streams.fs common/blocks.fs
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 	echo "ok" | cat $(WINDOWS_BOOT) - | $< boot >$@
 

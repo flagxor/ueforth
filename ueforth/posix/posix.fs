@@ -77,7 +77,6 @@ decimal
 ' posix-bye is bye
 
 ( I/O Error Helpers )
-: 0ior ( n -- n ior ) dup 0= if errno else 0 then ;
 : 0<ior ( n -- n ior ) dup 0< if errno else 0 then ;
 
 ( Generic Files )
@@ -94,7 +93,7 @@ octal 777 constant 0777 decimal
 : rename-file ( a n a n -- ior ) s>z -rot s>z swap rename sign-extend ;
 : read-file ( a n fh -- n ior ) -rot read 0<ior ;
 : write-file ( a n fh -- ior ) -rot dup >r write r> = 0= ;
-: file-position ( fh -- n ior ) dup 0 SEEK_CUR lseek 0<ior ;
+: file-position ( fh -- n ior ) 0 SEEK_CUR lseek 0<ior ;
 : reposition-file ( n fh -- ior ) swap SEEK_SET lseek 0< ;
 : resize-file ( n fh -- ior ) swap ftruncate 0< ;
 : file-size ( fh -- n ior )

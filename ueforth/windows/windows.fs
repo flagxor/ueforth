@@ -44,10 +44,21 @@ z" Kernel32.dll" dll Kernel32
 z" AllocConsole" 0 Kernel32 AllocConsole
 z" ExitProcess" 1 Kernel32 ExitProcess
 z" GetStdHandle" 1 Kernel32 GetStdHandle
-z" ReadFile" 5 Kernel32 ReadFile
-z" WriteFile" 5 Kernel32 WriteFile
 z" GetConsoleMode" 2 Kernel32 GetConsoleMode
 z" SetConsoleMode" 2 Kernel32 SetConsoleMode
+z" Sleep" 1 Kernel32 Sleep
+
+z" GetLastError" 0 Kernel32 GetLastError
+z" CreateFileA" 7 Kernel32 CreateFileA
+z" ReadFile" 5 Kernel32 ReadFile
+z" WriteFile" 5 Kernel32 WriteFile
+z" CloseHandle" 1 Kernel32 CloseHandle
+z" FlushFileBuffers" 1 Kernel32 FlushFileBuffers
+z" DeleteFileA" 1 Kernel32 DeleteFileA
+z" MoveFileA" 2 Kernel32 MoveFileA
+z" SetFilePointer" 4 Kernel32 SetFilePointer
+z" SetEndOfFile" 1 Kernel32 SetEndOfFile
+z" GetFileSize" 2 Kernel32 GetFileSize
 
 AllocConsole drop
 STD_INPUT_HANDLE GetStdHandle constant stdin
@@ -67,3 +78,51 @@ stdout console-mode @ ENABLE_VIRTUAL_TERMINAL_PROCESSING or SetConsoleMode drop
 
 : set-title ( a n -- ) esc ." ]0;" type bel ;
 s" uEforth" set-title
+
+( Window File Specific )
+1 constant FILE_SHARE_READ
+2 constant FILE_SHARE_WRITE
+2 constant CREATE_ALWAYS
+3 constant OPEN_EXISTING
+$80 constant FILE_ATTRIBUTE_NORMAL
+0 constant FILE_BEGIN
+1 constant FILE_CURRENT
+2 constant FILE_END
+
+( I/O Error Helpers )
+: ior ( f -- ior ) if GetLastError else 0 then ;
+: 0=ior ( n -- n ior ) dup 0= ior ;
+: 0<ior ( n -- n ior ) dup 0< ior ;
+: invalid?ior ( n -- ior ) $ffffffff = ior ;
+
+( Generic Files )
+$80000000 constant r/o  ( GENERIC_READ )
+$40000000 constant w/o  ( GENERIC_WRITE )
+r/o w/o or constant r/w
+: open-file ( a n fam -- fh ior )
+   >r s>z r> FILE_SHARE_READ FILE_SHARE_WRITE or NULL
+   OPEN_EXISTING FILE_ATTRIBUTE_NORMAL NULL CreateFileA 0<ior ;
+: create-file ( a n fam -- fh ior )
+   >r s>z r> FILE_SHARE_READ FILE_SHARE_WRITE or NULL
+   CREATE_ALWAYS FILE_ATTRIBUTE_NORMAL NULL CreateFileA 0<ior ;
+: close-file ( fh -- ior ) CloseHandle 0=ior ;
+: flush-file ( fh -- ior ) FlushFileBuffers 0=ior ;
+: delete-file ( a n -- ior ) s>z DeleteFileA 0=ior ;
+: rename-file ( a n a n -- ior ) s>z -rot s>z swap MoveFileA 0=ior ;
+: read-file ( a n fh -- n ior ) -rot 0 >r rp@ NULL ReadFile r> swap 0= ior ;
+: write-file ( a n fh -- ior )
+   -rot dup >r 0 >r rp@ NULL WriteFile
+   if r> r> <> else rdrop rdrop GetLastError then ;
+: file-position ( fh -- n ior )
+   0 NULL FILE_CURRENT SetFilePointer dup invalid?ior ;
+: reposition-file ( n fh -- ior )
+   swap NULL FILE_BEGIN SetFilePointer invalid?ior ;
+: resize-file ( n fh -- ior )
+   dup file-position dup if drop 2drop 1 ior exit else drop then >r
+   dup -rot reposition-file if rdrop drop 1 ior exit then
+   dup SetEndOfFile 0= if rdrop drop 1 ior exit then
+   r> swap reposition-file ;
+: file-size ( fh -- n ior ) NULL GetFileSize dup invalid?ior ;
+
+( Other Utils )
+: ms ( n -- ) Sleep ;
