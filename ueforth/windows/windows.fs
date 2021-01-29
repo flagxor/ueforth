@@ -91,8 +91,8 @@ $80 constant FILE_ATTRIBUTE_NORMAL
 
 ( I/O Error Helpers )
 : ior ( f -- ior ) if GetLastError else 0 then ;
-: 0=ior ( n -- n ior ) dup 0= ior ;
-: 0<ior ( n -- n ior ) dup 0< ior ;
+: 0=ior ( n -- n ior ) 0= ior ;
+: d0<ior ( n -- n ior ) dup 0< ior ;
 : invalid?ior ( n -- ior ) $ffffffff = ior ;
 
 ( Generic Files )
@@ -101,15 +101,15 @@ $40000000 constant w/o  ( GENERIC_WRITE )
 r/o w/o or constant r/w
 : open-file ( a n fam -- fh ior )
    >r s>z r> FILE_SHARE_READ FILE_SHARE_WRITE or NULL
-   OPEN_EXISTING FILE_ATTRIBUTE_NORMAL NULL CreateFileA 0<ior ;
+   OPEN_EXISTING FILE_ATTRIBUTE_NORMAL NULL CreateFileA d0<ior ;
 : create-file ( a n fam -- fh ior )
    >r s>z r> FILE_SHARE_READ FILE_SHARE_WRITE or NULL
-   CREATE_ALWAYS FILE_ATTRIBUTE_NORMAL NULL CreateFileA 0<ior ;
+   CREATE_ALWAYS FILE_ATTRIBUTE_NORMAL NULL CreateFileA d0<ior ;
 : close-file ( fh -- ior ) CloseHandle 0=ior ;
 : flush-file ( fh -- ior ) FlushFileBuffers 0=ior ;
 : delete-file ( a n -- ior ) s>z DeleteFileA 0=ior ;
 : rename-file ( a n a n -- ior ) s>z -rot s>z swap MoveFileA 0=ior ;
-: read-file ( a n fh -- n ior ) -rot 0 >r rp@ NULL ReadFile r> swap 0= ior ;
+: read-file ( a n fh -- n ior ) -rot 0 >r rp@ NULL ReadFile r> swap 0=ior ;
 : write-file ( a n fh -- ior )
    -rot dup >r 0 >r rp@ NULL WriteFile
    if r> r> <> else rdrop rdrop GetLastError then ;

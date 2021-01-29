@@ -77,29 +77,29 @@ decimal
 ' posix-bye is bye
 
 ( I/O Error Helpers )
-: 0<ior ( n -- n ior ) dup 0< if errno else 0 then ;
+: d0<ior ( n -- n ior ) dup 0< if errno else 0 then ;
 
 ( Generic Files )
 O_RDONLY constant r/o
 O_WRONLY constant w/o
 O_RDWR constant r/w
 octal 777 constant 0777 decimal
-: open-file ( a n fam -- fh ior ) >r s>z r> 0777 open sign-extend 0<ior ;
+: open-file ( a n fam -- fh ior ) >r s>z r> 0777 open sign-extend d0<ior ;
 : create-file ( a n fam -- fh ior )
-   >r s>z r> O_CREAT or 0777 open sign-extend 0<ior ;
+   >r s>z r> O_CREAT or 0777 open sign-extend d0<ior ;
 : close-file ( fh -- ior ) close sign-extend ;
 : flush-file ( fh -- ior ) fsync sign-extend ;
 : delete-file ( a n -- ior ) s>z unlink sign-extend ;
 : rename-file ( a n a n -- ior ) s>z -rot s>z swap rename sign-extend ;
-: read-file ( a n fh -- n ior ) -rot read 0<ior ;
+: read-file ( a n fh -- n ior ) -rot read d0<ior ;
 : write-file ( a n fh -- ior ) -rot dup >r write r> = 0= ;
-: file-position ( fh -- n ior ) 0 SEEK_CUR lseek 0<ior ;
+: file-position ( fh -- n ior ) 0 SEEK_CUR lseek d0<ior ;
 : reposition-file ( n fh -- ior ) swap SEEK_SET lseek 0< ;
 : resize-file ( n fh -- ior ) swap ftruncate 0< ;
 : file-size ( fh -- n ior )
    dup 0 SEEK_CUR lseek >r
    dup 0 SEEK_END lseek r> swap >r
-         SEEK_SET lseek drop r> 0<ior ;
+         SEEK_SET lseek drop r> d0<ior ;
 
 ( Other Utils )
 : ms ( n -- ) 1000 * usleep drop ;
