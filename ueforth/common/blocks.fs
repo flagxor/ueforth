@@ -5,6 +5,9 @@ create block-data 1024 allot
    block-fid 0< 0= if block-fid close-file throw -1 to block-fid then
    2dup r/w open-file if drop r/w create-file throw else nip nip then to block-fid ;
 : use ( "name" -- ) bl parse open-blocks ;
+: common-default-use s" blocks.fb" open-blocks ;
+defer default-use   ' common-default-use is default-use
+: use?!   block-fid 0< if default-use then ;
 : grow-blocks ( n -- ) 1024 * block-fid file-size throw max block-fid resize-file throw ;
 : save-buffers
    block-dirty if
@@ -15,13 +18,13 @@ create block-data 1024 allot
    then ;
 : clobber-line ( a -- a' ) dup 63 bl fill 63 + nl over c! 1+ ;
 : clobber ( a -- ) 15 for clobber-line next drop ;
-: block ( n -- a ) dup block-id = if drop block-data exit then
+: block ( n -- a ) use?! dup block-id = if drop block-data exit then
                    save-buffers dup grow-blocks
                    dup 1024 * block-fid reposition-file throw
                    block-data clobber
                    block-data 1024 block-fid read-file throw drop
                    to block-id block-data ;
-: buffer ( n -- a ) dup block-id = if drop block-data exit then
+: buffer ( n -- a ) use?! dup block-id = if drop block-data exit then
                     save-buffers to block-id block-data ;
 : empty-buffers   -1 to block-id ;
 : update   -1 to block-dirty ;
