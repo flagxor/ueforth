@@ -53,18 +53,20 @@ TARGETS = $(WEB)/terminal.html \
           $(POSIX)/ueforth \
           $(ARDUINO)/ueforth/ueforth.ino
 
+FINDQ = find 2>/dev/null
+
 PROGFILES = /mnt/c/Program Files (x86)
-CL32 = "$(shell find "${PROGFILES}/Microsoft Visual Studio" -name cl.exe | grep /Hostx86/x86/ | head -n 1)"
-CL64 = "$(shell find "${PROGFILES}/Microsoft Visual Studio" -name cl.exe | grep /Hostx86/x64/ | head -n 1)"
-LINK32 = "$(shell find "${PROGFILES}/Microsoft Visual Studio" -name link.exe | grep /Hostx86/x86/ | head -n 1)"
-LINK64 = "$(shell find "${PROGFILES}/Microsoft Visual Studio" -name link.exe | grep /Hostx86/x64/ | head -n 1)"
-RC32 = "$(shell find "${PROGFILES}/Windows Kits" -name rc.exe | grep /x86/ | head -n 1)"
-RC64 = "$(shell find "${PROGFILES}/Windows Kits" -name rc.exe | grep /x64/ | head -n 1)"
+CL32 = "$(shell $(FINDQ) "${PROGFILES}/Microsoft Visual Studio" -name cl.exe | grep /Hostx86/x86/ | head -n 1)"
+CL64 = "$(shell $(FINDQ) "${PROGFILES}/Microsoft Visual Studio" -name cl.exe | grep /Hostx86/x64/ | head -n 1)"
+LINK32 = "$(shell $(FINDQ) "${PROGFILES}/Microsoft Visual Studio" -name link.exe | grep /Hostx86/x86/ | head -n 1)"
+LINK64 = "$(shell $(FINDQ) "${PROGFILES}/Microsoft Visual Studio" -name link.exe | grep /Hostx86/x64/ | head -n 1)"
+RC32 = "$(shell $(FINDQ) "${PROGFILES}/Windows Kits" -name rc.exe | grep /x86/ | head -n 1)"
+RC64 = "$(shell $(FINDQ) "${PROGFILES}/Windows Kits" -name rc.exe | grep /x64/ | head -n 1)"
 
 # Selectively enable windows if tools available
-DEPLOYABLE = 1
-ifneq (, $(CL32))
-  ifneq (, $(RC32))
+DEPLOYABLE := 1
+ifneq ("", $(CL32))
+  ifneq ("", $(RC32))
     TARGETS += $(WINDOWS)/uEf32.exe
   else
     $(warning "Missing Visual Studio rc.exe skipping 32-bit Windows.")
@@ -74,8 +76,8 @@ else
   $(warning "Missing Visual Studio cl.exe skipping 32-bit Windows.")
   DEPLOYABLE := 0
 endif
-ifneq (, $(CL64))
-  ifneq (, $(RC64))
+ifneq ("", $(CL64))
+  ifneq ("", $(RC64))
     TARGETS += $(WINDOWS)/uEf64.exe
   else
     $(warning "Missing Visual Studio rc.exe skipping 64-bit Windows.")
