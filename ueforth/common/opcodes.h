@@ -11,7 +11,7 @@ typedef uintptr_t ucell_t;
 #define COMMA(n) *g_sys.heap++ = (n)
 #define IMMEDIATE() g_sys.last[-1] |= 1
 #define DOES(ip) *g_sys.last = (cell_t) ADDR_DODOES; g_sys.last[1] = (cell_t) ip
-#define PARK DUP; g_sys.ip = ip; g_sys.rp = rp; g_sys.sp = sp
+#define PARK DUP; *++rp = (cell_t) sp; *++rp = (cell_t) ip
 
 #ifndef SSMOD_FUNC
 # if __SIZEOF_POINTER__ == 8
@@ -71,7 +71,7 @@ typedef int64_t dcell_t;
   X("DOES>", DOES, DOES(ip); ip = (cell_t *) *rp; --rp) \
   X("IMMEDIATE", IMMEDIATE, IMMEDIATE()) \
   X("'SYS", SYS, DUP; tos = (cell_t) &g_sys) \
-  X("YIELD", YIELD, PARK; return) \
+  X("YIELD", YIELD, PARK; return rp) \
   X(":", COLON, DUP; DUP; tos = parse(32, sp); \
                 create((const char *) *sp, tos, 0, ADDR_DOCOLON); \
                 g_sys.state = -1; --sp; DROP) \

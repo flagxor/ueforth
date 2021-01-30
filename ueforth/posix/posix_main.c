@@ -18,6 +18,7 @@
 
 int main(int argc, char *argv[]) {
   void *heap = mmap(0, HEAP_SIZE, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-  ueforth(argc, argv, heap, boot, sizeof(boot));
+  ueforth_init(argc, argv, heap, boot, sizeof(boot));
+  for (;;) { g_sys.rp = ueforth_run(g_sys.rp); }
   return 1;
 }

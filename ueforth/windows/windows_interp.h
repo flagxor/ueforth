@@ -14,16 +14,17 @@ enum {
 #undef X
 };
 
-static void ueforth_run(void) {
-  if (!g_sys.ip) {
+static cell_t *ueforth_run(cell_t *init_rp) {
+  if (!init_rp) {
 #define X(name, op, code) \
     create(name, sizeof(name) - 1, name[0] == ';', (void *) OP_ ## op);
     PLATFORM_OPCODE_LIST
     OPCODE_LIST
 #undef X
-    return;
+    return 0;
   }
-  register cell_t *ip = g_sys.ip, *rp = g_sys.rp, *sp = g_sys.sp, tos, w;
+  register cell_t *ip, *rp, *sp, tos, w;
+  rp = init_rp;  ip = (cell_t *) *rp--;  sp = (cell_t *) *rp--;
   DROP;
   for (;;) {
 next:

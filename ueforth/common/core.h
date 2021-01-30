@@ -14,7 +14,7 @@ static struct {
   cell_t *heap, *last, notfound;
   int argc;
   char **argv;
-  cell_t *ip, *sp, *rp;  // Parked alternates
+  cell_t *rp;  // spot to park main thread
   cell_t DOLIT_XT, DOEXIT_XT, YIELD_XT;
 } g_sys;
 
@@ -120,30 +120,29 @@ static cell_t *evaluate1(cell_t *sp) {
   return sp;
 }
 
-static void ueforth_run(void);
+static cell_t *ueforth_run(cell_t *initrp);
 
-static void ueforth(int argc, char *argv[], void *heap,
-                    const char *src, cell_t src_len) {
-  g_sys.ip = 0;
+static void ueforth_init(int argc, char *argv[], void *heap,
+                         const char *src, cell_t src_len) {
   g_sys.heap = (cell_t *) heap + 4;  // Leave a little room.
-  ueforth_run();
-  g_sys.sp = g_sys.heap + 1; g_sys.heap += STACK_SIZE;
-  g_sys.rp = g_sys.heap + 1; g_sys.heap += STACK_SIZE;
+  ueforth_run(0);
+  cell_t *sp = g_sys.heap + 1; g_sys.heap += STACK_SIZE;
+  cell_t *rp = g_sys.heap + 1; g_sys.heap += STACK_SIZE;
   g_sys.last[-1] = 1;  // Make ; IMMEDIATE
   g_sys.DOLIT_XT = FIND("DOLIT");
   g_sys.DOEXIT_XT = FIND("EXIT");
   g_sys.YIELD_XT = FIND("YIELD");
   g_sys.notfound = FIND("DROP");
-  g_sys.ip = g_sys.heap;
+  cell_t *start = g_sys.heap;
   *g_sys.heap++ = FIND("EVALUATE1");
   *g_sys.heap++ = FIND("BRANCH");
-  *g_sys.heap++ = (cell_t) g_sys.ip;
+  *g_sys.heap++ = (cell_t) start;
   g_sys.argc = argc;
   g_sys.argv = argv;
   g_sys.base = 10;
   g_sys.tib = src;
   g_sys.ntib = src_len;
-  for (;;) {
-    ueforth_run();
-  }
+  *++rp = (cell_t) sp;
+  *++rp = (cell_t) start;
+  g_sys.rp = rp;
 }

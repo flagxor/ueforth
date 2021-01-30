@@ -343,30 +343,24 @@ static cell_t ResizeFile(cell_t fd, cell_t size) {
 #ifdef ENABLE_WEBSERVER_SUPPORT
 static void InvokeWebServerOn(WebServer *ws, const char *url, cell_t xt) {
   ws->on(url, [xt]() {
-    cell_t *old_ip = g_sys.ip;
-    cell_t *old_rp = g_sys.rp;
-    cell_t *old_sp = g_sys.sp;
-    cell_t stack[16];
-    cell_t rstack[16];
-    g_sys.sp = stack + 1;
-    g_sys.rp = rstack;
     cell_t code[2];
     code[0] = xt;
     code[1] = g_sys.YIELD_XT;
-    g_sys.ip = code;
-    ueforth_run();
-    g_sys.ip = old_ip;
-    g_sys.rp = old_rp;
-    g_sys.sp = old_sp;
+    cell_t stack[16];
+    cell_t rstack[16];
+    cell_t *rp = rstack;
+    *++rp = (cell_t) (stack + 1);
+    *++rp = (cell_t) code;
+    ueforth_run(rp);
   });
 }
 #endif
 
 void setup() {
   cell_t *heap = (cell_t *) malloc(HEAP_SIZE);
-  ueforth(0, 0, heap, boot, sizeof(boot));
+  ueforth_init(0, 0, heap, boot, sizeof(boot));
 }
 
 void loop() {
-  ueforth_run();
+  g_sys.rp = ueforth_run(g_sys.rp);
 }
