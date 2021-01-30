@@ -46,7 +46,9 @@ z" ExitProcess" 1 Kernel32 ExitProcess
 z" GetStdHandle" 1 Kernel32 GetStdHandle
 z" GetConsoleMode" 2 Kernel32 GetConsoleMode
 z" SetConsoleMode" 2 Kernel32 SetConsoleMode
+z" FlushConsoleInputBuffer" 1 Kernel32 FlushConsoleInputBuffer
 z" Sleep" 1 Kernel32 Sleep
+z" WaitForSingleObject" 2 Kernel32 WaitForSingleObject
 
 z" GetLastError" 0 Kernel32 GetLastError
 z" CreateFileA" 7 Kernel32 CreateFileA
@@ -65,16 +67,21 @@ STD_INPUT_HANDLE GetStdHandle constant stdin
 STD_OUTPUT_HANDLE GetStdHandle constant stdout
 STD_ERROR_HANDLE GetStdHandle constant stderr
 variable console-mode
+stdin console-mode GetConsoleMode drop
+stdin console-mode @ ENABLE_LINE_INPUT ENABLE_MOUSE_INPUT or
+                     ENABLE_WINDOW_INPUT or invert and SetConsoleMode drop
 stdout console-mode GetConsoleMode drop
 stdout console-mode @ ENABLE_VIRTUAL_TERMINAL_PROCESSING or SetConsoleMode drop
 
 : win-type ( a n -- ) stdout -rot NULL NULL WriteFile drop ;
 ' win-type is type
 : raw-key ( -- n ) 0 >r stdin rp@ 1 NULL NULL ReadFile drop r> ;
-: win-key ( -- n ) begin raw-key dup 13 = while drop repeat ;
+: key? ( -- f ) stdin 0 WaitForSingleObject 0= ;
+: win-key ( -- n ) raw-key dup 13 = if drop nl then ;
 ' win-key is key
 : win-bye ( -- ) 0 ExitProcess drop ;
 ' win-bye is bye
+-1 echo !
 
 : set-title ( a n -- ) esc ." ]0;" type bel ;
 s" uEforth" set-title

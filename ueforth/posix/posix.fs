@@ -66,6 +66,7 @@ octal
 100 constant O_CREAT
 200 constant O_TRUNC
 2000 constant O_APPEND
+4000 constant O_NONBLOCK
 decimal
 
 ( Hookup I/O )
@@ -103,3 +104,6 @@ octal 777 constant 0777 decimal
 
 ( Other Utils )
 : ms ( n -- ) 1000 * usleep drop ;
+
+( errno.h )
+11 constant EAGAIN

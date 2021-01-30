@@ -1,4 +1,4 @@
-( Terminal handling )
+( ANSI Codes )
 : n. ( n -- ) base @ swap decimal <# #s #> type base ! ;
 : esc   27 emit ;   : bel   7 emit ;
 : at-xy ( x y -- ) esc ." [" 1+ n. ." ;" 1+ n. ." H" ;
