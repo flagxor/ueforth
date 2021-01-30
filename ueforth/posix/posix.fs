@@ -35,6 +35,7 @@ z" malloc" 1 sysfunc malloc
 z" free" 1 sysfunc sysfree
 z" realloc" 2 sysfunc realloc
 z" usleep" 1 sysfunc usleep
+z" signal" 2 sysfunc signal
 
 ( Errno )
 z" __errno_location" 0 sysfunc __errno_location
@@ -107,3 +108,13 @@ octal 777 constant 0777 decimal
 
 ( errno.h )
 11 constant EAGAIN
+
+( Signal Handling )
+0 constant SIG_DFL
+1 constant SIG_IGN
+( Signals )
+1 constant SIGHUP
+2 constant SIGINT
+9 constant SIGKILL
+10 constant SIGPIPE
+7 constant SIGBUS
