@@ -343,6 +343,26 @@ It will then at start attempt to load <code>/spiffs/autoexec.fs</code>
 </p>
 
 <p>
+One way this feature can be used to configure the Web UI to start by default.
+When doing this, be sure to test your Web UI settings work well first.
+</p>
+
+<pre>
+r| z" NETWORK-NAME" z" PASSWORD" webui | s" /spiffs/autoexec.fs" dump-file
+</pre>
+
+<p>
+To remove a previously configured <code>autoexec.fs</code> you will need
+to be able to reboot in a mode with Forth. One way to do this is to search
+for the line in the .ino file that refers to <code>autoexec.fs</code>
+and replace it with a different name. Then run the following:
+</p>
+
+<pre>
+s" /spiffs/autoexec.fs" delete-file
+</pre>
+
+<p>
 See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/arduino/autoboot.fs">autoboot.fs</a>.
 </p>
 
