@@ -314,7 +314,7 @@ SD_MMC.totalBytes ( -- n )
 SD_MMC.usedBytes ( -- n )
 </pre>
 
-<h4>ESP32 WebUI</h4>
+<h4 id="webui">ESP32 WebUI</h4>
 
 <p>
 A terminal over the web can be activated.
@@ -325,11 +325,17 @@ Contact at port printed or via mDNS <a href="http://ueforth/">http://ueforth/</a
 webui ( network-z password-z -- )
 </pre>
 
+<p>Usage:</p>
+
+<pre>
+z" NETWORK-NAME" z" PASSWORD" webui
+</pre>
+
 <p>
 See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/arduino/arduino_server.fs">arduino_server.fs</a>.
 </p>
 
-<h4>Autoexec.fs</h4>
+<h4 id="autoexec">Autoexec.fs</h4>
 
 <p>
 The system will automatically attempt to mount SPIFFS filesystem at <code>/spiffs</code>.
