@@ -5,7 +5,26 @@
 : test-dup-values   456 dup 456 = assert 456 = assert ;
 : test-2drop   123 456 2drop depth 0= assert ;
 : test-nip   123 456 nip depth 1 = assert 456 = assert ;
+: 8throw   8 throw ;
+: test-catch ['] 8throw catch 8 = assert depth 0= assert ;
+: throw-layer 456 >r 123 123 123 8throw 123 123 123 r> ;
+: test-catch2 9 ['] throw-layer catch 8 = assert 9 = assert depth 0= assert ;
 : test-rdrop   111 >r 222 >r rdrop r> 111 = assert ;
 : test-*/    1000000 22 7 */ 3142857 = assert ;
 : test-bl   bl 32 = assert ;
 : test-0=   123 0= 0= assert 0 0= assert ;
+: test-cells   123 cells cell+ cell/ 124 = assert ;
+: test-aligned    127 aligned 128 = assert ;
+: test-[char]   [char] * 42 = assert ;
+2 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11 * 12 * constant 2-12*
+: test-fornext    1 10 for r@ 2 + * next 2-12* = assert ;
+: test-foraft    1 11 for aft r@ 2 + * then next 2-12* = assert ;
+: test-doloop     1 13 2 do i * loop 2-12* = assert ;
+: inc-times ( a n -- a+n ) 0 ?do 1+ loop ;
+: test-?do     123 40 inc-times 163 = assert ;
+: test-?do2     123 0 inc-times 123 = assert ;
+: test-<>   123 456 <> assert ;
+: test-<>2   123 123 <> 0= assert ;
+: inc/2-times ( a n -- a+n/2 ) 0 ?do 1+ 2 +loop ;
+: test-+loop   123 0 inc/2-times 123 = assert ;
+: test-+loop2   123 6 inc/2-times 126 = assert ;

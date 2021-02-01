@@ -10,7 +10,8 @@ variable tests-found   variable tests-run    variable tests-passed
    last @ begin dup while dup test? if 2dup >r >r swap execute r> r> then >link repeat 2drop ;
 : reset-test-counters   0 tests-found !   0 tests-run !   0 tests-passed ! ;
 : count-test ( xt -- ) drop 1 tests-found +! ;
-: wrap-test ( xt -- ) depth 1 <> if ."  depth leak! " 1 throw then execute depth 0= assert ;
+: check-fresh   depth if ."  DEPTH LEAK! " depth . 1 throw then ;
+: wrap-test ( xt -- ) >r check-fresh r> execute check-fresh ;
 : red   1 fg ;   : green   2 fg ;   : hr   40 for [char] - emit next cr ;
 : run-test ( xt -- ) dup >name type ['] wrap-test catch
    if red ."  FAILED" normal cr else green ."  OK" normal cr 1 tests-passed +! then 1 tests-run +! ;

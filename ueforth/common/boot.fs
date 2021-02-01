@@ -124,7 +124,7 @@ variable handler
 : catch ( xt -- n )
   sp@ >r handler @ >r rp@ handler ! execute r> handler ! r> drop 0 ;
 : throw ( n -- )
-  dup if handler @ rp! r> handler !  r> swap >r sp! drop r> else drop then ;
+  dup if handler @ rp! r> handler ! r> swap >r sp! drop r> else drop then ;
 ' throw 'notfound !
 
 ( Values )
