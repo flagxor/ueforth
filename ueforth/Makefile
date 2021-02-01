@@ -103,12 +103,15 @@ clean:
 
 # ---- TESTS ----
 
-tests: core_test
+tests: core_test unit_tests
 
 core_test: $(POSIX)/ueforth common/core_test.fs \
         common/core_test.fs.golden
 	echo "include common/core_test.fs" | $< | \
         diff - common/core_test.fs.golden
+
+unit_tests: $(POSIX)/ueforth common/all_tests.fs
+	echo "include common/all_tests.fs" | $<
 
 # ---- GENERATED ----
 
