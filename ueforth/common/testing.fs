@@ -14,7 +14,8 @@ variable tests-found   variable tests-run    variable tests-passed
 : wrap-test ( xt -- ) >r check-fresh r> execute check-fresh ;
 : red   1 fg ;   : green   2 fg ;   : hr   40 for [char] - emit next cr ;
 : run-test ( xt -- ) dup >name type ['] wrap-test catch
-   if red ."  FAILED" normal cr else green ."  OK" normal cr 1 tests-passed +! then 1 tests-run +! ;
+   if drop ( cause xt restored on throw ) red ."  FAILED" normal cr
+   else green ."  OK" normal cr 1 tests-passed +! then 1 tests-run +! ;
 : pre-test-run   cr hr tests-found @ . ." Tests found." cr hr ;
 : show-test-results
    hr ."   PASSED: " green tests-passed @ . normal ."   RUN: " tests-run @ .
