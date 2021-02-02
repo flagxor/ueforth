@@ -45,12 +45,15 @@ variable tests-found   variable tests-run    variable tests-passed
 : check-fresh   depth if ."  DEPTH LEAK! " depth . 1 throw then ;
 : wrap-test ( xt -- ) expect-reset >r check-fresh r> execute check-fresh expect-finish ;
 : red   1 fg ;   : green   2 fg ;   : hr   40 for [char] - emit next cr ;
-: run-test ( xt -- ) dup >name type confirm{ ['] wrap-test catch }confirm
+: replace-line   13 emit clear-to-eol ;
+: label-test ( xt -- ) replace-line >name type ;
+: run-test ( xt -- ) dup label-test confirm{ ['] wrap-test catch }confirm
    if drop ( cause xt restored on throw ) red ."  FAILED" normal cr
-   else green ."  OK" normal cr 1 tests-passed +! then 1 tests-run +! ;
-: pre-test-run   cr hr tests-found @ . ." Tests found." cr hr ;
+   else green ."  OK" normal 1 tests-passed +! then 1 tests-run +! ;
 : show-test-results
-   hr ."   PASSED: " green tests-passed @ . normal ."   RUN: " tests-run @ .
+   replace-line hr
+   ."   PASSED: " green tests-passed @ . normal
+   ."   RUN: " tests-run @ .
    ."   FOUND: " tests-found @ . cr
    tests-passed @ tests-found @ = if
      green ."   ALL TESTS PASSED" normal cr
@@ -58,6 +61,6 @@ variable tests-found   variable tests-run    variable tests-passed
      ."   FAILED: " red tests-run @ tests-passed @ - . normal cr
    then hr ;
 : run-tests
-   reset-test-counters ['] count-test for-tests pre-test-run
+   reset-test-counters ['] count-test for-tests
    ['] run-test for-tests show-test-results
    tests-passed @ tests-found @ <> sysexit ;
