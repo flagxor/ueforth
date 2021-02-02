@@ -28,3 +28,27 @@
 : inc/2-times ( a n -- a+n/2 ) 0 ?do 1+ 2 +loop ;
 : test-+loop   123 0 inc/2-times 123 = assert ;
 : test-+loop2   123 6 inc/2-times 126 = assert ;
+
+e: test-arithmetic
+  3 4 + .
+  out:\ 7 
+;e
+
+e: test-print-string
+  : foo ." This is a test!" cr ;
+  foo
+  out: This is a test!
+;e
+
+e: test-print20
+  : foo 20 0 do i . loop cr ;
+  foo
+  out: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 
+;e
+
+e: test-multiline
+  : foo ." Hello" cr ." There" cr ." Test!" cr ; foo
+  out: Hello
+  out: There
+  out: Test!
+;e

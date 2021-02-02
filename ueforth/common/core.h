@@ -68,16 +68,16 @@ static void create(const char *name, cell_t length, cell_t flags, void *op) {
   *g_sys.heap++ = (cell_t) op;  // code
 }
 
-static char spacefilter(char ch) {
-  return ch == '\t' || ch == '\n' || ch == '\r' ? ' ' : ch;
+static int match(char sep, char ch) {
+  return sep == ch || (sep == ' ' && (ch == '\t' || ch == '\n' || ch == '\r'));
 }
 
 static cell_t parse(cell_t sep, cell_t *ret) {
   while (g_sys.tin < g_sys.ntib &&
-         spacefilter(g_sys.tib[g_sys.tin]) == sep) { ++g_sys.tin; }
+         match(sep, g_sys.tib[g_sys.tin])) { ++g_sys.tin; }
   *ret = (cell_t) (g_sys.tib + g_sys.tin);
   while (g_sys.tin < g_sys.ntib &&
-         spacefilter(g_sys.tib[g_sys.tin]) != sep) { ++g_sys.tin; }
+         !match(sep, g_sys.tib[g_sys.tin])) { ++g_sys.tin; }
   cell_t len = g_sys.tin - (*ret - (cell_t) g_sys.tib);
   if (g_sys.tin < g_sys.ntib) { ++g_sys.tin; }
   return len;
