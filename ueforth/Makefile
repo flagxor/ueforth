@@ -103,15 +103,10 @@ clean:
 
 # ---- TESTS ----
 
-tests: core_test unit_tests
-
-core_test: $(POSIX)/ueforth common/core_test.fs \
-        common/core_test.fs.golden
-	echo "include common/core_test.fs" | $< | \
-        diff - common/core_test.fs.golden
+tests: unit_tests
 
 unit_tests: $(POSIX)/ueforth common/all_tests.fs
-	echo "include common/all_tests.fs" | $<
+	$^
 
 # ---- GENERATED ----
 
@@ -121,7 +116,7 @@ $(GEN):
 POSIX_BOOT =  common/boot.fs common/ansi.fs \
               posix/posix.fs posix/posix_highlevel.fs \
               common/highlevel.fs common/filetools.fs posix/posix_desktop.fs \
-              common/tasks.fs common/streams.fs common/blocks.fs
+              common/tasks.fs common/streams.fs common/blocks.fs posix/args.fs
 $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 	echo "ok" | cat $(POSIX_BOOT) - | $< boot >$@
 
