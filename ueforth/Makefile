@@ -116,20 +116,22 @@ $(GEN):
 POSIX_BOOT =  common/boot.fs common/ansi.fs \
               posix/posix.fs posix/posix_highlevel.fs \
               common/highlevel.fs common/filetools.fs posix/posix_desktop.fs \
-              common/tasks.fs common/streams.fs common/blocks.fs posix/args.fs
+              common/tasks.fs common/streams.fs common/blocks.fs posix/args.fs \
+              common/utils.fs
 $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 	echo "ok" | cat $(POSIX_BOOT) - | $< boot >$@
 
 WINDOWS_BOOT = common/boot.fs common/ansi.fs \
                windows/windows.fs windows/windows_highlevel.fs common/highlevel.fs \
-               common/tasks.fs common/streams.fs common/blocks.fs
+               common/tasks.fs common/streams.fs common/blocks.fs \
+               common/utils.fs
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 	echo "ok" | cat $(WINDOWS_BOOT) - | $< boot >$@
 
 ARDUINO_BOOT = common/boot.fs arduino/arduino.fs \
                posix/posix_highlevel.fs common/highlevel.fs common/filetools.fs \
                common/tasks.fs common/streams.fs arduino/arduino_server.fs \
-               arduino/esp_camera.fs common/blocks.fs \
+               arduino/esp_camera.fs common/blocks.fs common/utils.fs \
                arduino/autoboot.fs
 $(GEN)/arduino_boot.h: common/source_to_string.js $(ARDUINO_BOOT) | $(GEN)
 	echo "ok" | cat $(ARDUINO_BOOT) - | $< boot >$@
