@@ -9,7 +9,7 @@
 ' arduino-key is key
 
 ( Map Arduino / ESP32 things to shorter names. )
-: pin ( n n -- ) swap digitalWrite ;
+: pin ( n pin# -- ) swap digitalWrite ;
 : adc ( n -- n ) analogRead ;
 : duty ( n n -- ) 255 min 8191 255 */ ledcWrite ;
 : freq ( n n -- ) 1000 * 13 ledcSetup drop ;
