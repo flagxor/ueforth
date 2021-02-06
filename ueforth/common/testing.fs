@@ -39,7 +39,7 @@ variable confirm-old-type
 variable tests-found   variable tests-run    variable tests-passed
 : test? ( xt -- f ) >name s" test-" startswith? ;
 : for-tests ( xt -- )
-   last @ begin dup while dup test? if 2dup >r >r swap execute r> r> then >link repeat 2drop ;
+   context @ @ begin dup while dup test? if 2dup >r >r swap execute r> r> then >link repeat 2drop ;
 : reset-test-counters   0 tests-found !   0 tests-run !   0 tests-passed ! ;
 : count-test ( xt -- ) drop 1 tests-found +! ;
 : check-fresh   depth if }confirm ."  DEPTH LEAK! " depth . 1 throw then ;

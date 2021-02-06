@@ -11,7 +11,7 @@
 static struct {
   const char *tib;
   cell_t ntib, tin, state, base;
-  cell_t *heap, *last, notfound;
+  cell_t *heap, **current, **context, notfound;
   int argc;
   char **argv;
   cell_t *rp;  // spot to park main thread
@@ -45,7 +45,7 @@ static cell_t same(const char *a, const char *b, cell_t len) {
 }
 
 static cell_t find(const char *name, cell_t len) {
-  cell_t *pos = g_sys.last;
+  cell_t *pos = *g_sys.context;
   cell_t clen = CELL_LEN(len);
   while (pos) {
     if (len == pos[-3] &&
@@ -62,9 +62,9 @@ static void create(const char *name, cell_t length, cell_t flags, void *op) {
   for (cell_t n = length; n; --n) { *pos++ = *name++; }  // name
   g_sys.heap += CELL_LEN(length);
   *g_sys.heap++ = length;  // length
-  *g_sys.heap++ = (cell_t) g_sys.last;  // link
+  *g_sys.heap++ = (cell_t) *g_sys.current;  // link
   *g_sys.heap++ = flags;  // flags
-  g_sys.last = g_sys.heap;
+  *g_sys.current = g_sys.heap;
   *g_sys.heap++ = (cell_t) op;  // code
 }
 
@@ -125,10 +125,12 @@ static cell_t *ueforth_run(cell_t *initrp);
 static void ueforth_init(int argc, char *argv[], void *heap,
                          const char *src, cell_t src_len) {
   g_sys.heap = (cell_t *) heap + 4;  // Leave a little room.
-  ueforth_run(0);
   cell_t *sp = g_sys.heap + 1; g_sys.heap += STACK_SIZE;
   cell_t *rp = g_sys.heap + 1; g_sys.heap += STACK_SIZE;
-  g_sys.last[-1] = 1;  // Make ; IMMEDIATE
+  g_sys.current = (cell_t **) g_sys.heap;
+  g_sys.context = (cell_t **) g_sys.heap;  ++g_sys.heap;
+  ueforth_run(0);
+  (*g_sys.current)[-1] = 1;  // Make last word ; IMMEDIATE
   g_sys.DOLIT_XT = FIND("DOLIT");
   g_sys.DOEXIT_XT = FIND("EXIT");
   g_sys.YIELD_XT = FIND("YIELD");

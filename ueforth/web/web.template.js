@@ -20,13 +20,14 @@ var g_tin = g_sys + 2 * 4;
 var g_state = g_sys + 3 * 4;
 var g_base = g_sys + 4 * 4;
 var g_heap = g_sys + 5 * 4;
-var g_last = g_sys + 6 * 4;
-var g_notfound = g_sys + 7 * 4;
-var g_argc = g_sys + 8 * 4;
-var g_argv = g_sys + 9 * 4;
-var g_ip = g_sys + 10 * 4;
-var g_sp = g_sys + 11 * 4;
-var g_rp = g_sys + 12 * 4;
+var g_current = g_sys + 6 * 4;
+var g_context = g_sys + 7 * 4;
+var g_notfound = g_sys + 8 * 4;
+var g_argc = g_sys + 9 * 4;
+var g_argv = g_sys + 10 * 4;
+var g_ip = g_sys + 11 * 4;
+var g_sp = g_sys + 12 * 4;
+var g_rp = g_sys + 13 * 4;
 
 function SetEval(sp) {
   var index = i32[sp--];
@@ -72,7 +73,7 @@ function GetName(xt) {
 }
 
 function Find(name) {
-  var pos = i32[g_last>>2];
+  var pos = i32[i32[g_context>>2]>>2];
   while (pos) {
     if (Same(GetName(pos), name)) {
       return pos;
@@ -89,15 +90,15 @@ function create(name, opcode) {
   i32[i32[g_heap>>2]>>2] = name.length;  // length
   i32[g_heap>>2] += 4;
 
-  i32[i32[g_heap>>2]>>2] = i32[g_last>>2];  // link
+  i32[i32[g_heap>>2]>>2] = i32[i32[g_current]>>2]>>2];  // link
   i32[g_heap>>2] += 4;
 
   i32[i32[g_heap>>2]>>2] = 0;  // flags
   i32[g_heap>>2] += 4;
 
-  i32[g_last>>2] = i32[g_heap>>2];
+  i32[i32[g_current>>2]>>2] = i32[g_heap>>2];
 
-  i32[i32[g_last>>2]>>2] = opcode;  // code
+  i32[i32[i32[g_current>>2]>>2]>>2] = opcode;  // code
   i32[g_heap>>2] += 4;
 }
 
@@ -116,7 +117,7 @@ function Init() {
   i32[g_heap>>2] += STACK_SIZE;
   i32[g_rp>>2] = i32[g_heap>>2] + 1;
   i32[g_heap>>2] += STACK_SIZE;
-  i32[(g_last - 4)>>2] = 1;  // Make ; IMMMEDIATE
+  i32[((i32[g_current]>>2) - 4)>>2] = 1;  // Make ; IMMMEDIATE
   // Do not need DOLIT_XT, DOEXIT_XT, YIELD_XT (do by convention)
   i32[g_notfound>>2] = Find('DROP');
   i32[g_ip>>2] = i32[g_heap>>2];

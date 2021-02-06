@@ -519,7 +519,8 @@ C and Forth (by way of a memory region accessed via <code>'SYS</code>):
 BASE      --- Numeric base for printing and parsing
 
 STATE     --- State of compiling, -1 for compiling, 0 for interpreting
-LAST      --- Execution token of last word defined
+CURRENT   --- Pointer to pointer to last word of current vocabulary
+CONTEXT   --- Pointer to pointer to last word of context vocabulary
 
 'NOTFOUND --- Execution token of a handler to call on word not found
 </pre>

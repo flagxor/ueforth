@@ -9,8 +9,8 @@ typedef uintptr_t ucell_t;
 #define DUP *++sp = tos
 #define DROP tos = *sp--
 #define COMMA(n) *g_sys.heap++ = (n)
-#define IMMEDIATE() g_sys.last[-1] |= 1
-#define DOES(ip) *g_sys.last = (cell_t) ADDR_DODOES; g_sys.last[1] = (cell_t) ip
+#define IMMEDIATE() (*g_sys.current)[-1] |= 1
+#define DOES(ip) **g_sys.current = (cell_t) ADDR_DODOES; (*g_sys.current)[1] = (cell_t) ip
 #define PARK DUP; *++rp = (cell_t) sp; *++rp = (cell_t) ip
 
 #ifndef SSMOD_FUNC

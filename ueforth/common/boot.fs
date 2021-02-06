@@ -37,8 +37,9 @@
 : state ( -- a ) 'sys 3 cells + ;
 : base ( -- a ) 'sys 4 cells + ;
 : 'heap ( -- a ) 'sys 5 cells + ;
-: last ( -- a ) 'sys 6 cells + ;
-: 'notfound ( -- a ) 'sys 7 cells + ;
+: current ( -- a ) 'sys 6 cells + ;
+: context ( -- a ) 'sys 7 cells + ;
+: 'notfound ( -- a ) 'sys 8 cells + ;
 
 ( Dictionary )
 : here ( -- a ) 'heap @ ;
@@ -194,7 +195,7 @@ variable hld
 75 value line-width
 : onlines ( n xt -- n xt )
    swap dup line-width > if drop 0 cr then over >name nip + 1+ swap ;
-: words   0 last @ begin onlines dup see. >link dup 0= until 2drop cr ;
+: words   0 context @ @ begin onlines dup see. >link dup 0= until 2drop cr ;
 
 ( Examine Memory )
 : dump ( a n -- )
