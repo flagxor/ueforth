@@ -113,7 +113,7 @@ unit_tests: $(POSIX)/ueforth common/all_tests.fs
 $(GEN):
 	mkdir -p $@
 
-POSIX_BOOT =  common/boot.fs common/ansi.fs \
+POSIX_BOOT =  common/boot.fs common/vocabulary.fs common/ansi.fs \
               posix/posix.fs posix/posix_highlevel.fs \
               common/highlevel.fs common/filetools.fs posix/posix_desktop.fs \
               common/tasks.fs common/streams.fs common/blocks.fs posix/args.fs \
@@ -121,14 +121,14 @@ POSIX_BOOT =  common/boot.fs common/ansi.fs \
 $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 	echo "ok" | cat $(POSIX_BOOT) - | $< boot >$@
 
-WINDOWS_BOOT = common/boot.fs common/ansi.fs \
+WINDOWS_BOOT = common/boot.fs common/vocabulary.fs common/ansi.fs \
                windows/windows.fs windows/windows_highlevel.fs common/highlevel.fs \
                common/tasks.fs common/streams.fs common/blocks.fs \
                common/utils.fs
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 	echo "ok" | cat $(WINDOWS_BOOT) - | $< boot >$@
 
-ARDUINO_BOOT = common/boot.fs arduino/arduino.fs \
+ARDUINO_BOOT = common/boot.fs common/vocabulary.fs arduino/arduino.fs \
                posix/posix_highlevel.fs common/highlevel.fs common/filetools.fs \
                common/tasks.fs common/streams.fs arduino/arduino_server.fs \
                arduino/esp_camera.fs common/blocks.fs common/utils.fs \

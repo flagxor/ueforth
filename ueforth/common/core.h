@@ -127,8 +127,13 @@ static void ueforth_init(int argc, char *argv[], void *heap,
   g_sys.heap = (cell_t *) heap + 4;  // Leave a little room.
   cell_t *sp = g_sys.heap + 1; g_sys.heap += STACK_SIZE;
   cell_t *rp = g_sys.heap + 1; g_sys.heap += STACK_SIZE;
+
+  // FORTH vocabulary
+  *g_sys.heap++ = 0;
   g_sys.current = (cell_t **) g_sys.heap;
   g_sys.context = (cell_t **) g_sys.heap;  ++g_sys.heap;
+  *g_sys.heap++ = 0;  *g_sys.heap++ = 0;  *g_sys.heap++ = 0;
+
   ueforth_run(0);
   (*g_sys.current)[-1] = 1;  // Make last word ; IMMEDIATE
   g_sys.DOLIT_XT = FIND("DOLIT");
