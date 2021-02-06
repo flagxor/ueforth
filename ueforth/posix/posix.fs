@@ -1,3 +1,5 @@
+vocabulary posix   posix definitions
+
 ( Shared Library Handling )
 1 constant RTLD_LAZY
 2 constant RTLD_NOW
@@ -81,11 +83,29 @@ decimal
 ( I/O Error Helpers )
 : d0<ior ( n -- n ior ) dup 0< if errno else 0 then ;
 
+( errno.h )
+11 constant EAGAIN
+
+( Signal Handling )
+0 constant SIG_DFL
+1 constant SIG_IGN
+( Signals )
+1 constant SIGHUP
+2 constant SIGINT
+9 constant SIGKILL
+10 constant SIGPIPE
+7 constant SIGBUS
+
+( Modes )
+octal 777 constant 0777 decimal
+
+forth definitions posix
+
 ( Generic Files )
 O_RDONLY constant r/o
 O_WRONLY constant w/o
 O_RDWR constant r/w
-octal 777 constant 0777 decimal
+
 : open-file ( a n fam -- fh ior ) >r s>z r> 0777 open sign-extend d0<ior ;
 : create-file ( a n fam -- fh ior )
    >r s>z r> O_CREAT or 0777 open sign-extend d0<ior ;
@@ -106,15 +126,4 @@ octal 777 constant 0777 decimal
 ( Other Utils )
 : ms ( n -- ) 1000 * usleep drop ;
 
-( errno.h )
-11 constant EAGAIN
-
-( Signal Handling )
-0 constant SIG_DFL
-1 constant SIG_IGN
-( Signals )
-1 constant SIGHUP
-2 constant SIGINT
-9 constant SIGKILL
-10 constant SIGPIPE
-7 constant SIGBUS
+forth

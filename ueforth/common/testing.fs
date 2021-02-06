@@ -60,7 +60,9 @@ variable tests-found   variable tests-run    variable tests-passed
    else
      ."   FAILED: " red tests-run @ tests-passed @ - . normal cr
    then hr ;
+posix
 : run-tests
    reset-test-counters ['] count-test for-tests
    ['] run-test for-tests show-test-results
    tests-passed @ tests-found @ <> sysexit ;
+forth
