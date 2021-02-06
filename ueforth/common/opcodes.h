@@ -9,7 +9,8 @@ typedef uintptr_t ucell_t;
 #define DUP *++sp = tos
 #define DROP tos = *sp--
 #define COMMA(n) *g_sys.heap++ = (n)
-#define IMMEDIATE() (*g_sys.current)[-1] |= 1
+#define DOIMMEDIATE() (*g_sys.current)[-1] |= IMMEDIATE
+#define UNSMUDGE() (*g_sys.current)[-1] &= ~SMUDGE
 #define DOES(ip) **g_sys.current = (cell_t) ADDR_DODOES; (*g_sys.current)[1] = (cell_t) ip
 #define PARK DUP; *++rp = (cell_t) sp; *++rp = (cell_t) ip
 
@@ -69,14 +70,14 @@ typedef int64_t dcell_t;
                       create((const char *) *sp, tos, 0, ADDR_DOCREATE); \
                       COMMA(0); --sp; DROP) \
   X("DOES>", DOES, DOES(ip); ip = (cell_t *) *rp; --rp) \
-  X("IMMEDIATE", IMMEDIATE, IMMEDIATE()) \
+  X("IMMEDIATE", IMMEDIATE, DOIMMEDIATE()) \
   X("'SYS", SYS, DUP; tos = (cell_t) &g_sys) \
   X("YIELD", YIELD, PARK; return rp) \
   X(":", COLON, DUP; DUP; tos = parse(32, sp); \
-                create((const char *) *sp, tos, 0, ADDR_DOCOLON); \
+                create((const char *) *sp, tos, SMUDGE, ADDR_DOCOLON); \
                 g_sys.state = -1; --sp; DROP) \
   X("EVALUATE1", EVALUATE1, DUP; sp = evaluate1(sp); w = *sp--; DROP; \
                             if (w) JMPW) \
   X("EXIT", EXIT, ip = (cell_t *) *rp--) \
-  X(";", SEMICOLON, COMMA(g_sys.DOEXIT_XT); g_sys.state = 0) \
+  X(";", SEMICOLON, UNSMUDGE(); COMMA(g_sys.DOEXIT_XT); g_sys.state = 0) \
 

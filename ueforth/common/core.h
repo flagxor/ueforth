@@ -3,6 +3,8 @@
 #define CELL_LEN(n) (((n) + sizeof(cell_t) - 1) / sizeof(cell_t))
 #define FIND(name) find(name, sizeof(name) - 1)
 #define LOWER(ch) ((ch) & 0x5F)
+#define IMMEDIATE 1
+#define SMUDGE 2
 
 #if PRINT_ERRORS
 #include <unistd.h>
@@ -48,7 +50,7 @@ static cell_t find(const char *name, cell_t len) {
   cell_t *pos = *g_sys.context;
   cell_t clen = CELL_LEN(len);
   while (pos) {
-    if (len == pos[-3] &&
+    if (!(pos[-1] & SMUDGE) && len == pos[-3] &&
         same(name, (const char *) &pos[-3 - clen], len) == 0) {
       return (cell_t) pos;
     }
@@ -90,7 +92,7 @@ static cell_t *evaluate1(cell_t *sp) {
   if (len == 0) { *++sp = 0; return sp; }  // ignore empty
   cell_t xt = find((const char *) name, len);
   if (xt) {
-    if (g_sys.state && !(((cell_t *) xt)[-1] & 1)) {  // bit 0 of flags is immediate
+    if (g_sys.state && !(((cell_t *) xt)[-1] & IMMEDIATE)) {
       *g_sys.heap++ = xt;
     } else {
       call = xt;
@@ -135,7 +137,7 @@ static void ueforth_init(int argc, char *argv[], void *heap,
   *g_sys.heap++ = 0;  *g_sys.heap++ = 0;  *g_sys.heap++ = 0;
 
   ueforth_run(0);
-  (*g_sys.current)[-1] = 1;  // Make last word ; IMMEDIATE
+  (*g_sys.current)[-1] = IMMEDIATE;  // Make last word ; IMMEDIATE
   g_sys.DOLIT_XT = FIND("DOLIT");
   g_sys.DOEXIT_XT = FIND("EXIT");
   g_sys.YIELD_XT = FIND("YIELD");

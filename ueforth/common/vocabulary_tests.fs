@@ -22,3 +22,10 @@ e: test-vlist
   forth definitions
   out: sheep cow pig 
 ;e
+
+e: test-vlist-empty
+  vocabulary foo
+  foo vlist
+  forth definitions
+  out:
+;e

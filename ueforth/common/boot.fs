@@ -79,7 +79,7 @@
 
 ( Dictionary Format )
 : >name ( xt -- a n ) 3 cells - dup @ swap over aligned - swap ;
-: >link ( xt -- a ) 2 cells - @ ;
+: >link& ( xt -- a ) 2 cells - ;   : >link ( xt -- a ) >link& @ ;
 : >flags ( xt -- flags ) cell - ;
 : >body ( xt -- a ) dup @ [ ' >flags @ ] literal = 2 + cells + ;
 

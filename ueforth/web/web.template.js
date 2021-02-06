@@ -143,7 +143,8 @@ function VM(stdlib, foreign, heap) {
   var Call = foreign.Call;
   var COMMA = foreign.COMMA;
   var DOES = foreign.DOES;
-  var IMMEDIATE = foreign.IMMEDIATE;
+  var DOIMMEDIATE = foreign.DOIMMEDIATE;
+  var UNSMUDGE = foreign.UNSMUDGE;
   var create = foreign.create;
   var find = foreign.find;
   var parse = foreign.parse;
@@ -216,7 +217,8 @@ var ffi = {
   COMMA: function(n) { i32[i32[g_heap>>2]] = n; i32[g_heap>>2] += 4; console.log('comma'); },
   SSMOD: function() { console.log('ssmod'); },
   DOES: function() { console.log('does'); },
-  IMMEDIATE: function() { console.log('immediate'); },
+  DOIMMEDIATE: function() { console.log('immediate'); },
+  UNSMUDGE: function() { console.log('unsmudge'); },
   parse: function() { console.log('parse'); },
   find: function() { console.log('find'); },
   convert: function() { console.log('convert'); },
