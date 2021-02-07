@@ -112,6 +112,11 @@ WebServer
 : WebServer.new WebServer.new ;
 : WebServer.begin WebServer.begin ;
 : WebServer.handleClient WebServer.handleClient ;
+WiFi
+: WiFi.mode WiFi.mode ;
+: WiFi.begin WiFi.begin ;
+: WiFi.localIP WiFi.localIP ;
+: WIFI_MODE_STA WIFI_MODE_STA ;
 web-interface
 
 variable webserver

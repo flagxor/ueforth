@@ -69,6 +69,7 @@
       tos = (cell_t) (1000000 * ledcWriteTone(*sp, tos / 1000.0)); --sp) \
   X("ledcWriteNote", LEDC_WRITE_NOTE, \
       tos = (cell_t) (1000000 * ledcWriteNote(sp[-1], (note_t) *sp, tos)); sp -=2) \
+  /* General System */ \
   X("MS", MS, delay(tos); DROP) \
   X("TERMINATE", TERMINATE, exit(tos)) \
   /* File words */ \
