@@ -1,3 +1,4 @@
+also SerialBT also internals
 SerialBT.new constant bt
 z" ueforthbt" 0 bt SerialBT.begin .
 esp_bt_dev_get_address hex 6 dump cr

@@ -1,6 +1,7 @@
 ( Server Terminal )
 
-vocabulary web-interface   web-interface definitions
+also streams also WebServer also WiFi
+vocabulary web-interface   also web-interface definitions
 
 : n. ( n -- ) <# #s #> type ;  : ip# dup 255 and n. [char] . emit 256 / ;
 : ip. ( n -- ) ip# ip# ip# 255 and . ;
@@ -98,33 +99,10 @@ window.onload = function() {
 </script>
 | s>z constant index-html
 
-streams
-: >stream >stream ;
-: stream> stream> ;
-: stream>ch stream>ch ;
-: stream stream ;
-WebServer
-: WebServer.setContentLength WebServer.setContentLength ;
-: WebServer.arg WebServer.arg ;
-: WebServer.hasArg WebServer.hasArg ;
-: WebServer.send WebServer.send ;
-: WebServer.on WebServer.on ;
-: WebServer.new WebServer.new ;
-: WebServer.begin WebServer.begin ;
-: WebServer.handleClient WebServer.handleClient ;
-WiFi
-: WiFi.mode WiFi.mode ;
-: WiFi.begin WiFi.begin ;
-: WiFi.localIP WiFi.localIP ;
-: WIFI_MODE_STA WIFI_MODE_STA ;
-web-interface
-
 variable webserver
 20000 constant out-size
-
 200 stream input-stream
 out-size dup stream output-stream
-
 create out-string out-size 1+ allot align
 
 : handle-index
@@ -166,13 +144,13 @@ create out-string out-size 1+ allot align
    webserver-task start-task
 ;
 
-: wifi ( z z -- )
+: login ( z z -- )
    WIFI_MODE_STA Wifi.mode
    WiFi.begin begin WiFi.localIP 0= while 100 ms repeat WiFi.localIP ip. cr
    z" ueforth" MDNS.begin if ." MDNS started" else ." MDNS failed" then cr ;
 
-forth definitions web-interface
+also forth definitions
 
-: webui ( z z -- ) wifi serve ; 
+: webui ( z z -- ) login serve ;
 
-forth
+only forth definitions
