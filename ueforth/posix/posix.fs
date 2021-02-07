@@ -4,10 +4,12 @@ vocabulary posix   posix definitions
 1 constant RTLD_LAZY
 2 constant RTLD_NOW
 0 z" dlopen" dlsym constant 'dlopen
-: dlopen ( z n -- a ) 'dlopen call2 ;
+: dlopen ( z n -- a ) 'dlopen [ internals ] call2 [ posix ] ;
 create calls
+internals
 ' call0 , ' call1 , ' call2 , ' call3 , ' call4 , ' call5 ,
 ' call6 , ' call7 , ' call8 , ' call9 , ' call10 ,
+posix
 : sofunc ( z n a "name" -- )
    swap >r swap dlsym dup 0= throw create , r> cells calls + @ ,
    does> dup @ swap cell+ @ execute ;

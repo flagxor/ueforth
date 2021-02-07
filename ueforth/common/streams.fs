@@ -1,5 +1,7 @@
 ( Byte Stream / Ring Buffer )
 
+vocabulary streams   streams definitions
+
 : stream ( n "name" ) create 1+ dup , 0 , 0 , allot align ;
 : >write ( st -- wr ) cell+ ;   : >read ( st -- rd ) 2 cells + ;
 : >offset ( n st -- a ) 3 cells + + ;
@@ -21,3 +23,5 @@
 : stream> ( a n st -- )
    begin over 1 > over empty? 0= and while
    dup stream>ch >r rot dup r> swap c! 1+ rot 1- rot repeat 2drop 0 swap c! ;
+
+forth definitions

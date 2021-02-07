@@ -1,12 +1,16 @@
 ( Cooperative Tasks )
 
+vocabulary tasks   tasks definitions
+
+variable task-list
+
+forth definitions tasks
+
 : task ( xt rsz dsz "name" )
    create here >r 0 , 0 , 0 ,
    here cell+ r@ cell+ ! cells allot
    here r@ 2 cells + ! cells allot
    dup 0= if drop else >body r@ 2 cells + @ ! then rdrop ;
-
-variable task-list
 
 : start-task ( t -- )
    task-list @ if
@@ -26,4 +30,6 @@ variable task-list
   task-list @ 2 cells + @ rp!
 ;
 
+tasks definitions
 0 0 0 task main-task   main-task start-task
+forth definitions

@@ -2,8 +2,10 @@ vocabulary windows   windows definitions
 
 ( DLL Handling )
 create calls
+internals
 ' call0 , ' call1 , ' call2 , ' call3 , ' call4 , ' call5 ,
 ' call6 , ' call7 , ' call8 , ' call9 , ' call10 ,
+windows
 : sofunc ( z n a "name" -- )
    swap >r swap GetProcAddress dup 0= throw create , r> cells calls + @ ,
    does> dup @ swap cell+ @ execute ;
