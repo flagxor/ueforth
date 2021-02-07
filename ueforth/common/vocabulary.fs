@@ -10,28 +10,21 @@
 
 ( Hide some words in an internals vocabulary )
 vocabulary internals   internals definitions
-transfer branch
-transfer 0branch
-transfer 'notfound
-transfer notfound
+transfer branch   transfer 0branch   transfer donext   transfer dolit
+transfer 'notfound   transfer notfound
 transfer immediate?
-transfer evaluate1
-transfer 'sys
-transfer 'heap
+transfer input-buffer   transfer ?echo   transfer ?echo-prompt
+transfer evaluate1   transfer evaluate-buffer
+transfer 'sys   transfer 'heap
 transfer aliteral
-transfer leaving(
-transfer )leaving
-transfer leaving
-transfer leaving,
-transfer (do)
-transfer (?do)
-transfer (+loop)
+transfer leaving(   transfer )leaving   transfer leaving   transfer leaving,
+transfer (do)   transfer (?do)   transfer (+loop)
 transfer parse-quote
 transfer digit
 transfer $@
-transfer see.
-transfer see-loop
-transfer >name-length
+transfer see.   transfer see-loop    transfer >name-length   transfer exit=
+transfer see-one
+transfer tib-setup   transfer input-limit
 transfer call0 transfer call1 transfer call2 transfer call3 transfer call4
 transfer call5 transfer call6 transfer call7 transfer call8 transfer call9
 transfer call10

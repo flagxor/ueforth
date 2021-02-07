@@ -2,17 +2,19 @@
 internals definitions
 : clobber-line ( a -- a' ) dup 63 bl fill 63 + nl over c! 1+ ;
 : clobber ( a -- ) 15 for clobber-line next drop ;
+0 value block-dirty
+create block-data 1024 allot
 forth definitions internals
 
--1 value block-fid   variable scr   -1 value block-id   0 value block-dirty
-create block-data 1024 allot
+-1 value block-fid   variable scr   -1 value block-id
 : open-blocks ( a n -- )
    block-fid 0< 0= if block-fid close-file throw -1 to block-fid then
    2dup r/w open-file if drop r/w create-file throw else nip nip then to block-fid ;
 : use ( "name" -- ) bl parse open-blocks ;
+defer default-use
 internals definitions
 : common-default-use s" blocks.fb" open-blocks ;
-defer default-use   ' common-default-use is default-use
+' common-default-use is default-use
 : use?!   block-fid 0< if default-use then ;
 : grow-blocks ( n -- ) 1024 * block-fid file-size throw max block-fid resize-file throw ;
 forth definitions internals
