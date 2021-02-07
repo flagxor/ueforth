@@ -161,6 +161,7 @@ variable hld
 : u. ( u -- ) <# #s #> type space ;
 : . ( w -- ) base @ 10 xor if u. exit then str type space ;
 : ? ( a -- ) @ . ;
+: n. ( n -- ) base @ swap decimal <# #s #> type base ! ;
 
 ( Strings )
 : parse-quote ( -- a n ) [char] " parse ;
@@ -200,11 +201,12 @@ variable hld
 ( Examine Memory )
 : dump ( a n -- )
    cr 0 do i 16 mod 0= if cr then dup i + c@ . loop drop cr ;
+: raw.s   depth 0 max for aft sp@ r@ cells - @ . then next ;
 
 ( Input )
-variable echo
+variable echo   -1 echo !
 : ?echo ( n -- ) echo @ if emit else drop then ;
-: ?echo-prompt   echo @ if ." --> " then ;
+: ?echo-prompt   echo @ if >r >r raw.s r> r> ." --> " then ;
 : accept ( a n -- n ) ?echo-prompt 0 swap begin 2dup < while
      key
      dup nl = if ?echo drop nip exit then

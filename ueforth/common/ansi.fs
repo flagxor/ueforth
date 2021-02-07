@@ -1,6 +1,5 @@
 ( ANSI Codes )
 vocabulary ansi   ansi definitions
-: n. ( n -- ) base @ swap decimal <# #s #> type base ! ;
 : esc   27 emit ;   : bel   7 emit ;
 : clear-to-eol   esc ." [0K" ;
 : scroll-down   esc ." D" ;

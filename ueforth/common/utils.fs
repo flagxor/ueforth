@@ -1,7 +1,4 @@
-( Variable useful but non-critical words )
-
-: .s   ." <" depth <# #s #> type ." > "
-       depth 0 max for aft sp@ r@ cells - @ . then next cr ;
+( Words built after boot )
 : assert ( f -- ) 0= throw ;
 
 internals definitions
@@ -10,5 +7,6 @@ internals definitions
 forth definitions also internals
 : str= ( a n a n -- f) >r swap r@ <> if rdrop 2drop 0 exit then r> mem= ;
 : startswith? ( a n a n -- f ) >r swap r@ < if rdrop 2drop 0 exit then r> mem= ;
+: .s   ." <" depth n. ." > " raw.s cr ;
 only forth definitions
 

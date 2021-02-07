@@ -38,7 +38,7 @@ transfer{
   (do) (?do) (+loop)
   parse-quote digit $@
   see. see-loop >name-length exit=
-  see-one
+  see-one raw.s
   tib-setup input-limit
 }transfer
 forth definitions

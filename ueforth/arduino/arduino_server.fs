@@ -3,7 +3,7 @@
 also streams also WebServer also WiFi
 vocabulary web-interface   also web-interface definitions
 
-: n. ( n -- ) <# #s #> type ;  : ip# dup 255 and n. [char] . emit 256 / ;
+: ip# dup 255 and n. [char] . emit 256 / ;
 : ip. ( n -- ) ip# ip# ip# 255 and . ;
 
 r|
