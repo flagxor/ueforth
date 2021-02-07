@@ -7,3 +7,28 @@
 : transfer ( "name" ) ' context @ begin 2dup @ <> while @ >link& repeat nip
                       dup @ swap dup @ >link swap ! current @ @ over >link& !
                       current @ ! ;
+
+( Hide some words in an internals vocabulary )
+vocabulary internals   internals definitions
+transfer branch
+transfer 0branch
+transfer 'notfound
+transfer notfound
+transfer immediate?
+transfer evaluate1
+transfer 'sys
+transfer 'heap
+transfer aliteral
+transfer leaving(
+transfer )leaving
+transfer leaving
+transfer leaving,
+transfer (do)
+transfer (?do)
+transfer (+loop)
+transfer parse-quote
+transfer digit
+transfer $@
+transfer see.
+transfer see-loop
+forth definitions

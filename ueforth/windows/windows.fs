@@ -1,3 +1,5 @@
+vocabulary windows   windows definitions
+
 ( DLL Handling )
 create calls
 ' call0 , ' call1 , ' call2 , ' call3 , ' call4 , ' call5 ,
@@ -102,6 +104,8 @@ $80 constant FILE_ATTRIBUTE_NORMAL
 : d0<ior ( n -- n ior ) dup 0< ior ;
 : invalid?ior ( n -- ior ) $ffffffff = ior ;
 
+forth definitions windows
+
 ( Generic Files )
 $80000000 constant r/o  ( GENERIC_READ )
 $40000000 constant w/o  ( GENERIC_WRITE )
@@ -133,3 +137,5 @@ r/o w/o or constant r/w
 
 ( Other Utils )
 : ms ( n -- ) Sleep ;
+
+forth

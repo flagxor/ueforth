@@ -1,6 +1,8 @@
 ( Arguments )
+internals
 : 'argc ( -- a ) 'sys 9 cells + ;
 : 'argv ( -- a ) 'sys 10 cells + ;
+forth
 : argc ( -- n ) 'argc @ ;
 : argv ( n -- a n ) cells 'argv @ + @ z>s ;
 
