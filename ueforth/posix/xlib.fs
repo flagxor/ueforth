@@ -1,4 +1,6 @@
 ( Bindings for Xlib )
+also posix
+vocabulary x11   also x11 definitions
 
 z" libX11.so" shared-library xlib
 
@@ -96,3 +98,5 @@ xevent ClientMessage
 xevent MappingNotify
 xevent GenericEvent
 drop
+
+only forth definitions
