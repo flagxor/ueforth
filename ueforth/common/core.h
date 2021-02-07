@@ -133,7 +133,7 @@ static void ueforth_init(int argc, char *argv[], void *heap,
   // FORTH vocabulary
   *g_sys.heap++ = 0;
   g_sys.current = (cell_t **) g_sys.heap;
-  g_sys.context = (cell_t **) g_sys.heap;  ++g_sys.heap;
+  g_sys.context = (cell_t **) g_sys.heap;  *g_sys.heap++ = 0;
   *g_sys.heap++ = 0;  *g_sys.heap++ = 0;  *g_sys.heap++ = 0;
 
   ueforth_run(0);

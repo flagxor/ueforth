@@ -1,4 +1,7 @@
 ( Server Terminal )
+
+vocabulary web-interface   web-interface definitions
+
 : n. ( n -- ) <# #s #> type ;  : ip# dup 255 and n. [char] . emit 256 / ;
 : ip. ( n -- ) ip# ip# ip# 255 and . ;
 
@@ -97,8 +100,17 @@ window.onload = function() {
 
 variable webserver
 20000 constant out-size
+
+streams
+: >stream >stream ;
+: stream> stream> ;
+: stream>ch stream>ch ;
+: stream stream ;
+web-interface
+
 200 stream input-stream
 out-size dup stream output-stream
+
 create out-string out-size 1+ allot align
 
 : handle-index
@@ -132,6 +144,11 @@ create out-string out-size 1+ allot align
    again
 ;
 
+tasks
+: task task ;
+: start-task start-task ;
+web-interface
+
 ' do-serve 1000 1000 task webserver-task
 
 : serve
@@ -144,4 +161,9 @@ create out-string out-size 1+ allot align
    WIFI_MODE_STA Wifi.mode
    WiFi.begin begin WiFi.localIP 0= while 100 ms repeat WiFi.localIP ip. cr
    z" ueforth" MDNS.begin if ." MDNS started" else ." MDNS failed" then cr ;
+
+forth definitions web-interface
+
 : webui ( z z -- ) wifi serve ; 
+
+forth
