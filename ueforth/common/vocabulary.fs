@@ -28,6 +28,7 @@ current @ constant forth-wordlist
 vocabulary internals   internals definitions
 transfer{
   transfer-xt voc-stack-end forth-wordlist voc.
+  last-vocabulary
   branch 0branch donext dolit
   'context 'notfound notfound
   immediate? input-buffer ?echo ?echo-prompt
