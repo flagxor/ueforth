@@ -87,7 +87,9 @@ stdout console-mode @ ENABLE_VIRTUAL_TERMINAL_PROCESSING or SetConsoleMode drop
 ' win-bye is bye
 -1 echo !
 
+ansi
 : set-title ( a n -- ) esc ." ]0;" type bel ;
+windows
 s" uEforth" set-title
 
 ( Window File Specific )

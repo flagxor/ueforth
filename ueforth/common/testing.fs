@@ -45,7 +45,9 @@ variable tests-found   variable tests-run    variable tests-passed
 : check-fresh   depth if }confirm ."  DEPTH LEAK! " depth . 1 throw then ;
 : wrap-test ( xt -- ) expect-reset >r check-fresh r> execute check-fresh expect-finish ;
 : red   1 fg ;   : green   2 fg ;   : hr   40 for [char] - emit next cr ;
+ansi
 : replace-line   13 emit clear-to-eol ;
+forth
 : label-test ( xt -- ) replace-line >name type ;
 : run-test ( xt -- ) dup label-test confirm{ ['] wrap-test catch }confirm
    if drop ( cause xt restored on throw ) red ."  FAILED" normal cr
