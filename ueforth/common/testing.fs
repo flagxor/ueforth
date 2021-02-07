@@ -42,7 +42,7 @@ variable tests-found   variable tests-run    variable tests-passed
 : red   1 fg ;   : green   2 fg ;   : hr   40 for [char] - emit next cr ;
 : replace-line   13 emit clear-to-eol ;
 : label-test ( xt -- ) replace-line >name type ;
-: run-test ( xt -- ) dup label-test confirm{ ['] wrap-test catch }confirm
+: run-test ( xt -- ) dup label-test only forth confirm{ ['] wrap-test catch }confirm
    if drop ( cause xt restored on throw ) red ."  FAILED" normal cr
    else green ."  OK" normal 1 tests-passed +! then 1 tests-run +! ;
 : show-test-results

@@ -113,13 +113,31 @@ VARIABLE ECHO -- Determines if commands are echoed
 </pre>
 
 <h5>Vocabularies</h5>
+<p>
+µEforth uses a hybrid of Forth-79 and Forth-83 style vocabularies.
+By default vocabularies chain to the vocabulary in which they were defined,
+as in Forth-79. However, like Forth-83, <code>ALSO</code>
+can be used to add vocabularies to a vocabulary stack of which
+<code>CONTEXT @</code> is the first item.
+The word <code>ONLY</code> clears the vocabulary stack, but as there is
+no separate ONLY vocabulary, it also sets <code>CONTEXT</code>
+to the <code>FORTH</code> vocabulary.
+The word <code>SEALED</code> modifies the most recently defined vocabulary
+such that it does not chain. Note, this must be done before words are added to it.
+</p>
 <pre>
 VOCABULARY ( "name" ) Create a vocabulary with the current vocabulary as parent
 FORTH ( -- ) Make the FORTH vocabulary the context vocabulary
 DEFINITIONS ( -- ) Make the context vocabulary the current vocabulary
-VLIST ( -- ) List the words in the context vocabulary
+VLIST ( -- ) List the words in the context vocabulary (not chains)
+WORDS ( -- ) List the words in the context vocabulary (including chains)
 TRANSFER ( "name" ) Move a word from its current dictionary to the current vocabulary
                     Useful for "hiding" built-in words
+ALSO ( -- ) Duplicate the vocabulary at the top of the vocabulary stack
+ONLY ( -- ) Reset context stack to one item, the FORTH dictionary
+            Non-standard, as there's no distinct ONLY vocabulary
+ORDER ( -- ) Print the vocabulary search order
+SEALED ( -- ) Alter the last vocabulary defined so it doesn't chain
 </pre>
 
 <h5>Block Editor</h5>
