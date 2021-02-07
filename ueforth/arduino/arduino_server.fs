@@ -98,15 +98,24 @@ window.onload = function() {
 </script>
 | s>z constant index-html
 
-variable webserver
-20000 constant out-size
-
 streams
 : >stream >stream ;
 : stream> stream> ;
 : stream>ch stream>ch ;
 : stream stream ;
+WebServer
+: WebServer.setContentLength WebServer.setContentLength ;
+: WebServer.arg WebServer.arg ;
+: WebServer.hasArg WebServer.hasArg ;
+: WebServer.send WebServer.send ;
+: WebServer.on WebServer.on ;
+: WebServer.new WebServer.new ;
+: WebServer.begin WebServer.begin ;
+: WebServer.handleClient WebServer.handleClient ;
 web-interface
+
+variable webserver
+20000 constant out-size
 
 200 stream input-stream
 out-size dup stream output-stream

@@ -1,5 +1,5 @@
 internals definitions
-transfer call0 transfer call1 transfer call2 transfer call3 transfer call4
-transfer call5 transfer call6 transfer call7 transfer call8 transfer call9
-transfer call10
+transfer{
+  call0 call1 call2 call3 call4 call5 call6 call7 call8 call9 call10
+}transfer
 forth definitions

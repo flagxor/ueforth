@@ -4,25 +4,29 @@
 : definitions   context @ current ! ;
 : >name-length ( xt -- n ) dup 0= if exit then >name nip ;
 : vlist   0 context @ @ begin dup >name-length while onlines dup see. >link repeat 2drop cr ;
-: transfer ( "name" ) ' context @ begin 2dup @ <> while @ >link& repeat nip
-                      dup @ swap dup @ >link swap ! current @ @ over >link& !
-                      current @ ! ;
+
+( Make it easy to transfer words between vocabularies )
+: transfer-xt ( xt --  ) context @ begin 2dup @ <> while @ >link& repeat nip
+                         dup @ swap dup @ >link swap ! current @ @ over >link& !   current @ ! ;
+: transfer ( "name" ) ' transfer-xt ;
+: }transfer ;
+: transfer{ begin ' dup ['] }transfer = if drop exit then transfer-xt again ;
 
 ( Hide some words in an internals vocabulary )
 vocabulary internals   internals definitions
-transfer branch   transfer 0branch   transfer donext   transfer dolit
-transfer 'notfound   transfer notfound
-transfer immediate?
-transfer input-buffer   transfer ?echo   transfer ?echo-prompt
-transfer evaluate1   transfer evaluate-buffer
-transfer 'sys   transfer 'heap
-transfer aliteral
-transfer leaving(   transfer )leaving   transfer leaving   transfer leaving,
-transfer (do)   transfer (?do)   transfer (+loop)
-transfer parse-quote
-transfer digit
-transfer $@
-transfer see.   transfer see-loop    transfer >name-length   transfer exit=
-transfer see-one
-transfer tib-setup   transfer input-limit
+transfer{
+  transfer-xt
+  branch 0branch donext dolit
+  'notfound notfound
+  immediate? input-buffer ?echo ?echo-prompt
+  evaluate1 evaluate-buffer
+  'sys 'heap aliteral
+  leaving( )leaving leaving leaving,
+  (do) (?do) (+loop)
+  parse-quote digit $@
+  see. see-loop >name-length exit=
+  see-one
+  tib-setup input-limit
+}transfer
 forth definitions
+
