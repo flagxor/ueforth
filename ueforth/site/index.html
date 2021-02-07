@@ -156,6 +156,7 @@ See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/arduino/arduino
 </p>
 
 <h5>Allocation</h5>
+These words are inside the <code>internals</code> vocabulary.
 <pre>
 MALLOC ( n -- a | 0 )   System malloc
 SYSFREE ( a -- )   System free
@@ -163,6 +164,7 @@ REALLOC ( a n -- a | 0 )   System realloc
 </pre>
 
 <h5>Serial</h5>
+These words are inside the <code>Serial</code> vocabulary.
 <pre>
 Serial.begin ( baud -- )   Start serial port
 Serial.end ( -- )   End serial port
@@ -173,6 +175,7 @@ Serial.flush ( -- )   Flush serial buffer
 </pre>
 
 <h5>Serial Bluetooth</h5>
+These words are inside the <code>bluetooth</code> vocabulary.
 <pre>
 SerialBT.new ( -- bt )   Allocate new BT object
 SerialBT.delete ( bt -- )   Free BT object
@@ -194,6 +197,7 @@ SerialBT.isReady ( checkMaster timeout -- f )   Default checkMaster=false, timeo
 </pre>
 
 <h5>Bluetooth</h5>
+These words are inside the <code>bluetooth</code> vocabulary.
 <pre>
 esp_bt_dev_get_address ( -- a ) addr of 6 byte mac address
 </pre>
@@ -203,6 +207,11 @@ esp_bt_dev_get_address ( -- a ) addr of 6 byte mac address
 pinMode ( pin mode -- )   Set GPIO pin mode
 digitalWrite ( pin value -- )   Set GPIO pin state
 analogRead ( pin -- n )   Analog read from 0-4095
+</pre>
+
+<h5>ledc</h5>
+These words are inside the <code>ledc</code> vocabulary.
+<pre>
 ledcSetup ( channel freq resolution -- freq )
 ledcAttachPin ( pin channel -- )
 ledcDetachPin ( pin -- )
@@ -243,6 +252,7 @@ FILE-SIZE ( fh -- n ior )
 </pre>
 
 <h5>WiFi</h5>
+These words are inside the <code>WiFi</code> vocabulary.
 <pre>
 WiFi.config ( ip dns gateway subnet -- )   Packaged a.b.c.d little-endian
 Wifi.begin ( ssid-z password-z -- )
@@ -250,7 +260,7 @@ Wifi.disconnect ( -- )
 WiFi.status ( -- n )
 WiFi.macAddress ( a -- )
 WiFi.localIP ( -- ip )
-WiFi.mode ( mode -- )
+WiFi.mode ( mode -- ) WIFI_MODE_NULL WIFI_MODE_STA WIFI_MODE_AP WIFI_MODE_APSTA
 WiFi.setTxPower ( powerx4 -- )   Set power x4
 WiFi.getTxPower ( -- powerx4 )   Get power x4
 </pre>
@@ -261,6 +271,7 @@ MDNS.begin ( name-z -- )   Start multicast dns
 </pre>
 
 <h5>SPIFFS</h5>
+These words are inside the <code>SPIFFS</code> vocabulary.
 <pre>
 SPIFFS.begin ( format-on-fail path-z max-files -- f )
 SPIFFS.end ( -- )
@@ -315,6 +326,7 @@ Wire.flush ( -- )
 </pre>
 
 <h5>Camera</h5>
+These words are inside the <code>camera</code> vocabulary.
 <pre>
 esp_camera_init ( config -- f )
 esp_camera_deinit ( -- f )
@@ -324,6 +336,7 @@ esp_camera_sensor_get ( -- sensor )
 </pre>
 
 <h5>SD_MMC</h5>
+These words are inside the <code>SD_MMC</code> vocabulary.
 <pre>
 SD_MMC.begin ( mount mode1bit )   default mode1bit=false
 SD_MMC.end ( -- )

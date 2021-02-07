@@ -48,8 +48,8 @@ forth definitions internals
 internals definitions
 : @line ( n -- ) 64 * scr @ block + ;
 : e' ( n -- ) @line clobber-line drop update ;
-: wipe   15 for r@ e' next l ;   : e   e' l ;
 forth definitions internals
+: wipe   15 for r@ e' next l ;   : e   e' l ;
 : d ( n -- ) dup 1+ @line swap @line 15 @line over - cmove 15 e ;
 : r ( n "line" -- ) 0 parse 64 min rot dup e @line swap cmove l ;
 : a ( n "line" -- ) dup @line over 1+ @line 16 @line over - cmove> r ;

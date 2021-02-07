@@ -68,6 +68,27 @@ transfer{
 }transfer
 forth definitions
 
+vocabulary bluetooth   bluetooth definitions
+?transfer SerialBT.new
+?transfer SerialBT.delete
+?transfer SerialBT.begin
+?transfer SerialBT.end
+?transfer SerialBT.available
+?transfer SerialBT.readBytes
+?transfer SerialBT.write
+?transfer SerialBT.flush
+?transfer SerialBT.hasClient
+?transfer SerialBT.enableSSP
+?transfer SerialBT.setPin
+?transfer SerialBT.unpairDevice
+?transfer SerialBT.connect
+?transfer SerialBT.connectAddr
+?transfer SerialBT.disconnect
+?transfer SerialBT.connected
+?transfer SerialBT.isReady
+?transfer esp_bt_dev_get_address
+forth definitions
+
 internals definitions
 transfer{
   malloc sysfree realloc

@@ -9,6 +9,7 @@
 : transfer-xt ( xt --  ) context @ begin 2dup @ <> while @ >link& repeat nip
                          dup @ swap dup @ >link swap ! current @ @ over >link& !   current @ ! ;
 : transfer ( "name" ) ' transfer-xt ;
+: ?transfer ( "name" ) bl parse find dup if transfer-xt else drop then ;
 : }transfer ;
 : transfer{ begin ' dup ['] }transfer = if drop exit then transfer-xt again ;
 

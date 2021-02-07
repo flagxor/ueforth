@@ -158,11 +158,6 @@ create out-string out-size 1+ allot align
    again
 ;
 
-tasks
-: task task ;
-: start-task start-task ;
-web-interface
-
 ' do-serve 1000 1000 task webserver-task
 
 : serve

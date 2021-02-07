@@ -1,12 +1,14 @@
 ( Set up Basic I/O )
+internals definitions
 : arduino-bye   0 terminate ;
 ' arduino-bye is bye
 : arduino-type ( a n -- ) Serial.write drop ;
 ' arduino-type is type
-: key? ( -- n ) Serial.available ;
 : arduino-key ( -- n )
    begin Serial.available until 0 >r rp@ 1 Serial.readBytes drop r> ;
 ' arduino-key is key
+forth definitions
+: key? ( -- n ) Serial.available ;
 
 ( Map Arduino / ESP32 things to shorter names. )
 : pin ( n pin# -- ) swap digitalWrite ;

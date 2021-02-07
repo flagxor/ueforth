@@ -2,6 +2,12 @@
 
 vocabulary camera   camera definitions
 
+?transfer esp_camera_init
+?transfer esp_camera_deinit
+?transfer esp_camera_fb_get
+?transfer esp_camera_fb_return
+?transfer esp_camera_sensor_get
+
 0 constant PIXFORMAT_RGB565
 1 constant PIXFORMAT_YUV422
 2 constant PIXFORMAT_GRAYSCALE
