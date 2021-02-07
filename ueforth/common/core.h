@@ -5,6 +5,7 @@
 #define LOWER(ch) ((ch) & 0x5F)
 #define IMMEDIATE 1
 #define SMUDGE 2
+#define VOCABULARY_DEPTH 16
 
 #if PRINT_ERRORS
 #include <unistd.h>
@@ -13,7 +14,7 @@
 static struct {
   const char *tib;
   cell_t ntib, tin, state, base;
-  cell_t *heap, **current, **context, notfound;
+  cell_t *heap, **current, ***context, notfound;
   int argc;
   char **argv;
   cell_t *rp;  // spot to park main thread
@@ -47,14 +48,16 @@ static cell_t same(const char *a, const char *b, cell_t len) {
 }
 
 static cell_t find(const char *name, cell_t len) {
-  cell_t *pos = *g_sys.context;
-  cell_t clen = CELL_LEN(len);
-  while (pos) {
-    if (!(pos[-1] & SMUDGE) && len == pos[-3] &&
-        same(name, (const char *) &pos[-3 - clen], len) == 0) {
-      return (cell_t) pos;
+  for (cell_t ***voc = g_sys.context; *voc; ++voc) {
+    cell_t *pos = **voc;
+    cell_t clen = CELL_LEN(len);
+    while (pos) {
+      if (!(pos[-1] & SMUDGE) && len == pos[-3] &&
+          same(name, (const char *) &pos[-3 - clen], len) == 0) {
+        return (cell_t) pos;
+      }
+      pos = (cell_t *) pos[-2];  // Follow link
     }
-    pos = (cell_t *) pos[-2];  // Follow link
   }
   return 0;
 }
@@ -131,10 +134,13 @@ static void ueforth_init(int argc, char *argv[], void *heap,
   cell_t *rp = g_sys.heap + 1; g_sys.heap += STACK_SIZE;
 
   // FORTH vocabulary
-  *g_sys.heap++ = 0;
-  g_sys.current = (cell_t **) g_sys.heap;
-  g_sys.context = (cell_t **) g_sys.heap;  *g_sys.heap++ = 0;
+  *g_sys.heap++ = 0; cell_t *forth = g_sys.heap;
   *g_sys.heap++ = 0;  *g_sys.heap++ = 0;  *g_sys.heap++ = 0;
+  // Vocabulary stack
+  g_sys.current = (cell_t **) forth;
+  g_sys.context = (cell_t ***) g_sys.heap;
+  *g_sys.heap++ = (cell_t) forth;
+  for (int i = 0; i < VOCABULARY_DEPTH; ++i) { *g_sys.heap++ = 0; }
 
   ueforth_run(0);
   (*g_sys.current)[-1] = IMMEDIATE;  // Make last word ; IMMEDIATE

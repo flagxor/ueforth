@@ -38,7 +38,7 @@
 : base ( -- a ) 'sys 4 cells + ;
 : 'heap ( -- a ) 'sys 5 cells + ;
 : current ( -- a ) 'sys 6 cells + ;
-: context ( -- a ) 'sys 7 cells + ;
+: 'context ( -- a ) 'sys 7 cells + ;  : context 'context @ ;
 : 'notfound ( -- a ) 'sys 8 cells + ;
 
 ( Dictionary )
