@@ -13,12 +13,18 @@
 : }transfer ;
 : transfer{ begin ' dup ['] }transfer = if drop exit then transfer-xt again ;
 
+( Watered down versions of these )
+: only   forth 0 context cell+ ! ;
+: last-voc ( -- a) context begin dup @ while cell+ repeat ;
+: also   context context cell+ last-voc over - cell+ cmove> ;
+: sealed   0 current @ ! ;
+
 ( Hide some words in an internals vocabulary )
 vocabulary internals   internals definitions
 transfer{
-  transfer-xt
+  transfer-xt last-voc
   branch 0branch donext dolit
-  'notfound notfound
+  'context 'notfound notfound
   immediate? input-buffer ?echo ?echo-prompt
   evaluate1 evaluate-buffer
   'sys 'heap aliteral

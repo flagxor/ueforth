@@ -1,9 +1,4 @@
-( Utilities, probably should go elsewhere )
-: mem= ( a a n -- f)
-   for aft 2dup c@ swap c@ <> if 2drop rdrop 0 exit then 1+ swap 1+ then next 2drop -1 ;
-: str= ( a n a n -- f) >r swap r@ <> if rdrop 2drop 0 exit then r> mem= ;
-: startswith? ( a n a n -- f ) >r swap r@ < if rdrop 2drop 0 exit then r> mem= ;
-: assert ( f -- ) 0= throw ;
+also ansi also posix
 
 ( Support for eval tests )
 1000 constant expect-limit
@@ -45,9 +40,7 @@ variable tests-found   variable tests-run    variable tests-passed
 : check-fresh   depth if }confirm ."  DEPTH LEAK! " depth . 1 throw then ;
 : wrap-test ( xt -- ) expect-reset >r check-fresh r> execute check-fresh expect-finish ;
 : red   1 fg ;   : green   2 fg ;   : hr   40 for [char] - emit next cr ;
-ansi
 : replace-line   13 emit clear-to-eol ;
-forth
 : label-test ( xt -- ) replace-line >name type ;
 : run-test ( xt -- ) dup label-test confirm{ ['] wrap-test catch }confirm
    if drop ( cause xt restored on throw ) red ."  FAILED" normal cr
@@ -62,9 +55,8 @@ forth
    else
      ."   FAILED: " red tests-run @ tests-passed @ - . normal cr
    then hr ;
-posix
 : run-tests
    reset-test-counters ['] count-test for-tests
    ['] run-test for-tests show-test-results
    tests-passed @ tests-found @ <> sysexit ;
-forth
+only forth
