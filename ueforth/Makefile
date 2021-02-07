@@ -128,7 +128,7 @@ WINDOWS_BOOT = common/boot.fs common/vocabulary.fs common/hide_calls.fs common/a
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 	echo "ok" | cat $(WINDOWS_BOOT) - | $< boot >$@
 
-ARDUINO_BOOT = common/boot.fs common/vocabulary.fs arduino/arduino.fs \
+ARDUINO_BOOT = common/boot.fs common/vocabulary.fs arduino/arduino.fs arduino/hide_io.fs \
                arduino/arduino_highlevel.fs common/highlevel.fs common/filetools.fs \
                common/tasks.fs common/streams.fs arduino/arduino_server.fs \
                arduino/esp_camera.fs common/blocks.fs common/utils.fs \

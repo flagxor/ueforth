@@ -1,5 +1,7 @@
 ( Handling for ESP32-CAM )
 
+vocabulary camera   camera definitions
+
 0 constant PIXFORMAT_RGB565
 1 constant PIXFORMAT_YUV422
 2 constant PIXFORMAT_GRAYSCALE
@@ -28,3 +30,5 @@ create camera-config
   1 , ( fb_count )
 constant camera-fb-count
 constant camera-format
+
+forth definitions

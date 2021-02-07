@@ -112,6 +112,16 @@ SEE ( "name" -- ) Attempt to decompile a word
 VARIABLE ECHO -- Determines if commands are echoed
 </pre>
 
+<h5>Vocabularies</h5>
+<pre>
+VOCABULARY ( "name" ) Create a vocabulary with the current vocabulary as parent
+FORTH ( -- ) Make the FORTH vocabulary the context vocabulary
+DEFINITIONS ( -- ) Make the context vocabulary the current vocabulary
+VLIST ( -- ) List the words in the context vocabulary
+TRANSFER ( "name" ) Move a word from its current dictionary to the current vocabulary
+                    Useful for "hiding" built-in words
+</pre>
+
 <h5>Block Editor</h5>
 <pre>
 USE ( "name" -- ) Use "name" as the blockfile, e.g. USE /spiffs/foo
@@ -280,6 +290,7 @@ WebServer.method ( ws -- n )   GET / POST etc.
 </pre>
 
 <h5>Wire</h5>
+These words are inside the <code>Wire</code> vocabulary.
 <pre>
 Wire.begin ( -- f )
 Wire.setPins ( sda scl -- f )
