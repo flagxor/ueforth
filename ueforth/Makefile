@@ -128,7 +128,7 @@ $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 
 ARDUINO_BOOT = common/boot.fs common/vocabulary.fs \
                arduino/arduino.fs arduino/arduino_highlevel.fs \
-               arduino/hide_io.fs common/highlevel.fs \
+               arduino/bindings.fs common/highlevel.fs \
                common/filetools.fs common/utils.fs \
                common/tasks.fs common/streams.fs arduino/arduino_server.fs \
                arduino/esp_camera.fs common/blocks.fs \

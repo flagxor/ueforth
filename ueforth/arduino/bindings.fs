@@ -1,4 +1,5 @@
-( Migrate various words to separate vocabularies )
+( Migrate various words to separate vocabularies, and constants )
+
 vocabulary Wire   Wire definitions
 transfer{
   Wire.begin Wire.setClock Wire.getClock
@@ -25,6 +26,7 @@ transfer{
 forth definitions
 
 vocabulary WiFi   WiFi definitions
+
 transfer{
   WiFi.config
   WiFi.begin WiFi.disconnect
@@ -32,8 +34,14 @@ transfer{
   WiFi.macAddress WiFi.localIP
   WiFi.mode
   WiFi.setTxPower WiFi.getTxPower
-  WIFI_MODE_APSTA WIFI_MODE_AP WIFI_MODE_STA WIFI_MODE_NULL
 }transfer
+
+( WiFi Modes )
+0 constant WIFI_MODE_NULL
+1 constant WIFI_MODE_STA
+2 constant WIFI_MODE_AP
+3 constant WIFI_MODE_APSTA
+
 forth definitions
 
 vocabulary SD_MMC   SD_MMC definitions
@@ -92,6 +100,21 @@ forth definitions
 internals definitions
 transfer{
   malloc sysfree realloc
+  heap_caps_malloc heap_caps_free heap_caps_realloc
 }transfer
+
+( Heap Capabilities )
+binary
+0001 constant MALLOC_CAP_EXEC
+0010 constant MALLOC_CAP_32BIT
+0100 constant MALLOC_CAP_8BIT
+1000 constant MALLOC_CAP_DMA
+: MALLOC_CAP_PID ( n -- ) 10000 over 11 ( 3 ) - for 2* next ;
+000010000000000 constant MALLOC_CAP_SPIRAM
+000100000000000 constant MALLOC_CAP_INTERNAL
+001000000000000 constant MALLOC_CAP_DEFAULT
+010000000000000 constant MALLOC_CAP_IRAM_8BIT
+010000000000000 constant MALLOC_CAP_RETENTION
+decimal
 forth definitions
 

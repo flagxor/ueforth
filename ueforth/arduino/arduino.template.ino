@@ -42,10 +42,14 @@
 #define PUSH(v) (DUP, tos = (cell_t) (v))
 
 #define PLATFORM_OPCODE_LIST \
-  /* Allocation and Strings */ \
+  /* Memory Allocation */ \
   X("MALLOC", MALLOC, tos = (cell_t) malloc(tos)) \
   X("SYSFREE", FREE, free((void *) tos); DROP) \
   X("REALLOC", REALLOC, tos = (cell_t) realloc((void *) *sp, tos); --sp) \
+  X("heap_caps_malloc", HEAP_CAPS_MALLOC, tos = (cell_t) heap_caps_malloc(*sp, tos); --sp) \
+  X("heap_caps_free", HEAP_CAPS_FREE, heap_caps_free((void *) tos); DROP) \
+  X("heap_caps_realloc", HEAP_CAPS_REALLOC, \
+      tos = (cell_t) heap_caps_realloc((void *) sp[-1], *sp, tos); sp -= 2) \
   /* Serial */ \
   X("Serial.begin", SERIAL_BEGIN, Serial.begin(tos); DROP) \
   X("Serial.end", SERIAL_END, Serial.end()) \

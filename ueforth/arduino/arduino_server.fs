@@ -102,7 +102,7 @@ window.onload = function() {
 variable webserver
 20000 constant out-size
 200 stream input-stream
-out-size dup stream output-stream
+out-size stream output-stream
 create out-string out-size 1+ allot align
 
 : handle-index
