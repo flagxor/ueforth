@@ -15,6 +15,7 @@
 
 #include "common/opcodes.h"
 #include "common/calling.h"
+#include "common/calls.h"
 
 #define HEAP_SIZE (10 * 1024 * 1024)
 #define STACK_SIZE (64 * 1024)

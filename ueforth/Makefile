@@ -246,6 +246,7 @@ $(ARDUINO)/ueforth/ueforth.ino: \
         arduino/fuse_ino.js \
         arduino/arduino.template.ino \
         common/opcodes.h \
+        common/calling.h \
         common/core.h \
         common/interp.h \
         $(GEN)/arduino_boot.h | $(ARDUINO)/ueforth

@@ -7,8 +7,12 @@ typedef intptr_t cell_t;
 typedef uintptr_t ucell_t;
 
 #define Y(op, code) X(#op, id ## op, code)
-#define DUP *++sp = tos
-#define DROP tos = *sp--
+#define NIP (--sp)
+#define NIPn(n) (sp -= (n))
+#define DROP (tos = *sp--)
+#define DROPn(n) (NIPn(n-1), DROP)
+#define DUP (*++sp = tos)
+#define PUSH DUP; tos = (cell_t)
 #define COMMA(n) *g_sys.heap++ = (n)
 #define DOIMMEDIATE() (*g_sys.current)[-1] |= IMMEDIATE
 #define UNSMUDGE() (*g_sys.current)[-1] &= ~SMUDGE
@@ -68,7 +72,7 @@ typedef int64_t dcell_t;
                           if (!tos) --sp) \
   Y(CREATE, DUP; DUP; tos = parse(32, sp); \
             create((const char *) *sp, tos, 0, ADDR_DOCREATE); \
-            COMMA(0); --sp; DROP) \
+            COMMA(0); DROPn(2)) \
   X("DOES>", DOES, DOES(ip); ip = (cell_t *) *rp; --rp) \
   Y(IMMEDIATE, DOIMMEDIATE()) \
   X("'SYS", SYS, DUP; tos = (cell_t) &g_sys) \

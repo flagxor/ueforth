@@ -415,6 +415,109 @@ s" /spiffs/autoexec.fs" delete-file
 See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/arduino/autoboot.fs">autoboot.fs</a>.
 </p>
 
+<h4 id="adding_words">Adding Words</h4>
+
+<p>
+Adding words based on C functions can be done by editing the source code.
+For ESP32 Arduino <code>arduino.template.ino</code> is the appropriate place.
+</p>
+
+<p>
+Because of the use of <a href="https://en.wikipedia.org/wiki/X_Macro">X-Macros</a> words can be
+added in as little as one line. Locate the macro called <code>PLATFORM_OPCODE_LIST</code>
+and add your words there.
+</p>
+
+<p>NOTE: Be careful to end each line with a \ so the macros will chain correctly.</p>
+
+<p>
+To add a word containing only letters, numbers, and underscore you can use <code>Y</code>.
+</p>
+
+<pre>
+  Y(MY_WORD123, c_function_to_call()) \
+</pre>
+
+<p>
+If your word name contains other characters, instead use <code>X</code>.
+You will need to make up an alternate name for the middle parameter.
+It must contain only letters, numbers, and underscore.
+The name is not used anywhere else, but must be unique.
+</p>
+
+<pre>
+  X("myword!", MY_WORD_BANG, c_function_to_call()) \
+</pre>
+
+<p>
+Values from the data stack can be accessed via
+the variables <code>tos</code> (Top of Stack) and
+<code>sp</code> (Pointer to the rest of the stack).
+The stack has the data type <code>cell_t</code>.
+</p>
+
+<p>
+You can push a value of any type to the stack with the macro <code>PUSH</code>:
+</p>
+
+<pre>
+  Y(MY_WORD, PUSH calculate_magic_value()) \
+</pre>
+
+<p>
+To simplify calling C functions, you can also refer to elements on the stack
+with the types positional names:
+</p>
+
+<pre>
+n10 n9 n8 n7 n6 n5 n4 n3 n2 n1 n0 - Access stack as cell_t integer values
+                   c4 c3 c2 c1 c0 - Access stack as char* values
+                   b4 b3 b2 b1 b0 - Access stack as uint8_t* byte values
+                   a4 a3 a2 a1 a0 - Access stack as void* values
+
+Examples:
+  void send_message(const char *message, int code);
+  ...
+  X("send-message", SEND_MESSAGE, send_message(c1, n0)) \
+</pre>
+
+<p>
+  You can always replace the top item on the stack with <code>SET</code>:
+</p>
+
+<pre>
+  Y(DECODE, SET decode_func(n0)) \
+</pre>
+
+<p>
+  You can drop elements from the stack with <code>DROP</code>
+  or <code>DROPn(number)</code>.
+  You can nip elements from below top of the stack with <code>NIP</code>
+  or <code>NIPn(number)</code>.
+  Be aware that like <code>PUSH</code> this will cause stack indices to change.
+</p>
+
+<pre>
+  int my_cool_function(char *foo, int bar, uint8_t *baz);
+  ...
+  Y(MY_FUNC, n0 = my_cool_function(c2, n1, b0); NIPn(2)) \
+</pre>
+
+<p>
+Multiple C statements can be included in the code area of a word,
+but care must be taken to generally avoid {}s.
+If you find you need nesting, a separate function is recommended.
+</p>
+
+<p>
+New variables can be declared in each word and are scoped to that word.
+</p>
+
+<pre>
+  Y(MY_WORD, cell_t foo = n0; DROP; char *x = c0; DROP; \
+             PUSH my_func(foo, x)) \
+</pre>
+
 <h3>Windows</h3>
 
 <h4>Windows Opcodes</h4>

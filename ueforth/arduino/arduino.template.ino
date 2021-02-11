@@ -1,4 +1,5 @@
 {{opcodes}}
+{{calling}}
 
 // For now, default on several options.
 #define ENABLE_SPIFFS_SUPPORT
@@ -39,70 +40,68 @@
 # define STACK_SIZE 32
 #endif
 
-#define PUSH(v) (DUP, tos = (cell_t) (v))
-
 #define PLATFORM_OPCODE_LIST \
   /* Memory Allocation */ \
-  Y(MALLOC, tos = (cell_t) malloc(tos)) \
-  Y(SYSFREE, free((void *) tos); DROP) \
-  Y(REALLOC, tos = (cell_t) realloc((void *) *sp, tos); --sp) \
-  Y(heap_caps_malloc, tos = (cell_t) heap_caps_malloc(*sp, tos); --sp) \
-  Y(heap_caps_free, heap_caps_free((void *) tos); DROP) \
+  Y(MALLOC, SET malloc(n0)) \
+  Y(SYSFREE, free(a0); DROP) \
+  Y(REALLOC, SET realloc(a1, n0); NIP) \
+  Y(heap_caps_malloc, SET heap_caps_malloc(n1, n0); NIP) \
+  Y(heap_caps_free, heap_caps_free(a0); DROP) \
   Y(heap_caps_realloc, \
-      tos = (cell_t) heap_caps_realloc((void *) sp[-1], *sp, tos); sp -= 2) \
+      tos = (cell_t) heap_caps_realloc(a2, n1, n0); NIPn(2)) \
   /* Serial */ \
   X("Serial.begin", SERIAL_BEGIN, Serial.begin(tos); DROP) \
   X("Serial.end", SERIAL_END, Serial.end()) \
-  X("Serial.available", SERIAL_AVAILABLE, DUP; tos = Serial.available()) \
-  X("Serial.readBytes", SERIAL_READ_BYTES, tos = Serial.readBytes((uint8_t *) *sp, tos); --sp) \
-  X("Serial.write", SERIAL_WRITE, tos = Serial.write((const uint8_t *) *sp, tos); --sp) \
+  X("Serial.available", SERIAL_AVAILABLE, PUSH Serial.available()) \
+  X("Serial.readBytes", SERIAL_READ_BYTES, n0 = Serial.readBytes(b1, n0); NIP) \
+  X("Serial.write", SERIAL_WRITE, n0 = Serial.write(b1, n0); NIP) \
   X("Serial.flush", SERIAL_FLUSH, Serial.flush()) \
   /* Pins and PWM */ \
-  Y(pinMode, pinMode(*sp, tos); --sp; DROP) \
-  Y(digitalWrite, digitalWrite(*sp, tos); --sp; DROP) \
-  Y(digitalRead, tos = (cell_t) digitalRead(tos)) \
-  Y(analogRead, tos = (cell_t) analogRead(tos)) \
+  Y(pinMode, pinMode(n1, n0); DROPn(2)) \
+  Y(digitalWrite, digitalWrite(n1, n0); DROPn(2)) \
+  Y(digitalRead, n0 = digitalRead(n0)) \
+  Y(analogRead, n0 = analogRead(n0)) \
   Y(ledcSetup, \
-      tos = (cell_t) (1000000 * ledcSetup(sp[-1], *sp / 1000.0, tos)); sp -= 2) \
-  Y(ledcAttachPin, ledcAttachPin(*sp, tos); --sp; DROP) \
-  Y(ledcDetachPin, ledcDetachPin(tos); DROP) \
-  Y(ledcRead, tos = (cell_t) ledcRead(tos)) \
-  Y(ledcReadFreq, tos = (cell_t) (1000000 * ledcReadFreq(tos))) \
-  Y(ledcWrite, ledcWrite(*sp, tos); --sp; DROP) \
+      n0 = (cell_t) (1000000 * ledcSetup(n2, n1 / 1000.0, n0)); NIPn(2)) \
+  Y(ledcAttachPin, ledcAttachPin(n1, n0); DROPn(2)) \
+  Y(ledcDetachPin, ledcDetachPin(n0); DROP) \
+  Y(ledcRead, n0 = ledcRead(n0)) \
+  Y(ledcReadFreq, n0 = (cell_t) (1000000 * ledcReadFreq(n0))) \
+  Y(ledcWrite, ledcWrite(n1, n0); DROPn(2)) \
   Y(ledcWriteTone, \
-      tos = (cell_t) (1000000 * ledcWriteTone(*sp, tos / 1000.0)); --sp) \
+      n0 = (cell_t) (1000000 * ledcWriteTone(n1, n0 / 1000.0)); NIP) \
   Y(ledcWriteNote, \
-      tos = (cell_t) (1000000 * ledcWriteNote(sp[-1], (note_t) *sp, tos)); sp -=2) \
+      tos = (cell_t) (1000000 * ledcWriteNote(n2, (note_t) n1, n0)); NIPn(2)) \
   /* General System */ \
-  Y(MS, delay(tos); DROP) \
-  Y(TERMINATE, exit(tos)) \
+  Y(MS, delay(n0); DROP) \
+  Y(TERMINATE, exit(n0)) \
   /* File words */ \
-  X("R/O", R_O, PUSH(O_RDONLY)) \
-  X("R/W", R_W, PUSH(O_RDWR)) \
-  X("W/O", W_O, PUSH(O_WRONLY)) \
+  X("R/O", R_O, PUSH O_RDONLY) \
+  X("R/W", R_W, PUSH O_RDWR) \
+  X("W/O", W_O, PUSH O_WRONLY) \
   Y(BIN, ) \
   X("CLOSE-FILE", CLOSE_FILE, tos = close(tos); tos = tos ? errno : 0) \
   X("FLUSH-FILE", FLUSH_FILE, fsync(tos); /* fsync has no impl and returns ENOSYS :-( */ tos = 0) \
-  X("OPEN-FILE", OPEN_FILE, cell_t mode = tos; DROP; cell_t len = tos; DROP; \
-    memcpy(filename, (void *) tos, len); filename[len] = 0; \
-    tos = open(filename, mode, 0777); PUSH(tos < 0 ? errno : 0)) \
-  X("CREATE-FILE", CREATE_FILE, cell_t mode = tos; DROP; cell_t len = tos; DROP; \
-    memcpy(filename, (void *) tos, len); filename[len] = 0; \
-    tos = open(filename, mode | O_CREAT | O_TRUNC); PUSH(tos < 0 ? errno : 0)) \
-  X("DELETE-FILE", DELETE_FILE, cell_t len = tos; DROP; \
-    memcpy(filename, (void *) tos, len); filename[len] = 0; \
-    tos = unlink(filename); tos = tos ? errno : 0) \
-  X("WRITE-FILE", WRITE_FILE, cell_t fd = tos; DROP; cell_t len = tos; DROP; \
-    tos = write(fd, (void *) tos, len); tos = tos != len ? errno : 0) \
-  X("READ-FILE", READ_FILE, cell_t fd = tos; DROP; cell_t len = tos; DROP; \
-    tos = read(fd, (void *) tos, len); PUSH(tos < 0 ? errno : 0)) \
+  X("OPEN-FILE", OPEN_FILE, cell_t mode = n0; DROP; cell_t len = n0; DROP; \
+    memcpy(filename, a0, len); filename[len] = 0; \
+    n0 = open(filename, mode, 0777); PUSH n0 < 0 ? errno : 0) \
+  X("CREATE-FILE", CREATE_FILE, cell_t mode = n0; DROP; cell_t len = n0; DROP; \
+    memcpy(filename, a0, len); filename[len] = 0; \
+    n0 = open(filename, mode | O_CREAT | O_TRUNC); PUSH n0 < 0 ? errno : 0) \
+  X("DELETE-FILE", DELETE_FILE, cell_t len = n0; DROP; \
+    memcpy(filename, a0, len); filename[len] = 0; \
+    n0 = unlink(filename); n0 = n0 ? errno : 0) \
+  X("WRITE-FILE", WRITE_FILE, cell_t fd = n0; DROP; cell_t len = n0; DROP; \
+    n0 = write(fd, a0, len); n0 = n0 != len ? errno : 0) \
+  X("READ-FILE", READ_FILE, cell_t fd = n0; DROP; cell_t len = n0; DROP; \
+    n0 = read(fd, a0, len); PUSH n0 < 0 ? errno : 0) \
   X("FILE-POSITION", FILE_POSITION, \
-    tos = (cell_t) lseek(tos, 0, SEEK_CUR); PUSH(tos < 0 ? errno : 0)) \
-  X("REPOSITION-FILE", REPOSITION_FILE, cell_t fd = tos; DROP; \
-    tos = (cell_t) lseek(fd, tos, SEEK_SET); tos = tos < 0 ? errno : 0) \
-  X("RESIZE-FILE", RESIZE_FILE, cell_t fd = tos; DROP; tos = ResizeFile(fd, tos)) \
-  X("FILE-SIZE", FILE_SIZE, struct stat st; w = fstat(tos, &st); \
-    tos = (cell_t) st.st_size; PUSH(w < 0 ? errno : 0)) \
+    n0 = (cell_t) lseek(n0, 0, SEEK_CUR); PUSH n0 < 0 ? errno : 0) \
+  X("REPOSITION-FILE", REPOSITION_FILE, cell_t fd = n0; DROP; \
+    n0 = (cell_t) lseek(fd, tos, SEEK_SET); n0 = n0 < 0 ? errno : 0) \
+  X("RESIZE-FILE", RESIZE_FILE, cell_t fd = n0; DROP; n0 = ResizeFile(fd, tos)) \
+  X("FILE-SIZE", FILE_SIZE, struct stat st; w = fstat(n0, &st); \
+    n0 = (cell_t) st.st_size; PUSH w < 0 ? errno : 0) \
   OPTIONAL_SPIFFS_SUPPORT \
   OPTIONAL_WIFI_SUPPORT \
   OPTIONAL_MDNS_SUPPORT \
@@ -115,17 +114,17 @@
 #ifndef ENABLE_SPIFFS_SUPPORT
 // Provide a default failing SPIFFS.begin
 # define OPTIONAL_SPIFFS_SUPPORT \
-  X("SPIFFS.begin", SPIFFS_BEGIN, sp -= 2; tos = 0)
+  X("SPIFFS.begin", SPIFFS_BEGIN, NIPn(2); n0 = 0)
 #else
 # include "SPIFFS.h"
 # define OPTIONAL_SPIFFS_SUPPORT \
   /* SPIFFS */ \
   X("SPIFFS.begin", SPIFFS_BEGIN, \
-      tos = SPIFFS.begin(sp[-1], (const char *) *sp, tos); sp -=2) \
+      tos = SPIFFS.begin(n2, c1, n0); NIPn(2)) \
   X("SPIFFS.end", SPIFFS_END, SPIFFS.end()) \
-  X("SPIFFS.format", SPIFFS_FORMAT, DUP; tos = SPIFFS.format()) \
-  X("SPIFFS.totalBytes", SPIFFS_TOTAL_BYTES, DUP; tos = SPIFFS.totalBytes()) \
-  X("SPIFFS.usedBytes", SPIFFS_USED_BYTES, DUP; tos = SPIFFS.usedBytes())
+  X("SPIFFS.format", SPIFFS_FORMAT, PUSH SPIFFS.format()) \
+  X("SPIFFS.totalBytes", SPIFFS_TOTAL_BYTES, PUSH SPIFFS.totalBytes()) \
+  X("SPIFFS.usedBytes", SPIFFS_USED_BYTES, PUSH SPIFFS.usedBytes())
 #endif
 
 #ifndef ENABLE_CAMERA_SUPPORT
@@ -134,16 +133,11 @@
 # include "esp_camera.h"
 # define OPTIONAL_CAMERA_SUPPORT \
   /* Camera */ \
-  Y(esp_camera_init, \
-      tos = esp_camera_init((const camera_config_t *) tos)) \
-  Y(esp_camera_deinit, \
-      DUP; tos = esp_camera_deinit()) \
-  Y(esp_camera_fb_get, \
-      DUP; tos = (cell_t) esp_camera_fb_get()) \
-  Y(esp_camera_db_return, \
-      esp_camera_fb_return((camera_fb_t *) tos); DROP) \
-  Y(esp_camera_sensor_get, \
-      DUP; tos = (cell_t) esp_camera_sensor_get())
+  Y(esp_camera_init, n0 = esp_camera_init((camera_config_t *) a0)) \
+  Y(esp_camera_deinit, PUSH esp_camera_deinit()) \
+  Y(esp_camera_fb_get, PUSH esp_camera_fb_get()) \
+  Y(esp_camera_db_return, esp_camera_fb_return((camera_fb_t *) a0); DROP) \
+  Y(esp_camera_sensor_get, PUSH esp_camera_sensor_get())
 #endif
 
 #ifndef ENABLE_SDCARD_SUPPORT
@@ -152,12 +146,11 @@
 # include "SD_MMC.h"
 # define OPTIONAL_SDCARD_SUPPORT \
   /* SD_MMC */ \
-  X("SD_MMC.begin", SD_MMC_BEGIN, \
-      tos = SD_MMC.begin((const char *) *sp, tos); --sp) \
+  X("SD_MMC.begin", SD_MMC_BEGIN, tos = SD_MMC.begin(c1, n0); NIP) \
   X("SD_MMC.end", SD_MMC_END, SD_MMC.end()) \
-  X("SD_MMC.cardType", SD_MMC_CARD_TYPE, DUP; tos = SD_MMC.cardType()) \
-  X("SD_MMC.totalBytes", SD_MMC_TOTAL_BYTES, DUP; tos = SD_MMC.totalBytes()) \
-  X("SD_MMC.usedBytes", SD_MMC_USED_BYTES, DUP; tos = SD_MMC.usedBytes())
+  X("SD_MMC.cardType", SD_MMC_CARD_TYPE, PUSH SD_MMC.cardType()) \
+  X("SD_MMC.totalBytes", SD_MMC_TOTAL_BYTES, PUSH SD_MMC.totalBytes()) \
+  X("SD_MMC.usedBytes", SD_MMC_USED_BYTES, PUSH SD_MMC.usedBytes())
 #endif
 
 #ifndef ENABLE_I2C_SUPPORT
@@ -166,25 +159,25 @@
 # include <Wire.h>
 # define OPTIONAL_I2C_SUPPORT \
   /* Wire */ \
-  X("Wire.begin", WIRE_BEGIN, tos = (cell_t) Wire.begin(*sp, tos); --sp) \
-  X("Wire.setClock", WIRE_SET_CLOCK, Wire.setClock(tos); DROP) \
-  X("Wire.getClock", WIRE_GET_CLOCK, DUP; tos = (cell_t) Wire.getClock()) \
-  X("Wire.setTimeout", WIRE_SET_TIMEOUT, Wire.setTimeout(tos); DROP) \
-  X("Wire.getTimeout", WIRE_GET_TIMEOUT, DUP; tos = (cell_t) Wire.getTimeout()) \
-  X("Wire.lastError", WIRE_LAST_ERROR, DUP; tos = (cell_t) Wire.lastError()) \
-  X("Wire.getErrorText", WIRE_GET_ERROR_TEXT, tos = (cell_t) Wire.getErrorText(tos)) \
-  X("Wire.beginTransmission", WIRE_BEGIN_TRANSMISSION, Wire.beginTransmission(tos); DROP) \
-  X("Wire.endTransmission", WIRE_END_TRANSMISSION, tos = (cell_t) Wire.endTransmission(tos)) \
-  X("Wire.requestFrom", WIRE_REQUEST_FROM, tos = (cell_t) Wire.requestFrom(sp[-1], *sp, tos); sp -= 2) \
+  X("Wire.begin", WIRE_BEGIN, n0 = Wire.begin(n1, n0); NIP) \
+  X("Wire.setClock", WIRE_SET_CLOCK, Wire.setClock(n0); DROP) \
+  X("Wire.getClock", WIRE_GET_CLOCK, PUSH Wire.getClock()) \
+  X("Wire.setTimeout", WIRE_SET_TIMEOUT, Wire.setTimeout(n0); DROP) \
+  X("Wire.getTimeout", WIRE_GET_TIMEOUT, PUSH Wire.getTimeout()) \
+  X("Wire.lastError", WIRE_LAST_ERROR, PUSH Wire.lastError()) \
+  X("Wire.getErrorText", WIRE_GET_ERROR_TEXT, PUSH Wire.getErrorText(n0)) \
+  X("Wire.beginTransmission", WIRE_BEGIN_TRANSMISSION, Wire.beginTransmission(n0); DROP) \
+  X("Wire.endTransmission", WIRE_END_TRANSMISSION, PUSH Wire.endTransmission(n0)) \
+  X("Wire.requestFrom", WIRE_REQUEST_FROM, n0 = Wire.requestFrom(n2, n1, n0); NIPn(2)) \
   X("Wire.writeTransmission", WIRE_WRITE_TRANSMISSION, \
-      tos = (cell_t) Wire.writeTransmission(sp[-2], (uint8_t *) sp[-1], *sp, tos); sp -=3) \
+      n0 = Wire.writeTransmission(n3, b2, n1, n0); NIPn(3)) \
   X("Wire.readTransmission", WIRE_READ_TRANSMISSION, \
-      tos = (cell_t) Wire.readTransmission(sp[-3], (uint8_t *) sp[-2], sp[-1], *sp, (uint32_t *) tos); sp -=4) \
-  X("Wire.write", WIRE_WRITE, tos = Wire.write((uint8_t *) *sp, tos); --sp) \
-  X("Wire.available", WIRE_AVAILABLE, DUP; tos = Wire.available()) \
-  X("Wire.read", WIRE_READ, DUP; tos = Wire.read()) \
-  X("Wire.peek", WIRE_PEEK, DUP; tos = Wire.peek()) \
-  X("Wire.busy", WIRE_BUSY, DUP; tos = Wire.busy()) \
+      n0 = Wire.readTransmission(n4, b3, n2, n1, (uint32_t *) a0); NIPn(4)) \
+  X("Wire.write", WIRE_WRITE, n0 = Wire.write(b1, n0); NIP) \
+  X("Wire.available", WIRE_AVAILABLE, PUSH Wire.available()) \
+  X("Wire.read", WIRE_READ, PUSH Wire.read()) \
+  X("Wire.peek", WIRE_PEEK, PUSH Wire.peek()) \
+  X("Wire.busy", WIRE_BUSY, PUSH Wire.busy()) \
   X("Wire.flush", WIRE_FLUSH, Wire.flush())
 #endif
 
@@ -193,32 +186,29 @@
 #else
 # include "esp_bt_device.h"
 # include "BluetoothSerial.h"
+# define bt0 ((BluetoothSerial *) a0)
 # define OPTIONAL_SERIAL_BLUETOOTH_SUPPORT \
   /* SerialBT */ \
-  X("SerialBT.new", SERIALBT_NEW, DUP; tos = (cell_t) new BluetoothSerial()) \
-  X("SerialBT.delete", SERIALBT_DELETE, delete (BluetoothSerial *) tos; DROP) \
-  X("SerialBT.begin", SERIALBT_BEGIN, \
-      tos = ((BluetoothSerial *) tos)->begin((const char *) sp[-1], *sp); sp -= 2) \
-  X("SerialBT.end", SERIALBT_END, ((BluetoothSerial *) tos)->end(); DROP) \
-  X("SerialBT.available", SERIALBT_AVAILABLE, tos = ((BluetoothSerial *) tos)->available()) \
-  X("SerialBT.readBytes", SERIALBT_READ_BYTES, \
-      tos = ((BluetoothSerial *) tos)->readBytes((uint8_t *) sp[-1], *sp); sp -= 2) \
-  X("SerialBT.write", SERIALBT_WRITE, \
-      tos = ((BluetoothSerial *) tos)->write((const uint8_t *) sp[-1], *sp); sp -= 2) \
-  X("SerialBT.flush", SERIALBT_FLUSH, ((BluetoothSerial *) tos)->flush(); DROP) \
-  X("SerialBT.hasClient", SERIALBT_HAS_CLIENT, tos = ((BluetoothSerial *) tos)->hasClient()) \
-  X("SerialBT.enableSSP", SERIALBT_ENABLE_SSP, ((BluetoothSerial *) tos)->enableSSP(); DROP) \
-  X("SerialBT.setPin", SERIALBT_SET_PIN, tos = ((BluetoothSerial *) tos)->setPin((const char *) *sp); --sp) \
+  X("SerialBT.new", SERIALBT_NEW, PUSH new BluetoothSerial()) \
+  X("SerialBT.delete", SERIALBT_DELETE, delete bt0; DROP) \
+  X("SerialBT.begin", SERIALBT_BEGIN, n0 = bt0->begin(c2, n1); NIPn(2)) \
+  X("SerialBT.end", SERIALBT_END, bt0->end(); DROP) \
+  X("SerialBT.available", SERIALBT_AVAILABLE, n0 = bt0->available()) \
+  X("SerialBT.readBytes", SERIALBT_READ_BYTES, n0 = bt0->readBytes(b2, n1); NIPn(2)) \
+  X("SerialBT.write", SERIALBT_WRITE, n0 = bt0->write(b2, n1); NIPn(2)) \
+  X("SerialBT.flush", SERIALBT_FLUSH, bt0->flush(); DROP) \
+  X("SerialBT.hasClient", SERIALBT_HAS_CLIENT, n0 = bt0->hasClient()) \
+  X("SerialBT.enableSSP", SERIALBT_ENABLE_SSP, bt0->enableSSP(); DROP) \
+  X("SerialBT.setPin", SERIALBT_SET_PIN, n0 = bt0->setPin(c1); NIP) \
   X("SerialBT.unpairDevice", SERIALBT_UNPAIR_DEVICE, \
-      tos = ((BluetoothSerial *) tos)->unpairDevice((uint8_t *) *sp); --sp) \
-  X("SerialBT.connect", SERIALBT_CONNECT, tos = ((BluetoothSerial *) tos)->connect((const char *) *sp); --sp) \
-  X("SerialBT.connectAddr", SERIALBT_CONNECT_ADDR, \
-      tos = ((BluetoothSerial *) tos)->connect((uint8_t *) *sp); --sp) \
-  X("SerialBT.disconnect", SERIALBT_DISCONNECT, tos = ((BluetoothSerial *) tos)->disconnect()) \
-  X("SerialBT.connected", SERIALBT_CONNECTED, tos = ((BluetoothSerial *) tos)->connected(*sp); --sp) \
-  X("SerialBT.isReady", SERIALBT_IS_READY, tos = ((BluetoothSerial *) tos)->isReady(sp[-1], *sp); sp -= 2) \
+      n0 = bt0->unpairDevice(b1); NIP) \
+  X("SerialBT.connect", SERIALBT_CONNECT, n0 = bt0->connect(c1); NIP) \
+  X("SerialBT.connectAddr", SERIALBT_CONNECT_ADDR, n0 = bt0->connect(b1); NIP) \
+  X("SerialBT.disconnect", SERIALBT_DISCONNECT, n0 = bt0->disconnect()) \
+  X("SerialBT.connected", SERIALBT_CONNECTED, n0 = bt0->connected(n1); NIP) \
+  X("SerialBT.isReady", SERIALBT_IS_READY, n0 = bt0->isReady(n2, n1); NIPn(2)) \
   /* Bluetooth */ \
-  Y(esp_bt_dev_get_address, DUP; tos = (cell_t) esp_bt_dev_get_address())
+  Y(esp_bt_dev_get_address, PUSH esp_bt_dev_get_address())
 #endif
 
 #ifndef ENABLE_WIFI_SUPPORT
@@ -243,16 +233,15 @@ static cell_t FromIP(IPAddress ip) {
 # define OPTIONAL_WIFI_SUPPORT \
   /* WiFi */ \
   X("WiFi.config", WIFI_CONFIG, \
-      WiFi.config(ToIP(sp[-2]), ToIP(sp[-1]), ToIP(*sp), ToIP(tos)); sp -= 3; DROP) \
-  X("WiFi.begin", WIFI_BEGIN, \
-      WiFi.begin((const char *) *sp, (const char *) tos); --sp; DROP) \
+      WiFi.config(ToIP(n3), ToIP(n2), ToIP(n1), ToIP(n0)); DROPn(4)) \
+  X("WiFi.begin", WIFI_BEGIN, WiFi.begin(c1, c0); DROPn(2)) \
   X("WiFi.disconnect", WIFI_DISCONNECT, WiFi.disconnect()) \
-  X("WiFi.status", WIFI_STATUS, DUP; tos = WiFi.status()) \
-  X("WiFi.macAddress", WIFI_MAC_ADDRESS, WiFi.macAddress((uint8_t *) tos); DROP) \
-  X("WiFi.localIP", WIFI_LOCAL_IPS, DUP; tos = FromIP(WiFi.localIP())) \
-  X("WiFi.mode", WIFI_MODE, WiFi.mode((wifi_mode_t) tos); DROP) \
-  X("WiFi.setTxPower", WIFI_SET_TX_POWER, WiFi.setTxPower((wifi_power_t) tos); DROP) \
-  X("WiFi.getTxPower", WIFI_GET_TX_POWER, DUP; tos = (cell_t) WiFi.getTxPower())
+  X("WiFi.status", WIFI_STATUS, PUSH WiFi.status()) \
+  X("WiFi.macAddress", WIFI_MAC_ADDRESS, WiFi.macAddress(b0); DROP) \
+  X("WiFi.localIP", WIFI_LOCAL_IPS, PUSH FromIP(WiFi.localIP())) \
+  X("WiFi.mode", WIFI_MODE, WiFi.mode((wifi_mode_t) n0); DROP) \
+  X("WiFi.setTxPower", WIFI_SET_TX_POWER, WiFi.setTxPower((wifi_power_t) n0); DROP) \
+  X("WiFi.getTxPower", WIFI_GET_TX_POWER, PUSH WiFi.getTxPower())
 #endif
 
 #ifndef ENABLE_MDNS_SUPPORT
@@ -261,50 +250,41 @@ static cell_t FromIP(IPAddress ip) {
 # include <ESPmDNS.h>
 # define OPTIONAL_MDNS_SUPPORT \
   /* mDNS */ \
-  X("MDNS.begin", MDNS_BEGIN, tos = MDNS.begin((const char *) tos))
+  X("MDNS.begin", MDNS_BEGIN, n0 = MDNS.begin(c0))
 #endif
 
 #ifndef ENABLE_WEBSERVER_SUPPORT
 # define OPTIONAL_WEBSERVER_SUPPORT
 #else
 # include <WebServer.h>
+# define ws0 ((WebServer *) a0)
 # define OPTIONAL_WEBSERVER_SUPPORT \
   /* WebServer */ \
-  X("WebServer.new", WEBSERVER_NEW, DUP; tos = (cell_t) new WebServer(tos)) \
-  X("WebServer.delete", WEBSERVER_DELETE, delete (WebServer *) tos; DROP) \
-  X("WebServer.begin", WEBSERVER_BEGIN, \
-      WebServer *ws = (WebServer *) tos; DROP; ws->begin(tos); DROP) \
-  X("WebServer.stop", WEBSERVER_STOP, \
-      WebServer *ws = (WebServer *) tos; DROP; ws->stop()) \
-  X("WebServer.on", WEBSERVER_ON, \
-      InvokeWebServerOn((WebServer *) tos, (const char *) sp[-1], *sp); \
-      sp -= 2; DROP) \
-  X("WebServer.hasArg", WEBSERVER_HAS_ARG, \
-      tos = ((WebServer *) tos)->hasArg((const char *) *sp); DROP) \
+  X("WebServer.new", WEBSERVER_NEW, PUSH new WebServer(tos)) \
+  X("WebServer.delete", WEBSERVER_DELETE, delete ws0; DROP) \
+  X("WebServer.begin", WEBSERVER_BEGIN, ws0->begin(n1); DROPn(2)) \
+  X("WebServer.stop", WEBSERVER_STOP, ws0->stop(); DROP) \
+  X("WebServer.on", WEBSERVER_ON, InvokeWebServerOn(ws0, c2, n1); DROPn(3)) \
+  X("WebServer.hasArg", WEBSERVER_HAS_ARG, n0 = ws0->hasArg(c1); DROP) \
   X("WebServer.arg", WEBSERVER_ARG, \
-      string_value = ((WebServer *) tos)->arg((const char *) *sp); \
-      *sp = (cell_t) string_value.c_str(); tos = string_value.length()) \
+      string_value = ws0->arg(c1); \
+      c1 = &string_value[0]; n0 = string_value.length()) \
   X("WebServer.argi", WEBSERVER_ARGI, \
-      string_value = ((WebServer *) tos)->arg(*sp); \
-      *sp = (cell_t) string_value.c_str(); tos = string_value.length()) \
+      string_value = ws0->arg(n1); \
+      c1 = &string_value[0]; n0 = string_value.length()) \
   X("WebServer.argName", WEBSERVER_ARG_NAME, \
-      string_value = ((WebServer *) tos)->argName(*sp); \
-      *sp = (cell_t) string_value.c_str(); tos = string_value.length()) \
-  X("WebServer.args", WEBSERVER_ARGS, tos = ((WebServer *) tos)->args()) \
+      string_value = ws0->argName(n1); \
+      c1 = &string_value[0]; n0 = string_value.length()) \
+  X("WebServer.args", WEBSERVER_ARGS, n0 = ws0->args()) \
   X("WebServer.setContentLength", WEBSERVER_SET_CONTENT_LENGTH, \
-      ((WebServer *) tos)->setContentLength(*sp); --sp; DROP) \
+      ws0->setContentLength(n1); DROPn(2)) \
   X("WebServer.sendHeader", WEBSERVER_SEND_HEADER, \
-      ((WebServer *) tos)->sendHeader((const char *) sp[-2], (const char *) sp[-1], *sp); \
-      sp -= 3; DROP) \
-  X("WebServer.send", WEBSERVER_SEND, \
-      ((WebServer *) tos)->send(sp[-2], (const char *) sp[-1], (const char *) *sp); \
-      sp -= 3; DROP) \
+      ws0->sendHeader(c3, c2, n1); DROPn(4)) \
+  X("WebServer.send", WEBSERVER_SEND, ws0->send(n3, c2, c1); DROPn(4)) \
   X("WebServer.sendContent", WEBSERVER_SEND_CONTENT, \
-      ((WebServer *) tos)->sendContent((const char *) *sp); --sp; DROP) \
-  X("WebServer.method", WEBSERVER_METHOD, \
-      tos = (cell_t) ((WebServer *) tos)->method()) \
-  X("WebServer.handleClient", WEBSERVER_HANDLE_CLIENT, \
-      ((WebServer *) tos)->handleClient(); DROP)
+      ws0->sendContent(c1); DROPn(2)) \
+  X("WebServer.method", WEBSERVER_METHOD, n0 = ws0->method()) \
+  X("WebServer.handleClient", WEBSERVER_HANDLE_CLIENT, ws0->handleClient(); DROP)
 #endif
 
 static char filename[PATH_MAX];
