@@ -43,12 +43,12 @@
 
 #define PLATFORM_OPCODE_LIST \
   /* Memory Allocation */ \
-  X("MALLOC", MALLOC, tos = (cell_t) malloc(tos)) \
-  X("SYSFREE", FREE, free((void *) tos); DROP) \
-  X("REALLOC", REALLOC, tos = (cell_t) realloc((void *) *sp, tos); --sp) \
-  X("heap_caps_malloc", HEAP_CAPS_MALLOC, tos = (cell_t) heap_caps_malloc(*sp, tos); --sp) \
-  X("heap_caps_free", HEAP_CAPS_FREE, heap_caps_free((void *) tos); DROP) \
-  X("heap_caps_realloc", HEAP_CAPS_REALLOC, \
+  Y(MALLOC, tos = (cell_t) malloc(tos)) \
+  Y(SYSFREE, free((void *) tos); DROP) \
+  Y(REALLOC, tos = (cell_t) realloc((void *) *sp, tos); --sp) \
+  Y(heap_caps_malloc, tos = (cell_t) heap_caps_malloc(*sp, tos); --sp) \
+  Y(heap_caps_free, heap_caps_free((void *) tos); DROP) \
+  Y(heap_caps_realloc, \
       tos = (cell_t) heap_caps_realloc((void *) sp[-1], *sp, tos); sp -= 2) \
   /* Serial */ \
   X("Serial.begin", SERIAL_BEGIN, Serial.begin(tos); DROP) \
@@ -58,29 +58,29 @@
   X("Serial.write", SERIAL_WRITE, tos = Serial.write((const uint8_t *) *sp, tos); --sp) \
   X("Serial.flush", SERIAL_FLUSH, Serial.flush()) \
   /* Pins and PWM */ \
-  X("pinMode", PIN_MODE, pinMode(*sp, tos); --sp; DROP) \
-  X("digitalWrite", DIGITAL_WRITE, digitalWrite(*sp, tos); --sp; DROP) \
-  X("digitalRead", DIGITAL_READ, tos = (cell_t) digitalRead(tos)) \
-  X("analogRead", ANALOG_READ, tos = (cell_t) analogRead(tos)) \
-  X("ledcSetup", LEDC_SETUP, \
+  Y(pinMode, pinMode(*sp, tos); --sp; DROP) \
+  Y(digitalWrite, digitalWrite(*sp, tos); --sp; DROP) \
+  Y(digitalRead, tos = (cell_t) digitalRead(tos)) \
+  Y(analogRead, tos = (cell_t) analogRead(tos)) \
+  Y(ledcSetup, \
       tos = (cell_t) (1000000 * ledcSetup(sp[-1], *sp / 1000.0, tos)); sp -= 2) \
-  X("ledcAttachPin", ATTACH_PIN, ledcAttachPin(*sp, tos); --sp; DROP) \
-  X("ledcDetachPin", DETACH_PIN, ledcDetachPin(tos); DROP) \
-  X("ledcRead", LEDC_READ, tos = (cell_t) ledcRead(tos)) \
-  X("ledcReadFreq", LEDC_READ_FREQ, tos = (cell_t) (1000000 * ledcReadFreq(tos))) \
-  X("ledcWrite", LEDC_WRITE, ledcWrite(*sp, tos); --sp; DROP) \
-  X("ledcWriteTone", LEDC_WRITE_TONE, \
+  Y(ledcAttachPin, ledcAttachPin(*sp, tos); --sp; DROP) \
+  Y(ledcDetachPin, ledcDetachPin(tos); DROP) \
+  Y(ledcRead, tos = (cell_t) ledcRead(tos)) \
+  Y(ledcReadFreq, tos = (cell_t) (1000000 * ledcReadFreq(tos))) \
+  Y(ledcWrite, ledcWrite(*sp, tos); --sp; DROP) \
+  Y(ledcWriteTone, \
       tos = (cell_t) (1000000 * ledcWriteTone(*sp, tos / 1000.0)); --sp) \
-  X("ledcWriteNote", LEDC_WRITE_NOTE, \
+  Y(ledcWriteNote, \
       tos = (cell_t) (1000000 * ledcWriteNote(sp[-1], (note_t) *sp, tos)); sp -=2) \
   /* General System */ \
-  X("MS", MS, delay(tos); DROP) \
-  X("TERMINATE", TERMINATE, exit(tos)) \
+  Y(MS, delay(tos); DROP) \
+  Y(TERMINATE, exit(tos)) \
   /* File words */ \
   X("R/O", R_O, PUSH(O_RDONLY)) \
   X("R/W", R_W, PUSH(O_RDWR)) \
   X("W/O", W_O, PUSH(O_WRONLY)) \
-  X("BIN", BIN, ) \
+  Y(BIN, ) \
   X("CLOSE-FILE", CLOSE_FILE, tos = close(tos); tos = tos ? errno : 0) \
   X("FLUSH-FILE", FLUSH_FILE, fsync(tos); /* fsync has no impl and returns ENOSYS :-( */ tos = 0) \
   X("OPEN-FILE", OPEN_FILE, cell_t mode = tos; DROP; cell_t len = tos; DROP; \
@@ -134,15 +134,15 @@
 # include "esp_camera.h"
 # define OPTIONAL_CAMERA_SUPPORT \
   /* Camera */ \
-  X("esp_camera_init", ESP_CAMERA_INIT, \
+  Y(esp_camera_init, \
       tos = esp_camera_init((const camera_config_t *) tos)) \
-  X("esp_camera_deinit", ESP_CAMERA_DEINIT, \
+  Y(esp_camera_deinit, \
       DUP; tos = esp_camera_deinit()) \
-  X("esp_camera_fb_get", ESP_CAMERA_FB_GET, \
+  Y(esp_camera_fb_get, \
       DUP; tos = (cell_t) esp_camera_fb_get()) \
-  X("esp_camera_db_return", ESP_CAMERA_FB_RETURN, \
+  Y(esp_camera_db_return, \
       esp_camera_fb_return((camera_fb_t *) tos); DROP) \
-  X("esp_camera_sensor_get", ESP_CAMERA_SENSOR_GET, \
+  Y(esp_camera_sensor_get, \
       DUP; tos = (cell_t) esp_camera_sensor_get())
 #endif
 
@@ -218,7 +218,7 @@
   X("SerialBT.connected", SERIALBT_CONNECTED, tos = ((BluetoothSerial *) tos)->connected(*sp); --sp) \
   X("SerialBT.isReady", SERIALBT_IS_READY, tos = ((BluetoothSerial *) tos)->isReady(sp[-1], *sp); sp -= 2) \
   /* Bluetooth */ \
-  X("esp_bt_dev_get_address", ESP_BT_DEV_GET_ADDRESS, DUP; tos = (cell_t) esp_bt_dev_get_address())
+  Y(esp_bt_dev_get_address, DUP; tos = (cell_t) esp_bt_dev_get_address())
 #endif
 
 #ifndef ENABLE_WIFI_SUPPORT

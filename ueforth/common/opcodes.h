@@ -6,6 +6,7 @@
 typedef intptr_t cell_t;
 typedef uintptr_t ucell_t;
 
+#define Y(op, code) X(#op, id ## op, code)
 #define DUP *++sp = tos
 #define DROP tos = *sp--
 #define COMMA(n) *g_sys.heap++ = (n)
@@ -34,13 +35,13 @@ typedef int64_t dcell_t;
   X("U/MOD", USMOD, w = *sp; *sp = (ucell_t) w % (ucell_t) tos; \
                     tos = (ucell_t) w / (ucell_t) tos) \
   X("*/MOD", SSMOD, SSMOD_FUNC) \
-  X("AND", AND, tos &= *sp--) \
-  X("OR", OR, tos |= *sp--) \
-  X("XOR", XOR, tos ^= *sp--) \
-  X("DUP", DUP, DUP) \
-  X("SWAP", SWAP, w = tos; tos = *sp; *sp = w) \
-  X("OVER", OVER, DUP; tos = sp[-1]) \
-  X("DROP", DROP, DROP) \
+  Y(AND, tos &= *sp--) \
+  Y(OR, tos |= *sp--) \
+  Y(XOR, tos ^= *sp--) \
+  Y(DUP, DUP) \
+  Y(SWAP, w = tos; tos = *sp; *sp = w) \
+  Y(OVER, DUP; tos = sp[-1]) \
+  Y(DROP, DROP) \
   X("@", AT, tos = *(cell_t *) tos) \
   X("L@", LAT, tos = *(int32_t *) tos) \
   X("C@", CAT, tos = *(uint8_t *) tos) \
@@ -54,30 +55,28 @@ typedef int64_t dcell_t;
   X(">R", TOR, *++rp = tos; DROP) \
   X("R>", FROMR, DUP; tos = *rp; --rp) \
   X("R@", RAT, DUP; tos = *rp) \
-  X("EXECUTE", EXECUTE, w = tos; DROP; JMPW) \
-  X("BRANCH", BRANCH, ip = (cell_t *) *ip) \
-  X("0BRANCH", ZBRANCH, if (!tos) ip = (cell_t *) *ip; else ++ip; DROP) \
-  X("DONEXT", DONEXT, *rp = *rp - 1; \
-                      if (~*rp) ip = (cell_t *) *ip; else (--rp, ++ip)) \
-  X("DOLIT", DOLIT, DUP; tos = *ip++) \
-  X("ALITERAL", ALITERAL, COMMA(g_sys.DOLIT_XT); COMMA(tos); DROP) \
-  X("CELL", CELL, DUP; tos = sizeof(cell_t)) \
-  X("FIND", FIND, tos = find((const char *) *sp, tos); --sp) \
-  X("PARSE", PARSE, DUP; tos = parse(tos, sp)) \
+  Y(EXECUTE, w = tos; DROP; JMPW) \
+  Y(BRANCH, ip = (cell_t *) *ip) \
+  Y(0BRANCH, if (!tos) ip = (cell_t *) *ip; else ++ip; DROP) \
+  Y(DONEXT, *rp = *rp - 1; if (~*rp) ip = (cell_t *) *ip; else (--rp, ++ip)) \
+  Y(DOLIT, DUP; tos = *ip++) \
+  Y(ALITERAL, COMMA(g_sys.DOLIT_XT); COMMA(tos); DROP) \
+  Y(CELL, DUP; tos = sizeof(cell_t)) \
+  Y(FIND, tos = find((const char *) *sp, tos); --sp) \
+  Y(PARSE, DUP; tos = parse(tos, sp)) \
   X("S>NUMBER?", CONVERT, tos = convert((const char *) *sp, tos, sp); \
                           if (!tos) --sp) \
-  X("CREATE", CREATE, DUP; DUP; tos = parse(32, sp); \
-                      create((const char *) *sp, tos, 0, ADDR_DOCREATE); \
-                      COMMA(0); --sp; DROP) \
+  Y(CREATE, DUP; DUP; tos = parse(32, sp); \
+            create((const char *) *sp, tos, 0, ADDR_DOCREATE); \
+            COMMA(0); --sp; DROP) \
   X("DOES>", DOES, DOES(ip); ip = (cell_t *) *rp; --rp) \
-  X("IMMEDIATE", IMMEDIATE, DOIMMEDIATE()) \
+  Y(IMMEDIATE, DOIMMEDIATE()) \
   X("'SYS", SYS, DUP; tos = (cell_t) &g_sys) \
-  X("YIELD", YIELD, PARK; return rp) \
+  Y(YIELD, PARK; return rp) \
   X(":", COLON, DUP; DUP; tos = parse(32, sp); \
                 create((const char *) *sp, tos, SMUDGE, ADDR_DOCOLON); \
                 g_sys.state = -1; --sp; DROP) \
-  X("EVALUATE1", EVALUATE1, DUP; sp = evaluate1(sp); w = *sp--; DROP; \
-                            if (w) JMPW) \
-  X("EXIT", EXIT, ip = (cell_t *) *rp--) \
+  Y(EVALUATE1, DUP; sp = evaluate1(sp); w = *sp--; DROP; if (w) JMPW) \
+  Y(EXIT, ip = (cell_t *) *rp--) \
   X(";", SEMICOLON, UNSMUDGE(); COMMA(g_sys.DOEXIT_XT); g_sys.state = 0) \
 

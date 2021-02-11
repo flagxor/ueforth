@@ -8,7 +8,7 @@
 #define STACK_SIZE (16 * 1024)
 
 #define PLATFORM_OPCODE_LIST \
-  X("DLSYM", DLSYM, tos = (cell_t) dlsym((void *) *sp, (void *) tos); --sp) \
+  Y(DLSYM, tos = (cell_t) dlsym((void *) *sp, (void *) tos); --sp) \
   CALLING_OPCODE_LIST \
 
 #include "common/core.h"
