@@ -279,3 +279,7 @@ $(DEPLOY)/app.yaml: $(ARDUINO)/ESP32forth.zip \
 	cp -r $(RES)/eforth.ico $(DEPLOY)/static/favicon.ico
 	cp -r site/* $(DEPLOY)/
 	cp site/.gcloudignore $(DEPLOY)
+
+deploy: clean all
+	cd out/deploy && gcloud app deploy -q --project esp32forth *.yaml
+	cd out/deploy && gcloud app deploy -q --project eforth *.yaml
