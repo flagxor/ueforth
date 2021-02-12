@@ -41,16 +41,21 @@ forth definitions internals
 : load ( n -- ) block 1024 evaluate ;
 : thru ( a b -- ) over - 1+ for aft dup >r load r> 1+ then next drop ;
 
+( Utility )
+: copy ( from to -- )
+   swap block pad 1024 cmove pad swap block 1024 cmove update ;
+
 ( Editing )
 : list ( n -- ) scr ! ." Block " scr @ . cr scr @ block
    15 for dup 63 type [char] | emit space 15 r@ - . cr 64 + next drop ;
-: l    scr @ list ;   : n    1 scr +! l ;  : p   -1 scr +! l ;
 internals definitions
 : @line ( n -- ) 64 * scr @ block + ;
 : e' ( n -- ) @line clobber-line drop update ;
 forth definitions internals
+vocabulary editor   also editor definitions
+: l    scr @ list ;   : n    1 scr +! l ;  : p   -1 scr +! l ;
 : wipe   15 for r@ e' next l ;   : e   e' l ;
 : d ( n -- ) dup 1+ @line swap @line 15 @line over - cmove 15 e ;
 : r ( n "line" -- ) 0 parse 64 min rot dup e @line swap cmove l ;
 : a ( n "line" -- ) dup @line over 1+ @line 16 @line over - cmove> r ;
-forth definitions
+only forth definitions
