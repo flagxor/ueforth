@@ -1,3 +1,8 @@
+/*
+ * ESP32forth v{{VERSION}}
+ * Revision: {{REVISON}}
+ */
+
 {{opcodes}}
 {{calling}}
 

@@ -1,4 +1,5 @@
-VERSION=7.0.1
+VERSION=7.0
+REVISION=$(shell git rev-parse HEAD)
 
 OUT = out
 GEN = $(OUT)/gen
@@ -53,7 +54,7 @@ WIN_LFLAGS64 = /LIBPATH:"c:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib
 TARGETS = $(WEB)/terminal.html \
           $(WEB)/ueforth.js \
           $(POSIX)/ueforth \
-          $(ARDUINO)/ESP32forth-$(VERSION)/ESP32forth-$(VERSION).ino
+          $(ARDUINO)/ESP32forth/ESP32forth.ino
 
 FINDQ = find 2>/dev/null
 
@@ -241,48 +242,40 @@ $(WINDOWS)/uEf64.exe: \
 
 # ---- ARDUINO ----
 
-$(ARDUINO)/ESP32forth-$(VERSION):
+$(ARDUINO)/ESP32forth:
 	mkdir -p $@
 
-$(ARDUINO)/ESP32forth-$(VERSION)/ESP32forth-$(VERSION).ino: \
-        arduino/fuse_ino.js \
-        arduino/arduino.template.ino \
-        common/opcodes.h \
-        common/calling.h \
-        common/core.h \
-        common/interp.h \
-        $(GEN)/arduino_boot.h | $(ARDUINO)/ESP32forth-$(VERSION)
-	$^ >$@
+ARDUINO_PARTS = arduino/arduino.template.ino \
+                common/opcodes.h \
+                common/calling.h \
+                common/core.h \
+                common/interp.h \
+                $(GEN)/arduino_boot.h
+
+$(ARDUINO)/ESP32forth/ESP32forth.ino: \
+    arduino/fuse_ino.js $(ARDUINO_PARTS) | $(ARDUINO)/ESP32forth
+	$< "$(VERSION)" "$(REVISION)" $(ARDUINO_PARTS) >$@
 
 # ---- PACKAGE ----
 
-$(ARDUINO)/ESP32forth-$(VERSION).zip: $(ARDUINO)/ESP32forth-$(VERSION)/ESP32forth-$(VERSION).ino
-	cd $(ARDUINO) && zip -r ESP32forth-$(VERSION).zip ESP32forth-$(VERSION)
+$(ARDUINO)/ESP32forth.zip: $(ARDUINO)/ESP32forth/ESP32forth.ino
+	cd $(ARDUINO) && zip -r ESP32forth.zip ESP32forth
 
 # ---- DEPLOY ----
 
 $(DEPLOY):
 	mkdir -p $@
 
-$(DEPLOY)/app.yaml: $(ARDUINO)/ESP32forth-$(VERSION).zip \
+$(DEPLOY)/app.yaml: $(ARDUINO)/ESP32forth.zip \
                     $(wildcard site/*.html) \
                     site/app.yaml \
                     site/eforth.go \
                     $(TARGETS) | $(DEPLOY)
 	mkdir -p $(DEPLOY)/static
-	cp -r $(ARDUINO)/ESP32forth-$(VERSION).zip $(DEPLOY)/static
-	cp -r $(POSIX)/ueforth $(DEPLOY)/static/ueforth-$(VERSION).linux
-	cp -r $(WINDOWS)/uEf32.exe $(DEPLOY)/static/uEf32-$(VERSION).exe
-	cp -r $(WINDOWS)/uEf64.exe $(DEPLOY)/static/uEf64-$(VERSION).exe
+	cp -r $(ARDUINO)/ESP32forth.zip $(DEPLOY)/static
+	cp -r $(POSIX)/ueforth $(DEPLOY)/static/ueforth.linux
+	cp -r $(WINDOWS)/uEf32.exe $(DEPLOY)/static/uEf32.exe
+	cp -r $(WINDOWS)/uEf64.exe $(DEPLOY)/static/uEf64.exe
 	cp -r $(RES)/eforth.ico $(DEPLOY)/static/favicon.ico
-	cp -r site/static/* $(DEPLOY)/static/
-	cp -r site/*.sh $(DEPLOY)
-	cp -r site/*.go $(DEPLOY)
-	cp -r site/*.yaml $(DEPLOY)
-	sed 's/{{VERSION}}/$(VERSION)/g' site/index.html >$(DEPLOY)/index.html
-	sed 's/{{VERSION}}/$(VERSION)/g' site/ESP32forth.html >$(DEPLOY)/ESP32forth.html
-	sed 's/{{VERSION}}/$(VERSION)/g' site/windows.html >$(DEPLOY)/windows.html
-	sed 's/{{VERSION}}/$(VERSION)/g' site/linux.html >$(DEPLOY)/linux.html
-	cp site/internals.html $(DEPLOY)/
-	cp site/classic.html $(DEPLOY)/
-	cp -r site/.gcloudignore $(DEPLOY)
+	cp -r site/* $(DEPLOY)/
+	cp site/.gcloudignore $(DEPLOY)
