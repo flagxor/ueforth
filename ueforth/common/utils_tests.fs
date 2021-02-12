@@ -13,3 +13,16 @@ e: test-.s
   .s
   out: <0> 
 ;e
+
+e: test-forget
+  context @ @
+  current @
+  here
+  : foo 123 ;
+  : bar foo foo ;
+  : baz bar bar * * ;
+  forget foo
+  here = assert
+  current @ = assert
+  context @ @ = assert
+;e

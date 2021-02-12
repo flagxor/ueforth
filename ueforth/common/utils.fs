@@ -10,3 +10,4 @@ forth definitions also internals
 : .s   ." <" depth n. ." > " raw.s cr ;
 only forth definitions
 
+: forget ( "name" ) ' dup >link current @ !  >name drop here - allot ;
