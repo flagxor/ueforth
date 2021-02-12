@@ -20,7 +20,7 @@ handlers:
 
 - url: /(.*).html
   static_files: \1.html
-  upload: *.html
+  upload: (.*).html
   secure: always
 
 - url: /static
