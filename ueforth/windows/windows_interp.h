@@ -14,7 +14,7 @@ enum {
 #undef X
 };
 
-static cell_t *ueforth_run(cell_t *init_rp) {
+static cell_t *forth_run(cell_t *init_rp) {
   if (!init_rp) {
 #define X(name, op, code) \
     create(name, sizeof(name) - 1, name[0] == ';', (void *) OP_ ## op);

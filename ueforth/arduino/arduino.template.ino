@@ -336,16 +336,16 @@ static void InvokeWebServerOn(WebServer *ws, const char *url, cell_t xt) {
     cell_t *rp = rstack;
     *++rp = (cell_t) (stack + 1);
     *++rp = (cell_t) code;
-    ueforth_run(rp);
+    forth_run(rp);
   });
 }
 #endif
 
 void setup() {
   cell_t *heap = (cell_t *) malloc(HEAP_SIZE);
-  ueforth_init(0, 0, heap, boot, sizeof(boot));
+  forth_init(0, 0, heap, boot, sizeof(boot));
 }
 
 void loop() {
-  g_sys.rp = ueforth_run(g_sys.rp);
+  g_sys.rp = forth_run(g_sys.rp);
 }

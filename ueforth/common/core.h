@@ -125,9 +125,9 @@ static cell_t *evaluate1(cell_t *sp) {
   return sp;
 }
 
-static cell_t *ueforth_run(cell_t *initrp);
+static cell_t *forth_run(cell_t *initrp);
 
-static void ueforth_init(int argc, char *argv[], void *heap,
+static void forth_init(int argc, char *argv[], void *heap,
                          const char *src, cell_t src_len) {
   g_sys.heap = (cell_t *) heap + 4;  // Leave a little room.
   cell_t *sp = g_sys.heap + 1; g_sys.heap += STACK_SIZE;
@@ -142,7 +142,7 @@ static void ueforth_init(int argc, char *argv[], void *heap,
   *g_sys.heap++ = (cell_t) forth;
   for (int i = 0; i < VOCABULARY_DEPTH; ++i) { *g_sys.heap++ = 0; }
 
-  ueforth_run(0);
+  forth_run(0);
   (*g_sys.current)[-1] = IMMEDIATE;  // Make last word ; IMMEDIATE
   g_sys.DOLIT_XT = FIND("DOLIT");
   g_sys.DOEXIT_XT = FIND("EXIT");
