@@ -147,7 +147,7 @@ create out-string out-size 1+ allot align
 : login ( z z -- )
    WIFI_MODE_STA Wifi.mode
    WiFi.begin begin WiFi.localIP 0= while 100 ms repeat WiFi.localIP ip. cr
-   z" ueforth" MDNS.begin if ." MDNS started" else ." MDNS failed" then cr ;
+   z" forth" MDNS.begin if ." MDNS started" else ." MDNS failed" then cr ;
 
 also forth definitions
 
