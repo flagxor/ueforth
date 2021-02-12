@@ -18,6 +18,11 @@ handlers:
   upload: index.html
   secure: always
 
+- url: /(.*).html
+  static_files: \1.html
+  upload: *.html
+  secure: always
+
 - url: /static
   static_dir: static
   secure: always

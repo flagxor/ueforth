@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<head>
+<meta charset="UTF-8">
+<title>ESP32forth</title>
+<link rel="stylesheet" href="static/eforth.css">
+</head>
+<body>
+<h1>µEforth Internals</h1>
+
+<div class="menu">
+  <span><a href="ESP32forth.html">ESP32forth</a></span>
+  <span><a href="linux.html">Linux</a></span>
+  <span><a href="windows.html">Windows</a></span>
+  <span class="picked"><a href="internals.html">Internals</a></span>
+  <span><a href="classic.html">Classic</a></span>
+</div>
+
+<p>
+µEforth (micro-Eforth) simplifies EForth even futher, by building just enough
+of the core of the system in C to allow the rest to be be built in proper Forth.
+</p>
+
+<p>
+A handful of "tricky" words that involve internal loops or many steps are built in their own
+functions:
+</p>
+
+<pre>
+FIND ( a n -- xt | 0 )
+PARSE ( ch -- a n )
+S&gt;NUMBER? ( a n -- n f | 0 )
+CREATE ( "name" -- )
+EVALUATE1 ( -- )
+</pre>
+
+<p>
+This includes <code>EVALUATE1</code> which parses a single word and
+interprets or compiles it (reusing <code>PARSE</code>,
+<code>FIND</code>, and <code>S&gt;NUMBER?</code>).
+</p>
+
+<p>
+See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/common/core.h">core.h</a>.
+</p>
+
+<p>
+A few global variables connect parsing and compilation state between
+C and Forth (by way of a memory region accessed via <code>'SYS</code>):
+</p>
+
+<pre>
+'TIB      --- Pointer to the Translation Input Buffer
+#TIB      --- Length of the Translation Input Buffer
+&gt;IN       --- Number of characters consumed from TIB
+
+BASE      --- Numeric base for printing and parsing
+
+STATE     --- State of compiling, -1 for compiling, 0 for interpreting
+CURRENT   --- Pointer to pointer to last word of current vocabulary
+CONTEXT   --- Pointer to pointer to last word of context vocabulary
+
+'NOTFOUND --- Execution token of a handler to call on word not found
+</pre>
+
+<p>
+Error handling is routed via a deferred callback in <code>'NOTFOUND</code>
+used when a word is absent from the dictionary.
+This is eventually directed to an error routing that prints
+a proper error, once I/O and exceptions are available.
+</p>
+
+<p>
+<a href="https://en.wikipedia.org/wiki/X_Macro">X-Macros</a>
+are then used to build up a small set of core opcodes defined in 1-3 lines each:
+</p>
+
+<pre>
+0= 0&lt; + U/MOD */MOD   AND OR XOR
+DUP SWAP OVER DROP    @ L@ C@ ! L! C!
+SP@ SP! RP@ RP!       &gt;R R&gt; R@   : ; EXIT
+EXECUTE BRANCH 0BRANCH DONEXT DOLIT
+ALITERAL CELL DOES&gt; IMMEDIATE 'SYS
+</pre>
+
+<p>
+See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/common/opcodes.h">opcodes.h</a>.
+</p>
+
+<p>
+I/O and access to systems outside Forth are connected via a few per platform words.
+Typically this set of words should be minimal, while still allowing relevant parts
+of the host system to be available to Forth.
+</p>
+

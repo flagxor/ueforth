@@ -1,0 +1,67 @@
+body {
+  max-width: 800px;
+  margin-top: 0px;
+}
+h1 {
+  border-top: 3px solid #777;
+  background-color: #111;
+  color: #eee;
+  padding: 10px;
+  margin: 0px;
+}
+h2 {
+  border-top: 2px solid #777;
+  background-color: #ccc;
+  padding: 10px;
+}
+h3 {
+  border-top: 1px solid #777;
+  background-color: #eee;
+  padding: 10px;
+}
+h5 {
+  margin: 2px;
+}
+a:link {
+  color: #00c;
+}
+a:visited {
+  color: #00c;
+}
+a:active {
+  color: #0f0;
+}
+a:hover {
+  color: #0f0;
+}
+.menu {
+  background-color: #333;
+  border-top: 3px solid #777;
+  padding: 10px;
+}
+.menu span {
+  margin: 0px;
+  padding: 10px;
+}
+.menu a:link {
+  color: #fff;
+}
+.menu a:visited {
+  color: #fff;
+}
+.menu a:active {
+  color: #0f0;
+}
+.menu a:hover {
+  color: #0f0;
+}
+.menu .picked {
+  background-color: #070;
+}
+.menu .picked a:active {
+  color: #fff;
+}
+.menu .picked a:hover {
+  color: #fff;
+}
+

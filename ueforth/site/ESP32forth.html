@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<head>
+<meta charset="UTF-8">
+<title>ESP32forth</title>
+<link rel="stylesheet" href="static/eforth.css">
+</head>
+<body>
+<div>
+<h1>ESP32forth</h1>
+
+<div class="menu">
+  <span class="picked"><a href="ESP32forth.html">ESP32forth</a></span>
+  <span><a href="linux.html">Linux</a></span>
+  <span><a href="windows.html">Windows</a></span>
+  <span><a href="internals.html">Internals</a></span>
+  <span><a href="classic.html">Classic</a></span>
+</div>
+
+<h2>Download</h2>
+
+<p>
+<a href="static/ESP32forth-{{VERSION}}.zip">ESP32forth-{{VERSION}}.zip</a>
+  - Single .ino file ready for installation
+</p>
+
+<p>
+<a href="https://github.com/flagxor/eforth" target="_blank">http://github.com/flagxor/eforth</a>
+  - Complete Source Code (under ueforth/)
+</p>
+
+<h2>Install</h2>
+
+<p>
+Download the <a href="https://www.arduino.cc/en/software">Arduino IDE</a> for your platform.
+</p>
+
+<p>
+Go to <b>File &gt; Preferences</b>.<br/>
+Under <b>Additional Board Manager URLs</b> enter: <code>https://dl.espressif.com/dl/package_esp32_index.json</code>
+</p>
+
+<p>
+Choose these options under Tools.
+
+<ul>
+   <li><b>ESP32 Dev Module or similar (may work better with your particular board)</b>
+     <ul>
+       <li><b>Board:</b> ESP32 Dev Module</li>
+       <li><b>Partition Scheme:</b> No OTA (2M APP, 2M SPIFFS) <b>&larr; Non-default</b></li>
+       <small>
+       <li><b>Upload Speed:</b> 921600</li>
+       <li><b>CPU Frequency:</b> 240MHz</li>
+       <li><b>Flash Frequency:</b> 80MHz</li>
+       <li><b>Flash Mode:</b> QIO</li>
+       <li><b>Flash Size:</b> 4MB</li>
+       <li><b>Core Debug Level:</b> None</li>
+       <li><b>PSRAM:</b> Disabled</li>
+       </small>
+     </ul>
+   </li>
+   <li><b>ESP32-CAM</b>
+     <ul>
+       <li><b>Board:</b> AI Thinker ESP32-CAM</li>
+     </ul>
+   </li>
+</ul>
+</p>
+
+<h2>ESP32forth Features</h2>
+
+<h3>ESP32forth Specific Words</h3>
+
+<h5>Null Terminated Strings</h5>
+<p>
+As null terminated strings are used throughout C interfaces,
+their use is supported in Forth by way of several non-standard
+words with the convention of using Z/z to refer to such strings
+in names and stack comments.
+</p>
+<pre>
+Z" ( "string" -- z ) Creates a null terminated string on the heap
+Z&gt;S ( z -- a n ) Convert a null terminated string to a counted string
+S&gt;Z ( a n -- z ) Conver a counted string string to null terminated (copies string to heap)
+</pre>
+
+<h5>Raw Strings</h5>
+<p>
+Raw strings are provided better support using a string
+for the duration of the current command, without consuming heap memory.
+</p>
+<pre>
+R" ( "string" -- a n ) Creates a temporary counted string
+R| ( string| -- a n ) Creates a temporary counted string ending with |
+</pre>
+
+<h5>Utilities</h5>
+<pre>
+DUMP ( a n -- ) Dump a memory region
+SEE ( "name" -- ) Attempt to decompile a word
+VARIABLE ECHO -- Determines if commands are echoed
+</pre>
+
+<h5>Vocabularies</h5>
+<p>
+µEforth uses a hybrid of Forth-79 and Forth-83 style vocabularies.
+By default vocabularies chain to the vocabulary in which they were defined,
+as in Forth-79. However, like Forth-83, <code>ALSO</code>
+can be used to add vocabularies to a vocabulary stack of which
+<code>CONTEXT @</code> is the first item.
+The word <code>ONLY</code> clears the vocabulary stack, but as there is
+no separate ONLY vocabulary, it also sets <code>CONTEXT</code>
+to the <code>FORTH</code> vocabulary.
+The word <code>SEALED</code> modifies the most recently defined vocabulary
+such that it does not chain. Note, this must be done before words are added to it.
+</p>
+<pre>
+VOCABULARY ( "name" ) Create a vocabulary with the current vocabulary as parent
+FORTH ( -- ) Make the FORTH vocabulary the context vocabulary
+DEFINITIONS ( -- ) Make the context vocabulary the current vocabulary
+VLIST ( -- ) List the words in the context vocabulary (not chains)
+WORDS ( -- ) List the words in the context vocabulary (including chains)
+TRANSFER ( "name" ) Move a word from its current dictionary to the current vocabulary
+                    Useful for "hiding" built-in words
+ALSO ( -- ) Duplicate the vocabulary at the top of the vocabulary stack
+ONLY ( -- ) Reset context stack to one item, the FORTH dictionary
+            Non-standard, as there's no distinct ONLY vocabulary
+ORDER ( -- ) Print the vocabulary search order
+SEALED ( -- ) Alter the last vocabulary defined so it doesn't chain
+</pre>
+
+<h5>Blocks</h5>
+<pre>
+USE ( "name" -- ) Use "name" as the blockfile, e.g. USE /spiffs/foo
+OPEN-BLOCKS ( a n -- ) Open a file as the block file
+LOAD ( n -- ) Evaluate a block
+THRU ( a b -- ) Load blocks a thru b
+LIST ( n -- ) List a block
+BLOCK ( n -- a ) Get a 1024 byte block
+BUFFER ( n -- a ) Get a 1024 byte block without regard to old contents
+UPDATE ( -- ) Mark the last block modified
+FLUSH ( -- ) Save and empty all buffers
+EMPTY-BUFFERS ( -- ) Empty all buffers
+SAVE-BUFFERS ( -- ) Save all buffers
+SCR ( -- a ) Pointer to last listed block
+</pre>
+
+<h5>Block Editor</h5>
+These words are available inside the <code>EDITOR</code> vocabulary.
+<pre>
+WIPE ( -- ) Blank out the current block
+L ( -- ) List the current block
+D ( n -- ) Delete a line in the current block
+E ( n -- ) Clear a line in the current block
+R ( n "text" -- ) Replace a line in the current block
+A ( n "text" -- ) Add (insert) a line in the current block
+P ( -- ) Move to the previous block
+N ( -- ) Move to the next block
+</pre>
+
+<h5>Utilities</h5>
+<pre>
+SEE ( "name" -- ) Attempt to decompile a word
+ECHO ( -- a ) -- Address of flag that determines if commands are echoed
+</pre>
+
+<h3>ESP32forth Opcodes</h3>
+
+<p>
+Because Arduino builds a statically linked image for flashing into ESP32 devices,
+all C function bindings need to be explicitly added.
+This is the current collection.
+Typically to reduce confusion, function names have be preserved even through verbose.
+In popular cases a shorted higher level name is provided.
+</p>
+
+<p>
+See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/arduino/arduino.template.ino">arduino.template.ino</a>.
+</p>
+
+<h5>Allocation</h5>
+These words are inside the <code>internals</code> vocabulary.
+<pre>
+MALLOC ( n -- a | 0 )   System malloc
+SYSFREE ( a -- )   System free
+REALLOC ( a n -- a | 0 )   System realloc
+</pre>
+
+<h5>Serial</h5>
+These words are inside the <code>Serial</code> vocabulary.
+<pre>
+Serial.begin ( baud -- )   Start serial port
+Serial.end ( -- )   End serial port
+Serial.available ( -- f )   Is serial data available
+Serial.readBytes ( a n -- n )   Read serial bytes, return number gotten
+Serial.write ( a n -- n )   Write serial bytes
+Serial.flush ( -- )   Flush serial buffer
+</pre>
+
+<h5>Serial Bluetooth</h5>
+These words are inside the <code>bluetooth</code> vocabulary.
+<pre>
+SerialBT.new ( -- bt )   Allocate new BT object
+SerialBT.delete ( bt -- )   Free BT object
+SerialBT.begin ( localname ismaster bt -- f )
+SerialBT.end ( bt -- )
+SerialBT.available ( bt -- f )
+SerialBT.readBytes ( a n bt -- n )
+SerialBT.write ( a n bt -- n )
+SerialBT.flush ( bt -- )
+SerialBT.hasClient ( bt -- f )
+SerialBT.enableSSP ( bt -- )
+SerialBT.setPin ( z bt -- f )
+SerialBT.unpairDevice ( addr bt -- f )
+SerialBT.connect ( remotename bt -- f )
+SerialBT.connectAddr ( addr bt -- f )
+SerialBT.disconnect ( bt -- f )
+SerialBT.connected ( timeout bt -- f )
+SerialBT.isReady ( checkMaster timeout -- f )   Default checkMaster=false, timeout=0
+</pre>
+
+<h5>Bluetooth</h5>
+These words are inside the <code>bluetooth</code> vocabulary.
+<pre>
+esp_bt_dev_get_address ( -- a ) addr of 6 byte mac address
+</pre>
+
+<h5>GPIO</h5>
+<pre>
+pinMode ( pin mode -- )   Set GPIO pin mode
+digitalWrite ( pin value -- )   Set GPIO pin state
+analogRead ( pin -- n )   Analog read from 0-4095
+</pre>
+
+<h5>ledc</h5>
+These words are inside the <code>ledc</code> vocabulary.
+<pre>
+ledcSetup ( channel freq resolution -- freq )
+ledcAttachPin ( pin channel -- )
+ledcDetachPin ( pin -- )
+ledcRead ( channel -- n )
+ledcReadFreq ( channel -- freq )   Get frequency (x 1,000,000)
+ledcWrite ( channel duty -- )
+ledcWriteTone ( channel freq )   Write tone frequency (x 1000)
+ledcWriteNote ( channel note octave -- freq )
+</pre>
+
+<h5>Short GPIO Names</h5>
+<pre>
+pin ( value pin# -- )   Set GPIO pin value
+adc ( pin# -- n )   Analog read pin, result 0-1023
+</pre>
+
+<h5>System</h5>
+<pre>
+MS ( n -- )
+TERMINATE ( n -- ) Call system exit
+</pre>
+
+<h5>Files</h5>
+<pre>
+R/O ( -- mode )
+R/W ( -- mode )
+W/O ( -- mode )
+BIN ( mode -- mode )
+CLOSE-FILE ( fh -- ior )
+OPEN-FILE ( a n mode -- fh ior )
+CREATE-FILE ( a n mode -- fh ior )
+DELETE-FILE ( a n -- ior )
+WRITE-FILE ( a n fh -- ior )
+READ-FILE ( a n fh -- n ior )
+FILE-POSITION ( fh -- n ior )
+REPOSITION-FILE ( n fh -- ior )
+FILE-SIZE ( fh -- n ior )
+</pre>
+
+<h5>WiFi</h5>
+These words are inside the <code>WiFi</code> vocabulary.
+<pre>
+WiFi.config ( ip dns gateway subnet -- )   Packaged a.b.c.d little-endian
+Wifi.begin ( ssid-z password-z -- )
+Wifi.disconnect ( -- )
+WiFi.status ( -- n )
+WiFi.macAddress ( a -- )
+WiFi.localIP ( -- ip )
+WiFi.mode ( mode -- ) WIFI_MODE_NULL WIFI_MODE_STA WIFI_MODE_AP WIFI_MODE_APSTA
+WiFi.setTxPower ( powerx4 -- )   Set power x4
+WiFi.getTxPower ( -- powerx4 )   Get power x4
+</pre>
+
+<h5>mDNS</h5>
+<pre>
+MDNS.begin ( name-z -- )   Start multicast dns
+</pre>
+
+<h5>SPIFFS</h5>
+These words are inside the <code>SPIFFS</code> vocabulary.
+<pre>
+SPIFFS.begin ( format-on-fail path-z max-files -- f )
+SPIFFS.end ( -- )
+SPIFFS.format ( -- f )
+SPIFFS.totalBytes ( -- n )
+SPIFFS.usedBytes ( -- n )
+</pre>
+
+<h5>WebServer</h5>
+These words are inside the <code>WebServer</code> vocabulary.
+<pre>
+WebServer.new ( port -- ws )   Allocate new webserver object
+WebServer.delete ( ws -- )   Delete webserver object
+WebServer.begin ( port ws -- )
+WebServer.stop ( ws -- )
+WebServer.on ( path-z xt ws -- ) Set up a web path handle callback
+WebServer.handleClient ( ws -- )   Handle one client request
+WebServer.hasArg ( z ws -- f )   By name
+WebServer.arg ( z ws -- z )   By name
+WebServer.argi ( n ws -- z )   By index
+WebServer.argName ( n ws -- z)   By index
+WebServer.args ( ws -- n )   Number of args
+WebServer.setContentLength ( n ws -- )
+WebServer.sendHeader ( name-z value-z fist ws -- )
+WebServer.send ( code mimetype data ws -- )
+WebServer.sendContent ( z ws -- )
+WebServer.method ( ws -- n )   GET / POST etc.
+</pre>
+
+<h5>Wire</h5>
+These words are inside the <code>Wire</code> vocabulary.
+<pre>
+Wire.begin ( -- f )
+Wire.setPins ( sda scl -- f )
+Wire.setClock ( frequency -- )
+Wire.getClock ( -- frequency )
+Wire.setTimeout ( ms -- ) Default is 50ms
+Wire.getTimeout ( -- ms )
+Wire.lastError ( -- n )
+Wire.getErrorText ( n -- z )
+Wire.beginTransmission ( n -- )
+Wire.endTransmission ( sendstop -- f )
+Wire.requestFrom ( address quantity sendstop -- n )
+Wire.writeTransmission ( addr a n sendstop -- err )
+Wire.readTransmission ( addr a n sendstop acount -- err )
+Wire.write ( a n -- n )
+Wire.available ( -- f )
+Wire.read ( -- ch )
+Wire.peek ( -- ch )
+Wire.busy ( -- f )
+Wire.flush ( -- )
+</pre>
+
+<h5>Camera</h5>
+These words are inside the <code>camera</code> vocabulary.
+<pre>
+esp_camera_init ( config -- f )
+esp_camera_deinit ( -- f )
+esp_camera_fb_get ( -- fb )
+esp_camera_fb_return ( fb -- )
+esp_camera_sensor_get ( -- sensor )
+</pre>
+
+<h5>SD_MMC</h5>
+These words are inside the <code>SD_MMC</code> vocabulary.
+<pre>
+SD_MMC.begin ( mount mode1bit )   default mode1bit=false
+SD_MMC.end ( -- )
+SD_MMC.cardType ( -- n )
+SD_MMC.totalBytes ( -- n )
+SD_MMC.usedBytes ( -- n )
+</pre>
+
+<h3 id="webui">ESP32 WebUI</h3>
+
+<p>
+A terminal over the web can be activated.
+Contact at port printed or via mDNS <a href="http://ueforth/">http://ueforth/</a>.
+</p>
+
+<pre>
+webui ( network-z password-z -- )
+</pre>
+
+<p>Usage:</p>
+
+<pre>
+z" NETWORK-NAME" z" PASSWORD" webui
+</pre>
+
+<p>
+See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/arduino/arduino_server.fs">arduino_server.fs</a>.
+</p>
+
+<h3 id="autoexec">Autoexec.fs</h3>
+
+<p>
+The system will automatically attempt to mount SPIFFS filesystem at <code>/spiffs</code>.
+It will then at start attempt to load <code>/spiffs/autoexec.fs</code>
+</p>
+
+<p>
+One way this feature can be used to configure the Web UI to start by default.
+When doing this, be sure to test your Web UI settings work well first.
+</p>
+
+<pre>
+r| z" NETWORK-NAME" z" PASSWORD" webui | s" /spiffs/autoexec.fs" dump-file
+</pre>
+
+<p>
+To remove a previously configured <code>autoexec.fs</code> you will need
+to be able to reboot in a mode with Forth. One way to do this is to search
+for the line in the .ino file that refers to <code>autoexec.fs</code>
+and replace it with a different name. Then run the following:
+</p>
+
+<pre>
+s" /spiffs/autoexec.fs" delete-file
+</pre>
+
+<p>
+See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/arduino/autoboot.fs">autoboot.fs</a>.
+</p>
+
+<h3 id="adding_words">Adding Words</h3>
+
+<p>
+Adding words based on C functions can be done by editing the source code.
+For ESP32forth <code>arduino.template.ino</code> is the appropriate place.
+</p>
+
+<p>
+Because of the use of <a href="https://en.wikipedia.org/wiki/X_Macro">X-Macros</a> words can be
+added in as little as one line. Locate the macro called <code>PLATFORM_OPCODE_LIST</code>
+and add your words there.
+</p>
+
+<p>NOTE: Be careful to end each line with a \ so the macros will chain correctly.</p>
+
+<p>
+To add a word containing only letters, numbers, and underscore you can use <code>Y</code>.
+</p>
+
+<pre>
+  Y(MY_WORD123, c_function_to_call()) \
+</pre>
+
+<p>
+If your word name contains other characters, instead use <code>X</code>.
+You will need to make up an alternate name for the middle parameter.
+It must contain only letters, numbers, and underscore.
+The name is not used anywhere else, but must be unique.
+</p>
+
+<pre>
+  X("myword!", MY_WORD_BANG, c_function_to_call()) \
+</pre>
+
+<p>
+Values from the data stack can be accessed via
+the variables <code>tos</code> (Top of Stack) and
+<code>sp</code> (Pointer to the rest of the stack).
+The stack has the data type <code>cell_t</code>.
+</p>
+
+<p>
+You can push a value of any type to the stack with the macro <code>PUSH</code>:
+</p>
+
+<pre>
+  Y(MY_WORD, PUSH calculate_magic_value()) \
+</pre>
+
+<p>
+To simplify calling C functions, you can also refer to elements on the stack
+with the types positional names:
+</p>
+
+<pre>
+n10 n9 n8 n7 n6 n5 n4 n3 n2 n1 n0 - Access stack as cell_t integer values
+                   c4 c3 c2 c1 c0 - Access stack as char* values
+                   b4 b3 b2 b1 b0 - Access stack as uint8_t* byte values
+                   a4 a3 a2 a1 a0 - Access stack as void* values
+
+Examples:
+  void send_message(const char *message, int code);
+  ...
+  X("send-message", SEND_MESSAGE, send_message(c1, n0)) \
+</pre>
+
+<p>
+  You can always replace the top item on the stack with <code>SET</code>:
+</p>
+
+<pre>
+  Y(DECODE, SET decode_func(n0)) \
+</pre>
+
+<p>
+  You can drop elements from the stack with <code>DROP</code>
+  or <code>DROPn(number)</code>.
+  You can nip elements from below top of the stack with <code>NIP</code>
+  or <code>NIPn(number)</code>.
+  Be aware that like <code>PUSH</code> this will cause stack indices to change.
+</p>
+
+<pre>
+  int my_cool_function(char *foo, int bar, uint8_t *baz);
+  ...
+  Y(MY_FUNC, n0 = my_cool_function(c2, n1, b0); NIPn(2)) \
+</pre>
+
+<p>
+Multiple C statements can be included in the code area of a word,
+but care must be taken to generally avoid {}s.
+If you find you need nesting, a separate function is recommended.
+</p>
+
+<p>
+New variables can be declared in each word and are scoped to that word.
+</p>
+
+<pre>
+  Y(MY_WORD, cell_t foo = n0; DROP; char *x = c0; DROP; \
+             PUSH my_func(foo, x)) \
+</pre>
+

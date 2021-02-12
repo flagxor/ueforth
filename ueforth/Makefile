@@ -265,7 +265,7 @@ $(DEPLOY):
 	mkdir -p $@
 
 $(DEPLOY)/app.yaml: $(ARDUINO)/ESP32forth-$(VERSION).zip \
-                    site/index.html \
+                    $(wildcard site/*.html) \
                     site/app.yaml \
                     site/eforth.go \
                     $(TARGETS) | $(DEPLOY)
@@ -275,7 +275,14 @@ $(DEPLOY)/app.yaml: $(ARDUINO)/ESP32forth-$(VERSION).zip \
 	cp -r $(WINDOWS)/uEf32.exe $(DEPLOY)/static/uEf32-$(VERSION).exe
 	cp -r $(WINDOWS)/uEf64.exe $(DEPLOY)/static/uEf64-$(VERSION).exe
 	cp -r $(RES)/eforth.ico $(DEPLOY)/static/favicon.ico
+	cp -r site/static/* $(DEPLOY)/static/
+	cp -r site/*.sh $(DEPLOY)
 	cp -r site/*.go $(DEPLOY)
 	cp -r site/*.yaml $(DEPLOY)
 	sed 's/{{VERSION}}/$(VERSION)/g' site/index.html >$(DEPLOY)/index.html
+	sed 's/{{VERSION}}/$(VERSION)/g' site/ESP32forth.html >$(DEPLOY)/ESP32forth.html
+	sed 's/{{VERSION}}/$(VERSION)/g' site/windows.html >$(DEPLOY)/windows.html
+	sed 's/{{VERSION}}/$(VERSION)/g' site/linux.html >$(DEPLOY)/linux.html
+	cp site/internals.html $(DEPLOY)/
+	cp site/classic.html $(DEPLOY)/
 	cp -r site/.gcloudignore $(DEPLOY)

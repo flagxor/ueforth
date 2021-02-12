@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<head>
+<meta charset="UTF-8">
+<title>Classic EForth</title>
+<link rel="stylesheet" href="static/eforth.css">
+</head>
+<body>
+<h1>Classic EForth</h1>
+
+<div class="menu">
+  <span><a href="ESP32forth.html">ESP32forth</a></span>
+  <span><a href="linux.html">Linux</a></span>
+  <span><a href="windows.html">Windows</a></span>
+  <span><a href="internals.html">Internals</a></span>
+  <span class="picked"><a href="classic.html">Classic</a></span>
+</div>
+
+<p>
+EForth is a delightfully minimalist approach to Forth originated by Bill Muench and Dr. C. H. Ting.
+</p>
+
+<h2>Classic ESP32forth</h2>
+
+<p>
+ESP32forth - Version 6.3 for NodeMCU ESP32S - Tweaked for the Web
+</p>
+
+<ul>
+  <li><a href="static/ESP32forth-6.3.0.ino">ESP32forth-6.3.0.ino</a>
+</ul>
+
+<h3>Classic EForth Quirks</h3>
+
+<p>
+EForth exclusively uses <code>FOR..NEXT</code> in favor of <code>DO..LOOP</code>.
+<a href="https://github.com/TG9541/stm8ef/wiki/eForth-FOR-..-NEXT">Details</a>
+</p>
+
+<p>
+This construct has the odd property that it iterates one "extra" time for zero.
+</p>
+
+<pre>
+: FOO 10 FOR R@ . NEXT ; FOO
+ 10 9 8 7 6 5 4 3 2 1 0  ok
+</pre>
+
+<p>
+To permit a more ordinary loop the <code>AFT</code> word is used in the sequence
+<code>FOR..AFT..THEN..NEXT</code>.
+</p>
+
+<pre>
+: FOO 10 FOR ( 1st time only ) AFT R@ . THEN NEXT ; FOO
+ 9 8 7 6 5 4 3 2 1 0  ok
+</pre>
+
+<p>
+The even more enigmatic <code>FOR..WHILE..NEXT..ELSE..THEN</code>
+is used in place of <code>DO..LEAVE..LOOP</code>.
+It allows a while condition to early out of a counted loop.
+</p>
