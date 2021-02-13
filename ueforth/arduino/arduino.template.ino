@@ -141,7 +141,7 @@
   Y(esp_camera_init, n0 = esp_camera_init((camera_config_t *) a0)) \
   Y(esp_camera_deinit, PUSH esp_camera_deinit()) \
   Y(esp_camera_fb_get, PUSH esp_camera_fb_get()) \
-  Y(esp_camera_db_return, esp_camera_fb_return((camera_fb_t *) a0); DROP) \
+  Y(esp_camera_fb_return, esp_camera_fb_return((camera_fb_t *) a0); DROP) \
   Y(esp_camera_sensor_get, PUSH esp_camera_sensor_get())
 #endif
 

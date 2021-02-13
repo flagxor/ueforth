@@ -46,8 +46,9 @@ forth definitions
 
 vocabulary SD_MMC   SD_MMC definitions
 transfer{
-  SD_MMC.begin SD_MMC.end
   SD_MMC.cardType
+  SD_MMC.begin
+  SD_MMC.end
   SD_MMC.totalBytes SD_MMC.usedBytes
 }transfer
 forth definitions
