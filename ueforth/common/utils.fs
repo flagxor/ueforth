@@ -3,6 +3,10 @@
 ( For tests and asserts )
 : assert ( f -- ) 0= throw ;
 
+( Examine Memory )
+: dump ( a n -- )
+   cr 0 do i 16 mod 0= if cr then dup i + c@ . loop drop cr ;
+
 internals definitions
 : mem= ( a a n -- f)
    for aft 2dup c@ swap c@ <> if 2drop rdrop 0 exit then 1+ swap 1+ then next 2drop -1 ;

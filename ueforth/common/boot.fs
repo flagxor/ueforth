@@ -211,12 +211,8 @@ variable hld
    swap dup line-width > if drop 0 cr then over >name nip + 1+ swap ;
 : words   0 context @ @ begin dup while onlines dup see. >link repeat 2drop cr ;
 
-( Examine Memory )
-: dump ( a n -- )
-   cr 0 do i 16 mod 0= if cr then dup i + c@ . loop drop cr ;
-: raw.s   depth 0 max for aft sp@ r@ cells - @ . then next ;
-
 ( Input )
+: raw.s   depth 0 max for aft sp@ r@ cells - @ . then next ;
 variable echo   -1 echo !
 : ?echo ( n -- ) echo @ if emit else drop then ;
 : ?echo-prompt   echo @ if >r >r raw.s r> r> ." --> " then ;
