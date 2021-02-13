@@ -274,13 +274,13 @@ $(DEPLOY)/app.yaml: $(ARDUINO)/ESP32forth.zip \
                     site/app.yaml \
                     site/eforth.go \
                     $(TARGETS) | $(DEPLOY)
-	mkdir -p $(DEPLOY)/static
-	cp -r $(ARDUINO)/ESP32forth.zip $(DEPLOY)/static
-	cp -r $(POSIX)/ueforth $(DEPLOY)/static/ueforth.linux
-	cp -r $(WINDOWS)/uEf32.exe $(DEPLOY)/static/uEf32.exe
-	cp -r $(WINDOWS)/uEf64.exe $(DEPLOY)/static/uEf64.exe
-	cp -r $(RES)/eforth.ico $(DEPLOY)/static/favicon.ico
 	cp -r site/* $(DEPLOY)/
+	mkdir -p $(DEPLOY)/downloads
+	cp -r $(ARDUINO)/ESP32forth.zip $(DEPLOY)/downloads
+	cp -r $(POSIX)/ueforth $(DEPLOY)/downloads/ueforth.linux
+	cp -r $(WINDOWS)/uEf32.exe $(DEPLOY)/downloads/uEf32.exe
+	cp -r $(WINDOWS)/uEf64.exe $(DEPLOY)/downloads/uEf64.exe
+	cp -r $(RES)/eforth.ico $(DEPLOY)/downloads/favicon.ico
 	cp site/.gcloudignore $(DEPLOY)
 
 deploy: clean all
