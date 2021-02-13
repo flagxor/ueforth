@@ -5,7 +5,7 @@ internals definitions
 : arduino-type ( a n -- ) Serial.write drop ;
 ' arduino-type is type
 : arduino-key ( -- n )
-   begin Serial.available if 0 >r rp@ 1 Serial.readBytes drop r> dup 13 <> if exit then then again ;
+   begin Serial.available until 0 >r rp@ 1 Serial.readBytes drop r> ;
 ' arduino-key is key
 : arduino-key? ( -- n ) Serial.available ;
 ' arduino-key? is key?
