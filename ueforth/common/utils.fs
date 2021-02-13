@@ -1,4 +1,6 @@
 ( Words built after boot )
+
+( For tests and asserts )
 : assert ( f -- ) 0= throw ;
 
 internals definitions
@@ -8,6 +10,7 @@ forth definitions also internals
 : str= ( a n a n -- f) >r swap r@ <> if rdrop 2drop 0 exit then r> mem= ;
 : startswith? ( a n a n -- f ) >r swap r@ < if rdrop 2drop 0 exit then r> mem= ;
 : .s   ." <" depth n. ." > " raw.s cr ;
+: see-all   0 context @ @ begin dup while onlines dup see-xt >link repeat 2drop cr ;
 only forth definitions
 
 : forget ( "name" ) ' dup >link current @ !  >name drop here - allot ;

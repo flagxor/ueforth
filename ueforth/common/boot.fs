@@ -189,10 +189,23 @@ variable hld
 ( Examine Dictionary )
 : see. ( xt -- ) >name type space ;
 : see-one ( xt -- xt+1 )
-   dup @ dup ['] DOLIT = if drop cell+ dup @ . else see. then cell+ ;
+   dup cell+ swap @
+   dup ['] DOLIT = if drop dup @ . cell+ exit then
+   dup ['] $@ = if drop ['] s" see.
+                   dup @ dup >r >r dup cell+ r> type cell+ r> aligned +
+                   [char] " emit space exit then
+   dup  ['] BRANCH =
+   over ['] 0BRANCH = or
+   over ['] DONEXT = or
+       if see. cell+ exit then
+   see. ;
 : exit= ( xt -- ) ['] exit = ;
-: see-loop   >body begin see-one dup @ exit= until ;
-: see   cr ['] : see.  ' dup see.  space see-loop drop  ['] ; see.  cr ;
+: see-loop   >body begin dup @ exit= 0= while see-one repeat drop ;
+: see-xt ( xt -- )
+        cr dup @ ['] see-loop @ <>
+        if ." Unsupported word type: " see. cr exit then
+        ['] : see.  dup see.  space see-loop   ['] ; see. cr ;
+: see   ' see-xt ;
 75 value line-width
 : onlines ( n xt -- n xt )
    swap dup line-width > if drop 0 cr then over >name nip + 1+ swap ;

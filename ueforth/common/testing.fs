@@ -20,6 +20,7 @@ variable expect-used   variable result-used
 : result-type ( a n -- ) for aft dup c@ result-emit 1+ then next drop ;
 : expected ( -- a n ) expect-buffer expect-used @ ;
 : resulted ( -- a n ) result-buffer result-used @ ;
+: out:cr   nl expect-emit ;
 : out: ( "line" -- ) nl parse expect-type nl expect-emit ;
 : out:\ ( "line" -- ) nl parse expect-type ;
 variable confirm-old-type
