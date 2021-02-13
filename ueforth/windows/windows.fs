@@ -143,3 +143,6 @@ r/o w/o or constant r/w
 : ms ( n -- ) Sleep ;
 
 forth
+
+( Setup entry )
+: ok   ." uEforth v{{VERSION}} - rev {{REVISION}}" cr prompt refill drop quit ;

@@ -124,23 +124,24 @@ POSIX_BOOT =  common/boot.fs common/vocabulary.fs common/hide_calls.fs common/an
               common/utils.fs common/highlevel.fs common/filetools.fs posix/posix_desktop.fs \
               common/tasks.fs common/streams.fs common/blocks.fs posix/args.fs
 $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
-	echo "ok" | cat $(POSIX_BOOT) - | $< boot >$@
+	echo "ok" | cat $(POSIX_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
 
 WINDOWS_BOOT = common/boot.fs common/vocabulary.fs common/hide_calls.fs common/ansi.fs \
                windows/windows.fs windows/windows_highlevel.fs common/highlevel.fs \
                common/utils.fs common/tasks.fs common/streams.fs common/blocks.fs
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
-	echo "ok" | cat $(WINDOWS_BOOT) - | $< boot >$@
+	echo "ok" | cat $(WINDOWS_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
 
 ARDUINO_BOOT = common/boot.fs common/vocabulary.fs \
                arduino/arduino.fs arduino/arduino_highlevel.fs \
                arduino/bindings.fs common/highlevel.fs \
                common/filetools.fs common/utils.fs \
                common/tasks.fs common/streams.fs arduino/arduino_server.fs \
+               arduino/arduino_bterm.fs \
                arduino/esp_camera.fs common/blocks.fs \
                arduino/autoboot.fs
 $(GEN)/arduino_boot.h: common/source_to_string.js $(ARDUINO_BOOT) | $(GEN)
-	echo "ok" | cat $(ARDUINO_BOOT) - | $< boot >$@
+	echo "ok" | cat $(ARDUINO_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
 
 $(GEN)/dump_web_opcodes: web/dump_web_opcodes.c common/opcodes.h | $(GEN)
 	$(CC) $(CFLAGS) $< -o $@
@@ -257,7 +258,7 @@ ARDUINO_PARTS = arduino/arduino.template.ino \
 
 $(ARDUINO)/ESP32forth/ESP32forth.ino: \
     arduino/fuse_ino.js $(ARDUINO_PARTS) | $(ARDUINO)/ESP32forth
-	$< "$(VERSION)" "$(REVISION)" $(ARDUINO_PARTS) >$@
+	$< $(VERSION) $(REVISION) $(ARDUINO_PARTS) >$@
 
 # ---- PACKAGE ----
 

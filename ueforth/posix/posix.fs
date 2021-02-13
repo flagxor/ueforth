@@ -129,3 +129,6 @@ O_RDWR constant r/w
 : ms ( n -- ) 1000 * usleep drop ;
 
 forth
+
+( Setup entry )
+: ok   ." uEforth v{{VERSION}} - rev {{REVISION}}" cr prompt refill drop quit ;
