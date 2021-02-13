@@ -19,6 +19,7 @@
 : > ( a b -- a>b ) swap - 0< ;
 : = ( a b -- a!=b ) - 0= ;
 : <> ( a b -- a!=b ) = 0= ;
+: 0<> ( n -- n) 0= 0= ;
 : bl 32 ;   : nl 10 ;
 : 1+ 1 + ;   : 1- 1 - ;
 : 2* 2 * ;   : 2/ 2 / ;
@@ -140,6 +141,7 @@ variable handler
 ( Defer I/O to platform specific )
 defer type
 defer key
+defer key?
 defer bye
 : emit ( n -- ) >r rp@ 1 type rdrop ;
 : space bl emit ;   : cr nl emit ;

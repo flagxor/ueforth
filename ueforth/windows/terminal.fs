@@ -1,3 +1,4 @@
+also windows
 s" \\.\COM3" r/w open-file throw constant remote
 : remote-type ( a n -- ) remote write-file throw ;
 : remote-emit ( ch -- ) >r rp@ 1 remote-type rdrop ;

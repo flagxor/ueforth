@@ -5,10 +5,11 @@ internals definitions
 : arduino-type ( a n -- ) Serial.write drop ;
 ' arduino-type is type
 : arduino-key ( -- n )
-   begin Serial.available until 0 >r rp@ 1 Serial.readBytes drop r> ;
+   begin Serial.available if 0 >r rp@ 1 Serial.readBytes drop r> dup 13 <> if exit then then again ;
 ' arduino-key is key
+: arduino-key? ( -- n ) Serial.available ;
+' arduino-key? is key?
 forth definitions
-: key? ( -- n ) Serial.available ;
 
 ( Map Arduino / ESP32 things to shorter names. )
 : pin ( n pin# -- ) swap digitalWrite ;

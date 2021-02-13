@@ -1,5 +1,7 @@
 ( Terminal Handling )
 
+vocabulary termios   termios definitions also posix
+
 z" tcgetattr" 2 sysfunc tcgetattr
 z" tcsetattr" 3 sysfunc tcsetattr
 z" fcntl" 3 sysfunc fcntl
@@ -38,3 +40,17 @@ $5413 constant TIOCGWINSZ
 create winsize sizeof(winsize) allot
 : form ( -- h w ) stdin TIOCGWINSZ winsize ioctl throw
                   winsize l@ dup $ffff and swap $10000 / ;
+
+0 value pending
+: termios-key? ( -- f ) pending if -1 else stdin-key to pending pending 0<> then ;
+: termios-key ( -- n ) begin termios-key? 0= while repeat pending 0 to pending ;
+
+nodelay-mode
+' termios-key is key
+' termios-key? is key?
+
+forth definitions
+
+: form form ;
+
+only forth definitions

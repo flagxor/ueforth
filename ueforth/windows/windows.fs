@@ -80,7 +80,8 @@ stdout console-mode @ ENABLE_VIRTUAL_TERMINAL_PROCESSING or SetConsoleMode drop
 : win-type ( a n -- ) stdout -rot NULL NULL WriteFile drop ;
 ' win-type is type
 : raw-key ( -- n ) 0 >r stdin rp@ 1 NULL NULL ReadFile drop r> ;
-: key? ( -- f ) stdin 0 WaitForSingleObject 0= ;
+: win-key? ( -- f ) stdin 0 WaitForSingleObject 0= ;
+' win-key? is key?
 : win-key ( -- n ) raw-key dup 13 = if drop nl then ;
 ' win-key is key
 : win-bye ( -- ) 0 ExitProcess drop ;

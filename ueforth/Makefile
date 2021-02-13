@@ -120,7 +120,7 @@ $(GEN):
 	mkdir -p $@
 
 POSIX_BOOT =  common/boot.fs common/vocabulary.fs common/hide_calls.fs common/ansi.fs \
-              posix/posix.fs posix/posix_highlevel.fs \
+              posix/posix.fs posix/posix_highlevel.fs posix/termios.fs \
               common/utils.fs common/highlevel.fs common/filetools.fs posix/posix_desktop.fs \
               common/tasks.fs common/streams.fs common/blocks.fs posix/args.fs
 $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
