@@ -29,7 +29,7 @@ body {
 }
 </style>
 </head>
-<h2>uEforth</h2>
+<h2>ESP32forth v7</h2>
 <link rel="icon" href="data:,">
 <body>
 Upload File: <input id="filepick" type="file" name="files[]"></input><br/>
