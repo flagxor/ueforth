@@ -45,9 +45,9 @@ transfer{
 forth definitions
 
 vocabulary SD_MMC   SD_MMC definitions
+( SD_MMC.begin - TODO: causing issues pulled in )
 transfer{
   SD_MMC.cardType
-  SD_MMC.begin
   SD_MMC.end
   SD_MMC.totalBytes SD_MMC.usedBytes
 }transfer
