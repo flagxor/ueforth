@@ -1,5 +1,10 @@
-also posix
+also posix also termios
 s" /dev/ttyS3" r/w O_NONBLOCK or open-file throw constant remote
+256 constant ICRNL
+create remote-termios sizeof(termios) allot
+remote remote-termios tcgetattr drop
+remote-termios .c_lflag l@ ICRNL INVERT and remote-termios .c_lflag l!
+remote TCSAFLUSH remote-termios tcsetattr drop
 : remote-type ( a n -- ) remote write-file throw ;
 : remote-emit ( ch -- ) >r rp@ 1 remote-type rdrop ;
 : remote-key ( -- ch|0 )
