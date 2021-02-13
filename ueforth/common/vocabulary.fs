@@ -19,13 +19,11 @@ current @ constant forth-wordlist
 : voc-stack-end ( -- a ) context begin dup @ while cell+ repeat ;
 : also   context context cell+ voc-stack-end over - 2 cells + cmove> ;
 : sealed   0 last-vocabulary @ >body cell+ ! ;
-: voc. ( voc -- ) dup forth-wordlist = if ." FORTH " drop exit then 3 cells - see. ;
-: order   context begin dup @ while dup @ voc. cell+ repeat drop cr ;
 
 ( Hide some words in an internals vocabulary )
 vocabulary internals   internals definitions
 transfer{
-  transfer-xt voc-stack-end forth-wordlist voc.
+  transfer-xt voc-stack-end forth-wordlist
   last-vocabulary
   branch 0branch donext dolit
   'context 'notfound notfound

@@ -30,34 +30,29 @@ e: test-forget
 e: test-see-number
   : test 123 456 ;
   see test
-  out:cr
   out: : test  123 456 ; 
 ;e
 
 e: test-see-string
   : test s" hello there" ;
   see test
-  out:cr
   out: : test  s" hello there" ; 
 ;e
 
 e: test-see-branch
   : test begin again ;
   see test
-  out:cr
   out: : test  BRANCH ; 
 ;e
 
 e: test-see-0branch
   : test begin until ;
   see test
-  out:cr
   out: : test  0BRANCH ; 
 ;e
 
 e: test-see-fornext
   : test for next ;
   see test
-  out:cr
   out: : test  >R DONEXT ; 
 ;e

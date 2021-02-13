@@ -106,10 +106,13 @@ clean:
 
 # ---- TESTS ----
 
-tests: unit_tests
+tests: unit_tests see_all_test
 
 unit_tests: $(POSIX)/ueforth common/all_tests.fs
 	$^
+
+see_all_test: $(POSIX)/ueforth
+	echo "internals see-all bye" | $< >/dev/null
 
 # ---- GENERATED ----
 

@@ -186,27 +186,6 @@ variable hld
    if cr ." ERROR: " type ."  NOT FOUND!" cr -1 throw then ;
 ' notfound 'notfound !
 
-( Examine Dictionary )
-: see. ( xt -- ) >name type space ;
-: see-one ( xt -- xt+1 )
-   dup cell+ swap @
-   dup ['] DOLIT = if drop dup @ . cell+ exit then
-   dup ['] $@ = if drop ['] s" see.
-                   dup @ dup >r >r dup cell+ r> type cell+ r> aligned +
-                   [char] " emit space exit then
-   dup  ['] BRANCH =
-   over ['] 0BRANCH = or
-   over ['] DONEXT = or
-       if see. cell+ exit then
-   see. ;
-: exit= ( xt -- ) ['] exit = ;
-: see-loop   >body begin dup @ exit= 0= while see-one repeat drop ;
-: see-xt ( xt -- )
-        cr dup @ ['] see-loop @ <>
-        if ." Unsupported word type: " see. cr exit then
-        ['] : see.  dup see.  space see-loop   ['] ; see. cr ;
-: see   ' see-xt ;
-
 ( Input )
 : raw.s   depth 0 max for aft sp@ r@ cells - @ . then next ;
 variable echo   -1 echo !
