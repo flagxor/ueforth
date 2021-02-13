@@ -206,10 +206,6 @@ variable hld
         if ." Unsupported word type: " see. cr exit then
         ['] : see.  dup see.  space see-loop   ['] ; see. cr ;
 : see   ' see-xt ;
-75 value line-width
-: onlines ( n xt -- n xt )
-   swap dup line-width > if drop 0 cr then over >name nip + 1+ swap ;
-: words   0 context @ @ begin dup while onlines dup see. >link repeat 2drop cr ;
 
 ( Input )
 : raw.s   depth 0 max for aft sp@ r@ cells - @ . then next ;

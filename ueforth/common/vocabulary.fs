@@ -5,8 +5,6 @@ current @ constant forth-wordlist
 : vocabulary ( "name" ) create 0 , current @ 2 cells + , current @ @ last-vocabulary !
                         does> cell+ context ! ;
 : definitions   context @ current ! ;
-: >name-length ( xt -- n ) dup 0= if exit then >name nip ;
-: vlist   0 context @ @ begin dup >name-length while onlines dup see. >link repeat 2drop cr ;
 
 ( Make it easy to transfer words between vocabularies )
 : transfer-xt ( xt --  ) context @ begin 2dup @ <> while @ >link& repeat nip
@@ -36,9 +34,7 @@ transfer{
   'sys 'heap aliteral
   leaving( )leaving leaving leaving,
   (do) (?do) (+loop)
-  parse-quote digit $@
-  see. see-loop >name-length exit=
-  see-one raw.s
+  parse-quote digit $@ raw.s
   tib-setup input-limit
 }transfer
 forth definitions
