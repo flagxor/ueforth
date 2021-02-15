@@ -52,3 +52,17 @@ e: test-multiline
   out: There
   out: Test!
 ;e
+
+e: test-value-to
+  123 value foo
+  foo . cr
+  out: 123 
+  55 to foo
+  foo . cr
+  out: 55 
+  : bar 99 to foo ;
+  foo . cr
+  out: 55 
+  bar foo . cr
+  out: 99 
+;e

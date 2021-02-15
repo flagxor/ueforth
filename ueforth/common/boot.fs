@@ -39,7 +39,7 @@
 : base ( -- a ) 'sys 4 cells + ;
 : 'heap ( -- a ) 'sys 5 cells + ;
 : current ( -- a ) 'sys 6 cells + ;
-: 'context ( -- a ) 'sys 7 cells + ;  : context 'context @ ;
+: 'context ( -- a ) 'sys 7 cells + ;  : context 'context @ cell+ ;
 : 'notfound ( -- a ) 'sys 8 cells + ;
 
 ( Dictionary )
@@ -131,8 +131,7 @@ variable handler
 
 ( Values )
 : value ( n -- ) create , does> @ ;
-: to ( n -- ) state @ if postpone ['] postpone >body postpone !
-                      else ' >body ! then ; immediate
+: to ( n -- ) ' >body state @ if aliteral postpone ! else ! then ; immediate
 
 ( Deferred Words )
 : defer ( "name" -- ) create 0 , does> @ dup 0= throw execute ;

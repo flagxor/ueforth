@@ -22,6 +22,19 @@ current @ constant forth-wordlist
 
 ( Hide some words in an internals vocabulary )
 vocabulary internals   internals definitions
+
+( Vocabulary chain for current scope, place at the -1 position )
+variable scope   scope context cell - !
+
+( Make DOES> switch to compile mode when interpreted )
+(
+vocabulary partial-does   partial-does definitions
+transfer does>
+only forth definitions also partial-does
+: does>   postpone does> ; immediate
+only internals definitions
+)
+
 transfer{
   transfer-xt voc-stack-end forth-wordlist
   last-vocabulary
@@ -36,4 +49,3 @@ transfer{
   tib-setup input-limit
 }transfer
 forth definitions
-
