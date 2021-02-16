@@ -66,3 +66,17 @@ e: test-value-to
   bar foo . cr
   out: 99 
 ;e
+
+e: test-comments-interp
+  123 ( Interpretered comment ) 456
+  789 \ Interpretered comment )
+  789 = assert 456 = assert 123 = assert
+;e
+
+e: test-comments-compiled
+  : foo 123 ( Compiled comment ) 456
+        789 \ Interpretered comment )
+        999 ;
+  foo 999 = assert 789 = assert 456 = assert 123 = assert
+;e
+

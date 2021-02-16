@@ -26,6 +26,9 @@
 : 4* 4 * ;   : 4/ 4 / ;
 : +! ( n a -- ) swap over @ + swap ! ;
 
+( Line Comments )
+: \   nl parse drop drop ; immediate
+
 ( Cells )
 : cell+ ( n -- n ) cell + ;
 : cells ( n -- n ) cell * ;

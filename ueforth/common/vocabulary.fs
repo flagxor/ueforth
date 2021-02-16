@@ -7,12 +7,13 @@ current @ constant forth-wordlist
 : definitions   context @ current ! ;
 
 ( Make it easy to transfer words between vocabularies )
-: transfer-xt ( xt --  ) context @ begin 2dup @ <> while @ >link& repeat nip
-                         dup @ swap dup @ >link swap ! current @ @ over >link& !   current @ ! ;
-: transfer ( "name" ) ' transfer-xt ;
-: ?transfer ( "name" ) bl parse find dup if transfer-xt else drop then ;
+: xt-find& ( xt -- xt& ) context @ begin 2dup @ <> while @ >link& repeat nip ;
+: xt-hide ( xt -- ) xt-find& dup @ >link swap ! ;
+: xt-transfer ( xt --  ) dup xt-hide   current @ @ over >link& !   current @ ! ;
+: transfer ( "name" ) ' xt-transfer ;
+: ?transfer ( "name" ) bl parse find dup if xt-transfer else drop then ;
 : }transfer ;
-: transfer{ begin ' dup ['] }transfer = if drop exit then transfer-xt again ;
+: transfer{ begin ' dup ['] }transfer = if drop exit then xt-transfer again ;
 
 ( Watered down versions of these )
 : only   forth 0 context cell+ ! ;
@@ -26,17 +27,9 @@ vocabulary internals   internals definitions
 ( Vocabulary chain for current scope, place at the -1 position )
 variable scope   scope context cell - !
 
-( Make DOES> switch to compile mode when interpreted )
-(
-vocabulary partial-does   partial-does definitions
-transfer does>
-only forth definitions also partial-does
-: does>   postpone does> ; immediate
-only internals definitions
-)
-
 transfer{
-  transfer-xt voc-stack-end forth-wordlist
+  xt-find& xt-hide xt-transfer
+  voc-stack-end forth-wordlist
   last-vocabulary
   branch 0branch donext dolit
   'context 'notfound notfound
@@ -49,3 +42,14 @@ transfer{
   tib-setup input-limit
 }transfer
 forth definitions
+
+( Make DOES> switch to compile mode when interpreted )
+(
+forth definitions internals
+' does>
+: does>   state @ if postpone does> exit then
+          ['] constant @ current @ @ dup >r !
+          here r> cell+ ! postpone ] ; immediate
+xt-hide
+forth definitions
+)

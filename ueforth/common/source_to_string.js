@@ -9,6 +9,7 @@ var revision = process.argv[4];
 
 source = source.replace('{{VERSION}}', version);
 source = source.replace('{{REVISION}}', revision);
+source = source.replace(/\\/g, '\\\\');
 source = source.replace(/["]/g, '\\"');
 source = '"' + source.split('\n').join('\\n"\n"') + '\\n"';
 source = source.replace(/["]  ["]/g, '');
