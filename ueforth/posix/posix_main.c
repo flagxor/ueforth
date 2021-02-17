@@ -10,6 +10,7 @@
 #define STACK_SIZE (16 * 1024)
 
 #define PLATFORM_OPCODE_LIST \
+  Y(errno, DUP; tos = (cell_t) errno) \
   Y(DLSYM, tos = (cell_t) dlsym(a1 ? a1 : RTLD_DEFAULT, a0); --sp) \
   CALLING_OPCODE_LIST \
 
