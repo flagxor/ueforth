@@ -10,6 +10,10 @@ WINDOWS = $(OUT)/windows
 ARDUINO = $(OUT)/arduino
 DEPLOY = $(OUT)/deploy
 
+ifneq ($(OS),Windows_NT)
+  OS = $(shell uname -s)
+endif
+
 CFLAGS_COMMON = -O2 -I ./ -I $(OUT)
 
 CFLAGS_MINIMIZE = \
@@ -27,15 +31,27 @@ CFLAGS_MINIMIZE = \
                 -fmerge-all-constants
 CFLAGS = $(CFLAGS_COMMON) \
          -Wall \
-         -Werror \
-         -Wl,--gc-sections
-STRIP_ARGS = -S \
-             --strip-unneeded \
-             --remove-section=.note.gnu.gold-version \
-             --remove-section=.comment \
-             --remove-section=.note \
-             --remove-section=.note.gnu.build-id \
-             --remove-section=.note.ABI-tag
+         -Werror
+
+ifeq ($(OS),Darwin)
+  CFLAGS += -Wl,-dead_strip
+else
+  CFLAGS += -Wl,--gc-sections
+endif
+
+STRIP_ARGS = -S
+
+ifeq ($(OS),Darwin)
+ STRIP_ARGS += -x
+else
+ STRIP_ARGS += --strip-unneeded \
+              --remove-section=.note.gnu.gold-version \
+              --remove-section=.comment \
+              --remove-section=.note \
+              --remove-section=.note.gnu.build-id \
+              --remove-section=.note.ABI-tag
+endif
+
 LIBS=-ldl
 
 WIN_CFLAGS = $(CFLAGS_COMMON) \
