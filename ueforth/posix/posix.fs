@@ -41,6 +41,15 @@ z" realloc" 2 sysfunc realloc
 z" usleep" 1 sysfunc usleep
 z" signal" 2 sysfunc signal
 
+( Directories )
+z" mkdir" 2 sysfunc mkdir
+z" rmdir" 1 sysfunc rmdir
+z" opendir" 1 sysfunc opendir
+z" closedir" 1 sysfunc closedir
+z" readdir" 1 sysfunc readdir
+: .d_type ( a -- n ) 18 + c@ ;
+: .d_name ( a -- z ) 19 + ;
+
 ( Errno )
 z" __errno_location" 0 sysfunc __errno_location
 : errno ( -- n ) __errno_location l@ ;
