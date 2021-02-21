@@ -14,6 +14,7 @@
 #define ENABLE_SDCARD_SUPPORT
 #define ENABLE_I2C_SUPPORT
 #define ENABLE_SOCKETS_SUPPORT
+#define ENABLE_FREERTOS_SUPPORT
 
 // For now assume only boards with PSRAM (ESP32-CAM)
 // will want SerialBluetooth (very large) and camera support.
@@ -117,6 +118,7 @@
   OPTIONAL_SERIAL_BLUETOOTH_SUPPORT \
   OPTIONAL_CAMERA_SUPPORT \
   OPTIONAL_SOCKETS_SUPPORT \
+  OPTIONAL_FREERTOS_SUPPORT \
 
 #ifndef ENABLE_SPIFFS_SUPPORT
 // Provide a default failing SPIFFS.begin
@@ -131,6 +133,15 @@
   X("SPIFFS.format", SPIFFS_FORMAT, PUSH SPIFFS.format()) \
   X("SPIFFS.totalBytes", SPIFFS_TOTAL_BYTES, PUSH SPIFFS.totalBytes()) \
   X("SPIFFS.usedBytes", SPIFFS_USED_BYTES, PUSH SPIFFS.usedBytes())
+#endif
+
+#ifndef ENABLE_FREERTOS_SUPPORT
+# define OPTIONAL_FREERTOS_SUPPORT
+#else
+# define OPTIONAL_FREERTOS_SUPPORT \
+  Y(vTaskDelete, vTaskDelete((TaskHandle_t) n0); DROP) \
+  Y(xTaskCreatePinnedToCore, n0 = xTaskCreatePinnedToCore((TaskFunction_t) a6, c5, n4, a3, (UBaseType_t) n2, (TaskHandler_t *) a1, (BaseType_t) n0); NIPn(6)) \
+  Y(xPortGetCoreID, PUSH xPortGetCoreID())
 #endif
 
 #ifndef ENABLE_CAMERA_SUPPORT
