@@ -77,6 +77,15 @@ transfer{
 }transfer
 forth definitions
 
+vocabulary sockets   sockets definitions
+transfer{
+  socket bind listen connect accept select poll errno
+}transfer
+1 constant SOCK_STREAM
+2 constant AF_INET
+16 constant sizeof(sockaddr_in)
+forth definitions
+
 vocabulary bluetooth   bluetooth definitions
 ?transfer SerialBT.new
 ?transfer SerialBT.delete
