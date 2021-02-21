@@ -96,16 +96,21 @@ decimal
 
 ( errno.h )
 11 constant EAGAIN
+32 constant EPIPE
 
 ( Signal Handling )
 0 constant SIG_DFL
 1 constant SIG_IGN
+
 ( Signals )
 1 constant SIGHUP
 2 constant SIGINT
 9 constant SIGKILL
-10 constant SIGPIPE
 7 constant SIGBUS
+13 constant SIGPIPE
+
+( Ignore SIGPIPE )
+SIGPIPE SIG_IGN signal drop
 
 ( Modes )
 octal 777 constant 0777 decimal
