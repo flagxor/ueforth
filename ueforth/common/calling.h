@@ -17,6 +17,8 @@
 #define a2 (*(void **) &n2)
 #define a3 (*(void **) &n3)
 #define a4 (*(void **) &n4)
+#define a5 (*(void **) &n5)
+#define a6 (*(void **) &n6)
 
 #define b0 ((uint8_t *) tos)
 #define b1 (*(uint8_t **) &n1)
