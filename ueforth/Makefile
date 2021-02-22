@@ -1,4 +1,4 @@
-VERSION=7.0.1
+VERSION=7.0.2
 REVISION=$(shell git rev-parse HEAD)
 
 OUT = out

@@ -138,9 +138,11 @@
 #ifndef ENABLE_FREERTOS_SUPPORT
 # define OPTIONAL_FREERTOS_SUPPORT
 #else
+# include "freertos/FreeRTOS.h"
+# include "freertos/task.h"
 # define OPTIONAL_FREERTOS_SUPPORT \
   Y(vTaskDelete, vTaskDelete((TaskHandle_t) n0); DROP) \
-  Y(xTaskCreatePinnedToCore, n0 = xTaskCreatePinnedToCore((TaskFunction_t) a6, c5, n4, a3, (UBaseType_t) n2, (TaskHandler_t *) a1, (BaseType_t) n0); NIPn(6)) \
+  Y(xTaskCreatePinnedToCore, n0 = xTaskCreatePinnedToCore((TaskFunction_t) a6, c5, n4, a3, (UBaseType_t) n2, (TaskHandle_t *) a1, (BaseType_t) n0); NIPn(6)) \
   Y(xPortGetCoreID, PUSH xPortGetCoreID())
 #endif
 
