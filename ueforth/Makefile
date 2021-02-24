@@ -26,8 +26,10 @@ CFLAGS_MINIMIZE = \
                 -ffunction-sections -fdata-sections \
                 -fmerge-all-constants
 CFLAGS = $(CFLAGS_COMMON) \
+         $(CFLAGS_MINIMIZE) \
          -Wall \
          -Werror \
+         -no-pie \
          -Wl,--gc-sections
 STRIP_ARGS = -S \
              --strip-unneeded \

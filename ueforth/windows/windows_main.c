@@ -38,7 +38,8 @@ int WINAPI WinMainCRTStartup(void) {
 int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmd, int show) {
 #endif
   void *heap = VirtualAlloc(
-      NULL, HEAP_SIZE, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+      (void *) 0x8000000, HEAP_SIZE,
+      MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
   forth_init(0, 0, heap, boot, sizeof(boot));
   for (;;) { g_sys.rp = forth_run(g_sys.rp); }
 }
