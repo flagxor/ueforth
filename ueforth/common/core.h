@@ -17,6 +17,7 @@ static struct {
   cell_t *heap, **current, ***context, notfound;
   int argc;
   char **argv;
+  cell_t *(*runner)(cell_t *rp);  // pointer to forth_run
   cell_t *rp;  // spot to park main thread
   cell_t DOLIT_XT, DOEXIT_XT, YIELD_XT;
 } g_sys;
@@ -160,4 +161,5 @@ static void forth_init(int argc, char *argv[], void *heap,
   *++rp = (cell_t) sp;
   *++rp = (cell_t) start;
   g_sys.rp = rp;
+  g_sys.runner = forth_run;
 }

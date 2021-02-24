@@ -21,7 +21,9 @@
 #include "gen/posix_boot.h"
 
 int main(int argc, char *argv[]) {
-  void *heap = mmap(0, HEAP_SIZE, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+  void *heap = mmap(
+      (void *) 0x8000000, HEAP_SIZE,
+      PROT_EXEC | PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
   forth_init(argc, argv, heap, boot, sizeof(boot));
   for (;;) { g_sys.rp = forth_run(g_sys.rp); }
   return 1;

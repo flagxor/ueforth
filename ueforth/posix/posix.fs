@@ -41,6 +41,15 @@ z" realloc" 2 sysfunc realloc
 z" usleep" 1 sysfunc usleep
 z" signal" 2 sysfunc signal
 
+( Directories )
+z" mkdir" 2 sysfunc mkdir
+z" rmdir" 1 sysfunc rmdir
+z" opendir" 1 sysfunc opendir
+z" closedir" 1 sysfunc closedir
+z" readdir" 1 sysfunc readdir
+: .d_type ( a -- n ) 18 + c@ ;
+: .d_name ( a -- z ) 19 + ;
+
 ( Errno )
 ( : errno ( -- n )
 ( errno is now defined as primitive in posix_main.c )
@@ -92,16 +101,21 @@ decimal
 
 ( errno.h )
 11 constant EAGAIN
+32 constant EPIPE
 
 ( Signal Handling )
 0 constant SIG_DFL
 1 constant SIG_IGN
+
 ( Signals )
 1 constant SIGHUP
 2 constant SIGINT
 9 constant SIGKILL
-10 constant SIGPIPE
 7 constant SIGBUS
+13 constant SIGPIPE
+
+( Ignore SIGPIPE )
+SIGPIPE SIG_IGN signal drop
 
 ( Modes )
 octal 777 constant 0777 decimal

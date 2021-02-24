@@ -1,4 +1,4 @@
-VERSION=7.0
+VERSION=7.0.2
 REVISION=$(shell git rev-parse HEAD)
 
 OUT = out
@@ -30,8 +30,10 @@ CFLAGS_MINIMIZE = \
                 -ffunction-sections -fdata-sections \
                 -fmerge-all-constants
 CFLAGS = $(CFLAGS_COMMON) \
+         $(CFLAGS_MINIMIZE) \
          -Wall \
-         -Werror
+         -Werror \
+         -no-pie
 
 ifeq ($(OS),Darwin)
   CFLAGS += -Wl,-dead_strip

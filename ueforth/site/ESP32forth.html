@@ -66,6 +66,18 @@ Choose these options under Tools.
 </ul>
 </p>
 
+<h2>Use</h2>
+
+<p>
+Initially ESP32forth can be interacted with over a serial port (over USB).
+You can do this from the Arduino IDE's Serial Monitor option.
+Be sure to config the serial port to: <code>baud rate = 115200, data bits = 8, stop bits = 1, and parity = N</code>.
+</p>
+
+<p>
+On boot, ESP32forth configures PIN 2 (typically an LED) to be an output and brings it HIGH (lighting the LED after boot).
+</p>
+
 <h2>ESP32forth Features</h2>
 
 <h3>ESP32forth Specific Words</h3>
@@ -479,7 +491,7 @@ with the types positional names:
 n10 n9 n8 n7 n6 n5 n4 n3 n2 n1 n0 - Access stack as cell_t integer values
                    c4 c3 c2 c1 c0 - Access stack as char* values
                    b4 b3 b2 b1 b0 - Access stack as uint8_t* byte values
-                   a4 a3 a2 a1 a0 - Access stack as void* values
+             a6 a5 a4 a3 a2 a1 a0 - Access stack as void* values
 
 Examples:
   void send_message(const char *message, int code);

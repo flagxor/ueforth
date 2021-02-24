@@ -65,7 +65,7 @@ function httpPost(url, items, callback) {
 }
 function ask(cmd, callback) {
   httpPost('/input',
-           {cmd: cmd + '\\n'}, function(data) {
+           {cmd: cmd + '\n'}, function(data) {
     if (data !== null) { output.value += data; }
     output.scrollTop = output.scrollHeight;  // Scroll to the bottom
     if (callback !== undefined) { callback(); }
@@ -82,7 +82,7 @@ filepick.onchange = function(event) {
   if (event.target.files.length > 0) {
     var reader = new FileReader();
     reader.onload = function(e) {
-      var parts = e.target.result.split('\\n');
+      var parts = e.target.result.split('\n');
       function upload() {
         if (parts.length === 0) { filepick.value = ''; return; }
         ask(parts.shift(), upload);
@@ -125,7 +125,6 @@ create out-string out-size 1+ allot align
 
 : do-serve
    80 WebServer.new webserver !
-   z" /webui" ['] handle-index webserver @ WebServer.on
    z" /" ['] handle-index webserver @ WebServer.on
    z" /input" ['] handle-input webserver @ WebServer.on
    webserver @ WebServer.begin

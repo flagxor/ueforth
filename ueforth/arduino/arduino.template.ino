@@ -13,6 +13,8 @@
 #define ENABLE_WEBSERVER_SUPPORT
 #define ENABLE_SDCARD_SUPPORT
 #define ENABLE_I2C_SUPPORT
+#define ENABLE_SOCKETS_SUPPORT
+#define ENABLE_FREERTOS_SUPPORT
 
 // For now assume only boards with PSRAM (ESP32-CAM)
 // will want SerialBluetooth (very large) and camera support.
@@ -115,6 +117,8 @@
   OPTIONAL_I2C_SUPPORT \
   OPTIONAL_SERIAL_BLUETOOTH_SUPPORT \
   OPTIONAL_CAMERA_SUPPORT \
+  OPTIONAL_SOCKETS_SUPPORT \
+  OPTIONAL_FREERTOS_SUPPORT \
 
 #ifndef ENABLE_SPIFFS_SUPPORT
 // Provide a default failing SPIFFS.begin
@@ -123,7 +127,6 @@
 #else
 # include "SPIFFS.h"
 # define OPTIONAL_SPIFFS_SUPPORT \
-  /* SPIFFS */ \
   X("SPIFFS.begin", SPIFFS_BEGIN, \
       tos = SPIFFS.begin(n2, c1, n0); NIPn(2)) \
   X("SPIFFS.end", SPIFFS_END, SPIFFS.end()) \
@@ -132,12 +135,22 @@
   X("SPIFFS.usedBytes", SPIFFS_USED_BYTES, PUSH SPIFFS.usedBytes())
 #endif
 
+#ifndef ENABLE_FREERTOS_SUPPORT
+# define OPTIONAL_FREERTOS_SUPPORT
+#else
+# include "freertos/FreeRTOS.h"
+# include "freertos/task.h"
+# define OPTIONAL_FREERTOS_SUPPORT \
+  Y(vTaskDelete, vTaskDelete((TaskHandle_t) n0); DROP) \
+  Y(xTaskCreatePinnedToCore, n0 = xTaskCreatePinnedToCore((TaskFunction_t) a6, c5, n4, a3, (UBaseType_t) n2, (TaskHandle_t *) a1, (BaseType_t) n0); NIPn(6)) \
+  Y(xPortGetCoreID, PUSH xPortGetCoreID())
+#endif
+
 #ifndef ENABLE_CAMERA_SUPPORT
 # define OPTIONAL_CAMERA_SUPPORT
 #else
 # include "esp_camera.h"
 # define OPTIONAL_CAMERA_SUPPORT \
-  /* Camera */ \
   Y(esp_camera_init, n0 = esp_camera_init((camera_config_t *) a0)) \
   Y(esp_camera_deinit, PUSH esp_camera_deinit()) \
   Y(esp_camera_fb_get, PUSH esp_camera_fb_get()) \
@@ -145,12 +158,32 @@
   Y(esp_camera_sensor_get, PUSH esp_camera_sensor_get())
 #endif
 
+#ifndef ENABLE_SOCKETS_SUPPORT
+# define OPTIONAL_SOCKETS_SUPPORT
+#else
+# include <errno.h>
+# include <sys/select.h>
+# include <sys/socket.h>
+# include <sys/time.h>
+# include <sys/types.h>
+# include <sys/un.h>
+# include <sys/poll.h>
+# define OPTIONAL_SOCKETS_SUPPORT \
+  Y(socket, n0 = socket(n2, n1, n0); NIPn(2)) \
+  Y(bind, n0 = bind(n2, (struct sockaddr *) a1, n0); NIPn(2)) \
+  Y(listen, n0 = listen(n1, n0); NIP) \
+  Y(connect, n0 = connect(n2, (struct sockaddr *) a1, n0); NIPn(2)) \
+  Y(accept, n0 = accept(n2, (struct sockaddr *) a1, (socklen_t *) a0); NIPn(2)) \
+  Y(select, n0 = select(n4, (fd_set *) a3, (fd_set *) a2, (fd_set *) a1, (struct timeval *) a0); NIPn(4)) \
+  Y(poll, n0 = poll((struct pollfd *) a2, (nfds_t) n1, n0); NIPn(2)) \
+  Y(errno, PUSH errno)
+#endif
+
 #ifndef ENABLE_SDCARD_SUPPORT
 # define OPTIONAL_SDCARD_SUPPORT
 #else
 # include "SD_MMC.h"
 # define OPTIONAL_SDCARD_SUPPORT \
-  /* SD_MMC */ \
   X("SD_MMC.begin", SD_MMC_BEGIN, tos = SD_MMC.begin(c1, n0); NIP) \
   X("SD_MMC.end", SD_MMC_END, SD_MMC.end()) \
   X("SD_MMC.cardType", SD_MMC_CARD_TYPE, PUSH SD_MMC.cardType()) \
@@ -163,7 +196,6 @@
 #else
 # include <Wire.h>
 # define OPTIONAL_I2C_SUPPORT \
-  /* Wire */ \
   X("Wire.begin", WIRE_BEGIN, n0 = Wire.begin(n1, n0); NIP) \
   X("Wire.setClock", WIRE_SET_CLOCK, Wire.setClock(n0); DROP) \
   X("Wire.getClock", WIRE_GET_CLOCK, PUSH Wire.getClock()) \
@@ -193,7 +225,6 @@
 # include "BluetoothSerial.h"
 # define bt0 ((BluetoothSerial *) a0)
 # define OPTIONAL_SERIAL_BLUETOOTH_SUPPORT \
-  /* SerialBT */ \
   X("SerialBT.new", SERIALBT_NEW, PUSH new BluetoothSerial()) \
   X("SerialBT.delete", SERIALBT_DELETE, delete bt0; DROP) \
   X("SerialBT.begin", SERIALBT_BEGIN, n0 = bt0->begin(c2, n1); NIPn(2)) \
