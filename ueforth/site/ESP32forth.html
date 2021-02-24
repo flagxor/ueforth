@@ -67,10 +67,15 @@ Choose these options under Tools.
 </p>
 
 <h2>Use</h2>
+
 <p>
 Initially ESP32forth can be interacted with over a serial port (over USB).
 You can do this from the Arduino IDE's Serial Monitor option.
 Be sure to config the serial port to: <code>baud rate = 115200, data bits = 8, stop bits = 1, and parity = N</code>.
+</p>
+
+<p>
+On boot, ESP32forth configures PIN 2 (typically an LED) to be an output and brings it HIGH (lighting the LED after boot).
 </p>
 
 <h2>ESP32forth Features</h2>
