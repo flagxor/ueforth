@@ -130,7 +130,7 @@ static cell_t *forth_run(cell_t *initrp);
 
 static void forth_init(int argc, char *argv[], void *heap,
                          const char *src, cell_t src_len) {
-  g_sys.heap = (cell_t *) heap + 4;  // Leave a little room.
+  g_sys.heap = ((cell_t *) heap) + 4;  // Leave a little room.
   cell_t *sp = g_sys.heap + 1; g_sys.heap += STACK_SIZE;
   cell_t *rp = g_sys.heap + 1; g_sys.heap += STACK_SIZE;
 

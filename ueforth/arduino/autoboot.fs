@@ -5,6 +5,5 @@ internals definitions
 
 ( Check for autoexec.fs and run if present )
 : autoexec ( a n -- ) s" /spiffs/autoexec.fs" ['] included catch 2drop drop ;
-' autoexec
+' autoexec ( leave on the stack for fini.fs )
 forth definitions
-execute
