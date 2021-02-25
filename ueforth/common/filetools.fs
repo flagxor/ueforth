@@ -10,20 +10,24 @@ $4000 constant growth-gap
 here growth-gap + growth-gap 1- + growth-gap 1- invert and constant saving-base
 : park-heap ( -- a ) saving-base ;
 : park-forth ( -- a ) saving-base cell+ ;
-forth definitions also internals
 
-: save ( "name" -- )
+: save-name
   'heap @ park-heap !
   forth-wordlist @ park-forth !
-  bl parse w/o create-file throw >r
+  w/o create-file throw >r
   saving-base here over - r@ write-file throw
   r> close-file throw ;
 
-: restore ( "name" -- )
-  bl parse r/o open-file throw >r
+: restore-name ( "name" -- )
+  r/o open-file throw >r
   saving-base r@ file-size throw r@ read-file throw drop
   r> close-file throw
   park-heap @ 'heap !
   park-forth @ forth-wordlist ! ;
+
+forth definitions also internals
+
+: save ( "name" -- ) bl parse save-name ;
+: restore ( "name" -- ) bl parse restore-name ;
 
 only forth definitions
