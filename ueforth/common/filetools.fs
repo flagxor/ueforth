@@ -10,7 +10,7 @@ $4000 constant growth-gap
 here growth-gap + growth-gap 1- + growth-gap 1- invert and constant saving-base
 : park-heap ( -- a ) saving-base ;
 : park-forth ( -- a ) saving-base cell+ ;
-: bootword ( -- a ) saving-base 2 cells + ;   0 bootword !
+: 'cold ( -- a ) saving-base 2 cells + ;   0 'cold !
 
 : save-name
   'heap @ park-heap !
@@ -25,7 +25,7 @@ here growth-gap + growth-gap 1- + growth-gap 1- invert and constant saving-base
   r> close-file throw
   park-heap @ 'heap !
   park-forth @ forth-wordlist !
-  bootword @ dup if execute else drop then ;
+  'cold @ dup if execute else drop then ;
 
 defer remember-filename
 : default-remember-filename   s" myforth" ;
@@ -36,7 +36,7 @@ forth definitions also internals
 : save ( "name" -- ) bl parse save-name ;
 : restore ( "name" -- ) bl parse restore-name ;
 : remember   remember-filename save-name ;
-: startup: ( "name" ) ' bootword ! remember ;
+: startup: ( "name" ) ' 'cold ! remember ;
 : revive   remember-filename restore-name ;
 : reset   remember-filename delete-file throw ;
 
