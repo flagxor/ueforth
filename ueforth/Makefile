@@ -288,6 +288,15 @@ $(DEPLOY)/app.yaml: $(ARDUINO)/ESP32forth.zip \
 	cp -r $(WINDOWS)/uEf64.exe $(DEPLOY)/downloads/uEf64.exe
 	cp -r $(RES)/eforth.ico $(DEPLOY)/downloads/favicon.ico
 	cp site/.gcloudignore $(DEPLOY)
+	cat site/ESPForth.html | \
+    sed "s/{{VERSION}}/${VERSION}/g" | \
+    sed "s/{{REVISION}}/${REVISION}/g" > $(DEPLOY)/ESP32Forth.html
+	cat site/windows.html | \
+    sed "s/{{VERSION}}/${VERSION}/g" | \
+    sed "s/{{REVISION}}/${REVISION}/g" > $(DEPLOY)/windows.html
+	cat site/linux.html | \
+    sed "s/{{VERSION}}/${VERSION}/g" | \
+    sed "s/{{REVISION}}/${REVISION}/g" > $(DEPLOY)/linux.html
 
 deploy: clean all
 	cd out/deploy && gcloud app deploy -q --project esp32forth *.yaml
