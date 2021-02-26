@@ -17,6 +17,8 @@
 : -rot ( a b c -- b c a ) swap >r swap r> ;
 : < ( a b -- a<b ) - 0< ;
 : > ( a b -- a>b ) swap - 0< ;
+: <= ( a b -- a>b ) swap - 0< 0= ;
+: >= ( a b -- a<b ) - 0< 0= ;
 : = ( a b -- a!=b ) - 0= ;
 : <> ( a b -- a!=b ) = 0= ;
 : 0<> ( n -- n) 0= 0= ;
