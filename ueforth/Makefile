@@ -131,7 +131,8 @@ $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 
 WINDOWS_BOOT = common/boot.fs common/vocabulary.fs common/hide_calls.fs common/ansi.fs \
                windows/windows.fs windows/windows_highlevel.fs common/highlevel.fs \
-               common/utils.fs common/tasks.fs common/streams.fs common/blocks.fs common/locals.fs \
+               common/utils.fs common/filetools.fs common/tasks.fs common/streams.fs \
+               common/blocks.fs common/locals.fs \
                common/fini.fs
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 	echo "ok" | cat $(WINDOWS_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
