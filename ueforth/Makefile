@@ -141,7 +141,7 @@ ARDUINO_BOOT = common/boot.fs common/vocabulary.fs \
                arduino/bindings.fs common/highlevel.fs \
                common/filetools.fs common/utils.fs common/locals.fs \
                common/tasks.fs common/streams.fs arduino/arduino_server.fs \
-               arduino/arduino_bterm.fs \
+               arduino/arduino_bterm.fs arduino/telnetd.fs \
                arduino/esp_camera.fs common/blocks.fs \
                arduino/autoboot.fs \
                common/fini.fs

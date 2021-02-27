@@ -33,7 +33,7 @@ transfer{
   last-vocabulary
   branch 0branch donext dolit
   'context 'notfound notfound
-  immediate? input-buffer ?echo ?echo-prompt
+  immediate? input-buffer ?echo ?arrow. arrow
   evaluate1 evaluate-buffer
   'sys 'heap aliteral
   leaving( )leaving leaving leaving,

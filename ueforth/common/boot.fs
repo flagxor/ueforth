@@ -194,12 +194,12 @@ variable hld
 
 ( Input )
 : raw.s   depth 0 max for aft sp@ r@ cells - @ . then next ;
-variable echo   -1 echo !
+variable echo -1 echo !   variable arrow -1 arrow !
 : ?echo ( n -- ) echo @ if emit else drop then ;
-: ?echo-prompt   echo @ if >r >r raw.s r> r> ." --> " then ;
-: accept ( a n -- n ) ?echo-prompt 0 swap begin 2dup < while
+: ?arrow.   arrow @ if >r >r raw.s r> r> ." --> " then ;
+: accept ( a n -- n ) ?arrow. 0 swap begin 2dup < while
      key
-     dup nl = if ?echo drop nip exit then
+     dup nl = if 13 emit ?echo drop nip exit then
      dup 8 = over 127 = or if
        drop over if rot 1- rot 1- rot 8 ?echo bl ?echo 8 ?echo then
      else
