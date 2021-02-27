@@ -199,7 +199,7 @@ variable echo -1 echo !   variable arrow -1 arrow !
 : ?arrow.   arrow @ if >r >r raw.s r> r> ." --> " then ;
 : accept ( a n -- n ) ?arrow. 0 swap begin 2dup < while
      key
-     dup nl = if ?echo drop nip exit then
+     dup nl = over 13 = or if ?echo drop nip exit then
      dup 8 = over 127 = or if
        drop over if rot 1- rot 1- rot 8 ?echo bl ?echo 8 ?echo then
      else
