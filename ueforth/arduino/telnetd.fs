@@ -11,7 +11,9 @@ create client   sizeof(sockaddr_in) allot   variable client-len
 
 defer broker
 
-: telnet-type ( a n -- ) clientfd write-file if broker then ;
+: telnet-emit' ( ch -- ) >r rp@ 1 clientfd write-file rdrop if broker then ;
+: telnet-emit ( ch -- ) dup nl = if 13 telnet-emit' then telnet-emit' ;
+: telnet-type ( a n -- ) for aft dup c@ telnet-emit 1+ then next drop ;
 : telnet-key ( -- n ) 0 >r rp@ 1 clientfd read-file if drop rdrop broker else drop then r> ;
 
 : connection ( n -- )
