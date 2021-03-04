@@ -11,7 +11,6 @@ current @ constant forth-wordlist
 : xt-hide ( xt -- ) xt-find& dup @ >link swap ! ;
 : xt-transfer ( xt --  ) dup xt-hide   current @ @ over >link& !   current @ ! ;
 : transfer ( "name" ) ' xt-transfer ;
-: ?transfer ( "name" ) bl parse find dup if xt-transfer else drop then ;
 : }transfer ;
 : transfer{ begin ' dup ['] }transfer = if drop exit then xt-transfer again ;
 
@@ -40,6 +39,7 @@ transfer{
   (do) (?do) (+loop)
   parse-quote digit $@ raw.s
   tib-setup input-limit
+  [SKIP] [SKIP]'
 }transfer
 forth definitions
 

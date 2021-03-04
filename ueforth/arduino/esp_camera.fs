@@ -1,12 +1,14 @@
 ( Handling for ESP32-CAM )
 
+DEFINED? esp_camera_init [IF]
+
 vocabulary camera   camera definitions
 
-?transfer esp_camera_init
-?transfer esp_camera_deinit
-?transfer esp_camera_fb_get
-?transfer esp_camera_fb_return
-?transfer esp_camera_sensor_get
+transfer{
+  esp_camera_init esp_camera_deinit
+  esp_camera_fb_get esp_camera_fb_return
+  esp_camera_sensor_get
+}transfer
 
 0 constant PIXFORMAT_RGB565
 1 constant PIXFORMAT_YUV422
@@ -38,3 +40,5 @@ constant camera-fb-count
 constant camera-format
 
 forth definitions
+
+[THEN]

@@ -121,7 +121,8 @@ see_all_test: $(POSIX)/ueforth
 $(GEN):
 	mkdir -p $@
 
-POSIX_BOOT =  common/boot.fs common/vocabulary.fs common/hide_calls.fs common/ansi.fs \
+POSIX_BOOT =  common/boot.fs common/conditionals.fs common/vocabulary.fs \
+              common/hide_calls.fs common/ansi.fs \
               posix/posix.fs posix/posix_highlevel.fs posix/termios.fs common/locals.fs \
               common/utils.fs common/highlevel.fs common/filetools.fs posix/posix_desktop.fs \
               common/tasks.fs common/streams.fs common/blocks.fs posix/autoboot.fs \
@@ -129,7 +130,8 @@ POSIX_BOOT =  common/boot.fs common/vocabulary.fs common/hide_calls.fs common/an
 $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 	echo "ok" | cat $(POSIX_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
 
-WINDOWS_BOOT = common/boot.fs common/vocabulary.fs common/hide_calls.fs common/ansi.fs \
+WINDOWS_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
+               common/hide_calls.fs common/ansi.fs \
                windows/windows.fs windows/windows_highlevel.fs common/highlevel.fs \
                common/utils.fs common/filetools.fs common/tasks.fs common/streams.fs \
                common/blocks.fs common/locals.fs \
@@ -137,7 +139,7 @@ WINDOWS_BOOT = common/boot.fs common/vocabulary.fs common/hide_calls.fs common/a
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 	echo "ok" | cat $(WINDOWS_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
 
-ARDUINO_BOOT = common/boot.fs common/vocabulary.fs \
+ARDUINO_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
                arduino/arduino.fs arduino/arduino_highlevel.fs \
                arduino/bindings.fs common/highlevel.fs \
                common/filetools.fs common/utils.fs common/locals.fs \

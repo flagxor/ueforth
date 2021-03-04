@@ -86,26 +86,50 @@ transfer{
 16 constant sizeof(sockaddr_in)
 forth definitions
 
+DEFINED? SerialBT.new [IF]
 vocabulary bluetooth   bluetooth definitions
-?transfer SerialBT.new
-?transfer SerialBT.delete
-?transfer SerialBT.begin
-?transfer SerialBT.end
-?transfer SerialBT.available
-?transfer SerialBT.readBytes
-?transfer SerialBT.write
-?transfer SerialBT.flush
-?transfer SerialBT.hasClient
-?transfer SerialBT.enableSSP
-?transfer SerialBT.setPin
-?transfer SerialBT.unpairDevice
-?transfer SerialBT.connect
-?transfer SerialBT.connectAddr
-?transfer SerialBT.disconnect
-?transfer SerialBT.connected
-?transfer SerialBT.isReady
-?transfer esp_bt_dev_get_address
+transfer{
+  SerialBT.new SerialBT.delete SerialBT.begin SerialBT.end
+  SerialBT.available SerialBT.readBytes SerialBT.write
+  SerialBT.flush SerialBT.hasClient
+  SerialBT.enableSSP SerialBT.setPin SerialBT.unpairDevice
+  SerialBT.connect SerialBT.connectAddr SerialBT.disconnect SerialBT.connected
+  SerialBT.isReady esp_bt_dev_get_address
+}transfer
 forth definitions
+[THEN]
+
+DEFINED? OledNew [IF]
+vocabulary oled   oled definitions
+transfer{
+  OledNew OledDelete
+  OledHOME OledCLS
+  OledTextc OledPrintln OledNumln OledNum
+  OledDisplay OledPrint
+  OledInvert OledTextsize OledSetCursor
+  OledPixel OledDrawL OledCirc OledCircF
+  OledRect OledRectF OledRectR OledRectrf
+}transfer
+
+128 constant width
+64 constant height
+-1 constant OledReset
+0 constant BLACK
+1 constant WHITE
+1 constant SSD1306_EXTERNALVCC
+2 constant SSD1306_SWITCHCAPVCC
+: OledInit
+  OledAddr @ 0= if
+    OledNew SSD1306_SWITCHCAPVCC $3C OledBegin drop
+  then
+  OledCLS
+  2 OledTextsize  ( Draw 2x Scale Text )
+  WHITE OledTextc  ( Draw white text )
+  0 0 OledSetCursor  ( Start at top-left corner )
+  z" *Esp32forth*" OledPrintln OledDisplay
+;
+forth definitions
+[THEN]
 
 internals definitions
 transfer{

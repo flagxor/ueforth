@@ -16,6 +16,13 @@
 #define ENABLE_SOCKETS_SUPPORT
 #define ENABLE_FREERTOS_SUPPORT
 
+// Uncomment this #define for OLED Support.
+// You will need to install these libraries from the Library Manager:
+//   Adafruit SSD1306
+//   Adafruit GFX Library
+//   Adafruit BusIO
+// #define ENABLE_OLED_SUPPORT
+
 // For now assume only boards with PSRAM (ESP32-CAM)
 // will want SerialBluetooth (very large) and camera support.
 // Other boards can support these if they're set to a larger
@@ -119,6 +126,7 @@
   OPTIONAL_CAMERA_SUPPORT \
   OPTIONAL_SOCKETS_SUPPORT \
   OPTIONAL_FREERTOS_SUPPORT \
+  OPTIONAL_OLED_SUPPORT \
 
 #ifndef ENABLE_SPIFFS_SUPPORT
 // Provide a default failing SPIFFS.begin
@@ -321,6 +329,38 @@ static cell_t FromIP(IPAddress ip) {
       ws0->sendContent(c1); DROPn(2)) \
   X("WebServer.method", WEBSERVER_METHOD, n0 = ws0->method()) \
   X("WebServer.handleClient", WEBSERVER_HANDLE_CLIENT, ws0->handleClient(); DROP)
+#endif
+
+#ifndef ENABLE_OLED_SUPPORT
+# define OPTIONAL_OLED_SUPPORT
+#else
+#  include <Adafruit_GFX.h>
+#  include <Adafruit_SSD1306.h>
+static Adafruit_SSD1306 *oled_display = 0;
+# define OPTIONAL_OLED_SUPPORT \
+  Y(OledAddr, PUSH oled_display) \
+  Y(OledNew, oled_display = new Adafruit_SSD1306 display(n2, n1, &Wire, n0) DROPn(3)) \
+  Y(OledDelete, delete oled_display) \
+  Y(OledBegin, n0 = oled_display->begin(n1, n0); NIP) \
+  Y(OledHOME, oled_display->setCursor(0,0); DROP) \
+  Y(OledCLS, oled_display->clearDisplay()) \
+  Y(OledTextc, oled_display->setTextColor(n0); DROP) \
+  Y(OledPrintln, oled_display->println(c0); DROP) \
+  Y(OledNumln, oled_display->println(n0); DROP) \
+  Y(OledNum, oled_display->print(n0); DROP) \
+  Y(OledDisplay, oled_display->display()) \
+  Y(OledPrint, oled_display->write(c0); DROP) \
+  Y(OledInvert, oled_display->invertDisplay(n0); DROP) \
+  Y(OledTextsize, oled_display->setTextSize(n0); DROP) \
+  Y(OledSetCursor, oled_display->setCursor(n1,n0); DROPn(2)) \
+  Y(OledPixel, oled_display->drawPixel(n2, n1, n0); DROPn(2)) \
+  Y(OledDrawL, oled_display->drawLine(n4, n3, n2, n1, n0); DROPn(4)) \
+  Y(OledCirc, oled_display->drawCircle(n3,n2, n1, n0); DROPn(3)) \
+  Y(OledCircF, oled_display->fillCircle(n3, n2, n1, n0); DROPn(3)) \
+  Y(OledRect, oled_display->drawRect(n4, n3, n2, n1, n0); DROPn(4)) \
+  Y(OledRectF, oled_display->fillRect(n4, n3, n2, n1, n0); DROPn(3)) \
+  Y(OledRectR, oled_display->drawRoundRect(n5, n4, n3, n2, n1, n0); DROPn(5)) \
+  Y(OledRectRF, oled_display->fillRoundRect(n5, n4, n3, n2, n1, n0 ); DROPn(5))
 #endif
 
 static char filename[PATH_MAX];

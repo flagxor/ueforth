@@ -134,11 +134,26 @@ VLIST ( -- ) List the words in the context vocabulary (not chains)
 WORDS ( -- ) List the words in the context vocabulary (including chains)
 TRANSFER ( "name" ) Move a word from its current dictionary to the current vocabulary
                     Useful for "hiding" built-in words
+TRANSFER{ ..words.. }TRANSFER ( -- ) Transfer multiple words to the current vocabulary
 ALSO ( -- ) Duplicate the vocabulary at the top of the vocabulary stack
 ONLY ( -- ) Reset context stack to one item, the FORTH dictionary
             Non-standard, as there's no distinct ONLY vocabulary
 ORDER ( -- ) Print the vocabulary search order
 SEALED ( -- ) Alter the last vocabulary defined so it doesn't chain
+</pre>
+
+<h5>Interpret Time Conditions</h5>
+<p>
+<code>[I]F</code>, <code>[ELSE]</code>, and <code>[THEN]</code> can be used
+to selectively compile. Used in tandem with <code>DEFINED?</code> they can
+be used to handle the absence of modules gracefully.
+Nesting is supported.
+</p>
+<pre>
+DEFINED? ( "name" -- xt|0 ) Check if a word exists (works at compile time too).
+[IF] ( f -- ) Conditionally interpret the text the follows.
+[ELSE] ( -- ) Interpret time ELSE.
+[THEN] ( -- ) Interpret time THEN.
 </pre>
 
 <h5>Blocks</h5>
