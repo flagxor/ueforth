@@ -111,8 +111,8 @@ transfer{
   OledRect OledRectF OledRectR OledRectrf
 }transfer
 
-128 constant width
-64 constant height
+128 constant WIDTH
+64 constant HEIGHT
 -1 constant OledReset
 0 constant BLACK
 1 constant WHITE
@@ -120,7 +120,8 @@ transfer{
 2 constant SSD1306_SWITCHCAPVCC
 : OledInit
   OledAddr @ 0= if
-    OledNew SSD1306_SWITCHCAPVCC $3C OledBegin drop
+    WIDTH HEIGHT OledReset OledNew
+    SSD1306_SWITCHCAPVCC $3C OledBegin drop
   then
   OledCLS
   2 OledTextsize  ( Draw 2x Scale Text )

@@ -21,7 +21,7 @@
 //   Adafruit SSD1306
 //   Adafruit GFX Library
 //   Adafruit BusIO
-// #define ENABLE_OLED_SUPPORT
+//#define ENABLE_OLED_SUPPORT
 
 // For now assume only boards with PSRAM (ESP32-CAM)
 // will want SerialBluetooth (very large) and camera support.
@@ -338,8 +338,8 @@ static cell_t FromIP(IPAddress ip) {
 #  include <Adafruit_SSD1306.h>
 static Adafruit_SSD1306 *oled_display = 0;
 # define OPTIONAL_OLED_SUPPORT \
-  Y(OledAddr, PUSH oled_display) \
-  Y(OledNew, oled_display = new Adafruit_SSD1306 display(n2, n1, &Wire, n0) DROPn(3)) \
+  Y(OledAddr, PUSH &oled_display) \
+  Y(OledNew, oled_display = new Adafruit_SSD1306(n2, n1, &Wire, n0); DROPn(3)) \
   Y(OledDelete, delete oled_display) \
   Y(OledBegin, n0 = oled_display->begin(n1, n0); NIP) \
   Y(OledHOME, oled_display->setCursor(0,0); DROP) \
