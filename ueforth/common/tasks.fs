@@ -4,13 +4,22 @@ vocabulary tasks   tasks definitions
 
 variable task-list
 
-forth definitions tasks
+forth definitions tasks also internals
 
-: task ( xt rsz dsz "name" )
-   create here >r 0 , 0 , 0 ,
-   here cell+ r@ cell+ ! cells allot
-   here r@ 2 cells + ! cells allot
-   dup 0= if drop else >body r@ 2 cells + @ ! then rdrop ;
+: pause
+  rp@ sp@ task-list @ cell+ !
+  task-list @ @ task-list !
+  task-list @ cell+ @ sp! rp!
+;
+
+: task ( xt dsz rsz "name" )
+   create here >r 0 , 0 , ( link, sp )
+   swap here cell+ r@ cell+ ! cells allot
+   here r@ cell+ @ ! cells allot
+   dup 0= if drop else
+     here r@ cell+ @ @ ! ( set rp to point here )
+     , postpone pause ['] branch , here 3 cells - ,
+   then rdrop ;
 
 : start-task ( t -- )
    task-list @ if
@@ -20,14 +29,6 @@ forth definitions tasks
      dup task-list !
      dup !
    then
-;
-
-: pause
-  rp@ task-list @ 2 cells + !
-  sp@ task-list @ cell+ !
-  task-list @ @ task-list !
-  task-list @ cell+ @ sp!
-  task-list @ 2 cells + @ rp!
 ;
 
 DEFINED? ms-ticks [IF]
