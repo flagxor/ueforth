@@ -278,28 +278,36 @@ $(ARDUINO)/ESP32forth.zip: $(ARDUINO)/ESP32forth/ESP32forth.ino
 $(DEPLOY):
 	mkdir -p $@
 
+REPLACE = common/replace.js \
+          COMMON=@site/common.html \
+          DESKTOP_COMMON=@site/desktop_common.html \
+          MENU=@site/menu.html \
+          VERSION=${VERSION} \
+          REVISION=${REVISION}
+UE_REPLACE = $(REPLACE) FORTH=uEForth
+ESP_REPLACE = $(REPLACE) FORTH=ESP32forth
+
 $(DEPLOY)/app.yaml: $(ARDUINO)/ESP32forth.zip \
                     $(wildcard site/*.html) \
                     site/app.yaml \
                     site/eforth.go \
                     $(TARGETS) | $(DEPLOY)
-	cp -r site/* $(DEPLOY)/
-	mkdir -p $(DEPLOY)/downloads
+	mkdir -p $(DEPLOY)
+	cp -r site/static $(DEPLOY)/static
+	cp -r site/downloads $(DEPLOY)/downloads
+	cp site/*.go $(DEPLOY)/
+	cp site/*.yaml $(DEPLOY)/
 	cp -r $(ARDUINO)/ESP32forth.zip $(DEPLOY)/downloads
 	cp -r $(POSIX)/ueforth $(DEPLOY)/downloads/ueforth.linux
 	cp -r $(WINDOWS)/uEf32.exe $(DEPLOY)/downloads/uEf32.exe
 	cp -r $(WINDOWS)/uEf64.exe $(DEPLOY)/downloads/uEf64.exe
 	cp -r $(RES)/eforth.ico $(DEPLOY)/downloads/favicon.ico
 	cp site/.gcloudignore $(DEPLOY)
-	cat site/ESP32forth.html | \
-    sed "s/{{VERSION}}/${VERSION}/g" | \
-    sed "s/{{REVISION}}/${REVISION}/g" > $(DEPLOY)/ESP32forth.html
-	cat site/windows.html | \
-    sed "s/{{VERSION}}/${VERSION}/g" | \
-    sed "s/{{REVISION}}/${REVISION}/g" > $(DEPLOY)/windows.html
-	cat site/linux.html | \
-    sed "s/{{VERSION}}/${VERSION}/g" | \
-    sed "s/{{REVISION}}/${REVISION}/g" > $(DEPLOY)/linux.html
+	cat site/index.html | $(ESP_REPLACE) >$(DEPLOY)/index.html
+	cat site/ESP32forth.html | $(ESP_REPLACE) >$(DEPLOY)/ESP32forth.html
+	cat site/linux.html | $(UE_REPLACE) >$(DEPLOY)/linux.html
+	cat site/windows.html | $(UE_REPLACE) >$(DEPLOY)/windows.html
+	cat site/classic.html | $(UE_REPLACE) >$(DEPLOY)/classic.html
 
 deploy: clean all
 	cd out/deploy && gcloud app deploy -q --project esp32forth *.yaml
