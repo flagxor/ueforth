@@ -15,8 +15,16 @@
     }
   }
   for (var i = 0; i < anchors.length; ++i) {
-    if (anchors[i].href.split('?')[0] == window.location.href.split('?')[0]) {
-      anchors[i].parentElement.classList.add('picked');
+    var link = anchors[i].href;
+    link = link.replace('https://eforth.appspot.com/', './');
+    link = link.replace('https://esp32forth.appspot.com/', './');
+    if (link.split('?')[0] == window.location.href.split('?')[0]) {
+      if (anchors[i].href.split('?')[0] == window.location.href.split('?')[0]) {
+        anchors[i].parentElement.classList.add('picked');
+      } else {
+        // Redirect if on the wrong host.
+        window.location.replace(anchors[i].ref);
+      }
     }
   }
 })();
