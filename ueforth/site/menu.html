@@ -1,0 +1,23 @@
+<div class="menu">
+  <span><a href="https://esp32forth.appspot.com/ESP32forth.html">ESP32forth</a></span>
+  <span><a href="https://eforth.appspot.com/linux.html">Linux</a></span>
+  <span><a href="https://eforth.appspot.com/windows.html">Windows</a></span>
+  <span><a href="https://eforth.appspot.com/internals.html">Internals</a></span>
+  <span><a href="https://eforth.appspot.com/classic.html">Classic</a></span>
+</div>
+<script>
+(function() {
+  var anchors = document.getElementsByTagName('a');
+  if (window.location.href.indexOf('file://') == 0) {
+    for (var i = 0; i < anchors.length; ++i) {
+      anchors[i].href = anchors[i].href.replace('https://eforth.appspot.com/', './');
+      anchors[i].href = anchors[i].href.replace('https://esp32forth.appspot.com/', './');
+    }
+  }
+  for (var i = 0; i < anchors.length; ++i) {
+    if (anchors[i].href.split('?')[0] == window.location.href.split('?')[0]) {
+      anchors[i].parentElement.classList.add('picked');
+    }
+  }
+})();
+</script>

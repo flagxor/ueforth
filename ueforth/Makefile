@@ -303,10 +303,11 @@ $(DEPLOY)/app.yaml: $(ARDUINO)/ESP32forth.zip \
 	cp -r $(WINDOWS)/uEf64.exe $(DEPLOY)/downloads/uEf64.exe
 	cp -r $(RES)/eforth.ico $(DEPLOY)/downloads/favicon.ico
 	cp site/.gcloudignore $(DEPLOY)
-	cat site/index.html | $(ESP_REPLACE) >$(DEPLOY)/index.html
 	cat site/ESP32forth.html | $(ESP_REPLACE) >$(DEPLOY)/ESP32forth.html
+	cat site/index.html | $(UE_REPLACE) >$(DEPLOY)/index.html
 	cat site/linux.html | $(UE_REPLACE) >$(DEPLOY)/linux.html
 	cat site/windows.html | $(UE_REPLACE) >$(DEPLOY)/windows.html
+	cat site/internals.html | $(UE_REPLACE) >$(DEPLOY)/internals.html
 	cat site/classic.html | $(UE_REPLACE) >$(DEPLOY)/classic.html
 
 deploy: clean all
