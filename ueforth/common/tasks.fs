@@ -30,6 +30,10 @@ forth definitions tasks
   task-list @ 2 cells + @ rp!
 ;
 
+DEFINED? ms-ticks [IF]
+  : ms ( n -- ) ms-ticks >r begin pause ms-ticks r@ - over >= until rdrop drop ;
+[THEN]
+
 tasks definitions
 0 0 0 task main-task   main-task start-task
 forth definitions
