@@ -115,6 +115,20 @@ SIGPIPE SIG_IGN signal drop
 ( Modes )
 octal 777 constant 0777 decimal
 
+( Clock )
+z" clock_gettime" 2 sysfunc clock_gettime
+: timespec ( "name" ) create 0 , 0 , ;
+0 constant CLOCK_REALTIME
+1 constant CLOCK_MONOTONIC
+2 constant CLOCK_PROCESS_CPUTIME_ID
+3 constant CLOCK_THREAD_CPUTIME_ID
+4 constant CLOCK_MONOTONIC_RAW
+5 constant CLOCK_REALTIME_COARSE
+6 constant CLOCK_MONOTONIC_COARSE
+7 constant CLOCK_BOOTTIME
+8 constant CLOCK_REALTIME_ALARM
+9 constant CLOCK_BOOTTIME_ALARM
+
 forth definitions posix
 
 ( Generic Files )
@@ -139,25 +153,11 @@ O_RDWR constant r/w
    dup 0 SEEK_END lseek r> swap >r
          SEEK_SET lseek drop r> d0<ior ;
 
-( Clock )
-z" clock_gettime" 2 sysfunc clock_gettime
-: timespec ( "name" ) create 0 , 0 , ;
-0 constant CLOCK_REALTIME
-1 constant CLOCK_MONOTONIC
-2 constant CLOCK_PROCESS_CPUTIME_ID
-3 constant CLOCK_THREAD_CPUTIME_ID
-4 constant CLOCK_MONOTONIC_RAW
-5 constant CLOCK_REALTIME_COARSE
-6 constant CLOCK_MONOTONIC_COARSE
-7 constant CLOCK_BOOTTIME
-8 constant CLOCK_REALTIME_ALARM
-9 constant CLOCK_BOOTTIME_ALARM
+( Other Utils )
+: ms ( n -- ) 1000 * usleep drop ;
 : ms-ticks ( -- n )
    0 >r 0 >r CLOCK_MONOTONIC_RAW rp@ cell - clock_gettime throw
    r> 1000000 / r> 1000 * + ;
-
-( Other Utils )
-: ms ( n -- ) 1000 * usleep drop ;
 
 forth
 
