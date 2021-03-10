@@ -251,7 +251,7 @@ Wire.getTimeout ( -- ms )
 Wire.lastError ( -- n )
 Wire.getErrorText ( n -- z )
 Wire.beginTransmission ( n -- )
-Wire.endTransmission ( sendstop -- f )
+Wire.endTransmission ( sendstop -- f ) Default is true
 Wire.requestFrom ( address quantity sendstop -- n )
 Wire.writeTransmission ( addr a n sendstop -- err )
 Wire.readTransmission ( addr a n sendstop acount -- err )

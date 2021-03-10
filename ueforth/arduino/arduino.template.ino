@@ -212,7 +212,7 @@
   X("Wire.lastError", WIRE_LAST_ERROR, PUSH Wire.lastError()) \
   X("Wire.getErrorText", WIRE_GET_ERROR_TEXT, PUSH Wire.getErrorText(n0)) \
   X("Wire.beginTransmission", WIRE_BEGIN_TRANSMISSION, Wire.beginTransmission(n0); DROP) \
-  X("Wire.endTransmission", WIRE_END_TRANSMISSION, PUSH Wire.endTransmission(n0)) \
+  X("Wire.endTransmission", WIRE_END_TRANSMISSION, SET Wire.endTransmission(n0)) \
   X("Wire.requestFrom", WIRE_REQUEST_FROM, n0 = Wire.requestFrom(n2, n1, n0); NIPn(2)) \
   X("Wire.writeTransmission", WIRE_WRITE_TRANSMISSION, \
       n0 = Wire.writeTransmission(n3, b2, n1, n0); NIPn(3)) \
