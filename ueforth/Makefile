@@ -1,4 +1,4 @@
-VERSION=7.0.2
+VERSION=7.0.3
 REVISION=$(shell git rev-parse HEAD)
 
 OUT = out
@@ -137,27 +137,33 @@ see_all_test: $(POSIX)/ueforth
 $(GEN):
 	mkdir -p $@
 
-POSIX_BOOT =  common/boot.fs common/vocabulary.fs common/hide_calls.fs common/ansi.fs \
+POSIX_BOOT =  common/boot.fs common/conditionals.fs common/vocabulary.fs \
+              common/hide_calls.fs common/ansi.fs \
               posix/posix.fs posix/posix_highlevel.fs posix/termios.fs common/locals.fs \
               common/utils.fs common/highlevel.fs common/filetools.fs posix/posix_desktop.fs \
-              common/tasks.fs common/streams.fs common/blocks.fs posix/args.fs
+              common/tasks.fs common/streams.fs common/blocks.fs posix/autoboot.fs \
+              common/fini.fs
 $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 	echo "ok" | cat $(POSIX_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
 
-WINDOWS_BOOT = common/boot.fs common/vocabulary.fs common/hide_calls.fs common/ansi.fs \
+WINDOWS_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
+               common/hide_calls.fs common/ansi.fs \
                windows/windows.fs windows/windows_highlevel.fs common/highlevel.fs \
-               common/utils.fs common/tasks.fs common/streams.fs common/blocks.fs common/locals.fs
+               common/utils.fs common/filetools.fs common/tasks.fs common/streams.fs \
+               common/blocks.fs common/locals.fs \
+               common/fini.fs
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 	echo "ok" | cat $(WINDOWS_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
 
-ARDUINO_BOOT = common/boot.fs common/vocabulary.fs \
+ARDUINO_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
                arduino/arduino.fs arduino/arduino_highlevel.fs \
                arduino/bindings.fs common/highlevel.fs \
                common/filetools.fs common/utils.fs common/locals.fs \
                common/tasks.fs common/streams.fs arduino/arduino_server.fs \
-               arduino/arduino_bterm.fs \
+               arduino/arduino_bterm.fs arduino/telnetd.fs \
                arduino/esp_camera.fs common/blocks.fs \
-               arduino/autoboot.fs
+               arduino/autoboot.fs \
+               common/fini.fs
 $(GEN)/arduino_boot.h: common/source_to_string.js $(ARDUINO_BOOT) | $(GEN)
 	echo "ok" | cat $(ARDUINO_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
 
@@ -288,19 +294,37 @@ $(ARDUINO)/ESP32forth.zip: $(ARDUINO)/ESP32forth/ESP32forth.ino
 $(DEPLOY):
 	mkdir -p $@
 
+REPLACE = common/replace.js \
+          COMMON=@site/common.html \
+          DESKTOP_COMMON=@site/desktop_common.html \
+          MENU=@site/menu.html \
+          VERSION=${VERSION} \
+          REVISION=${REVISION}
+UE_REPLACE = $(REPLACE) FORTH=uEForth
+ESP_REPLACE = $(REPLACE) FORTH=ESP32forth
+
 $(DEPLOY)/app.yaml: $(ARDUINO)/ESP32forth.zip \
                     $(wildcard site/*.html) \
                     site/app.yaml \
                     site/eforth.go \
                     $(TARGETS) | $(DEPLOY)
-	cp -r site/* $(DEPLOY)/
-	mkdir -p $(DEPLOY)/downloads
+	mkdir -p $(DEPLOY)
+	cp -r site/static $(DEPLOY)/static
+	cp -r site/downloads $(DEPLOY)/downloads
+	cp site/*.go $(DEPLOY)/
+	cp site/*.yaml $(DEPLOY)/
 	cp -r $(ARDUINO)/ESP32forth.zip $(DEPLOY)/downloads
 	cp -r $(POSIX)/ueforth $(DEPLOY)/downloads/ueforth.linux
 	cp -r $(WINDOWS)/uEf32.exe $(DEPLOY)/downloads/uEf32.exe
 	cp -r $(WINDOWS)/uEf64.exe $(DEPLOY)/downloads/uEf64.exe
 	cp -r $(RES)/eforth.ico $(DEPLOY)/downloads/favicon.ico
 	cp site/.gcloudignore $(DEPLOY)
+	cat site/ESP32forth.html | $(ESP_REPLACE) >$(DEPLOY)/ESP32forth.html
+	cat site/index.html | $(UE_REPLACE) >$(DEPLOY)/index.html
+	cat site/linux.html | $(UE_REPLACE) >$(DEPLOY)/linux.html
+	cat site/windows.html | $(UE_REPLACE) >$(DEPLOY)/windows.html
+	cat site/internals.html | $(UE_REPLACE) >$(DEPLOY)/internals.html
+	cat site/classic.html | $(UE_REPLACE) >$(DEPLOY)/classic.html
 
 deploy: clean all
 	cd out/deploy && gcloud app deploy -q --project esp32forth *.yaml

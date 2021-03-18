@@ -8,19 +8,14 @@
 <div>
 <h1>ESP32forth</h1>
 
-<div class="menu">
-  <span class="picked"><a href="ESP32forth.html">ESP32forth</a></span>
-  <span><a href="linux.html">Linux</a></span>
-  <span><a href="windows.html">Windows</a></span>
-  <span><a href="internals.html">Internals</a></span>
-  <span><a href="classic.html">Classic</a></span>
-</div>
+{{MENU}}
 
 <h2>Download</h2>
 
 <p>
 <a href="downloads/ESP32forth.zip">ESP32forth.zip</a>
-  - Single .ino file ready for installation
+  - Single .ino file ready for installation<br/>
+  <i>Version: {{VERSION}} Rev: {{REVISION}}</i>
 </p>
 
 <p>
@@ -82,102 +77,9 @@ On boot, ESP32forth configures PIN 2 (typically an LED) to be an output and brin
 
 <h3>ESP32forth Specific Words</h3>
 
-<h5>Null Terminated Strings</h5>
-<p>
-As null terminated strings are used throughout C interfaces,
-their use is supported in Forth by way of several non-standard
-words with the convention of using Z/z to refer to such strings
-in names and stack comments.
-</p>
-<pre>
-Z" ( "string" -- z ) Creates a null terminated string on the heap
-Z&gt;S ( z -- a n ) Convert a null terminated string to a counted string
-S&gt;Z ( a n -- z ) Conver a counted string string to null terminated (copies string to heap)
-</pre>
+{{COMMON}}
 
-<h5>Raw Strings</h5>
-<p>
-Raw strings are provided better support using a string
-for the duration of the current command, without consuming heap memory.
-</p>
-<pre>
-R" ( "string" -- a n ) Creates a temporary counted string
-R| ( string| -- a n ) Creates a temporary counted string ending with |
-</pre>
-
-<h5>Utilities</h5>
-<pre>
-DUMP ( a n -- ) Dump a memory region
-SEE ( "name" -- ) Attempt to decompile a word
-VARIABLE ECHO -- Determines if commands are echoed
-</pre>
-
-<h5>Vocabularies</h5>
-<p>
-ESP32forth uses a hybrid of Forth-79 and Forth-83 style vocabularies.
-By default vocabularies chain to the vocabulary in which they were defined,
-as in Forth-79. However, like Forth-83, <code>ALSO</code>
-can be used to add vocabularies to a vocabulary stack of which
-<code>CONTEXT @</code> is the first item.
-The word <code>ONLY</code> clears the vocabulary stack, but as there is
-no separate ONLY vocabulary, it also sets <code>CONTEXT</code>
-to the <code>FORTH</code> vocabulary.
-The word <code>SEALED</code> modifies the most recently defined vocabulary
-such that it does not chain. Note, this must be done before words are added to it.
-</p>
-<pre>
-VOCABULARY ( "name" ) Create a vocabulary with the current vocabulary as parent
-FORTH ( -- ) Make the FORTH vocabulary the context vocabulary
-DEFINITIONS ( -- ) Make the context vocabulary the current vocabulary
-VLIST ( -- ) List the words in the context vocabulary (not chains)
-WORDS ( -- ) List the words in the context vocabulary (including chains)
-TRANSFER ( "name" ) Move a word from its current dictionary to the current vocabulary
-                    Useful for "hiding" built-in words
-ALSO ( -- ) Duplicate the vocabulary at the top of the vocabulary stack
-ONLY ( -- ) Reset context stack to one item, the FORTH dictionary
-            Non-standard, as there's no distinct ONLY vocabulary
-ORDER ( -- ) Print the vocabulary search order
-SEALED ( -- ) Alter the last vocabulary defined so it doesn't chain
-</pre>
-
-<h5>Blocks</h5>
-<pre>
-USE ( "name" -- ) Use "name" as the blockfile, e.g. USE /spiffs/foo
-OPEN-BLOCKS ( a n -- ) Open a file as the block file
-LOAD ( n -- ) Evaluate a block
-THRU ( a b -- ) Load blocks a thru b
-LIST ( n -- ) List a block
-BLOCK ( n -- a ) Get a 1024 byte block
-BUFFER ( n -- a ) Get a 1024 byte block without regard to old contents
-UPDATE ( -- ) Mark the last block modified
-FLUSH ( -- ) Save and empty all buffers
-EMPTY-BUFFERS ( -- ) Empty all buffers
-SAVE-BUFFERS ( -- ) Save all buffers
-SCR ( -- a ) Pointer to last listed block
-</pre>
-
-<h5>Block Editor</h5>
-These words are available inside the <code>EDITOR</code> vocabulary.
-Note the block editor places newlines in the 63rd column of each line
-to make the block file readable in a text editor.
-<pre>
-WIPE ( -- ) Blank out the current block
-L ( -- ) List the current block
-D ( n -- ) Delete a line in the current block
-E ( n -- ) Clear a line in the current block
-R ( n "text" -- ) Replace a line in the current block
-A ( n "text" -- ) Add (insert) a line in the current block
-P ( -- ) Move to the previous block
-N ( -- ) Move to the next block
-</pre>
-
-<h5>Utilities</h5>
-<pre>
-SEE ( "name" -- ) Attempt to decompile a word
-ECHO ( -- a ) -- Address of flag that determines if commands are echoed
-</pre>
-
-<h3>ESP32forth Opcodes</h3>
+<h3>ESP32forth Bindings</h3>
 
 <p>
 Because Arduino builds a statically linked image for flashing into ESP32 devices,
@@ -349,7 +251,7 @@ Wire.getTimeout ( -- ms )
 Wire.lastError ( -- n )
 Wire.getErrorText ( n -- z )
 Wire.beginTransmission ( n -- )
-Wire.endTransmission ( sendstop -- f )
+Wire.endTransmission ( sendstop -- f ) Default is true
 Wire.requestFrom ( address quantity sendstop -- n )
 Wire.writeTransmission ( addr a n sendstop -- err )
 Wire.readTransmission ( addr a n sendstop acount -- err )

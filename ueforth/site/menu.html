@@ -1,0 +1,34 @@
+<div class="menu">
+  <span><a href="https://esp32forth.appspot.com/ESP32forth.html">ESP32forth</a></span>
+  <span><a href="https://eforth.appspot.com/linux.html">Linux</a></span>
+  <span><a href="https://eforth.appspot.com/windows.html">Windows</a></span>
+  <span><a href="https://eforth.appspot.com/internals.html">Internals</a></span>
+  <span><a href="https://eforth.appspot.com/classic.html">Classic</a></span>
+</div>
+<script>
+(function() {
+  function Behead(full, link) {
+    if (full) {
+      link = link.replace('https://eforth.appspot.com/', './');
+      link = link.replace('https://esp32forth.appspot.com/', './');
+    }
+    return link.split('?')[0];
+  }
+  var anchors = document.getElementsByTagName('a');
+  if (window.location.href.indexOf('file://') == 0) {
+    for (var i = 0; i < anchors.length; ++i) {
+      anchors[i].href = Behead(true, anchors[i].href);
+    }
+  }
+  for (var i = 0; i < anchors.length; ++i) {
+    if (Behead(true, anchors[i].href) == Behead(true, window.location.href)) {
+      if (Behead(false, anchors[i].href) == Behead(false, window.location.href)) {
+        anchors[i].parentElement.classList.add('picked');
+      } else {
+        // Redirect if on the wrong host.
+        window.location.replace(anchors[i].href);
+      }
+    }
+  }
+})();
+</script>

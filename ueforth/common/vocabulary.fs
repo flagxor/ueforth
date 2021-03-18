@@ -11,7 +11,6 @@ current @ constant forth-wordlist
 : xt-hide ( xt -- ) xt-find& dup @ >link swap ! ;
 : xt-transfer ( xt --  ) dup xt-hide   current @ @ over >link& !   current @ ! ;
 : transfer ( "name" ) ' xt-transfer ;
-: ?transfer ( "name" ) bl parse find dup if xt-transfer else drop then ;
 : }transfer ;
 : transfer{ begin ' dup ['] }transfer = if drop exit then xt-transfer again ;
 
@@ -33,13 +32,14 @@ transfer{
   last-vocabulary
   branch 0branch donext dolit
   'context 'notfound notfound
-  immediate? input-buffer ?echo ?echo-prompt
+  immediate? input-buffer ?echo ?arrow. arrow
   evaluate1 evaluate-buffer
   'sys 'heap aliteral
   leaving( )leaving leaving leaving,
   (do) (?do) (+loop)
   parse-quote digit $@ raw.s
   tib-setup input-limit
+  [SKIP] [SKIP]'
 }transfer
 forth definitions
 

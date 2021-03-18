@@ -147,3 +147,4 @@ forth
 
 ( Setup entry )
 : ok   ." uEforth v{{VERSION}} - rev {{REVISION}}" cr prompt refill drop quit ;
+' forth ( leave on stack for fini.fs )

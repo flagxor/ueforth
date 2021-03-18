@@ -1,10 +1,19 @@
 internals definitions
+
 ( Change default block source on arduino )
 : arduino-default-use s" /spiffs/blocks.fb" open-blocks ;
 ' arduino-default-use is default-use
 
-( Check for autoexec.fs and run if present )
-: autoexec ( a n -- ) s" /spiffs/autoexec.fs" ['] included catch 2drop drop ;
-' autoexec
+( Setup remember file )
+: arduino-remember-filename   s" /spiffs/myforth" ;
+' arduino-remember-filename is remember-filename
+
+( Check for autoexec.fs and run if present.
+  Failing that, try to revive save image. )
+: autoexec
+   300 for key? if rdrop exit then 10 ms next
+   s" /spiffs/autoexec.fs" ['] included catch 2drop drop
+   ['] revive catch drop ;
+' autoexec ( leave on the stack for fini.fs )
+
 forth definitions
-execute

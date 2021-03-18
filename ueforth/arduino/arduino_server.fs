@@ -143,13 +143,12 @@ create out-string out-size 1+ allot align
    webserver-task start-task
 ;
 
+also forth definitions
+
 : login ( z z -- )
    WIFI_MODE_STA Wifi.mode
    WiFi.begin begin WiFi.localIP 0= while 100 ms repeat WiFi.localIP ip. cr
    z" forth" MDNS.begin if ." MDNS started" else ." MDNS failed" then cr ;
-
-also forth definitions
-
 : webui ( z z -- ) login serve ;
 
 only forth definitions

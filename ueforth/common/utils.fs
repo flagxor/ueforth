@@ -10,6 +10,9 @@
 ( Remove from Dictionary )
 : forget ( "name" ) ' dup >link current @ !  >name drop here - allot ;
 
+2 constant SMUDGE
+: :noname ( -- xt ) 0 , current @ @ , SMUDGE , here dup current @ ! ['] = @ , postpone ] ;
+
 internals definitions
 : mem= ( a a n -- f)
    for aft 2dup c@ swap c@ <> if 2drop rdrop 0 exit then 1+ swap 1+ then next 2drop -1 ;

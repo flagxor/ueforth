@@ -1,0 +1,28 @@
+
+<h3>Windows &amp; Linux Calling</h3>
+
+<p>
+As unfortunately both Windows and Linux have system and library calls with
+as many as 10 parameters (for example <code>XCreateImage</code>),
+a collection of calling thunks is required.
+A single varidic thunk would be ideal, but is hard to do without per platform
+assembly language.
+</p>
+
+<pre>
+CALL0 ( fn -- n )
+CALL1 ( n fn -- n )
+CALL2 ( n n fn -- n )
+CALL3 ( n n n fn -- n )
+CALL4 ( n n n n fn -- n )
+CALL5 ( n n n n n fn -- n )
+CALL6 ( n n n n n n fn -- n )
+CALL7 ( n n n n n n n fn -- n )
+CALL7 ( n n n n n n n n fn -- n )
+CALL9 ( n n n n n n n n n fn -- n )
+CALL10 ( n n n n n n n n n n fn -- n )
+</pre>
+
+<p>
+See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/common/calling.h">calling.h</a>.
+</p>
