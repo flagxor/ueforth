@@ -75,6 +75,8 @@
   Y(digitalWrite, digitalWrite(n1, n0); DROPn(2)) \
   Y(digitalRead, n0 = digitalRead(n0)) \
   Y(analogRead, n0 = analogRead(n0)) \
+  Y(pulseIn, n0 = pulseIn(n2, n1, n0); NIPn(2)) \
+  Y(dacWrite, dacWrite(n1, n0); DROPn(2)) \
   Y(ledcSetup, \
       n0 = (cell_t) (1000000 * ledcSetup(n2, n1 / 1000.0, n0)); NIPn(2)) \
   Y(ledcAttachPin, ledcAttachPin(n1, n0); DROPn(2)) \

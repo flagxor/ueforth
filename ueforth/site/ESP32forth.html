@@ -145,6 +145,8 @@ esp_bt_dev_get_address ( -- a ) addr of 6 byte mac address
 pinMode ( pin mode -- )   Set GPIO pin mode
 digitalWrite ( pin value -- )   Set GPIO pin state
 analogRead ( pin -- n )   Analog read from 0-4095
+pulseIn ( pin value usec -- usec/0 )  Wait for a pulse
+dacWrite ( pin 0-255 -- )  Write to DAC (pin 25, 26)
 </pre>
 
 <h5>ledc</h5>
