@@ -285,6 +285,82 @@ SD_MMC.totalBytes ( -- n )
 SD_MMC.usedBytes ( -- n )
 </pre>
 
+<h5 id="interrupts">Interrupts</h5>
+These words are inside the <code>INTERRUPTS</code> vocabulary.
+
+<p>High Level words:</p>
+<pre>
+pinchange ( xt pin -- ) Call xt when pin changes.
+</pre>
+
+<p>Example:</p>
+
+<pre>
+: test ." pinvalue: " 17 digitalRead . cr ;
+' test 17 pinchange
+</pre>
+
+<p>Low Level words:</p>
+<pre>
+ESP_INTR_FLAG_DEFAULT -- Default handler allows per pin routing
+
+Various triggers:
+  GPIO_INTR_DISABLE
+  GPIO_INTR_POSEDGE
+  GPIO_INTR_NEGEDGE
+  GPIO_INTR_ANYEDGE
+  GPIO_INTR_LOW_LEVEL
+  GPIO_INTR_HIGH_LEVEL
+
+gpio_config ( gpio_config_t* -- 0/err )
+gpio_reset_pin ( pin -- 0/err )
+
+gpio_set_intr_type ( pin type -- 0/err )
+
+gpio_intr_enable ( pin -- 0/err )
+gpio_intr_disable ( pin -- 0/err )
+
+gpio_set_level ( pin level -- 0/err )
+gpio_get_level ( pin -- level )
+
+gpio_set_direction ( pin mode -- 0/err )
+
+gpio_set_pull_mode ( pin mode -- 0/err )
+
+gpio_wakeup_enable ( pin type -- 0/err )
+gpio_wakeup_disable ( pin -- 0/err )
+
+gpio_pullup_en ( pin -- 0/err )
+gpio_pullup_dis ( pin -- 0/err )
+gpio_pulldown_en ( pin -- 0/err )
+gpio_pulldown_dis ( pin -- 0/err )
+gpio_hold_en ( pin -- 0/err )
+gpio_hold_dis ( pin -- 0/err )
+
+gpio_deep_sleep_hold_en ( -- )
+gpio_deep_sleep_hold_dis ( -- )
+
+gpio_install_isr_service ( a -- ) Typically ESP_INTR_FLAG_DEFAULT
+gpio_uninstall_isr_service
+
+gpio_isr_handler_add ( pin xt arg -- 0/err )
+gpio_isr_handler_remove ( pin -- 0/err )
+
+gpio_set_drive_capability ( pin cap -- 0/err )
+gpio_get_drive_capability ( pin cap* -- 0/err )
+
+esp_intr_alloc ( source flags xt args handle* -- 0/err )
+esp_intr_free ( handle -- 0/err )
+</pre>
+
+<h5>RTOS</h5>
+These words are inside the <code>RTOS</code> vocabulary.
+<pre>
+xPortGetCoreID ( -- n )
+xTaskCreatePinnedToCore ( fn name stack-depth params priority taskout coreid -- )
+vTaskDelete ( task ) -- ) 
+</pre>
+
 <h3 id="webui">ESP32 WebUI</h3>
 
 <p>

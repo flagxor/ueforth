@@ -164,9 +164,31 @@
 # include "esp_intr_alloc.h"
 # include "driver/gpio.h"
 # define OPTIONAL_INTERRUPTS_SUPPORT \
+  Y(gpio_config, n0 = gpio_config((const gpio_config_t *) a0)) \
+  Y(gpio_reset_pin, n0 = gpio_reset_pin((gpio_num_t) n0)) \
+  Y(gpio_set_intr_type, n0 = gpio_set_intr_type((gpio_num_t) n1, (gpio_int_type_t) n0); NIP) \
+  Y(gpio_intr_enable, n0 = gpio_intr_enable((gpio_num_t) n0)) \
+  Y(gpio_intr_disable, n0 = gpio_intr_disable((gpio_num_t) n0)) \
+  Y(gpio_set_level, n0 = gpio_set_level((gpio_num_t) n1, n0); NIP) \
+  Y(gpio_get_level, n0 = gpio_get_level((gpio_num_t) n0)) \
+  Y(gpio_set_direction, n0 = gpio_set_direction((gpio_num_t) n1, (gpio_mode_t) n0); NIP) \
+  Y(gpio_set_pull_mode, n0 = gpio_set_pull_mode((gpio_num_t) n1, (gpio_pull_mode_t) n0); NIP) \
+  Y(gpio_wakeup_enable, n0 = gpio_wakeup_enable((gpio_num_t) n1, (gpio_int_type_t) n0); NIP) \
+  Y(gpio_wakeup_disable, n0 = gpio_wakeup_disable((gpio_num_t) n0)) \
+  Y(gpio_pullup_en, n0 = gpio_pullup_en((gpio_num_t) n0)) \
+  Y(gpio_pullup_dis, n0 = gpio_pullup_dis((gpio_num_t) n0)) \
+  Y(gpio_pulldown_en, n0 = gpio_pulldown_en((gpio_num_t) n0)) \
+  Y(gpio_pulldown_dis, n0 = gpio_pulldown_dis((gpio_num_t) n0)) \
+  Y(gpio_hold_en, n0 = gpio_hold_en((gpio_num_t) n0)) \
+  Y(gpio_hold_dis, n0 = gpio_hold_dis((gpio_num_t) n0)) \
+  Y(gpio_deep_sleep_hold_en, gpio_deep_sleep_hold_en()) \
+  Y(gpio_deep_sleep_hold_dis, gpio_deep_sleep_hold_dis()) \
+  Y(gpio_install_isr_service, n0 = gpio_install_isr_service(n0)) \
+  Y(gpio_uninstall_isr_service, gpio_uninstall_isr_service()) \
   Y(gpio_isr_handler_add, n0 = GpioIsrHandlerAdd((gpio_num_t) n2, n1, n0); NIPn(2)) \
   Y(gpio_isr_handler_remove, n0 = gpio_isr_handler_remove((gpio_num_t) n0)) \
-  Y(gpio_install_isr_service, n0 = gpio_install_isr_service(n0)) \
+  Y(gpio_set_drive_capability, n0 = gpio_set_drive_capability((gpio_num_t) n1, (gpio_drive_cap_t) n0); NIP) \
+  Y(gpio_get_drive_capability, n0 = gpio_get_drive_capability((gpio_num_t) n1, (gpio_drive_cap_t *) a0); NIP) \
   Y(esp_intr_alloc, n0 = EspIntrAlloc(n4, n3, n2, n1, a0); NIPn(4)) \
   Y(esp_intr_free, n0 = esp_intr_free((intr_handle_t) n0))
 #endif
