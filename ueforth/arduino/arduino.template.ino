@@ -15,6 +15,7 @@
 #define ENABLE_I2C_SUPPORT
 #define ENABLE_SOCKETS_SUPPORT
 #define ENABLE_FREERTOS_SUPPORT
+#define ENABLE_INTERRUPTS_SUPPORT
 
 // Uncomment this #define for OLED Support.
 // You will need to install these libraries from the Library Manager:
@@ -128,6 +129,7 @@
   OPTIONAL_CAMERA_SUPPORT \
   OPTIONAL_SOCKETS_SUPPORT \
   OPTIONAL_FREERTOS_SUPPORT \
+  OPTIONAL_INTERRUPTS_SUPPORT \
   OPTIONAL_OLED_SUPPORT \
 
 #ifndef ENABLE_SPIFFS_SUPPORT
@@ -154,6 +156,19 @@
   Y(vTaskDelete, vTaskDelete((TaskHandle_t) n0); DROP) \
   Y(xTaskCreatePinnedToCore, n0 = xTaskCreatePinnedToCore((TaskFunction_t) a6, c5, n4, a3, (UBaseType_t) n2, (TaskHandle_t *) a1, (BaseType_t) n0); NIPn(6)) \
   Y(xPortGetCoreID, PUSH xPortGetCoreID())
+#endif
+
+#ifndef ENABLE_INTERRUPTS_SUPPORT
+# define OPTIONAL_INTERRUPTS_SUPPORT
+#else
+# include "esp_intr_alloc.h"
+# include "driver/gpio.h"
+# define OPTIONAL_INTERRUPTS_SUPPORT \
+  Y(gpio_isr_handler_add, n0 = GpioIsrHandlerAdd((gpio_num_t) n2, n1, n0); NIPn(2)) \
+  Y(gpio_isr_handler_remove, n0 = gpio_isr_handler_remove((gpio_num_t) n0)) \
+  Y(gpio_install_isr_service, n0 = gpio_install_isr_service(n0)) \
+  Y(esp_intr_alloc, n0 = EspIntrAlloc(n4, n3, n2, n1, a0); NIPn(4)) \
+  Y(esp_intr_free, n0 = esp_intr_free((intr_handle_t) n0))
 #endif
 
 #ifndef ENABLE_CAMERA_SUPPORT
@@ -368,6 +383,9 @@ static Adafruit_SSD1306 *oled_display = 0;
 static char filename[PATH_MAX];
 static String string_value;
 
+static cell_t EspIntrAlloc(cell_t source, cell_t flags, cell_t xt, cell_t arg, cell_t *ret);
+static cell_t GpioIsrHandlerAdd(cell_t pin, cell_t xt, cell_t arg);
+
 {{core}}
 {{interp}}
 {{boot}}
@@ -418,6 +436,41 @@ static void InvokeWebServerOn(WebServer *ws, const char *url, cell_t xt) {
   });
 }
 #endif
+
+struct handle_interrupt_args {
+  cell_t xt;
+  cell_t arg;
+};
+
+static void IRAM_ATTR HandleInterrupt(void *arg) {
+  struct handle_interrupt_args *args = (struct handle_interrupt_args *) arg;
+  cell_t code[2];
+  code[0] = args->xt;
+  code[1] = g_sys.YIELD_XT;
+  cell_t stack[16];
+  cell_t rstack[16];
+  stack[0] = args->arg;
+  cell_t *rp = rstack;
+  *++rp = (cell_t) (stack + 1);
+  *++rp = (cell_t) code;
+  forth_run(rp);
+}
+
+static cell_t EspIntrAlloc(cell_t source, cell_t flags, cell_t xt, cell_t arg, void *ret) {
+  // NOTE: Leaks memory.
+  struct handle_interrupt_args *args = (struct handle_interrupt_args *) malloc(sizeof(struct handle_interrupt_args));
+  args->xt = xt;
+  args->arg = arg;
+  return esp_intr_alloc(source, flags, HandleInterrupt, args, (intr_handle_t *) ret);
+}
+
+static cell_t GpioIsrHandlerAdd(cell_t pin, cell_t xt, cell_t arg) {
+  // NOTE: Leaks memory.
+  struct handle_interrupt_args *args = (struct handle_interrupt_args *) malloc(sizeof(struct handle_interrupt_args));
+  args->xt = xt;
+  args->arg = arg;
+  return gpio_isr_handler_add((gpio_num_t) pin, HandleInterrupt, args);
+}
 
 void setup() {
   cell_t *heap = (cell_t *) malloc(HEAP_SIZE);

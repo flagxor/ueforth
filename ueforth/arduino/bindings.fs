@@ -86,6 +86,20 @@ transfer{
 16 constant sizeof(sockaddr_in)
 forth definitions
 
+vocabulary interrupts   interrupts definitions
+transfer{
+  gpio_isr_handler_add gpio_isr_handler_remove gpio_install_isr_service
+  esp_intr_alloc esp_intr_free
+}transfer
+0 constant ESP_INTR_FLAG_DEFAULT
+forth definitions
+
+vocabulary rtos   rtos definitions
+transfer{
+  xPortGetCoreID xTaskCreatePinnedToCore vTaskDelete
+}transfer
+forth definitions
+
 DEFINED? SerialBT.new [IF]
 vocabulary bluetooth   bluetooth definitions
 transfer{
