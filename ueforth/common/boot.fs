@@ -136,7 +136,10 @@ variable handler
 
 ( Values )
 : value ( n -- ) create , does> @ ;
-: to ( n -- ) ' >body state @ if aliteral postpone ! else ! then ; immediate
+: to ( n -- )
+   ' >body state @ if aliteral postpone ! else ! then ; immediate
+: +to ( n -- )
+   ' >body state @ if aliteral postpone +! else +! then ; immediate
 
 ( Deferred Words )
 : defer ( "name" -- ) create 0 , does> @ dup 0= throw execute ;
