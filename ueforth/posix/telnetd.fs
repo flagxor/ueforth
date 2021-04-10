@@ -3,7 +3,7 @@ include posix/sockets.fs
 
 vocabulary telnetd   telnetd definitions also posix
 
-8080 constant port
+5555 constant port
 -1 value sockfd   -1 value clientfd
 : bs, ( n -- ) dup 256 / c, c, ;
 : s, ( n -- ) dup c, 256 / c, ;
@@ -38,4 +38,3 @@ defer broker
 
 only forth definitions
 
-telnetd server
