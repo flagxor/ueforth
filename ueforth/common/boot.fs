@@ -1,8 +1,6 @@
 : (   41 parse drop drop ; immediate
 
 ( Useful Basic Compound Words )
-: 2drop ( n n -- ) drop drop ;
-: 2dup ( a b -- a b a b ) over over ;
 : nip ( a b -- b ) swap drop ;
 : rdrop ( r: n n -- ) r> r> drop >r ;
 : */ ( n n n -- n ) */mod nip ;
@@ -27,6 +25,12 @@
 : 2* 2 * ;   : 2/ 2 / ;
 : 4* 4 * ;   : 4/ 4 / ;
 : +! ( n a -- ) swap over @ + swap ! ;
+
+( Double Words )
+: 2drop ( n n -- ) drop drop ;
+: 2dup ( a b -- a b a b ) over over ;
+: 2@ ( a -- lo hi ) dup @ swap cell+ @ ;
+: 2! ( lo hi a -- ) dup >r cell+ ! r> ! ;
 
 ( Line Comments )
 : \   nl parse drop drop ; immediate

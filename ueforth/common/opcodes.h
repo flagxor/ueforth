@@ -39,6 +39,8 @@ typedef int64_t dcell_t;
   X("U/MOD", USMOD, w = *sp; *sp = (ucell_t) w % (ucell_t) tos; \
                     tos = (ucell_t) w / (ucell_t) tos) \
   X("*/MOD", SSMOD, SSMOD_FUNC) \
+  Y(LSHIFT, tos = (*sp-- << tos)) \
+  Y(RSHIFT, tos = (*sp-- >> tos)) \
   Y(AND, tos &= *sp--) \
   Y(OR, tos |= *sp--) \
   Y(XOR, tos ^= *sp--) \

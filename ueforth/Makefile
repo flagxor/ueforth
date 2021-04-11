@@ -145,10 +145,10 @@ ESP32_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
              esp32/bindings.fs common/highlevel.fs \
              common/filetools.fs common/utils.fs common/locals.fs \
              common/tasks.fs common/streams.fs esp32/web_interface.fs \
+             esp32/registers.fs esp32/timers.fs \
              esp32/bterm.fs esp32/telnetd.fs \
              esp32/camera.fs common/blocks.fs \
-             esp32/autoboot.fs \
-             common/fini.fs
+             esp32/autoboot.fs common/fini.fs
 $(GEN)/esp32_boot.h: common/source_to_string.js $(ESP32_BOOT) | $(GEN)
 	echo "ok" | cat $(ESP32_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
 
