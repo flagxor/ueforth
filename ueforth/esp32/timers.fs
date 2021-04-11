@@ -36,10 +36,10 @@ $3ff5f000 constant TIMG_BASE
 : enable! ( v t ) >r 31 $80000000 r> t>nx TIMGn_TxCONFIG_REG m! ;
 : increase! ( v t ) >r 30 $40000000 r> t>nx TIMGn_TxCONFIG_REG m! ;
 : autoreload! ( v t ) >r 29 $20000000 r> t>nx TIMGn_TxCONFIG_REG m! ;
-: divider! ( v t ) >r 3 $1ffffff8 r> t>nx TIMGn_TxCONFIG_REG m! ;
-: edgeint! ( v t ) >r 2 $4 r> t>nx TIMGn_TxCONFIG_REG m! ;
-: levelint! ( v t ) >r 1 $2 r> t>nx TIMGn_TxCONFIG_REG m! ;
-: alarm-enable! ( v t ) >r 0 $1 r> t>nx TIMGn_TxCONFIG_REG m! ;
-: alarm-enable@ ( v t ) >r 0 $1 r> t>nx TIMGn_TxCONFIG_REG m@ ;
+: divider! ( v t ) >r 13 $1fffc000 r> t>nx TIMGn_TxCONFIG_REG m! ;
+: edgeint! ( v t ) >r 12 $1000 r> t>nx TIMGn_TxCONFIG_REG m! ;
+: levelint! ( v t ) >r 11 $800 r> t>nx TIMGn_TxCONFIG_REG m! ;
+: alarm-enable! ( v t ) >r 10 $400 r> t>nx TIMGn_TxCONFIG_REG m! ;
+: alarm-enable@ ( v t ) >r 10 $400 r> t>nx TIMGn_TxCONFIG_REG m@ ;
 
 only forth definitions
