@@ -26,12 +26,6 @@
 : 4* 4 * ;   : 4/ 4 / ;
 : +! ( n a -- ) swap over @ + swap ! ;
 
-( Double Words )
-: 2drop ( n n -- ) drop drop ;
-: 2dup ( a b -- a b a b ) over over ;
-: 2@ ( a -- lo hi ) dup @ swap cell+ @ ;
-: 2! ( lo hi a -- ) dup >r cell+ ! r> ! ;
-
 ( Line Comments )
 : \   nl parse drop drop ; immediate
 
@@ -39,6 +33,12 @@
 : cell+ ( n -- n ) cell + ;
 : cells ( n -- n ) cell * ;
 : cell/ ( n -- n ) cell / ;
+
+( Double Words )
+: 2drop ( n n -- ) drop drop ;
+: 2dup ( a b -- a b a b ) over over ;
+: 2@ ( a -- lo hi ) dup @ swap cell+ @ ;
+: 2! ( lo hi a -- ) dup >r cell+ ! r> ! ;
 
 ( System Variables )
 : 'tib ( -- a ) 'sys 0 cells + ;
