@@ -42,6 +42,10 @@ $3ff5f000 constant TIMG_BASE
 : alarm-enable! ( v t ) >r 10 $400 r> t>nx TIMGn_TxCONFIG_REG m! ;
 : alarm-enable@ ( v t ) >r 10 $400 r> t>nx TIMGn_TxCONFIG_REG m@ ;
 
-: onalarm ( xt t ) swap >r t>nx r> 0 0 0 timer_isr_register throw ;
+: int-enable! ( f t -- )
+   t>nx swap >r dup 1 swap lshift r> TIMGn_Tx_INT_ENA_REG m! ;
+
+: onalarm ( xt t ) swap >r t>nx r> 0 ESP_INTR_FLAG_IRAM 0
+                   timer_isr_register throw ;
 
 only forth definitions

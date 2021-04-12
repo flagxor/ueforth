@@ -106,6 +106,12 @@ transfer{
 }transfer
 
 0 constant ESP_INTR_FLAG_DEFAULT
+: ESP_INTR_FLAG_LEVELn ( n=1-6 -- n ) 1 swap lshift ;
+1 7 lshift constant ESP_INTR_FLAG_NMI
+1 8 lshift constant ESP_INTR_FLAG_SHARED
+1 9 lshift constant ESP_INTR_FLAG_EDGE
+1 10 lshift constant ESP_INTR_FLAG_IRAM
+1 11 lshift constant ESP_INTR_FLAG_INTRDISABLED
 
 0 constant GPIO_INTR_DISABLE
 1 constant GPIO_INTR_POSEDGE
