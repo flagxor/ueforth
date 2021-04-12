@@ -1,4 +1,4 @@
-vocabulary timers   timers definitions   also registers
+vocabulary timers   timers definitions   also registers also interrupts
 
 $3ff5f000 constant TIMG_BASE
 ( group n = 0/1, timer x = 0/1, watchdog m = 0-5 )
@@ -41,5 +41,7 @@ $3ff5f000 constant TIMG_BASE
 : levelint! ( v t ) >r 11 $800 r> t>nx TIMGn_TxCONFIG_REG m! ;
 : alarm-enable! ( v t ) >r 10 $400 r> t>nx TIMGn_TxCONFIG_REG m! ;
 : alarm-enable@ ( v t ) >r 10 $400 r> t>nx TIMGn_TxCONFIG_REG m@ ;
+
+: onalarm ( xt t ) swap >r t>nx r> 0 0 0 timer_isr_register throw ;
 
 only forth definitions
