@@ -362,6 +362,19 @@ These words are inside the <code>TIMERS</code> vocabulary.
 <p>High Level words:</p>
 <pre>
 ( timer t = 0-3 )
+
+interval ( xt usec t -- ) Setup timer t to call xt each after usec
+rerun ( t -- ) Rerun timer t triggering
+
+Example:
+timers
+: hi   ." hi" cr   0 rerun ;
+' hi 1000000 0 interval ( run hi ever second )
+</pre>
+
+<p>Medium Level words:</p>
+<pre>
+
 timer@ ( t -- lo hi )
 timer! ( lo hi t -- )
 alarm ( t -- a )
