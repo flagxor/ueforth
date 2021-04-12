@@ -45,7 +45,17 @@ $3ff5f000 constant TIMG_BASE
 : int-enable! ( f t -- )
    t>nx swap >r dup 1 swap lshift r> TIMGn_Tx_INT_ENA_REG m! ;
 
-: onalarm ( xt t ) swap >r t>nx r> 0 ESP_INTR_FLAG_IRAM 0
+: onalarm ( xt t ) swap >r t>nx r> 0 ESP_INTR_FLAG_EDGE 0
                    timer_isr_register throw ;
+: interval ( xt usec t ) 80 over divider!
+                         swap over 0 swap alarm 2!
+                         1 over increase!
+                         1 over autoreload!
+                         1 over alarm-enable!
+                         1 over edgeint!
+                         0 over 0 swap timer!
+                         dup >r onalarm r>
+                         1 swap enable! ;
+: rerun ( t -- ) 1 swap alarm-enable! ;
 
 only forth definitions
