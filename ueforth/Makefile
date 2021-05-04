@@ -7,7 +7,7 @@ RES = $(OUT)/resources
 WEB = $(OUT)/web
 POSIX = $(OUT)/posix
 WINDOWS = $(OUT)/windows
-ARDUINO = $(OUT)/arduino
+ESP32 = $(OUT)/esp32
 DEPLOY = $(OUT)/deploy
 
 ifneq ($(OS),Windows_NT)
@@ -72,7 +72,7 @@ WIN_LFLAGS64 = /LIBPATH:"c:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib
 TARGETS = $(WEB)/terminal.html \
           $(WEB)/ueforth.js \
           $(POSIX)/ueforth \
-          $(ARDUINO)/ESP32forth/ESP32forth.ino
+          $(ESP32)/ESP32forth/ESP32forth.ino
 
 FINDQ = find 2>/dev/null
 
@@ -141,7 +141,8 @@ POSIX_BOOT =  common/boot.fs common/conditionals.fs common/vocabulary.fs \
               common/hide_calls.fs common/ansi.fs \
               posix/posix.fs posix/posix_highlevel.fs posix/termios.fs common/locals.fs \
               common/utils.fs common/highlevel.fs common/filetools.fs posix/posix_desktop.fs \
-              common/tasks.fs common/streams.fs common/blocks.fs posix/autoboot.fs \
+              common/tasks.fs common/streams.fs common/blocks.fs posix/telnetd.fs \
+              posix/autoboot.fs \
               common/fini.fs
 $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 	echo "ok" | cat $(POSIX_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
@@ -155,17 +156,17 @@ WINDOWS_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 	echo "ok" | cat $(WINDOWS_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
 
-ARDUINO_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
-               arduino/arduino.fs arduino/arduino_highlevel.fs \
-               arduino/bindings.fs common/highlevel.fs \
-               common/filetools.fs common/utils.fs common/locals.fs \
-               common/tasks.fs common/streams.fs arduino/arduino_server.fs \
-               arduino/arduino_bterm.fs arduino/telnetd.fs \
-               arduino/esp_camera.fs common/blocks.fs \
-               arduino/autoboot.fs \
-               common/fini.fs
-$(GEN)/arduino_boot.h: common/source_to_string.js $(ARDUINO_BOOT) | $(GEN)
-	echo "ok" | cat $(ARDUINO_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
+ESP32_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
+             esp32/platform.fs esp32/highlevel.fs \
+             esp32/bindings.fs common/highlevel.fs \
+             common/filetools.fs common/utils.fs common/locals.fs \
+             common/tasks.fs common/streams.fs esp32/web_interface.fs \
+             esp32/registers.fs esp32/timers.fs \
+             esp32/bterm.fs esp32/telnetd.fs \
+             esp32/camera.fs common/blocks.fs \
+             esp32/autoboot.fs common/fini.fs
+$(GEN)/esp32_boot.h: common/source_to_string.js $(ESP32_BOOT) | $(GEN)
+	echo "ok" | cat $(ESP32_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
 
 $(GEN)/dump_web_opcodes: web/dump_web_opcodes.c common/opcodes.h | $(GEN)
 	$(CC) $(CFLAGS) $< -o $@
@@ -268,26 +269,26 @@ $(WINDOWS)/uEf64.exe: \
     $(RES)/ueforth_res64.res | $(WINDOWS)
 	$(LINK64) /OUT:$@ $(WIN_LFLAGS64) $^
 
-# ---- ARDUINO ----
+# ---- ESP32 ----
 
-$(ARDUINO)/ESP32forth:
+$(ESP32)/ESP32forth:
 	mkdir -p $@
 
-ARDUINO_PARTS = arduino/arduino.template.ino \
-                common/opcodes.h \
-                common/calling.h \
-                common/core.h \
-                common/interp.h \
-                $(GEN)/arduino_boot.h
+ESP32_PARTS = esp32/template.ino \
+              common/opcodes.h \
+              common/calling.h \
+              common/core.h \
+              common/interp.h \
+              $(GEN)/esp32_boot.h
 
-$(ARDUINO)/ESP32forth/ESP32forth.ino: \
-    arduino/fuse_ino.js $(ARDUINO_PARTS) | $(ARDUINO)/ESP32forth
-	$< $(VERSION) $(REVISION) $(ARDUINO_PARTS) >$@
+$(ESP32)/ESP32forth/ESP32forth.ino: \
+    esp32/fuse_ino.js $(ESP32_PARTS) | $(ESP32)/ESP32forth
+	$< $(VERSION) $(REVISION) $(ESP32_PARTS) >$@
 
 # ---- PACKAGE ----
 
-$(ARDUINO)/ESP32forth.zip: $(ARDUINO)/ESP32forth/ESP32forth.ino
-	cd $(ARDUINO) && zip -r ESP32forth.zip ESP32forth
+$(ESP32)/ESP32forth.zip: $(ESP32)/ESP32forth/ESP32forth.ino
+	cd $(ESP32) && zip -r ESP32forth.zip ESP32forth
 
 # ---- DEPLOY ----
 
@@ -303,7 +304,7 @@ REPLACE = common/replace.js \
 UE_REPLACE = $(REPLACE) FORTH=uEForth
 ESP_REPLACE = $(REPLACE) FORTH=ESP32forth
 
-$(DEPLOY)/app.yaml: $(ARDUINO)/ESP32forth.zip \
+$(DEPLOY)/app.yaml: $(ESP32)/ESP32forth.zip \
                     $(wildcard site/*.html) \
                     site/app.yaml \
                     site/eforth.go \
@@ -313,7 +314,7 @@ $(DEPLOY)/app.yaml: $(ARDUINO)/ESP32forth.zip \
 	cp -r site/downloads $(DEPLOY)/downloads
 	cp site/*.go $(DEPLOY)/
 	cp site/*.yaml $(DEPLOY)/
-	cp -r $(ARDUINO)/ESP32forth.zip $(DEPLOY)/downloads
+	cp -r $(ESP32)/ESP32forth.zip $(DEPLOY)/downloads
 	cp -r $(POSIX)/ueforth $(DEPLOY)/downloads/ueforth.linux
 	cp -r $(WINDOWS)/uEf32.exe $(DEPLOY)/downloads/uEf32.exe
 	cp -r $(WINDOWS)/uEf64.exe $(DEPLOY)/downloads/uEf64.exe

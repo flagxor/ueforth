@@ -70,8 +70,9 @@ are then used to build up a small set of core opcodes defined in 1-3 lines each:
 
 <pre>
 0= 0&lt; + U/MOD */MOD   AND OR XOR
-DUP SWAP OVER DROP    @ L@ C@ ! L! C!
-SP@ SP! RP@ RP!       &gt;R R&gt; R@   : ; EXIT
+LSHIFT RSHIFT   DUP SWAP OVER DROP
+@ L@ C@ ! L! C!   SP@ SP! RP@ RP!
+&gt;R R&gt; R@   : ; EXIT
 EXECUTE BRANCH 0BRANCH DONEXT DOLIT
 ALITERAL CELL DOES&gt; IMMEDIATE 'SYS
 </pre>

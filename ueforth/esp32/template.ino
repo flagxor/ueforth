@@ -15,6 +15,7 @@
 #define ENABLE_I2C_SUPPORT
 #define ENABLE_SOCKETS_SUPPORT
 #define ENABLE_FREERTOS_SUPPORT
+#define ENABLE_INTERRUPTS_SUPPORT
 
 // Uncomment this #define for OLED Support.
 // You will need to install these libraries from the Library Manager:
@@ -53,6 +54,7 @@
 # define HEAP_SIZE 2 * 1024
 # define STACK_SIZE 32
 #endif
+#define INTERRUPT_STACK_CELLS 16
 
 #define PLATFORM_OPCODE_LIST \
   /* Memory Allocation */ \
@@ -75,6 +77,8 @@
   Y(digitalWrite, digitalWrite(n1, n0); DROPn(2)) \
   Y(digitalRead, n0 = digitalRead(n0)) \
   Y(analogRead, n0 = analogRead(n0)) \
+  Y(pulseIn, n0 = pulseIn(n2, n1, n0); NIPn(2)) \
+  Y(dacWrite, dacWrite(n1, n0); DROPn(2)) \
   Y(ledcSetup, \
       n0 = (cell_t) (1000000 * ledcSetup(n2, n1 / 1000.0, n0)); NIPn(2)) \
   Y(ledcAttachPin, ledcAttachPin(n1, n0); DROPn(2)) \
@@ -126,6 +130,7 @@
   OPTIONAL_CAMERA_SUPPORT \
   OPTIONAL_SOCKETS_SUPPORT \
   OPTIONAL_FREERTOS_SUPPORT \
+  OPTIONAL_INTERRUPTS_SUPPORT \
   OPTIONAL_OLED_SUPPORT \
 
 #ifndef ENABLE_SPIFFS_SUPPORT
@@ -152,6 +157,43 @@
   Y(vTaskDelete, vTaskDelete((TaskHandle_t) n0); DROP) \
   Y(xTaskCreatePinnedToCore, n0 = xTaskCreatePinnedToCore((TaskFunction_t) a6, c5, n4, a3, (UBaseType_t) n2, (TaskHandle_t *) a1, (BaseType_t) n0); NIPn(6)) \
   Y(xPortGetCoreID, PUSH xPortGetCoreID())
+#endif
+
+#ifndef ENABLE_INTERRUPTS_SUPPORT
+# define OPTIONAL_INTERRUPTS_SUPPORT
+#else
+# include "esp_intr_alloc.h"
+# include "driver/timer.h"
+# include "driver/gpio.h"
+# define OPTIONAL_INTERRUPTS_SUPPORT \
+  Y(gpio_config, n0 = gpio_config((const gpio_config_t *) a0)) \
+  Y(gpio_reset_pin, n0 = gpio_reset_pin((gpio_num_t) n0)) \
+  Y(gpio_set_intr_type, n0 = gpio_set_intr_type((gpio_num_t) n1, (gpio_int_type_t) n0); NIP) \
+  Y(gpio_intr_enable, n0 = gpio_intr_enable((gpio_num_t) n0)) \
+  Y(gpio_intr_disable, n0 = gpio_intr_disable((gpio_num_t) n0)) \
+  Y(gpio_set_level, n0 = gpio_set_level((gpio_num_t) n1, n0); NIP) \
+  Y(gpio_get_level, n0 = gpio_get_level((gpio_num_t) n0)) \
+  Y(gpio_set_direction, n0 = gpio_set_direction((gpio_num_t) n1, (gpio_mode_t) n0); NIP) \
+  Y(gpio_set_pull_mode, n0 = gpio_set_pull_mode((gpio_num_t) n1, (gpio_pull_mode_t) n0); NIP) \
+  Y(gpio_wakeup_enable, n0 = gpio_wakeup_enable((gpio_num_t) n1, (gpio_int_type_t) n0); NIP) \
+  Y(gpio_wakeup_disable, n0 = gpio_wakeup_disable((gpio_num_t) n0)) \
+  Y(gpio_pullup_en, n0 = gpio_pullup_en((gpio_num_t) n0)) \
+  Y(gpio_pullup_dis, n0 = gpio_pullup_dis((gpio_num_t) n0)) \
+  Y(gpio_pulldown_en, n0 = gpio_pulldown_en((gpio_num_t) n0)) \
+  Y(gpio_pulldown_dis, n0 = gpio_pulldown_dis((gpio_num_t) n0)) \
+  Y(gpio_hold_en, n0 = gpio_hold_en((gpio_num_t) n0)) \
+  Y(gpio_hold_dis, n0 = gpio_hold_dis((gpio_num_t) n0)) \
+  Y(gpio_deep_sleep_hold_en, gpio_deep_sleep_hold_en()) \
+  Y(gpio_deep_sleep_hold_dis, gpio_deep_sleep_hold_dis()) \
+  Y(gpio_install_isr_service, n0 = gpio_install_isr_service(n0)) \
+  Y(gpio_uninstall_isr_service, gpio_uninstall_isr_service()) \
+  Y(gpio_isr_handler_add, n0 = GpioIsrHandlerAdd(n2, n1, n0); NIPn(2)) \
+  Y(gpio_isr_handler_remove, n0 = gpio_isr_handler_remove((gpio_num_t) n0)) \
+  Y(gpio_set_drive_capability, n0 = gpio_set_drive_capability((gpio_num_t) n1, (gpio_drive_cap_t) n0); NIP) \
+  Y(gpio_get_drive_capability, n0 = gpio_get_drive_capability((gpio_num_t) n1, (gpio_drive_cap_t *) a0); NIP) \
+  Y(esp_intr_alloc, n0 = EspIntrAlloc(n4, n3, n2, n1, a0); NIPn(4)) \
+  Y(esp_intr_free, n0 = esp_intr_free((intr_handle_t) n0)) \
+  Y(timer_isr_register, n0 = TimerIsrRegister(n5, n4, n3, n2, n1, a0); NIPn(5))
 #endif
 
 #ifndef ENABLE_CAMERA_SUPPORT
@@ -366,6 +408,10 @@ static Adafruit_SSD1306 *oled_display = 0;
 static char filename[PATH_MAX];
 static String string_value;
 
+static cell_t EspIntrAlloc(cell_t source, cell_t flags, cell_t xt, cell_t arg, cell_t *ret);
+static cell_t GpioIsrHandlerAdd(cell_t pin, cell_t xt, cell_t arg);
+static cell_t TimerIsrRegister(cell_t group, cell_t timer, cell_t xt, cell_t arg, void *ret);
+
 {{core}}
 {{interp}}
 {{boot}}
@@ -407,8 +453,8 @@ static void InvokeWebServerOn(WebServer *ws, const char *url, cell_t xt) {
     cell_t code[2];
     code[0] = xt;
     code[1] = g_sys.YIELD_XT;
-    cell_t stack[16];
-    cell_t rstack[16];
+    cell_t stack[INTERRUPT_STACK_CELLS];
+    cell_t rstack[INTERRUPT_STACK_CELLS];
     cell_t *rp = rstack;
     *++rp = (cell_t) (stack + 1);
     *++rp = (cell_t) code;
@@ -416,6 +462,49 @@ static void InvokeWebServerOn(WebServer *ws, const char *url, cell_t xt) {
   });
 }
 #endif
+
+struct handle_interrupt_args {
+  cell_t xt;
+  cell_t arg;
+};
+
+static void IRAM_ATTR HandleInterrupt(void *arg) {
+  struct handle_interrupt_args *args = (struct handle_interrupt_args *) arg;
+  cell_t code[2];
+  code[0] = args->xt;
+  code[1] = g_sys.YIELD_XT;
+  cell_t stack[INTERRUPT_STACK_CELLS];
+  cell_t rstack[INTERRUPT_STACK_CELLS];
+  stack[0] = args->arg;
+  cell_t *rp = rstack;
+  *++rp = (cell_t) (stack + 1);
+  *++rp = (cell_t) code;
+  forth_run(rp);
+}
+
+static cell_t EspIntrAlloc(cell_t source, cell_t flags, cell_t xt, cell_t arg, void *ret) {
+  // NOTE: Leaks memory.
+  struct handle_interrupt_args *args = (struct handle_interrupt_args *) malloc(sizeof(struct handle_interrupt_args));
+  args->xt = xt;
+  args->arg = arg;
+  return esp_intr_alloc(source, flags, HandleInterrupt, args, (intr_handle_t *) ret);
+}
+
+static cell_t GpioIsrHandlerAdd(cell_t pin, cell_t xt, cell_t arg) {
+  // NOTE: Leaks memory.
+  struct handle_interrupt_args *args = (struct handle_interrupt_args *) malloc(sizeof(struct handle_interrupt_args));
+  args->xt = xt;
+  args->arg = arg;
+  return gpio_isr_handler_add((gpio_num_t) pin, HandleInterrupt, args);
+}
+
+static cell_t TimerIsrRegister(cell_t group, cell_t timer, cell_t xt, cell_t arg, cell_t flags, void *ret) {
+  // NOTE: Leaks memory.
+  struct handle_interrupt_args *args = (struct handle_interrupt_args *) malloc(sizeof(struct handle_interrupt_args));
+  args->xt = xt;
+  args->arg = arg;
+  return timer_isr_register((timer_group_t) group, (timer_idx_t) timer, HandleInterrupt, args, flags, (timer_isr_handle_t *) ret);
+}
 
 void setup() {
   cell_t *heap = (cell_t *) malloc(HEAP_SIZE);

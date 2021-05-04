@@ -1,8 +1,6 @@
 : (   41 parse drop drop ; immediate
 
 ( Useful Basic Compound Words )
-: 2drop ( n n -- ) drop drop ;
-: 2dup ( a b -- a b a b ) over over ;
 : nip ( a b -- b ) swap drop ;
 : rdrop ( r: n n -- ) r> r> drop >r ;
 : */ ( n n n -- n ) */mod nip ;
@@ -35,6 +33,12 @@
 : cell+ ( n -- n ) cell + ;
 : cells ( n -- n ) cell * ;
 : cell/ ( n -- n ) cell / ;
+
+( Double Words )
+: 2drop ( n n -- ) drop drop ;
+: 2dup ( a b -- a b a b ) over over ;
+: 2@ ( a -- lo hi ) dup @ swap cell+ @ ;
+: 2! ( lo hi a -- ) dup >r cell+ ! r> ! ;
 
 ( System Variables )
 : 'tib ( -- a ) 'sys 0 cells + ;
@@ -136,7 +140,10 @@ variable handler
 
 ( Values )
 : value ( n -- ) create , does> @ ;
-: to ( n -- ) ' >body state @ if aliteral postpone ! else ! then ; immediate
+: to ( n -- )
+   ' >body state @ if aliteral postpone ! else ! then ; immediate
+: +to ( n -- )
+   ' >body state @ if aliteral postpone +! else +! then ; immediate
 
 ( Deferred Words )
 : defer ( "name" -- ) create 0 , does> @ dup 0= throw execute ;

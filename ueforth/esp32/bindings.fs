@@ -86,6 +86,53 @@ transfer{
 16 constant sizeof(sockaddr_in)
 forth definitions
 
+vocabulary interrupts   interrupts definitions
+transfer{
+  gpio_config
+  gpio_reset_pin gpio_set_intr_type
+  gpio_intr_enable gpio_intr_disable
+  gpio_set_level gpio_get_level
+  gpio_set_direction
+  gpio_set_pull_mode
+  gpio_wakeup_enable gpio_wakeup_disable
+  gpio_pullup_en gpio_pullup_dis
+  gpio_pulldown_en gpio_pulldown_dis
+  gpio_hold_en gpio_hold_dis
+  gpio_deep_sleep_hold_en gpio_deep_sleep_hold_dis
+  gpio_install_isr_service gpio_uninstall_isr_service
+  gpio_isr_handler_add gpio_isr_handler_remove
+  gpio_set_drive_capability gpio_get_drive_capability
+  esp_intr_alloc esp_intr_free
+}transfer
+
+0 constant ESP_INTR_FLAG_DEFAULT
+: ESP_INTR_FLAG_LEVELn ( n=1-6 -- n ) 1 swap lshift ;
+1 7 lshift constant ESP_INTR_FLAG_NMI
+1 8 lshift constant ESP_INTR_FLAG_SHARED
+1 9 lshift constant ESP_INTR_FLAG_EDGE
+1 10 lshift constant ESP_INTR_FLAG_IRAM
+1 11 lshift constant ESP_INTR_FLAG_INTRDISABLED
+
+0 constant GPIO_INTR_DISABLE
+1 constant GPIO_INTR_POSEDGE
+2 constant GPIO_INTR_NEGEDGE
+3 constant GPIO_INTR_ANYEDGE
+4 constant GPIO_INTR_LOW_LEVEL
+5 constant GPIO_INTR_HIGH_LEVEL
+
+( Easy word to trigger on any change to a pin )
+ESP_INTR_FLAG_DEFAULT gpio_install_isr_service drop
+: pinchange ( xt pin ) dup GPIO_INTR_ANYEDGE gpio_set_intr_type throw
+                       swap 0 gpio_isr_handler_add throw ;
+
+forth definitions
+
+vocabulary rtos   rtos definitions
+transfer{
+  xPortGetCoreID xTaskCreatePinnedToCore vTaskDelete
+}transfer
+forth definitions
+
 DEFINED? SerialBT.new [IF]
 vocabulary bluetooth   bluetooth definitions
 transfer{

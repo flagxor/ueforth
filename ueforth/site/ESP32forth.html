@@ -90,7 +90,7 @@ In popular cases a shorted higher level name is provided.
 </p>
 
 <p>
-See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/arduino/arduino.template.ino">arduino.template.ino</a>.
+See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/esp32/template.ino">template.ino</a>.
 </p>
 
 <h5>Allocation</h5>
@@ -145,6 +145,8 @@ esp_bt_dev_get_address ( -- a ) addr of 6 byte mac address
 pinMode ( pin mode -- )   Set GPIO pin mode
 digitalWrite ( pin value -- )   Set GPIO pin state
 analogRead ( pin -- n )   Analog read from 0-4095
+pulseIn ( pin value usec -- usec/0 )  Wait for a pulse
+dacWrite ( pin 0-255 -- )  Write to DAC (pin 25, 26)
 </pre>
 
 <h5>ledc</h5>
@@ -283,6 +285,140 @@ SD_MMC.totalBytes ( -- n )
 SD_MMC.usedBytes ( -- n )
 </pre>
 
+<h5 id="interrupts">Interrupts</h5>
+These words are inside the <code>INTERRUPTS</code> vocabulary.
+
+<p>High Level words:</p>
+<pre>
+pinchange ( xt pin -- ) Call xt when pin changes.
+</pre>
+
+<p>Example:</p>
+
+<pre>
+17 input pinMode
+: test ." pinvalue: " 17 digitalRead . cr ;
+' test 17 pinchange
+</pre>
+
+<p>Low Level words:</p>
+<pre>
+ESP_INTR_FLAG_DEFAULT -- Default handler allows per pin routing
+
+Various triggers:
+  GPIO_INTR_DISABLE
+  GPIO_INTR_POSEDGE
+  GPIO_INTR_NEGEDGE
+  GPIO_INTR_ANYEDGE
+  GPIO_INTR_LOW_LEVEL
+  GPIO_INTR_HIGH_LEVEL
+
+gpio_config ( gpio_config_t* -- 0/err )
+gpio_reset_pin ( pin -- 0/err )
+
+gpio_set_intr_type ( pin type -- 0/err )
+
+gpio_intr_enable ( pin -- 0/err )
+gpio_intr_disable ( pin -- 0/err )
+
+gpio_set_level ( pin level -- 0/err )
+gpio_get_level ( pin -- level )
+
+gpio_set_direction ( pin mode -- 0/err )
+
+gpio_set_pull_mode ( pin mode -- 0/err )
+
+gpio_wakeup_enable ( pin type -- 0/err )
+gpio_wakeup_disable ( pin -- 0/err )
+
+gpio_pullup_en ( pin -- 0/err )
+gpio_pullup_dis ( pin -- 0/err )
+gpio_pulldown_en ( pin -- 0/err )
+gpio_pulldown_dis ( pin -- 0/err )
+gpio_hold_en ( pin -- 0/err )
+gpio_hold_dis ( pin -- 0/err )
+
+gpio_deep_sleep_hold_en ( -- )
+gpio_deep_sleep_hold_dis ( -- )
+
+gpio_install_isr_service ( a -- ) Typically ESP_INTR_FLAG_DEFAULT
+gpio_uninstall_isr_service
+
+gpio_isr_handler_add ( pin xt arg -- 0/err )
+gpio_isr_handler_remove ( pin -- 0/err )
+
+gpio_set_drive_capability ( pin cap -- 0/err )
+gpio_get_drive_capability ( pin cap* -- 0/err )
+
+esp_intr_alloc ( source flags xt args handle* -- 0/err )
+esp_intr_free ( handle -- 0/err )
+
+timer_isr_register ( group timer xt arg ret -- 0/err )
+</pre>
+
+<h5 id="timers">Timers</h5>
+These words are inside the <code>TIMERS</code> vocabulary.
+
+<p>High Level words:</p>
+<pre>
+( timer t = 0-3 )
+
+interval ( xt usec t -- ) Setup timer t to call xt each after usec
+rerun ( t -- ) Rerun timer t triggering
+
+Example:
+timers
+: hi   ." hi" cr   0 rerun ;
+' hi 1000000 0 interval ( run hi every second )
+</pre>
+
+<p>Medium Level words:</p>
+<pre>
+timer@ ( t -- lo hi )
+timer! ( lo hi t -- )
+alarm ( t -- a )
+enable! ( f t -- ) Timer enable/disable
+increase! ( f t -- ) Timer increasing/decreasing
+divider! ( n t -- ) Timer divider 2 - 65535
+edgeint! ( f t -- ) Edge trigger
+levelint! ( f t -- ) Level trigger
+alarm-enable! ( f t -- ) Alarm enable
+alarm-enable@ ( t -- f ) Alarm enabled?
+onalarm ( xt t -- ) Set callback
+</pre>
+
+<p>Low Level words:</p>
+<pre>
+( group n = 0/1, timer x = 0/1, watchdog m = 0-5 )
+
+TIMGn_TxCONFIG_REG ( n x -- a )
+TIMGn_TxLOHI_REG ( n x -- a )
+TIMGn_TxUPDATE_REG ( n x -- a )
+TIMGn_TxALARMLOHI_REG ( n x -- a )
+TIMGn_TxLOADLOHI_REG ( n x -- a )
+TIMGn_TxLOAD_REG ( n x -- a )
+
+TIMGn_Tx_WDTCONFIGm_REG ( n m -- a )
+TIMGn_Tx_WDTFEED_REG ( n -- a )
+TIMGn_Tx_WDTWPROTECT_REG ( n -- a )
+
+TIMGn_RTCCALICFG_REG ( n -- a )
+TIMGn_RTCCALICFG1_REG ( n -- a )
+
+TIMGn_Tx_INT_ENA_REG ( n -- a )
+TIMGn_Tx_INT_RAW_REG ( n -- a )
+TIMGn_Tx_INT_ST_REG ( n -- a )
+TIMGn_Tx_INT_CLR_REG ( n -- a )
+</pre>
+
+<h5>RTOS</h5>
+These words are inside the <code>RTOS</code> vocabulary.
+<pre>
+xPortGetCoreID ( -- n )
+xTaskCreatePinnedToCore ( fn name stack-depth params priority taskout coreid -- )
+vTaskDelete ( task ) -- ) 
+</pre>
+
 <h3 id="webui">ESP32 WebUI</h3>
 
 <p>
@@ -301,7 +437,7 @@ z" NETWORK-NAME" z" PASSWORD" webui
 </pre>
 
 <p>
-See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/arduino/arduino_server.fs">arduino_server.fs</a>.
+See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/esp32/web_interface.fs">web_interface.fs</a>.
 </p>
 
 <h3 id="autoexec">Autoexec.fs</h3>
@@ -332,14 +468,14 @@ s" /spiffs/autoexec.fs" delete-file
 </pre>
 
 <p>
-See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/arduino/autoboot.fs">autoboot.fs</a>.
+See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/esp32/autoboot.fs">autoboot.fs</a>.
 </p>
 
 <h3 id="adding_words">Adding Words</h3>
 
 <p>
 Adding words based on C functions can be done by editing the source code.
-For ESP32forth <code>arduino.template.ino</code> is the appropriate place.
+For ESP32forth <code>template.ino</code> is the appropriate place.
 </p>
 
 <p>
