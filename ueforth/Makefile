@@ -17,7 +17,6 @@ endif
 CFLAGS_COMMON = -O2 -I ./ -I $(OUT)
 
 CFLAGS_MINIMIZE = \
-                -s \
                 -DUEFORTH_MINIMAL \
                 -fno-exceptions \
                 -ffreestanding \
@@ -26,19 +25,19 @@ CFLAGS_MINIMIZE = \
                 -fno-stack-protector \
                 -fomit-frame-pointer \
                 -mno-stack-arg-probe \
-                -fno-ident -Wl,--build-id=none \
+                -fno-ident \
                 -ffunction-sections -fdata-sections \
                 -fmerge-all-constants
 CFLAGS = $(CFLAGS_COMMON) \
          $(CFLAGS_MINIMIZE) \
          -Wall \
-         -Werror \
-         -no-pie
+         -Werror
 
 ifeq ($(OS),Darwin)
   CFLAGS += -Wl,-dead_strip
 else
-  CFLAGS += -Wl,--gc-sections
+  CFLAGS_MINIMIZE += -Wl,--build-id=none
+  CFLAGS += -s -Wl,--gc-sections -no-pie -Wl,--build-id=none
 endif
 
 STRIP_ARGS = -S
