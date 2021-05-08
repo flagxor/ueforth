@@ -1,4 +1,4 @@
-VERSION=7.0.3
+VERSION=7.0.4
 REVISION=$(shell git rev-parse HEAD)
 
 OUT = out
@@ -141,10 +141,10 @@ $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 	echo "ok" | cat $(WINDOWS_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
 
 ESP32_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
-             esp32/platform.fs esp32/highlevel.fs \
+             common/tasks.fs esp32/platform.fs esp32/highlevel.fs \
              esp32/bindings.fs common/highlevel.fs \
              common/filetools.fs common/utils.fs common/locals.fs \
-             common/tasks.fs common/streams.fs esp32/web_interface.fs \
+             common/streams.fs esp32/web_interface.fs \
              esp32/registers.fs esp32/timers.fs \
              esp32/bterm.fs esp32/telnetd.fs \
              esp32/camera.fs common/blocks.fs \

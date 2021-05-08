@@ -10,7 +10,7 @@ esp_bt_dev_get_address hex 6 dump cr
 : bt-key
    begin bt SerialBT.available until 0 >r rp@ 1 bt SerialBT.readBytes drop r> ;
 : bt-on ['] bt-type is type ['] bt-key is key ;
-: bt-off ['] arduino-type is type ['] arduino-key is key ;
+: bt-off ['] serial-type is type ['] serial-key is key ;
 only forth definitions
 bterm 500 ms bt-on
 | evaluate ;

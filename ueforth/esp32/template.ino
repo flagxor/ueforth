@@ -91,7 +91,8 @@
   Y(ledcWriteNote, \
       tos = (cell_t) (1000000 * ledcWriteNote(n2, (note_t) n1, n0)); NIPn(2)) \
   /* General System */ \
-  Y(MS, delay(n0); DROP) \
+  X("MS-TICKS", MS_TICKS, PUSH millis()) \
+  X("RAW-YIELD", RAW_YIELD, yield()) \
   Y(TERMINATE, exit(n0)) \
   /* File words */ \
   X("R/O", R_O, PUSH O_RDONLY) \

@@ -15,6 +15,7 @@ body {
   padding: 5px;
   background-color: #111;
   color: #2cf;
+  overflow: hidden;
 }
 #prompt {
   width: 100%;
@@ -26,12 +27,14 @@ body {
   width: 100%;
   height: 80%;
   resize: none;
+  overflow-y: scroll;
+  word-break: break-all;
 }
 </style>
-</head>
-<h2>ESP32forth v7</h2>
 <link rel="icon" href="data:,">
+</head>
 <body>
+<h2>ESP32forth v7</h2>
 Upload File: <input id="filepick" type="file" name="files[]"></input><br/>
 <button onclick="ask('hex')">hex</button>
 <button onclick="ask('decimal')">decimal</button>
@@ -82,7 +85,7 @@ filepick.onchange = function(event) {
   if (event.target.files.length > 0) {
     var reader = new FileReader();
     reader.onload = function(e) {
-      var parts = e.target.result.split('\n');
+      var parts = e.target.result.replace(/[\r]/g, '').split('\n');
       function upload() {
         if (parts.length === 0) { filepick.value = ''; return; }
         ask(parts.shift(), upload);
@@ -130,8 +133,7 @@ create out-string out-size 1+ allot align
    webserver @ WebServer.begin
    begin
      webserver @ WebServer.handleClient
-     1 ms
-     yield
+     pause
    again
 ;
 

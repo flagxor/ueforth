@@ -25,8 +25,8 @@ defer broker
 : broker-connection
   rp0 rp! sp0 sp!
   begin
-    ['] arduino-key is key
-    ['] arduino-type is type
+    ['] serial-key is key
+    ['] serial-type is type
     -1 echo !
     ." Listening on port " port . cr
     sockfd client client-len accept
