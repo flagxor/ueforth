@@ -54,7 +54,7 @@
 # define HEAP_SIZE 2 * 1024
 # define STACK_SIZE 32
 #endif
-#define INTERRUPT_STACK_CELLS 16
+#define INTERRUPT_STACK_CELLS 64
 
 #define PLATFORM_OPCODE_LIST \
   /* Memory Allocation */ \
