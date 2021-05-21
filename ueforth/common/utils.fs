@@ -59,3 +59,8 @@ forth definitions also internals
 : vlist   0 context @ @ begin dup >name-length while onlines dup see. >link repeat 2drop cr ;
 : words   0 context @ @ begin dup while onlines dup see. >link repeat 2drop cr ;
 only forth definitions
+
+( Extra Task Utils )
+tasks definitions also internals
+: .tasks   task-list @ begin dup 2 cells - see. @ dup task-list @ = until drop ;
+only forth definitions

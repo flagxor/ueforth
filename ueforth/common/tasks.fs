@@ -31,8 +31,6 @@ forth definitions tasks also internals
    then
 ;
 
-: .tasks   task-list @ begin dup 2 cells - see. @ dup task-list @ = until drop ;
-
 DEFINED? ms-ticks [IF]
   : ms ( n -- ) ms-ticks >r begin pause ms-ticks r@ - over >= until rdrop drop ;
 [THEN]
