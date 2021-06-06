@@ -58,15 +58,17 @@ TARGETS = $(WEB)/terminal.html \
           $(POSIX)/ueforth \
           $(ESP32)/ESP32forth/ESP32forth.ino
 
-FINDQ = find 2>/dev/null
+LSQ = ls 2>/dev/null
 
 PROGFILES = /mnt/c/Program Files (x86)
-CL32 = "$(shell $(FINDQ) "${PROGFILES}/Microsoft Visual Studio" -name cl.exe | grep /Hostx86/x86/ | head -n 1)"
-CL64 = "$(shell $(FINDQ) "${PROGFILES}/Microsoft Visual Studio" -name cl.exe | grep /Hostx86/x64/ | head -n 1)"
-LINK32 = "$(shell $(FINDQ) "${PROGFILES}/Microsoft Visual Studio" -name link.exe | grep /Hostx86/x86/ | head -n 1)"
-LINK64 = "$(shell $(FINDQ) "${PROGFILES}/Microsoft Visual Studio" -name link.exe | grep /Hostx86/x64/ | head -n 1)"
-RC32 = "$(shell $(FINDQ) "${PROGFILES}/Windows Kits" -name rc.exe | grep /x86/ | head -n 1)"
-RC64 = "$(shell $(FINDQ) "${PROGFILES}/Windows Kits" -name rc.exe | grep /x64/ | head -n 1)"
+MSVS = "${PROGFILES}/Microsoft Visual Studio"
+MSKITS = "${PROGFILES}/Windows Kits"
+CL32 = "$(shell $(LSQ) ${MSVS}/*/*/VC/Tools/MSVC/*/bin/Hostx86/x86/cl.exe | head -n 1)"
+CL64 = "$(shell $(LSQ) ${MSVS}/*/*/VC/Tools/MSVC/*/bin/Hostx86/x64/cl.exe | head -n 1)"
+LINK32 = "$(shell $(LSQ) ${MSVS}/*/*/VC/Tools/MSVC/*/bin/Hostx86/x86/link.exe | head -n 1)"
+LINK64 = "$(shell $(LSQ) ${MSVS}/*/*/VC/Tools/MSVC/*/bin/Hostx86/x64/link.exe | head -n 1)"
+RC32 = "$(shell $(LSQ) ${MSKITS}/*/bin/*/x86/rc.exe | head -n 1)"
+RC64 = "$(shell $(LSQ) ${MSKITS}/*/bin/*/x64/rc.exe | head -n 1)"
 
 # Selectively enable windows if tools available
 DEPLOYABLE := 1
