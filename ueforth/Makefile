@@ -1,4 +1,4 @@
-VERSION=7.0.5
+VERSION=7.0.6
 REVISION=$(shell git rev-parse HEAD)
 
 OUT = out
@@ -128,8 +128,8 @@ POSIX_BOOT =  common/boot.fs common/conditionals.fs common/vocabulary.fs \
               posix/posix.fs posix/posix_highlevel.fs posix/termios.fs common/locals.fs \
               common/tasks.fs common/utils.fs common/highlevel.fs common/filetools.fs \
               posix/posix_desktop.fs \
-              common/streams.fs common/blocks.fs posix/telnetd.fs \
-              posix/sockets.fs posix/httpd.fs posix/web_interface.fs \
+              common/streams.fs common/blocks.fs \
+              posix/sockets.fs posix/telnetd.fs posix/httpd.fs posix/web_interface.fs \
               posix/autoboot.fs \
               common/fini.fs
 $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
@@ -148,9 +148,9 @@ ESP32_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
              common/tasks.fs esp32/platform.fs esp32/highlevel.fs \
              esp32/bindings.fs common/highlevel.fs \
              common/filetools.fs common/utils.fs common/locals.fs \
-             common/streams.fs esp32/web_interface.fs \
+             common/streams.fs posix/httpd.fs posix/web_interface.fs esp32/web_interface.fs \
              esp32/registers.fs esp32/timers.fs \
-             esp32/bterm.fs esp32/telnetd.fs \
+             esp32/bterm.fs posix/telnetd.fs \
              esp32/camera.fs common/blocks.fs \
              esp32/autoboot.fs common/fini.fs
 $(GEN)/esp32_boot.h: common/source_to_string.js $(ESP32_BOOT) | $(GEN)

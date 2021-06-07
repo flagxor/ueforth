@@ -8,15 +8,19 @@ forth definitions
 ( Set up Basic I/O )
 internals definitions
 : esp32-bye   0 terminate ;
-' esp32-bye is bye
 : serial-type ( a n -- ) Serial.write drop ;
-' serial-type is type
 : serial-key ( -- n )
    begin pause Serial.available until 0 >r rp@ 1 Serial.readBytes drop r> ;
-' serial-key is key
 : serial-key? ( -- n ) Serial.available ;
-' serial-key? is key?
-forth definitions
+also forth definitions
+: default-type serial-type ;
+: default-key serial-key ;
+: default-key? serial-key? ;
+' default-type is type
+' default-key is key
+' default-key? is key?
+' esp32-bye is bye
+only forth definitions
 
 ( Map Arduino / ESP32 things to shorter names. )
 : pin ( n pin# -- ) swap digitalWrite ;

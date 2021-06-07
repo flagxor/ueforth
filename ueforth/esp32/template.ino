@@ -221,10 +221,11 @@
 # include <sys/poll.h>
 # define OPTIONAL_SOCKETS_SUPPORT \
   Y(socket, n0 = socket(n2, n1, n0); NIPn(2)) \
+  Y(setsockopt, n0 = setsockopt(n4, n3, n2, a1, n0); NIPn(4)) \
   Y(bind, n0 = bind(n2, (struct sockaddr *) a1, n0); NIPn(2)) \
   Y(listen, n0 = listen(n1, n0); NIP) \
   Y(connect, n0 = connect(n2, (struct sockaddr *) a1, n0); NIPn(2)) \
-  Y(accept, n0 = accept(n2, (struct sockaddr *) a1, (socklen_t *) a0); NIPn(2)) \
+  Y(sockaccept, n0 = accept(n2, (struct sockaddr *) a1, (socklen_t *) a0); NIPn(2)) \
   Y(select, n0 = select(n4, (fd_set *) a3, (fd_set *) a2, (fd_set *) a1, (struct timeval *) a0); NIPn(4)) \
   Y(poll, n0 = poll((struct pollfd *) a2, (nfds_t) n1, n0); NIPn(2)) \
   Y(errno, PUSH errno)

@@ -1,6 +1,5 @@
 ( HTTP Daemon )
-
-vocabulary httpd   httpd definitions also posix
+vocabulary httpd   httpd definitions also sockets
 
 1 constant max-connections
 2048 constant chunk-size
@@ -8,32 +7,25 @@ create chunk chunk-size allot
 0 value chunk-filled
 
 -1 value sockfd   -1 value clientfd
-: bs, ( n -- ) dup 256 / c, c, ;
-: s, ( n -- ) dup c, 256 / c, ;
-: l, ( n -- ) dup s, 65536 / s, ;
-create httpd-port   AF_INET s, here 0 bs, 0 l, 0 , constant port
-: port@ ( -- n ) port c@ 256 * port 1+ c@ + ;
-: port! ( n --  ) dup 256 / port c! port 1+ c! ;
-create client   sizeof(sockaddr_in) allot   variable client-len
+sockaddr httpd-port   sockaddr client   variable client-len
 
-: client-type ( a n -- ) clientfd -rot write 0< if 2drop 1 throw then ;
-: client-read ( -- n ) 0 >r clientfd rp@ 1 read 0< if rdrop 1 throw then r> ;
+: client-type ( a n -- ) clientfd write-file throw ;
+: client-read ( -- n ) 0 >r rp@ 1 clientfd read-file throw 1 <> throw ;
 : client-emit ( ch -- ) >r rp@ 1 client-type rdrop ;
 : client-cr   13 client-emit nl client-emit ;
 
 : handleClient
-  clientfd close drop
-  sockfd client client-len accept
+  clientfd close-file drop
+  sockfd client client-len sockaccept
   dup 0< if drop exit then to clientfd
   chunk chunk-size 0 fill
-  clientfd chunk chunk-size read to chunk-filled
-  ( chunk chunk-filled type cr )
+  chunk chunk-size clientfd read-file throw to chunk-filled
 ;
 
-: serve ( port -- )
-  port!  ." Listening on port " port@ . cr
+: server ( port -- )
+  httpd-port ->port!  ." Listening on port " httpd-port ->port@ . cr
   AF_INET SOCK_STREAM 0 socket to sockfd
-  sockfd SOL_SOCKET SO_REUSEADDR 1 >r rp@ 4 setsockopt rdrop throw
+  ( sockfd SOL_SOCKET SO_REUSEADDR 1 >r rp@ 4 setsockopt rdrop throw )
   sockfd httpd-port sizeof(sockaddr_in) bind throw
   sockfd max-connections listen throw
 ;

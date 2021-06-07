@@ -125,8 +125,8 @@ create out-string out-size 1+ allot align
 : do-serve    begin handle1 pause again ;
 ' do-serve 1000 1000 task webserver-task
 
-: serve ( port -- )
-   serve
+: server ( port -- )
+   server
    ['] serve-type is type
    ['] serve-key is key
    webserver-task start-task
