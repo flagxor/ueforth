@@ -129,6 +129,7 @@ POSIX_BOOT =  common/boot.fs common/conditionals.fs common/vocabulary.fs \
               common/tasks.fs common/utils.fs common/highlevel.fs common/filetools.fs \
               posix/posix_desktop.fs \
               common/streams.fs common/blocks.fs posix/telnetd.fs \
+              posix/sockets.fs posix/httpd.fs posix/web_interface.fs \
               posix/autoboot.fs \
               common/fini.fs
 $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)

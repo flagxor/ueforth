@@ -19,7 +19,7 @@ vocabulary streams   streams definitions
    >r r@ >read @ r@ >offset c@
    r@ >read @ 1+ r@ @ mod r> >read ! ;
 : >stream ( a n st -- )
-   swap 0 do over c@ over ch>stream swap 1+ swap loop 2drop ;
+   swap for aft over c@ over ch>stream swap 1+ swap then next 2drop ;
 : stream> ( a n st -- )
    begin over 1 > over empty? 0= and while
    dup stream>ch >r rot dup r> swap c! 1+ rot 1- rot repeat 2drop 0 swap c! ;
