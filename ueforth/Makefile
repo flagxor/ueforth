@@ -1,4 +1,4 @@
-VERSION=7.0.3
+VERSION=7.0.6
 REVISION=$(shell git rev-parse HEAD)
 
 OUT = out
@@ -73,15 +73,17 @@ TARGETS = $(WEB)/terminal.html \
           $(POSIX)/ueforth \
           $(ESP32)/ESP32forth/ESP32forth.ino
 
-FINDQ = find 2>/dev/null
+LSQ = ls 2>/dev/null
 
 PROGFILES = /mnt/c/Program Files (x86)
-CL32 = "$(shell $(FINDQ) "${PROGFILES}/Microsoft Visual Studio" -name cl.exe | grep /Hostx86/x86/ | head -n 1)"
-CL64 = "$(shell $(FINDQ) "${PROGFILES}/Microsoft Visual Studio" -name cl.exe | grep /Hostx86/x64/ | head -n 1)"
-LINK32 = "$(shell $(FINDQ) "${PROGFILES}/Microsoft Visual Studio" -name link.exe | grep /Hostx86/x86/ | head -n 1)"
-LINK64 = "$(shell $(FINDQ) "${PROGFILES}/Microsoft Visual Studio" -name link.exe | grep /Hostx86/x64/ | head -n 1)"
-RC32 = "$(shell $(FINDQ) "${PROGFILES}/Windows Kits" -name rc.exe | grep /x86/ | head -n 1)"
-RC64 = "$(shell $(FINDQ) "${PROGFILES}/Windows Kits" -name rc.exe | grep /x64/ | head -n 1)"
+MSVS = "${PROGFILES}/Microsoft Visual Studio"
+MSKITS = "${PROGFILES}/Windows Kits"
+CL32 = "$(shell $(LSQ) ${MSVS}/*/*/VC/Tools/MSVC/*/bin/Hostx86/x86/cl.exe | head -n 1)"
+CL64 = "$(shell $(LSQ) ${MSVS}/*/*/VC/Tools/MSVC/*/bin/Hostx86/x64/cl.exe | head -n 1)"
+LINK32 = "$(shell $(LSQ) ${MSVS}/*/*/VC/Tools/MSVC/*/bin/Hostx86/x86/link.exe | head -n 1)"
+LINK64 = "$(shell $(LSQ) ${MSVS}/*/*/VC/Tools/MSVC/*/bin/Hostx86/x64/link.exe | head -n 1)"
+RC32 = "$(shell $(LSQ) ${MSKITS}/*/bin/*/x86/rc.exe | head -n 1)"
+RC64 = "$(shell $(LSQ) ${MSKITS}/*/bin/*/x64/rc.exe | head -n 1)"
 
 # Selectively enable windows if tools available
 DEPLOYABLE := 1
@@ -139,8 +141,10 @@ $(GEN):
 POSIX_BOOT =  common/boot.fs common/conditionals.fs common/vocabulary.fs \
               common/hide_calls.fs common/ansi.fs \
               posix/posix.fs posix/posix_highlevel.fs posix/termios.fs common/locals.fs \
-              common/utils.fs common/highlevel.fs common/filetools.fs posix/posix_desktop.fs \
-              common/tasks.fs common/streams.fs common/blocks.fs posix/telnetd.fs \
+              common/tasks.fs common/utils.fs common/highlevel.fs common/filetools.fs \
+              posix/posix_desktop.fs \
+              common/streams.fs common/blocks.fs \
+              posix/sockets.fs posix/telnetd.fs posix/httpd.fs posix/web_interface.fs \
               posix/autoboot.fs \
               common/fini.fs
 $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
@@ -149,20 +153,20 @@ $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 WINDOWS_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
                common/hide_calls.fs common/ansi.fs \
                windows/windows.fs windows/windows_highlevel.fs common/highlevel.fs \
-               common/utils.fs common/filetools.fs common/tasks.fs common/streams.fs \
+               common/tasks.fs common/utils.fs common/filetools.fs common/streams.fs \
                common/blocks.fs common/locals.fs \
                common/fini.fs
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 	echo "ok" | cat $(WINDOWS_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
 
 ESP32_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
-             esp32/platform.fs esp32/highlevel.fs \
+             common/tasks.fs esp32/platform.fs esp32/highlevel.fs \
              esp32/bindings.fs common/highlevel.fs \
              common/filetools.fs common/utils.fs common/locals.fs \
-             common/tasks.fs common/streams.fs esp32/web_interface.fs \
+             common/streams.fs posix/httpd.fs posix/web_interface.fs esp32/web_interface.fs \
              esp32/registers.fs esp32/timers.fs \
-             esp32/bterm.fs esp32/telnetd.fs \
-             esp32/camera.fs common/blocks.fs \
+             esp32/bterm.fs posix/telnetd.fs \
+             esp32/camera.fs esp32/camera_server.fs common/blocks.fs \
              esp32/autoboot.fs common/fini.fs
 $(GEN)/esp32_boot.h: common/source_to_string.js $(ESP32_BOOT) | $(GEN)
 	echo "ok" | cat $(ESP32_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
@@ -296,6 +300,7 @@ $(DEPLOY):
 
 REPLACE = common/replace.js \
           COMMON=@site/common.html \
+          POSIX_COMMON=@site/posix_common.html \
           DESKTOP_COMMON=@site/desktop_common.html \
           MENU=@site/menu.html \
           VERSION=${VERSION} \

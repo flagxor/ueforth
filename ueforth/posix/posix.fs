@@ -90,10 +90,15 @@ decimal
 
 ( Hookup I/O )
 : stdout-write ( a n -- ) stdout -rot write drop ;
-' stdout-write is type
 : stdin-key ( -- n ) 0 >r stdin rp@ 1 read drop r> ;
-' stdin-key is key
 : posix-bye   0 sysexit ;
+
+also forth definitions
+: default-type stdout-write ;
+: default-key stdin-key ;
+only posix definitions
+' default-type is type
+' default-key is key
 ' posix-bye is bye
 
 ( I/O Error Helpers )

@@ -1,15 +1,26 @@
+( Add a yielding task so pause yields )
+internals definitions
+transfer{ yield raw-yield }transfer
+' raw-yield 100 100 task yield-task
+yield-task start-task
+forth definitions
+
 ( Set up Basic I/O )
 internals definitions
-: arduino-bye   0 terminate ;
-' arduino-bye is bye
-: arduino-type ( a n -- ) Serial.write drop ;
-' arduino-type is type
-: arduino-key ( -- n )
-   begin Serial.available until 0 >r rp@ 1 Serial.readBytes drop r> ;
-' arduino-key is key
-: arduino-key? ( -- n ) Serial.available ;
-' arduino-key? is key?
-forth definitions
+: esp32-bye   0 terminate ;
+: serial-type ( a n -- ) Serial.write drop ;
+: serial-key ( -- n )
+   begin pause Serial.available until 0 >r rp@ 1 Serial.readBytes drop r> ;
+: serial-key? ( -- n ) Serial.available ;
+also forth definitions
+: default-type serial-type ;
+: default-key serial-key ;
+: default-key? serial-key? ;
+' default-type is type
+' default-key is key
+' default-key? is key?
+' esp32-bye is bye
+only forth definitions
 
 ( Map Arduino / ESP32 things to shorter names. )
 : pin ( n pin# -- ) swap digitalWrite ;

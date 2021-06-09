@@ -78,6 +78,7 @@ On boot, ESP32forth configures PIN 2 (typically an LED) to be an output and brin
 <h3>ESP32forth Specific Words</h3>
 
 {{COMMON}}
+{{POSIX_COMMON}}
 
 <h3>ESP32forth Bindings</h3>
 
@@ -170,8 +171,9 @@ adc ( pin# -- n )   Analog read pin, result 0-1023
 
 <h5>System</h5>
 <pre>
-MS ( n -- )
-TERMINATE ( n -- ) Call system exit
+MS ( n -- ) Pause for some number of milliseconds.
+MS-TICKS ( -- n ) Time since start in milliseconds.
+TERMINATE ( n -- ) Call system exit.
 </pre>
 
 <h5>Files</h5>
@@ -275,6 +277,14 @@ esp_camera_fb_return ( fb -- )
 esp_camera_sensor_get ( -- sensor )
 </pre>
 
+<h5>Camera Server</h5>
+<b>WIP Prototype - Not yet stable</b>
+These words are inside the <code>camera-server</code> vocabulary.
+<pre>
+server ( port -- ) Start an image server at port,
+                   e.g. http://IP/image will produce an image
+</pre>
+
 <h5>SD_MMC</h5>
 These words are inside the <code>SD_MMC</code> vocabulary.
 <pre>
@@ -356,8 +366,28 @@ esp_intr_free ( handle -- 0/err )
 timer_isr_register ( group timer xt arg ret -- 0/err )
 </pre>
 
+<h5 id="tasks">Tasks</h5>
+These words are inside the <code>TASKS</code> vocabulary.
+
+<pre>
+PAUSE ( -- ) Yield to other tasks.
+MS ( n -- ) Pause for some number of milliseconds (yields to other tasks).
+TASK ( xt dsz rsz "name" -- ) Create a new task with dsz size data stack
+                              and rsz size return stack running xt.
+START-TASK ( task -- ) Activate a task.
+.TASKS ( -- ) List running tasks.
+
+Example:
+tasks
+: hi   begin ." Time is: " ms-ticks . cr 1000 ms again ;
+' hi 100 100 task my-counter
+my-counter start-task 
+</pre>
+
 <h5 id="timers">Timers</h5>
 These words are inside the <code>TIMERS</code> vocabulary.
+<br/><b>NOTE: These are low level ESP32 timers. For a periodic background
+operation, you'll probably want to use <a href="#tasks">TASKS</a>.</b>
 
 <p>High Level words:</p>
 <pre>
@@ -427,7 +457,8 @@ Contact at port printed or via mDNS <a href="http://forth/">http://forth/</a>.
 </p>
 
 <pre>
-webui ( network-z password-z -- )
+webui ( network-z password-z -- ) login and start webui
+login ( network-z password-z -- ) login to wifi only
 </pre>
 
 <p>Usage:</p>

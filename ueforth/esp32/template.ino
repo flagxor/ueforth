@@ -54,7 +54,7 @@
 # define HEAP_SIZE 2 * 1024
 # define STACK_SIZE 32
 #endif
-#define INTERRUPT_STACK_CELLS 16
+#define INTERRUPT_STACK_CELLS 64
 
 #define PLATFORM_OPCODE_LIST \
   /* Memory Allocation */ \
@@ -91,7 +91,8 @@
   Y(ledcWriteNote, \
       tos = (cell_t) (1000000 * ledcWriteNote(n2, (note_t) n1, n0)); NIPn(2)) \
   /* General System */ \
-  Y(MS, delay(n0); DROP) \
+  X("MS-TICKS", MS_TICKS, PUSH millis()) \
+  X("RAW-YIELD", RAW_YIELD, yield()) \
   Y(TERMINATE, exit(n0)) \
   /* File words */ \
   X("R/O", R_O, PUSH O_RDONLY) \
@@ -220,10 +221,11 @@
 # include <sys/poll.h>
 # define OPTIONAL_SOCKETS_SUPPORT \
   Y(socket, n0 = socket(n2, n1, n0); NIPn(2)) \
+  Y(setsockopt, n0 = setsockopt(n4, n3, n2, a1, n0); NIPn(4)) \
   Y(bind, n0 = bind(n2, (struct sockaddr *) a1, n0); NIPn(2)) \
   Y(listen, n0 = listen(n1, n0); NIP) \
   Y(connect, n0 = connect(n2, (struct sockaddr *) a1, n0); NIPn(2)) \
-  Y(accept, n0 = accept(n2, (struct sockaddr *) a1, (socklen_t *) a0); NIPn(2)) \
+  Y(sockaccept, n0 = accept(n2, (struct sockaddr *) a1, (socklen_t *) a0); NIPn(2)) \
   Y(select, n0 = select(n4, (fd_set *) a3, (fd_set *) a2, (fd_set *) a1, (struct timeval *) a0); NIPn(4)) \
   Y(poll, n0 = poll((struct pollfd *) a2, (nfds_t) n1, n0); NIPn(2)) \
   Y(errno, PUSH errno)

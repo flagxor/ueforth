@@ -1,5 +1,4 @@
 ( Handling for ESP32-CAM )
-
 DEFINED? esp_camera_init [IF]
 
 vocabulary camera   camera definitions

@@ -79,11 +79,21 @@ forth definitions
 
 vocabulary sockets   sockets definitions
 transfer{
-  socket bind listen connect accept select poll errno
+  socket bind listen connect sockaccept select poll errno
 }transfer
 1 constant SOCK_STREAM
 2 constant AF_INET
 16 constant sizeof(sockaddr_in)
+1 constant SOL_SOCKET
+2 constant SO_REUSEADDR
+
+: bs, ( n -- ) dup 256 / c, c, ;
+: s, ( n -- ) dup c, 256 / c, ;
+: l, ( n -- ) dup s, 65536 / s, ;
+: sockaddr   create 16 c, AF_INET c, 0 bs, 0 l, 0 l, 0 l, ;
+: ->port@ ( a -- n ) 2 + >r r@ c@ 256 * r> 1+ c@ + ;
+: ->port! ( n a --  ) 2 + >r dup 256 / r@ c! r> 1+ c! ;
+
 forth definitions
 
 vocabulary interrupts   interrupts definitions
