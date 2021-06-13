@@ -1,0 +1,22 @@
+<h5>Web Interface</h5>
+These words are inside the <code>web-interface</code> vocabulary.
+<pre>
+server ( port -- ) Start web UI on port (used to implement webui).
+</pre>
+
+<h5>HTTP Daemon</h5>
+These words are inside the <code>httpde</code> vocabulary.
+<pre>
+server ( port -- ) Start an httpd on port.
+handleClient ( -- ) Get next request.
+path ( -- a n ) Request path, e.g. /foo
+method ( -- a n ) Request method, e.g. GET
+header ( a n -- a n ) Contents of header (or empty string).
+body ( -- a n ) Rquest body.
+</pre>
+
+<h5>Telnet Daemon</h5>
+These words are inside the <code>web-interface</code> vocabulary.
+<pre>
+server ( port -- ) Start telnet daemon on port.
+</pre>
