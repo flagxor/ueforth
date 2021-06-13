@@ -2,7 +2,7 @@ include posix/xlib.fs
 
 also x11
 
-z" :0" XOpenDisplay constant display
+0 XOpenDisplay constant display
 display XDefaultScreen constant screen
 display screen XBlackPixel constant black
 display screen XWhitePixel constant white
