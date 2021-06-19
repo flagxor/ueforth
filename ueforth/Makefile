@@ -116,7 +116,16 @@ unit_tests: $(POSIX)/ueforth common/all_tests.fs
 	$^
 
 see_all_test: $(POSIX)/ueforth
-	echo "internals see-all bye" | $< >/dev/null
+	echo \
+     also internals \
+     also posix \
+     also tasks \
+     also streams \
+     also ansi \
+     also termios \
+     also telnetd \
+     also httpd \
+     see-all bye | $< >/dev/null
 
 # ---- GENERATED ----
 
