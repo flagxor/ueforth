@@ -1,5 +1,6 @@
 VERSION=7.0.5
 REVISION=$(shell git rev-parse HEAD)
+REVSHORT=$(shell echo $(REVISION) | head -c 7)
 
 OUT = out
 GEN = $(OUT)/gen
@@ -276,7 +277,43 @@ $(ESP32)/ESP32forth/ESP32forth.ino: \
 # ---- PACKAGE ----
 
 $(ESP32)/ESP32forth.zip: $(ESP32)/ESP32forth/ESP32forth.ino
-	cd $(ESP32) && zip -r ESP32forth.zip ESP32forth
+	cd $(ESP32) && rm -f ESP32forth.zip && zip -r ESP32forth.zip ESP32forth
+
+# ---- Publish to Archive ----
+
+ARCHIVE=gs://eforth/releases
+
+publish-esp32: $(ESP32)/ESP32forth.zip
+	CLOUDSDK_CORE_PROJECT=eforth gsutil cp -a public-read \
+    $(ESP32)/ESP32forth.zip \
+    $(ARCHIVE)/ESP32forth-$(VERSION)-$(REVSHORT).zip
+	CLOUDSDK_CORE_PROJECT=eforth gsutil cp -a public-read \
+    $(ESP32)/ESP32forth.zip \
+    $(ARCHIVE)/ESP32forth-$(VERSION).zip
+
+publish-linux: $(POSIX)/ueforth
+	CLOUDSDK_CORE_PROJECT=eforth gsutil cp -a public-read \
+    $(POSIX)/ueforth \
+    $(ARCHIVE)/ueforth.$(VERSION)-$(REVSHORT).linux
+	CLOUDSDK_CORE_PROJECT=eforth gsutil cp -a public-read \
+    $(POSIX)/ueforth \
+    $(ARCHIVE)/ueforth.$(VERSION).linux
+
+publish-windows: $(WINDOWS)/uEf32.exe $(WINDOWS)/uEf64.exe
+	CLOUDSDK_CORE_PROJECT=eforth gsutil cp -a public-read \
+    $(WINDOWS)/uEf32.exe \
+    $(ARCHIVE)/uEf32.$(VERSION)-$(REVSHORT).exe
+	CLOUDSDK_CORE_PROJECT=eforth gsutil cp -a public-read \
+    $(WINDOWS)/uEf32.exe \
+    $(ARCHIVE)/uEf32.$(VERSION).exe
+	CLOUDSDK_CORE_PROJECT=eforth gsutil cp -a public-read \
+    $(WINDOWS)/uEf64.exe \
+    $(ARCHIVE)/uEf64.$(VERSION)-$(REVSHORT).exe
+	CLOUDSDK_CORE_PROJECT=eforth gsutil cp -a public-read \
+    $(WINDOWS)/uEf64.exe \
+    $(ARCHIVE)/uEf64.$(VERSION).exe
+
+publish: publish-esp32 publish-linux publish-windows
 
 # ---- DEPLOY ----
 
