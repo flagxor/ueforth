@@ -370,6 +370,6 @@ $(DEPLOY)/app.yaml: $(RES)/eforth.ico \
 	cat site/internals.html | $(UE_REPLACE) >$(DEPLOY)/internals.html
 	cat site/classic.html | $(UE_REPLACE) >$(DEPLOY)/classic.html
 
-deploy: clean all
+deploy: all
 	cd out/deploy && gcloud app deploy -q --project esp32forth *.yaml
 	cd out/deploy && gcloud app deploy -q --project eforth *.yaml
