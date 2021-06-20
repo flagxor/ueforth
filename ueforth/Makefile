@@ -1,4 +1,4 @@
-VERSION=7.0.6
+VERSION=7.0.6.1
 REVISION=$(shell git rev-parse HEAD)
 REVSHORT=$(shell echo $(REVISION) | head -c 7)
 
@@ -291,38 +291,49 @@ $(ESP32)/ESP32forth.zip: $(ESP32)/ESP32forth/ESP32forth.ino
 # ---- Publish to Archive ----
 
 ARCHIVE=gs://eforth/releases
+GSUTIL=CLOUDSDK_CORE_PROJECT=eforth gsutil
+GSUTIL_CP=$(GSUTIL) \
+          -h "Cache-Control:public, max-age=3600" \
+          cp -a public-read
 
 publish-esp32: $(ESP32)/ESP32forth.zip
-	CLOUDSDK_CORE_PROJECT=eforth gsutil cp -a public-read \
+	$(GSUTIL_CP) \
     $(ESP32)/ESP32forth.zip \
     $(ARCHIVE)/ESP32forth-$(VERSION)-$(REVSHORT).zip
-	CLOUDSDK_CORE_PROJECT=eforth gsutil cp -a public-read \
+	$(GSUTIL_CP) \
     $(ESP32)/ESP32forth.zip \
     $(ARCHIVE)/ESP32forth-$(VERSION).zip
 
 publish-linux: $(POSIX)/ueforth
-	CLOUDSDK_CORE_PROJECT=eforth gsutil cp -a public-read \
+	$(GSUTIL_CP) \
     $(POSIX)/ueforth \
-    $(ARCHIVE)/ueforth.$(VERSION)-$(REVSHORT).linux
-	CLOUDSDK_CORE_PROJECT=eforth gsutil cp -a public-read \
+    $(ARCHIVE)/ueforth-$(VERSION)-$(REVSHORT).linux
+	$(GSUTIL_CP) \
     $(POSIX)/ueforth \
-    $(ARCHIVE)/ueforth.$(VERSION).linux
+    $(ARCHIVE)/ueforth-$(VERSION).linux
 
 publish-windows: $(WINDOWS)/uEf32.exe $(WINDOWS)/uEf64.exe
-	CLOUDSDK_CORE_PROJECT=eforth gsutil cp -a public-read \
+	$(GSUTIL_CP) \
     $(WINDOWS)/uEf32.exe \
-    $(ARCHIVE)/uEf32.$(VERSION)-$(REVSHORT).exe
-	CLOUDSDK_CORE_PROJECT=eforth gsutil cp -a public-read \
+    $(ARCHIVE)/uEf32-$(VERSION)-$(REVSHORT).exe
+	$(GSUTIL_CP) \
     $(WINDOWS)/uEf32.exe \
-    $(ARCHIVE)/uEf32.$(VERSION).exe
-	CLOUDSDK_CORE_PROJECT=eforth gsutil cp -a public-read \
+    $(ARCHIVE)/uEf32-$(VERSION).exe
+	$(GSUTIL_CP) \
     $(WINDOWS)/uEf64.exe \
-    $(ARCHIVE)/uEf64.$(VERSION)-$(REVSHORT).exe
-	CLOUDSDK_CORE_PROJECT=eforth gsutil cp -a public-read \
+    $(ARCHIVE)/uEf64-$(VERSION)-$(REVSHORT).exe
+	$(GSUTIL_CP) \
     $(WINDOWS)/uEf64.exe \
-    $(ARCHIVE)/uEf64.$(VERSION).exe
+    $(ARCHIVE)/uEf64-$(VERSION).exe
 
-publish: publish-esp32 publish-linux publish-windows
+publish-index: | $(GEN)
+	$(GSUTIL) ls gs://eforth/releases | tools/webindex.py >$(GEN)/archive.html
+	$(GSUTIL_CP) \
+    $(GEN)/archive.html \
+    gs://eforth/releases/index.html
+	$(GSUTIL) web set -m index.html -e 404.html gs://eforth
+
+publish: publish-esp32 publish-linux publish-windows publish-index
 
 # ---- DEPLOY ----
 
@@ -339,21 +350,18 @@ REPLACE = common/replace.js \
 UE_REPLACE = $(REPLACE) FORTH=uEForth
 ESP_REPLACE = $(REPLACE) FORTH=ESP32forth
 
-$(DEPLOY)/app.yaml: $(ESP32)/ESP32forth.zip \
+$(DEPLOY)/app.yaml: $(RES)/eforth.ico \
                     $(wildcard site/*.html) \
+                    site/static/eforth.css \
                     site/app.yaml \
                     site/eforth.go \
                     $(TARGETS) | $(DEPLOY)
+	rm -rf $(DEPLOY)/
 	mkdir -p $(DEPLOY)
 	cp -r site/static $(DEPLOY)/static
-	cp -r site/downloads $(DEPLOY)/downloads
+	cp $(RES)/eforth.ico $(DEPLOY)/static/favicon.ico
 	cp site/*.go $(DEPLOY)/
 	cp site/*.yaml $(DEPLOY)/
-	cp -r $(ESP32)/ESP32forth.zip $(DEPLOY)/downloads
-	cp -r $(POSIX)/ueforth $(DEPLOY)/downloads/ueforth.linux
-	cp -r $(WINDOWS)/uEf32.exe $(DEPLOY)/downloads/uEf32.exe
-	cp -r $(WINDOWS)/uEf64.exe $(DEPLOY)/downloads/uEf64.exe
-	cp -r $(RES)/eforth.ico $(DEPLOY)/downloads/favicon.ico
 	cp site/.gcloudignore $(DEPLOY)
 	cat site/ESP32forth.html | $(ESP_REPLACE) >$(DEPLOY)/ESP32forth.html
 	cat site/index.html | $(UE_REPLACE) >$(DEPLOY)/index.html

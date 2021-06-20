@@ -12,15 +12,29 @@
 
 <h2>Download</h2>
 
+<h3>STABLE RELEASE</h3>
 <p>
-<a href="downloads/ESP32forth.zip">ESP32forth.zip</a>
+<a href="https://eforth.storage.googleapis.com/releases/ESP32forth-7.0.5.1.zip">ESP32forth-7.0.5.1.zip</a>
   - Single .ino file ready for installation<br/>
-  <i>Version: {{VERSION}} Rev: {{REVISION}}</i>
+  <i>Version: 7.0.5.1</i>
 </p>
 
+<h3>Beta Release</h3>
+<p>
+<a href="https://eforth.storage.googleapis.com/releases/ESP32forth-{{VERSION}}.zip">ESP32forth-{{VERSION}}.zip</a>
+  - Single .ino file ready for installation<br/>
+  <i>Version: {{VERSION}}</i>
+</p>
+
+<hr/>
+
+<p>
+<a href="https://eforth.storage.googleapis.com/releases/" target="_blank">Release Archive</a>
+  - Prior Releases
+</p>
 <p>
 <a href="https://github.com/flagxor/eforth" target="_blank">http://github.com/flagxor/eforth</a>
-  - Complete Source Code (under ueforth/)
+  - Complete Unprocessed Source Code (under ueforth/)
 </p>
 
 <h2>Install</h2>
@@ -278,7 +292,8 @@ esp_camera_sensor_get ( -- sensor )
 </pre>
 
 <h5>Camera Server</h5>
-<b>WIP Prototype - Not yet stable</b>
+<p><b>Requires v7.0.6+</b></p>
+<b>WIP Prototype - Not yet stable</b><br/>
 These words are inside the <code>camera-server</code> vocabulary.
 <pre>
 server ( port -- ) Start an image server at port,

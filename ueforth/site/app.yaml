@@ -27,10 +27,6 @@ handlers:
   static_dir: static
   secure: always
 
-- url: /downloads
-  static_dir: downloads
-  secure: always
-
 - url: /.*
   script: auto
   secure: always

@@ -19,8 +19,14 @@ h3 {
   background-color: #eee;
   padding: 10px;
 }
+h4 {
+  border-bottom: 2px solid #777;
+  width: 30%;
+}
 h5 {
+  border-bottom: 2px solid #777;
   margin: 2px;
+  width: 30%;
 }
 a:link {
   color: #00c;
