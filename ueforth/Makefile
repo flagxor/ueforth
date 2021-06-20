@@ -330,8 +330,7 @@ publish-index: | $(GEN)
 	$(GSUTIL) ls gs://eforth/releases | tools/webindex.py >$(GEN)/archive.html
 	$(GSUTIL_CP) \
     $(GEN)/archive.html \
-    gs://eforth/releases/index.html
-	$(GSUTIL) web set -m index.html -e 404.html gs://eforth
+    gs://eforth/releases/archive.html
 
 publish: publish-esp32 publish-linux publish-windows publish-index
 

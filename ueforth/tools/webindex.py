@@ -13,4 +13,6 @@ sys.stdout.write("""<!DOCTYPE html>
 for line in sys.stdin.read().splitlines():
   url = line.replace('gs://eforth/', 'https://eforth.storage.googleapis.com/')
   name = line.replace('gs://eforth/releases/', '')
+  if name == 'archive.html':
+    continue
   sys.stdout.write('<a href="%s">%s</a><br/>\n' % (name, url))
