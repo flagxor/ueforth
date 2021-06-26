@@ -107,3 +107,55 @@ N ( -- ) Move to the next block
 SEE ( "name" -- ) Attempt to decompile a word
 ECHO ( -- a ) -- Address of flag that determines if commands are echoed
 </pre>
+
+<h5 id="dictimages">Dictionary Images and Startup</h5>
+
+<p>
+<b>WARNING: Danger ahead.</b><br/>
+Snapshotting the dictionary may not be stable across reinstallations of the C build of Forth.
+</p>
+
+<p>
+A collection of non-standard words is provided that allow snapshotting
+the dictionary and restoring it at startup, with a start word.
+</p>
+
+<pre>
+SAVE ( "name" -- ) Saves a snapshot of the current dictionary to a file.
+RESTORE ( "name" -- ) Restore a snapshot from a file.
+REMEMBER ( -- ) Save a snapshot to the default file
+                (./myforth or /spiffs/myforth on ESP32).
+STARTUP: ( "name" -- ) Save a snapshot to the default file arranging for
+                       "name" to be run on startup.
+REVIVE ( -- ) Restore the default filename.
+RESET ( -- ) Delete the default filename.
+</pre>
+
+<p>
+Here's an example usage:
+</p>
+
+<pre>
+: welcome ." Hello!" cr 100 0 do i . loop cr ;
+startup: welcome
+bye
+
+( Next boot will run a custom startup message )
+
+reset
+
+( Reset removes the custom message )
+</pre>
+
+<p>
+The <code>INTERNALS</code> vocabulary has some additional words
+for more control.
+</p>
+
+<pre>
+SAVE-NAME ( a n -- ) Save a snapshot if the current vocabulary to a file.
+RESTORE-NAME ( a n -- ) Restore a snapshot from a file.
+'COLD ( -- a ) Address of the word that will be run on startup.
+REMEMBER-FILENAME ( -- a n ) Deferred word specifying the platform specific
+                             default snapshot filename.
+</pre>
