@@ -225,7 +225,10 @@ variable echo -1 echo !   variable arrow -1 arrow !
        dup ?echo
        >r rot r> over c! 1+ -rot swap 1+ swap
      then
-   repeat drop nip ;
+   repeat drop nip
+   ( Eat rest of the line if buffer too small )
+   begin key dup nl = over 13 = or if ?echo exit else drop then again
+;
 200 constant input-limit
 : tib ( -- a ) 'tib @ ;
 create input-buffer   input-limit allot
