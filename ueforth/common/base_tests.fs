@@ -80,3 +80,7 @@ e: test-comments-compiled
   foo 999 = assert 789 = assert 456 = assert 123 = assert
 ;e
 
+e: test-recurse
+  : factorial   dup 0= if drop 1 else dup 1- recurse * then ;
+  5 factorial 120 = assert
+;e

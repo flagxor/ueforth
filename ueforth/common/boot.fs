@@ -82,6 +82,9 @@
 : repeat   ['] branch , , here swap ! ; immediate
 : aft   drop ['] branch , here 0 , here swap ; immediate
 
+( Recursion )
+: recurse   current @ @ aliteral ['] execute , ; immediate
+
 ( Compound words requiring conditionals )
 : min 2dup < if drop else nip then ;
 : max 2dup < if nip else drop then ;
