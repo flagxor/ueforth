@@ -84,3 +84,17 @@ e: test-recurse
   : factorial   dup 0= if drop 1 else dup 1- recurse * then ;
   5 factorial 120 = assert
 ;e
+
+e: test-accept
+  in: 1234567890xxxxxx
+  pad 10 accept
+  pad swap type cr
+  out: --> 1234567890
+  out: 1234567890
+;e
+
+e: test-key
+  in: 1
+  key 49 = assert
+  key nl = assert
+;e

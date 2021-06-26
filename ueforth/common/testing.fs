@@ -30,6 +30,17 @@ variable confirm-old-type
 : expect-finish   expected resulted str= if exit then }confirm
    cr ." Expected:" cr expected type cr ." Resulted:" cr resulted type cr 1 throw ;
 
+( Input testing )
+create in-buffer 1000 allot
+variable in-head   variable in-tail
+: >in ( c -- ) in-buffer in-head @ + c!  1 in-head +! ;
+: in> ( -- c ) in-tail @ in-head @ < assert
+               in-buffer in-tail @ + c@  1 in-tail +!
+               in-head @ in-tail @ = if 0 in-head ! 0 in-tail ! then ;
+: s>in ( a n -- ) for aft dup c@ >in 1+ then next drop ;
+: in: ( "line" -- ) nl parse s>in nl >in ;
+' in> is key
+
 ( Testing Framework )
 ( run-tests runs all words starting with "test-", use assert to assert things. )
 variable tests-found   variable tests-run    variable tests-passed
