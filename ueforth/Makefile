@@ -1,4 +1,4 @@
-VERSION=7.0.5.1
+VERSION=7.0.5.2
 REVISION=$(shell git rev-parse HEAD)
 REVSHORT=$(shell echo $(REVISION) | head -c 7)
 
@@ -134,7 +134,7 @@ POSIX_BOOT =  common/boot.fs common/conditionals.fs common/vocabulary.fs \
               posix/autoboot.fs \
               common/fini.fs
 $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
-	echo "ok" | cat $(POSIX_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
+	echo "ok" | cat $(POSIX_BOOT) - | cat | $< boot $(VERSION) $(REVISION) >$@
 
 WINDOWS_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
                common/hide_calls.fs common/ansi.fs \
@@ -143,7 +143,7 @@ WINDOWS_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
                common/blocks.fs common/locals.fs \
                common/fini.fs
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
-	echo "ok" | cat $(WINDOWS_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
+	echo "ok" | cat $(WINDOWS_BOOT) - | cat | $< boot $(VERSION) $(REVISION) >$@
 
 ESP32_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
              common/tasks.fs esp32/platform.fs esp32/highlevel.fs \
@@ -155,7 +155,7 @@ ESP32_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
              esp32/camera.fs common/blocks.fs \
              esp32/autoboot.fs common/fini.fs
 $(GEN)/esp32_boot.h: common/source_to_string.js $(ESP32_BOOT) | $(GEN)
-	echo "ok" | cat $(ESP32_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
+	echo "ok" | cat $(ESP32_BOOT) - | cat | $< boot $(VERSION) $(REVISION) >$@
 
 $(GEN)/dump_web_opcodes: web/dump_web_opcodes.c common/opcodes.h | $(GEN)
 	$(CC) $(CFLAGS) $< -o $@
