@@ -323,12 +323,12 @@ pinchange ( xt pin -- ) Call xt when pin changes.
 ESP_INTR_FLAG_DEFAULT -- Default handler allows per pin routing
 
 Various triggers:
-  GPIO_INTR_DISABLE
-  GPIO_INTR_POSEDGE
-  GPIO_INTR_NEGEDGE
-  GPIO_INTR_ANYEDGE
-  GPIO_INTR_LOW_LEVEL
-  GPIO_INTR_HIGH_LEVEL
+  #GPIO_INTR_DISABLE
+  #GPIO_INTR_POSEDGE
+  #GPIO_INTR_NEGEDGE
+  #GPIO_INTR_ANYEDGE
+  #GPIO_INTR_LOW_LEVEL
+  #GPIO_INTR_HIGH_LEVEL
 
 gpio_config ( gpio_config_t* -- 0/err )
 gpio_reset_pin ( pin -- 0/err )
