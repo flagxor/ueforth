@@ -1,4 +1,4 @@
-VERSION=7.0.5.2
+VERSION=7.0.5.3
 REVISION=$(shell git rev-parse HEAD)
 REVSHORT=$(shell echo $(REVISION) | head -c 7)
 
