@@ -14,9 +14,11 @@
 
 #define PRINT_ERRORS 0
 
-#define CELL_LEN(n) (((n) + sizeof(cell_t) - 1) / sizeof(cell_t))
+#define CELL_MASK (sizeof(cell_t) - 1)
+#define CELL_LEN(n) (((n) + CELL_MASK) / sizeof(cell_t))
 #define FIND(name) find(name, sizeof(name) - 1)
-#define LOWER(ch) ((ch) & 0x5F)
+#define UPPER(ch) (((ch) >= 'a' && (ch) <= 'z') ? ((ch) & 0x5F) : (ch))
+#define CELL_ALIGNED(a) (((cell_t) (a) + CELL_MASK) & ~CELL_MASK)
 #define IMMEDIATE 1
 #define SMUDGE 2
 #define VOCABULARY_DEPTH 16
@@ -44,9 +46,9 @@ static cell_t convert(const char *pos, cell_t n, cell_t *ret) {
   if (pos[0] == '-') { negate = -1; ++pos; --n; }
   if (pos[0] == '$') { base = 16; ++pos; --n; }
   for (; n; --n) {
-    uintptr_t d = pos[0] - '0';
+    uintptr_t d = UPPER(pos[0]) - '0';
     if (d > 9) {
-      d = LOWER(d) - 7;
+      d -= 7;
       if (d < 10) { return 0; }
     }
     if (d >= base) { return 0; }
@@ -58,8 +60,8 @@ static cell_t convert(const char *pos, cell_t n, cell_t *ret) {
 }
 
 static cell_t same(const char *a, const char *b, cell_t len) {
-  for (;len && LOWER(*a) == LOWER(*b); --len, ++a, ++b);
-  return len;
+  for (;len && UPPER(*a) == UPPER(*b); --len, ++a, ++b);
+  return len == 0;
 }
 
 static cell_t find(const char *name, cell_t len) {
@@ -68,7 +70,7 @@ static cell_t find(const char *name, cell_t len) {
     cell_t clen = CELL_LEN(len);
     while (pos) {
       if (!(pos[-1] & SMUDGE) && len == pos[-3] &&
-          same(name, (const char *) &pos[-3 - clen], len) == 0) {
+          same(name, (const char *) &pos[-3 - clen], len)) {
         return (cell_t) pos;
       }
       pos = (cell_t *) pos[-2];  // Follow link
@@ -78,6 +80,7 @@ static cell_t find(const char *name, cell_t len) {
 }
 
 static void create(const char *name, cell_t length, cell_t flags, void *op) {
+  g_sys.heap = (cell_t *) CELL_ALIGNED(g_sys.heap);
   char *pos = (char *) g_sys.heap;
   for (cell_t n = length; n; --n) { *pos++ = *name++; }  // name
   g_sys.heap += CELL_LEN(length);

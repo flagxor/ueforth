@@ -193,15 +193,16 @@ variable hld
 
 ( Strings )
 : parse-quote ( -- a n ) [char] " parse ;
-: $place ( a n -- ) for aft dup c@ c, 1+ then next drop 0 c, align ;
+: $place ( a n -- ) for aft dup c@ c, 1+ then next drop ;
+: zplace ( a n -- ) $place 0 c, align ;
 : $@   r@ dup cell+ swap @ r> dup @ 1+ aligned + cell+ >r ;
-: s"   parse-quote state @ if postpone $@ dup , $place
-       else dup here swap >r >r $place r> r> then ; immediate
+: s"   parse-quote state @ if postpone $@ dup , zplace
+       else dup here swap >r >r zplace r> r> then ; immediate
 : ."   postpone s" state @ if postpone type else type then ; immediate
 : z"   postpone s" state @ if postpone drop else drop then ; immediate
 : r"   parse-quote state @ if swap aliteral aliteral then ; immediate
 : r|   [char] | parse state @ if swap aliteral aliteral then ; immediate
-: s>z ( a n -- z ) here >r $place r> ;
+: s>z ( a n -- z ) here >r zplace r> ;
 : z>s ( z -- a n ) 0 over begin dup c@ while 1+ swap 1+ swap repeat drop ;
 
 ( Fill, Move )

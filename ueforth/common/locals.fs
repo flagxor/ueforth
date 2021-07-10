@@ -25,7 +25,7 @@ scope-doer scope-template
    begin scope-depth @ while postpone rdrop cell scope-depth +! repeat
    0 scope ! ;
 : scope-create ( a n -- )
-   dup >r $place r> , ( name )
+   dup >r $place align r> , ( name )
    scope @ , 0 , here scope ! ( link, flags )
    ['] scope-template dup @ , cell+ @ ,
    cell negate scope-depth +!   scope-depth @ , ;

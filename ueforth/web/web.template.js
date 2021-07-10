@@ -65,12 +65,17 @@ function Load(addr, content) {
   return addr;
 }
 
+function UPPER(a) {
+  // a = 97, z = 122
+  return a >= 97 && a <= 122 ? a & 95 : a;
+}
+
 function Same(a, b) {
   if (a.length != b.length) {
     return false;
   }
   for (var i = 0; i < a.length; ++i) {
-    if ((a.charCodeAt(i) & 95) != (b.charCodeAt(i) & 95)) {
+    if (UPPER(a.charCodeAt(i)) != UPPER(b.charCodeAt(i))) {
       return false;
     }
   }

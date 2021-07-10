@@ -26,3 +26,13 @@ e: test-locals-two
   sp0 sp!
 ;e
 
+e: test-alignment
+  30 allot
+  : color24 { r g b } r 16 lshift g 8 lshift b or or ;
+  1 2 3 color24 66051 = assert
+;e
+
+e: test-longname
+  : setPixelColor { pixelNum } pixelNum ;
+  1 setPixelColor 1 = assert
+;e

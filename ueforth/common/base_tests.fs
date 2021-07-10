@@ -112,3 +112,8 @@ e: test-key
   key 49 = assert
   key nl = assert
 ;e
+
+e: test-compiler-off
+  : test [ 123 111 + literal ] ;
+  test 234 = assert
+;e
