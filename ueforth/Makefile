@@ -13,6 +13,7 @@
 # limitations under the License.
 
 VERSION=7.0.6.3
+STABLE_VERSION=7.0.5.3
 REVISION=$(shell git rev-parse HEAD)
 REVSHORT=$(shell echo $(REVISION) | head -c 7)
 
@@ -359,7 +360,7 @@ REPLACE = common/replace.js \
           DESKTOP_COMMON=@site/desktop_common.html \
           MENU=@site/menu.html \
           VERSION=${VERSION} \
-          REVISION=${REVISION}
+          STABLE_VERSION=${STABLE_VERSION}
 UE_REPLACE = $(REPLACE) FORTH=uEForth
 ESP_REPLACE = $(REPLACE) FORTH=ESP32forth
 
