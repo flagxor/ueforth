@@ -34,10 +34,15 @@ scope-doer scope-template
 : (local) ( a n -- )
    >r >r postpone >r postpone ahead r> r> scope-create postpone then ;
 : }? ( a n -- ) 1 <> if drop 0 exit then c@ [char] } = ;
+: --? ( a n -- ) s" --" str= ;
+: eat}   begin bl parse }? until ;
 
 also forth definitions
 
-: {   begin bl parse 2dup }? if 2drop exit then (local) again ; immediate
+: {   begin bl parse
+        2dup --? if 2drop eat} exit then
+        2dup }? if 2drop exit then
+      (local) again ; immediate
 : ;   scope-clear postpone ; ; immediate
 
 only forth definitions

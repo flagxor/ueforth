@@ -150,9 +150,9 @@ $(GEN):
 
 POSIX_BOOT =  common/boot.fs common/conditionals.fs common/vocabulary.fs \
               common/hide_calls.fs common/ansi.fs \
-              posix/posix.fs posix/posix_highlevel.fs posix/termios.fs common/locals.fs \
+              posix/posix.fs posix/posix_highlevel.fs posix/termios.fs \
               common/tasks.fs common/utils.fs common/highlevel.fs common/filetools.fs \
-              posix/posix_desktop.fs \
+              common/locals.fs posix/posix_desktop.fs \
               common/streams.fs common/blocks.fs \
               posix/sockets.fs posix/telnetd.fs posix/httpd.fs posix/web_interface.fs \
               posix/autoboot.fs \

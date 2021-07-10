@@ -36,3 +36,8 @@ e: test-longname
   : setPixelColor { pixelNum } pixelNum ;
   1 setPixelColor 1 = assert
 ;e
+
+e: test-dash
+  : test { a b c -- a a b b c c } a a b b c c ;
+  1 2 3 test * + * + * 23 = assert
+;e
