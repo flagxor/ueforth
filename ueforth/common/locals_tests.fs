@@ -41,3 +41,21 @@ e: test-dash
   : test { a b c -- a a b b c c } a a b b c c ;
   1 2 3 test * + * + * 23 = assert
 ;e
+
+e: test-for-loop
+  : test { a b } 5 for a . b . next cr ;
+  1 2 test
+  out: 1 2 1 2 1 2 1 2 1 2 1 2 
+;e
+
+e: test-do-loop
+  : test { a b } 5 0 do a . b . loop cr ;
+  1 2 test
+  out: 1 2 1 2 1 2 1 2 1 2 
+;e
+
+e: test-do-+loop
+  : test { a b } 10 0 do i . a . b . 2 +loop cr ;
+  99 999 test
+  out: 0 99 999 2 99 999 4 99 999 6 99 999 8 99 999 
+;e

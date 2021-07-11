@@ -18,29 +18,39 @@
 
 internals definitions
 
+( Leave a region for locals definitions )
+1024 constant locals-capacity  128 constant locals-gap
+create locals-area locals-capacity allot
+variable locals-here  locals-area locals-here !
+: <>locals   locals-here @ here locals-here ! here - allot ;
+
 variable scope-depth
-: scope-doer   create does> @ rp@ + @ ;
-scope-doer scope-template
 : scope-clear
    begin scope-depth @ while postpone rdrop cell scope-depth +! repeat
-   0 scope ! ;
+   0 scope !   locals-area locals-here ! ;
+: local@ ( n -- ) rp@ + @ ;
+: do-local ( n -- ) nest-depth @ 1+ cells - aliteral ['] local@ , ;
 : scope-create ( a n -- )
    dup >r $place align r> , ( name )
-   scope @ , 0 , here scope ! ( link, flags )
-   ['] scope-template dup @ , cell+ @ ,
-   cell negate scope-depth +!   scope-depth @ , ;
+   scope @ , 1 , ( IMMEDIATE ) here scope ! ( link, flags )
+   ['] scope-clear @ ( docol) ,
+   scope-depth @ aliteral postpone do-local ['] exit ,
+   cell negate scope-depth +!
+;
+
+: ?room   locals-here @ locals-area - locals-capacity locals-gap - >
+          if scope-clear -1 throw then ;
 
 ( NOTE: This is not ANSForth compatible )
-: (local) ( a n -- )
-   >r >r postpone >r postpone ahead r> r> scope-create postpone then ;
+: (local) ( a n -- ) ?room <>locals scope-create <>locals postpone >r ;
 : }? ( a n -- ) 1 <> if drop 0 exit then c@ [char] } = ;
 : --? ( a n -- ) s" --" str= ;
-: eat}   begin bl parse }? until ;
 
 also forth definitions
 
 : {   begin bl parse
-        2dup --? if 2drop eat} exit then
+        dup 0= if scope-clear -1 throw then
+        2dup --? if 2drop [char] } parse 2drop exit then
         2dup }? if 2drop exit then
       (local) again ; immediate
 : ;   scope-clear postpone ; ; immediate

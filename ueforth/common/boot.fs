@@ -121,15 +121,18 @@ sp@ constant sp0
 rp@ constant rp0
 : depth ( -- n ) sp@ sp0 - cell/ ;
 
+( Rstack nest depth )
+variable nest-depth
+
 ( FOR..NEXT )
-: for   postpone >r postpone begin ; immediate
-: next   postpone donext , ; immediate
+: for   1 nest-depth +! postpone >r postpone begin ; immediate
+: next   -1 nest-depth +! postpone donext , ; immediate
 
 ( DO..LOOP )
 variable leaving
 : leaving,   here leaving @ , leaving ! ;
-: leaving(   leaving @ 0 leaving ! ;
-: )leaving   leaving @ swap leaving !
+: leaving(   leaving @ 0 leaving !   2 nest-depth +! ;
+: )leaving   leaving @ swap leaving !  -2 nest-depth +!
              begin dup while dup @ swap here swap ! repeat drop ;
 : (do) ( n n -- .. ) swap r> -rot >r >r >r ;
 : do ( lim s -- ) leaving( postpone (do) here ; immediate
