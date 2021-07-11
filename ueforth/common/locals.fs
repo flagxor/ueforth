@@ -24,18 +24,23 @@ create locals-area locals-capacity allot
 variable locals-here  locals-area locals-here !
 : <>locals   locals-here @ here locals-here ! here - allot ;
 
-variable scope-depth
-: scope-clear
-   begin scope-depth @ while postpone rdrop cell scope-depth +! repeat
-   0 scope !   locals-area locals-here ! ;
 : local@ ( n -- ) rp@ + @ ;
-: do-local ( n -- ) nest-depth @ 1+ cells - aliteral ['] local@ , ;
+: local! ( n -- ) rp@ + ! ;
+: local+! ( n -- ) rp@ + +! ;
+
+variable scope-depth
+variable local-op   ' local@ local-op !
+: scope-clear
+   scope-depth @ for aft postpone rdrop then next
+   0 scope-depth !   0 scope !   locals-area locals-here ! ;
+: do-local ( n -- ) nest-depth @ + 1+ cells negate aliteral
+                    local-op @ ,  ['] local@ local-op ! ;
 : scope-create ( a n -- )
    dup >r $place align r> , ( name )
    scope @ , 1 , ( IMMEDIATE ) here scope ! ( link, flags )
    ['] scope-clear @ ( docol) ,
    scope-depth @ aliteral postpone do-local ['] exit ,
-   cell negate scope-depth +!
+   1 scope-depth +!
 ;
 
 : ?room   locals-here @ locals-area - locals-capacity locals-gap - >
@@ -46,6 +51,9 @@ variable scope-depth
 : }? ( a n -- ) 1 <> if drop 0 exit then c@ [char] } = ;
 : --? ( a n -- ) s" --" str= ;
 
+: (to) ( xt -- ) ['] local! local-op ! execute ;
+: (+to) ( xt -- ) ['] local+! local-op ! execute ;
+
 also forth definitions
 
 : {   begin bl parse
@@ -53,6 +61,9 @@ also forth definitions
         2dup --? if 2drop [char] } parse 2drop exit then
         2dup }? if 2drop exit then
       (local) again ; immediate
+( TODO: Hide the words overriden here. )
 : ;   scope-clear postpone ; ; immediate
+: to ( n -- ) ' dup >flags @ if (to) else ['] ! value-bind then ; immediate
+: +to ( n -- ) ' dup >flags @ if (+to) else ['] +! value-bind then ; immediate
 
 only forth definitions

@@ -59,3 +59,15 @@ e: test-do-+loop
   99 999 test
   out: 0 99 999 2 99 999 4 99 999 6 99 999 8 99 999 
 ;e
+
+e: test-to
+  : test 0 { a b } 123 to b a . b . cr ;
+  3 test 
+  out: 3 123 
+;e
+
+e: test-to-loop
+  : test 0 { x } 5 0 do i i * to x x . loop cr ;
+  test
+  out: 0 1 4 9 16 
+;e

@@ -158,10 +158,10 @@ variable handler
 
 ( Values )
 : value ( n -- ) create , does> @ ;
-: to ( n -- )
-   ' >body state @ if aliteral postpone ! else ! then ; immediate
-: +to ( n -- )
-   ' >body state @ if aliteral postpone +! else +! then ; immediate
+: value-bind ( xt-val xt )
+   >r >body state @ if aliteral r> , else r> execute then ;
+: to ( n -- ) ' ['] ! value-bind ; immediate
+: +to ( n -- ) ' ['] +! value-bind ; immediate
 
 ( Deferred Words )
 : defer ( "name" -- ) create 0 , does> @ dup 0= throw execute ;
