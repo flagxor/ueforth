@@ -124,6 +124,42 @@ SEE ( "name" -- ) Attempt to decompile a word
 ECHO ( -- a ) -- Address of flag that determines if commands are echoed
 </pre>
 
+<h5>Locals</h5>
+
+<p>
+Locals allow named word local parameters and values.
+</p>
+
+<pre>
+Syntax:
+  { local1 local2 .. -- comment }
+or
+  { local1 local2 .. }
+
+Locals are ordered to match the stack, examples:
+: 2OVER { a b c d } a b c d a b ;
+: MAX { a b -- biggest } a b &lt; IF b ELSE a THEN ;
+
+( Equivalent with DO and FOR )
+: POW2 { n } 1 { s } n FOR AFT s 2* to s THEN NEXT s ;
+: POW2 { n } 1 { s } n 0 DO s 2* to s LOOP s ;
+</pre>
+
+<p>
+Capabilities and limitations:
+<ul>
+  <li>Support for locals referenced inside DO and FOR loops - OK</li>
+  <li>Support for multiple {} uses in one definition - OK</li>
+  <li>Support for TO and +TO to modify a local</li>
+  <li>Locals mixed with raw return stack operations (<code>&gt;R R&gt;</code>) - NOT OK</li>
+  <li>Locals defined inside a DO or FOR loop - NOT OK</li>
+  <li>The low level ANSForth word <code>(LOCAL)</code> is also supported.</li>
+</ul>
+</p>
+
+<p>
+</p>
+
 <h5 id="dictimages">Dictionary Images and Startup</h5>
 
 <p>
