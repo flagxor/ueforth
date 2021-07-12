@@ -71,3 +71,15 @@ e: test-to-loop
   test
   out: 0 1 4 9 16 
 ;e
+
+e: test-multi
+  : test { a b } 9 99 { c d } a . b . c . d . ;
+  1 2 test cr
+  out: 1 2 9 99 
+;e
+
+e: test-multi-to
+  : test { a b } 9 99 { c d } 5 to c a . b . c . d . ;
+  1 2 test cr
+  out: 1 2 5 99 
+;e
