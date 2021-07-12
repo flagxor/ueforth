@@ -575,8 +575,9 @@ See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/esp32/autoboot.
 <h3 id="adding_words">Adding Words</h3>
 
 <p>
-Adding words based on C functions can be done by editing the source code.
-For ESP32forth <code>template.ino</code> is the appropriate place.
+Words can be added based on C functions by placing a file named <code>userwords.h</code>
+alongside the .ino file for ESP32forth. <b>(Requires v7.0.6.4+)</b>
+<i>Before v7.0.6.4, user words required editing the .ino file.</i>
 </p>
 
 <p>
@@ -592,6 +593,8 @@ To add a word containing only letters, numbers, and underscore you can use <code
 </p>
 
 <pre>
+<b>---- userwords.h ----</b>
+#define USER_WORDS \
   Y(MY_WORD123, c_function_to_call()) \
 </pre>
 
@@ -603,6 +606,8 @@ The name is not used anywhere else, but must be unique.
 </p>
 
 <pre>
+<b>---- userwords.h ----</b>
+#define USER_WORDS \
   X("myword!", MY_WORD_BANG, c_function_to_call()) \
 </pre>
 
@@ -618,6 +623,8 @@ You can push a value of any type to the stack with the macro <code>PUSH</code>:
 </p>
 
 <pre>
+<b>---- userwords.h ----</b>
+#define USER_WORDS \
   Y(MY_WORD, PUSH calculate_magic_value()) \
 </pre>
 
@@ -633,8 +640,11 @@ n10 n9 n8 n7 n6 n5 n4 n3 n2 n1 n0 - Access stack as cell_t integer values
              a6 a5 a4 a3 a2 a1 a0 - Access stack as void* values
 
 Examples:
-  void send_message(const char *message, int code);
-  ...
+
+<b>---- userwords.h ----</b>
+void send_message(const char *message, int code);
+...
+#define USER_WORDS \
   X("send-message", SEND_MESSAGE, send_message(c1, n0)) \
 </pre>
 
@@ -643,6 +653,8 @@ Examples:
 </p>
 
 <pre>
+<b>---- userwords.h ----</b>
+#define USER_WORDS \
   Y(DECODE, SET decode_func(n0)) \
 </pre>
 
@@ -655,8 +667,10 @@ Examples:
 </p>
 
 <pre>
-  int my_cool_function(char *foo, int bar, uint8_t *baz);
-  ...
+<b>---- userwords.h ----</b>
+int my_cool_function(char *foo, int bar, uint8_t *baz);
+...
+#define USER_WORDS \
   Y(MY_FUNC, n0 = my_cool_function(c2, n1, b0); NIPn(2)) \
 </pre>
 
@@ -671,6 +685,8 @@ New variables can be declared in each word and are scoped to that word.
 </p>
 
 <pre>
+<b>---- userwords.h ----</b>
+#define USER_WORDS \
   Y(MY_WORD, cell_t foo = n0; DROP; char *x = c0; DROP; \
              PUSH my_func(foo, x)) \
 </pre>
