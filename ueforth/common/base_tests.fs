@@ -1,3 +1,17 @@
+\ Copyright 2021 Bradley D. Nelson
+\
+\ Licensed under the Apache License, Version 2.0 (the "License");
+\ you may not use this file except in compliance with the License.
+\ You may obtain a copy of the License at
+\
+\     http://www.apache.org/licenses/LICENSE-2.0
+\
+\ Unless required by applicable law or agreed to in writing, software
+\ distributed under the License is distributed on an "AS IS" BASIS,
+\ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+\ See the License for the specific language governing permissions and
+\ limitations under the License.
+
 ( Tests Base Operations )
 : test-empty-stack   depth 0= assert ;
 : test-add   123 111 + 234 = assert ;
@@ -80,3 +94,26 @@ e: test-comments-compiled
   foo 999 = assert 789 = assert 456 = assert 123 = assert
 ;e
 
+e: test-recurse
+  : factorial   dup 0= if drop 1 else dup 1- recurse * then ;
+  5 factorial 120 = assert
+;e
+
+e: test-accept
+  in: 1234567890xxxxxx
+  pad 10 accept
+  pad swap type cr
+  out: --> 1234567890
+  out: 1234567890
+;e
+
+e: test-key
+  in: 1
+  key 49 = assert
+  key nl = assert
+;e
+
+e: test-compiler-off
+  : test [ 123 111 + literal ] ;
+  test 234 = assert
+;e

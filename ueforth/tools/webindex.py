@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # Copyright 2021 Bradley D. Nelson
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,35 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-runtime: go115
+import sys
 
-default_expiration: "1m"
+sys.stdout.write("""<!DOCTYPE html>
+<head>
+<title>Release Archive</title>
+</head>
+<body>
+<h1>Release Archive</h1>
+""")
 
-handlers:
-- url: /robots.txt
-  static_files: static/robots.txt
-  upload: static/robots.txt
-  secure: always
-
-- url: /favicon(.*)
-  static_files: static/favicon\1
-  upload: static/favicon.*
-  secure: always
-
-- url: /
-  static_files: index.html
-  upload: index.html
-  secure: always
-
-- url: /(.*).html
-  static_files: \1.html
-  upload: (.*).html
-  secure: always
-
-- url: /static
-  static_dir: static
-  secure: always
-
-- url: /.*
-  script: auto
-  secure: always
+for line in sys.stdin.read().splitlines():
+  url = line.replace('gs://eforth/', 'https://eforth.storage.googleapis.com/')
+  name = line.replace('gs://eforth/releases/', '')
+  if name == 'archive.html':
+    continue
+  sys.stdout.write('<a href="%s">%s</a><br/>\n' % (name, url))

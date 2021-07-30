@@ -1,0 +1,39 @@
+<!--
+Copyright 2021 Bradley D. Nelson
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<h5>Web Interface</h5>
+These words are inside the <code>web-interface</code> vocabulary.
+<pre>
+server ( port -- ) Start web UI on port (used to implement webui).
+</pre>
+
+<h5>HTTP Daemon</h5>
+<p><b>Requires v7.0.6+</b></p>
+These words are inside the <code>httpd</code> vocabulary.
+<pre>
+server ( port -- ) Start an httpd on port.
+handleClient ( -- ) Get next request.
+path ( -- a n ) Request path, e.g. /foo
+method ( -- a n ) Request method, e.g. GET
+header ( a n -- a n ) Contents of header (or empty string).
+body ( -- a n ) Rquest body.
+</pre>
+
+<h5>Telnet Daemon</h5>
+These words are inside the <code>web-interface</code> vocabulary.
+<pre>
+server ( port -- ) Start telnet daemon on port.
+</pre>

@@ -1,4 +1,20 @@
 <!DOCTYPE html>
+<!--
+Copyright 2021 Bradley D. Nelson
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
 <head>
 <meta charset="UTF-8">
 <title>ESP32forth</title>
@@ -12,15 +28,29 @@
 
 <h2>Download</h2>
 
+<h3>STABLE RELEASE</h3>
 <p>
-<a href="downloads/ESP32forth.zip">ESP32forth.zip</a>
+<a href="https://eforth.storage.googleapis.com/releases/ESP32forth-{{STABLE_VERSION}}.zip">ESP32forth-{{STABLE_VERSION}}.zip</a>
   - Single .ino file ready for installation<br/>
-  <i>Version: {{VERSION}} Rev: {{REVISION}}</i>
+  <i>Version: {{STABLE_VERSION}}</i>
 </p>
 
+<h3>Beta Release</h3>
+<p>
+<a href="https://eforth.storage.googleapis.com/releases/ESP32forth-{{VERSION}}.zip">ESP32forth-{{VERSION}}.zip</a>
+  - Single .ino file ready for installation<br/>
+  <i>Version: {{VERSION}}</i>
+</p>
+
+<hr/>
+
+<p>
+<a href="https://eforth.storage.googleapis.com/releases/archive.html" target="_blank">Release Archive</a>
+  - Prior Releases
+</p>
 <p>
 <a href="https://github.com/flagxor/eforth" target="_blank">http://github.com/flagxor/eforth</a>
-  - Complete Source Code (under ueforth/)
+  - Complete Unprocessed Source Code (under ueforth/)
 </p>
 
 <h2>Install</h2>
@@ -278,7 +308,8 @@ esp_camera_sensor_get ( -- sensor )
 </pre>
 
 <h5>Camera Server</h5>
-<b>WIP Prototype - Not yet stable</b>
+<p><b>Requires v7.0.6+</b></p>
+<b>WIP Prototype - Not yet stable</b><br/>
 These words are inside the <code>camera-server</code> vocabulary.
 <pre>
 server ( port -- ) Start an image server at port,
@@ -316,12 +347,12 @@ pinchange ( xt pin -- ) Call xt when pin changes.
 ESP_INTR_FLAG_DEFAULT -- Default handler allows per pin routing
 
 Various triggers:
-  GPIO_INTR_DISABLE
-  GPIO_INTR_POSEDGE
-  GPIO_INTR_NEGEDGE
-  GPIO_INTR_ANYEDGE
-  GPIO_INTR_LOW_LEVEL
-  GPIO_INTR_HIGH_LEVEL
+  #GPIO_INTR_DISABLE
+  #GPIO_INTR_POSEDGE
+  #GPIO_INTR_NEGEDGE
+  #GPIO_INTR_ANYEDGE
+  #GPIO_INTR_LOW_LEVEL
+  #GPIO_INTR_HIGH_LEVEL
 
 gpio_config ( gpio_config_t* -- 0/err )
 gpio_reset_pin ( pin -- 0/err )
@@ -472,6 +503,11 @@ See <a href="https://github.com/flagxor/eforth/blob/main/ueforth/esp32/web_inter
 </p>
 
 <h3 id="autoexec">Autoexec.fs</h3>
+
+<p>
+NOTE: This section describes one mechanism for running code at startup.
+See <a href="#dictimages">this</a> for an alternate option.
+</p>
 
 <p>
 The system will automatically attempt to mount SPIFFS filesystem at <code>/spiffs</code>.

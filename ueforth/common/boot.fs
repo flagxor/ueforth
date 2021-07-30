@@ -1,4 +1,19 @@
 : (   41 parse drop drop ; immediate
+: \   10 parse drop drop ; immediate
+
+\ Copyright 2021 Bradley D. Nelson
+\
+\ Licensed under the Apache License, Version 2.0 (the "License");
+\ you may not use this file except in compliance with the License.
+\ You may obtain a copy of the License at
+\
+\     http://www.apache.org/licenses/LICENSE-2.0
+\
+\ Unless required by applicable law or agreed to in writing, software
+\ distributed under the License is distributed on an "AS IS" BASIS,
+\ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+\ See the License for the specific language governing permissions and
+\ limitations under the License.
 
 ( Useful Basic Compound Words )
 : nip ( a b -- b ) swap drop ;
@@ -25,9 +40,6 @@
 : 2* 2 * ;   : 2/ 2 / ;
 : 4* 4 * ;   : 4/ 4 / ;
 : +! ( n a -- ) swap over @ + swap ! ;
-
-( Line Comments )
-: \   nl parse drop drop ; immediate
 
 ( Cells )
 : cell+ ( n -- n ) cell + ;
@@ -82,6 +94,9 @@
 : repeat   ['] branch , , here swap ! ; immediate
 : aft   drop ['] branch , here 0 , here swap ; immediate
 
+( Recursion )
+: recurse   current @ @ aliteral ['] execute , ; immediate
+
 ( Compound words requiring conditionals )
 : min 2dup < if drop else nip then ;
 : max 2dup < if nip else drop then ;
@@ -106,15 +121,18 @@ sp@ constant sp0
 rp@ constant rp0
 : depth ( -- n ) sp@ sp0 - cell/ ;
 
+( Rstack nest depth )
+variable nest-depth
+
 ( FOR..NEXT )
-: for   postpone >r postpone begin ; immediate
-: next   postpone donext , ; immediate
+: for   1 nest-depth +! postpone >r postpone begin ; immediate
+: next   -1 nest-depth +! postpone donext , ; immediate
 
 ( DO..LOOP )
 variable leaving
 : leaving,   here leaving @ , leaving ! ;
-: leaving(   leaving @ 0 leaving ! ;
-: )leaving   leaving @ swap leaving !
+: leaving(   leaving @ 0 leaving !   2 nest-depth +! ;
+: )leaving   leaving @ swap leaving !  -2 nest-depth +!
              begin dup while dup @ swap here swap ! repeat drop ;
 : (do) ( n n -- .. ) swap r> -rot >r >r >r ;
 : do ( lim s -- ) leaving( postpone (do) here ; immediate
@@ -140,10 +158,10 @@ variable handler
 
 ( Values )
 : value ( n -- ) create , does> @ ;
-: to ( n -- )
-   ' >body state @ if aliteral postpone ! else ! then ; immediate
-: +to ( n -- )
-   ' >body state @ if aliteral postpone +! else +! then ; immediate
+: value-bind ( xt-val xt )
+   >r >body state @ if aliteral r> , else r> execute then ;
+: to ( n -- ) ' ['] ! value-bind ; immediate
+: +to ( n -- ) ' ['] +! value-bind ; immediate
 
 ( Deferred Words )
 : defer ( "name" -- ) create 0 , does> @ dup 0= throw execute ;
@@ -178,21 +196,23 @@ variable hld
 
 ( Strings )
 : parse-quote ( -- a n ) [char] " parse ;
-: $place ( a n -- ) for aft dup c@ c, 1+ then next drop 0 c, align ;
+: $place ( a n -- ) for aft dup c@ c, 1+ then next drop ;
+: zplace ( a n -- ) $place 0 c, align ;
 : $@   r@ dup cell+ swap @ r> dup @ 1+ aligned + cell+ >r ;
-: s"   parse-quote state @ if postpone $@ dup , $place
-       else dup here swap >r >r $place r> r> then ; immediate
+: s"   parse-quote state @ if postpone $@ dup , zplace
+       else dup here swap >r >r zplace r> r> then ; immediate
 : ."   postpone s" state @ if postpone type else type then ; immediate
 : z"   postpone s" state @ if postpone drop else drop then ; immediate
 : r"   parse-quote state @ if swap aliteral aliteral then ; immediate
 : r|   [char] | parse state @ if swap aliteral aliteral then ; immediate
-: s>z ( a n -- z ) here >r $place r> ;
+: s>z ( a n -- z ) here >r zplace r> ;
 : z>s ( z -- a n ) 0 over begin dup c@ while 1+ swap 1+ swap repeat drop ;
 
 ( Fill, Move )
 : cmove ( a a n -- ) for aft >r dup c@ r@ c! 1+ r> 1+ then next 2drop ;
 : cmove> ( a a n -- ) for aft 2dup swap r@ + c@ swap r@ + c! then next 2drop ;
-: fill ( a a n -- ) swap for swap aft 2dup c! 1 + then next 2drop ;
+: fill ( a n ch -- ) swap for swap aft 2dup c! 1 + then next 2drop ;
+: erase ( a n -- ) 0 fill ;   : blank ( a n -- ) bl fill ;
 
 ( Better Errors )
 : notfound ( a n n -- )
@@ -213,7 +233,10 @@ variable echo -1 echo !   variable arrow -1 arrow !
        dup ?echo
        >r rot r> over c! 1+ -rot swap 1+ swap
      then
-   repeat drop nip ;
+   repeat drop nip
+   ( Eat rest of the line if buffer too small )
+   begin key dup nl = over 13 = or if ?echo exit else drop then again
+;
 200 constant input-limit
 : tib ( -- a ) 'tib @ ;
 create input-buffer   input-limit allot

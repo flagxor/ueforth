@@ -1,5 +1,21 @@
-VERSION=7.0.6
+# Copyright 2021 Bradley D. Nelson
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+VERSION=7.0.6.3
+STABLE_VERSION=7.0.5.3
 REVISION=$(shell git rev-parse HEAD)
+REVSHORT=$(shell echo $(REVISION) | head -c 7)
 
 OUT = out
 GEN = $(OUT)/gen
@@ -131,7 +147,16 @@ unit_tests: $(POSIX)/ueforth common/all_tests.fs
 	$^
 
 see_all_test: $(POSIX)/ueforth
-	echo "internals see-all bye" | $< >/dev/null
+	echo \
+     also internals \
+     also posix \
+     also tasks \
+     also streams \
+     also ansi \
+     also termios \
+     also telnetd \
+     also httpd \
+     see-all bye | $< >/dev/null
 
 # ---- GENERATED ----
 
@@ -140,15 +165,15 @@ $(GEN):
 
 POSIX_BOOT =  common/boot.fs common/conditionals.fs common/vocabulary.fs \
               common/hide_calls.fs common/ansi.fs \
-              posix/posix.fs posix/posix_highlevel.fs posix/termios.fs common/locals.fs \
+              posix/posix.fs posix/posix_highlevel.fs posix/termios.fs \
               common/tasks.fs common/utils.fs common/highlevel.fs common/filetools.fs \
-              posix/posix_desktop.fs \
+              common/locals.fs posix/posix_desktop.fs \
               common/streams.fs common/blocks.fs \
               posix/sockets.fs posix/telnetd.fs posix/httpd.fs posix/web_interface.fs \
               posix/autoboot.fs \
               common/fini.fs
 $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
-	echo "ok" | cat $(POSIX_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
+	echo "ok" | cat $(POSIX_BOOT) - | cat | $< boot $(VERSION) $(REVISION) >$@
 
 WINDOWS_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
                common/hide_calls.fs common/ansi.fs \
@@ -157,7 +182,7 @@ WINDOWS_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
                common/blocks.fs common/locals.fs \
                common/fini.fs
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
-	echo "ok" | cat $(WINDOWS_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
+	echo "ok" | cat $(WINDOWS_BOOT) - | cat | $< boot $(VERSION) $(REVISION) >$@
 
 ESP32_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
              common/tasks.fs esp32/platform.fs esp32/highlevel.fs \
@@ -169,7 +194,7 @@ ESP32_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
              esp32/camera.fs esp32/camera_server.fs common/blocks.fs \
              esp32/autoboot.fs common/fini.fs
 $(GEN)/esp32_boot.h: common/source_to_string.js $(ESP32_BOOT) | $(GEN)
-	echo "ok" | cat $(ESP32_BOOT) - | $< boot $(VERSION) $(REVISION) >$@
+	echo "ok" | cat $(ESP32_BOOT) - | cat | $< boot $(VERSION) $(REVISION) >$@
 
 $(GEN)/dump_web_opcodes: web/dump_web_opcodes.c common/opcodes.h | $(GEN)
 	$(CC) $(CFLAGS) $< -o $@
@@ -291,7 +316,53 @@ $(ESP32)/ESP32forth/ESP32forth.ino: \
 # ---- PACKAGE ----
 
 $(ESP32)/ESP32forth.zip: $(ESP32)/ESP32forth/ESP32forth.ino
-	cd $(ESP32) && zip -r ESP32forth.zip ESP32forth
+	cd $(ESP32) && rm -f ESP32forth.zip && zip -r ESP32forth.zip ESP32forth
+
+# ---- Publish to Archive ----
+
+ARCHIVE=gs://eforth/releases
+GSUTIL=CLOUDSDK_CORE_PROJECT=eforth gsutil
+GSUTIL_CP=$(GSUTIL) \
+          -h "Cache-Control:public, max-age=3600" \
+          cp -a public-read
+
+publish-esp32: $(ESP32)/ESP32forth.zip
+	$(GSUTIL_CP) \
+    $(ESP32)/ESP32forth.zip \
+    $(ARCHIVE)/ESP32forth-$(VERSION)-$(REVSHORT).zip
+	$(GSUTIL_CP) \
+    $(ESP32)/ESP32forth.zip \
+    $(ARCHIVE)/ESP32forth-$(VERSION).zip
+
+publish-linux: $(POSIX)/ueforth
+	$(GSUTIL_CP) \
+    $(POSIX)/ueforth \
+    $(ARCHIVE)/ueforth-$(VERSION)-$(REVSHORT).linux
+	$(GSUTIL_CP) \
+    $(POSIX)/ueforth \
+    $(ARCHIVE)/ueforth-$(VERSION).linux
+
+publish-windows: $(WINDOWS)/uEf32.exe $(WINDOWS)/uEf64.exe
+	$(GSUTIL_CP) \
+    $(WINDOWS)/uEf32.exe \
+    $(ARCHIVE)/uEf32-$(VERSION)-$(REVSHORT).exe
+	$(GSUTIL_CP) \
+    $(WINDOWS)/uEf32.exe \
+    $(ARCHIVE)/uEf32-$(VERSION).exe
+	$(GSUTIL_CP) \
+    $(WINDOWS)/uEf64.exe \
+    $(ARCHIVE)/uEf64-$(VERSION)-$(REVSHORT).exe
+	$(GSUTIL_CP) \
+    $(WINDOWS)/uEf64.exe \
+    $(ARCHIVE)/uEf64-$(VERSION).exe
+
+publish-index: | $(GEN)
+	$(GSUTIL) ls gs://eforth/releases | tools/webindex.py >$(GEN)/archive.html
+	$(GSUTIL_CP) \
+    $(GEN)/archive.html \
+    gs://eforth/releases/archive.html
+
+publish: publish-esp32 publish-linux publish-windows publish-index
 
 # ---- DEPLOY ----
 
@@ -304,25 +375,22 @@ REPLACE = common/replace.js \
           DESKTOP_COMMON=@site/desktop_common.html \
           MENU=@site/menu.html \
           VERSION=${VERSION} \
-          REVISION=${REVISION}
+          STABLE_VERSION=${STABLE_VERSION}
 UE_REPLACE = $(REPLACE) FORTH=uEForth
 ESP_REPLACE = $(REPLACE) FORTH=ESP32forth
 
-$(DEPLOY)/app.yaml: $(ESP32)/ESP32forth.zip \
+$(DEPLOY)/app.yaml: $(RES)/eforth.ico \
                     $(wildcard site/*.html) \
+                    site/static/eforth.css \
                     site/app.yaml \
                     site/eforth.go \
                     $(TARGETS) | $(DEPLOY)
+	rm -rf $(DEPLOY)/
 	mkdir -p $(DEPLOY)
 	cp -r site/static $(DEPLOY)/static
-	cp -r site/downloads $(DEPLOY)/downloads
+	cp $(RES)/eforth.ico $(DEPLOY)/static/favicon.ico
 	cp site/*.go $(DEPLOY)/
 	cp site/*.yaml $(DEPLOY)/
-	cp -r $(ESP32)/ESP32forth.zip $(DEPLOY)/downloads
-	cp -r $(POSIX)/ueforth $(DEPLOY)/downloads/ueforth.linux
-	cp -r $(WINDOWS)/uEf32.exe $(DEPLOY)/downloads/uEf32.exe
-	cp -r $(WINDOWS)/uEf64.exe $(DEPLOY)/downloads/uEf64.exe
-	cp -r $(RES)/eforth.ico $(DEPLOY)/downloads/favicon.ico
 	cp site/.gcloudignore $(DEPLOY)
 	cat site/ESP32forth.html | $(ESP_REPLACE) >$(DEPLOY)/ESP32forth.html
 	cat site/index.html | $(UE_REPLACE) >$(DEPLOY)/index.html
@@ -331,6 +399,6 @@ $(DEPLOY)/app.yaml: $(ESP32)/ESP32forth.zip \
 	cat site/internals.html | $(UE_REPLACE) >$(DEPLOY)/internals.html
 	cat site/classic.html | $(UE_REPLACE) >$(DEPLOY)/classic.html
 
-deploy: clean all
+deploy: all
 	cd out/deploy && gcloud app deploy -q --project esp32forth *.yaml
 	cd out/deploy && gcloud app deploy -q --project eforth *.yaml
