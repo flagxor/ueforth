@@ -20,6 +20,7 @@
  */
 
 {{opcodes}}
+{{floats}}
 {{calling}}
 
 // For now, default on several options.
@@ -80,6 +81,7 @@
 #endif
 
 #define PLATFORM_OPCODE_LIST \
+  FLOATING_POINT_LIST \
   /* Memory Allocation */ \
   Y(MALLOC, SET malloc(n0)) \
   Y(SYSFREE, free(a0); DROP) \

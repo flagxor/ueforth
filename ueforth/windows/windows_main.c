@@ -28,6 +28,7 @@
 #endif
 
 #include "common/opcodes.h"
+#include "common/floats.h"
 #include "common/calling.h"
 #include "common/calls.h"
 
@@ -39,6 +40,7 @@
       tos = (cell_t) GetProcAddress((HMODULE) *sp, (LPCSTR) tos); --sp) \
   Y(LOADLIBRARYA, \
       tos = (cell_t) LoadLibraryA((LPCSTR) tos)) \
+  FLOATING_POINT_LIST \
   CALLING_OPCODE_LIST \
 
 #include "common/core.h"

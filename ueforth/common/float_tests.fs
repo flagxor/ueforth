@@ -12,13 +12,46 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-include common/testing.fs
-include common/utils.fs
-include common/base_tests.fs
-include common/utils_tests.fs
-include common/vocabulary_tests.fs
-include common/locals_tests.fs
-include common/doloop_tests.fs
-include common/conditionals_tests.fs
-include common/float_tests.fs
-run-tests
+e: test-f.
+  123e f. cr
+  out: 123.000000 
+  123.123e f. cr
+  out: 123.123000 
+  -123.123e f. cr
+  out: -123.123000 
+;e
+
+e: test-f+
+  123e 11e f+ f. cr
+  out: 134.000000 
+;e
+
+e: test-f*
+  123e 10e f* f. cr
+  out: 1230.000000 
+;e
+
+e: test-1/f
+  100e 1/f f. cr
+  out: 0.009999 
+;e
+
+e: test-f/
+  1000e 4e f/ f. cr
+  out: 250.000000 
+;e
+
+e: test-fsqrt
+  256e fsqrt f. cr
+  out: 16.000000 
+;e
+
+e: test-fswap
+  123e 234e fswap f. f. cr
+  out: 123.000000 234.000000 
+;e
+
+e: test-fover
+  123e 234e fover f. f. f. cr
+  out: 123.000000 234.000000 123.000000 
+;e

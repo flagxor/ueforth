@@ -16,6 +16,7 @@
 #include <sys/mman.h>
 
 #include "common/opcodes.h"
+#include "common/floats.h"
 #include "common/calling.h"
 #include "common/calls.h"
 
@@ -24,6 +25,7 @@
 
 #define PLATFORM_OPCODE_LIST \
   Y(DLSYM, tos = (cell_t) dlsym(a1, a0); --sp) \
+  FLOATING_POINT_LIST \
   CALLING_OPCODE_LIST \
 
 #include "common/core.h"

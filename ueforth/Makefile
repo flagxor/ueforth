@@ -149,7 +149,7 @@ $(GEN):
 	mkdir -p $@
 
 POSIX_BOOT =  common/boot.fs common/conditionals.fs common/vocabulary.fs \
-              common/hide_calls.fs common/ansi.fs \
+              common/hide_calls.fs common/ansi.fs common/floats.fs \
               posix/posix.fs posix/posix_highlevel.fs posix/termios.fs \
               common/tasks.fs common/utils.fs common/highlevel.fs common/filetools.fs \
               common/locals.fs posix/posix_desktop.fs \
@@ -161,7 +161,7 @@ $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 	echo "ok" | cat $(POSIX_BOOT) - | cat | $< boot $(VERSION) $(REVISION) >$@
 
 WINDOWS_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
-               common/hide_calls.fs common/ansi.fs \
+               common/hide_calls.fs common/ansi.fs common/floats.fs \
                windows/windows.fs windows/windows_highlevel.fs common/highlevel.fs \
                common/tasks.fs common/utils.fs common/filetools.fs common/streams.fs \
                common/blocks.fs common/locals.fs \
@@ -171,7 +171,7 @@ $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 
 ESP32_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
              common/tasks.fs esp32/platform.fs esp32/highlevel.fs \
-             esp32/bindings.fs common/highlevel.fs \
+             esp32/bindings.fs common/highlevel.fs common/floats.fs \
              common/filetools.fs common/utils.fs common/locals.fs \
              common/streams.fs posix/httpd.fs posix/web_interface.fs esp32/web_interface.fs \
              esp32/registers.fs esp32/timers.fs \
@@ -245,6 +245,8 @@ $(POSIX):
 $(POSIX)/ueforth: \
     posix/posix_main.c \
     common/opcodes.h \
+    common/floats.h \
+    common/calls.h \
     common/interp.h \
     common/core.h \
     $(GEN)/posix_boot.h | $(POSIX)
@@ -259,6 +261,8 @@ $(WINDOWS):
 $(WINDOWS)/uEf32.obj: \
     windows/windows_main.c \
     common/opcodes.h \
+    common/floats.h \
+    common/calls.h \
     common/core.h \
     windows/windows_interp.h \
     $(GEN)/windows_boot.h | $(WINDOWS)
@@ -272,6 +276,8 @@ $(WINDOWS)/uEf32.exe: \
 $(WINDOWS)/uEf64.obj: \
     windows/windows_main.c \
     common/opcodes.h \
+    common/floats.h \
+    common/calls.h \
     common/core.h \
     windows/windows_interp.h \
     $(GEN)/windows_boot.h | $(WINDOWS)
@@ -289,6 +295,7 @@ $(ESP32)/ESP32forth:
 
 ESP32_PARTS = esp32/template.ino \
               common/opcodes.h \
+              common/floats.h \
               common/calling.h \
               common/core.h \
               common/interp.h \

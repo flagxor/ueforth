@@ -119,7 +119,9 @@
 ( Stack Convience )
 sp@ constant sp0
 rp@ constant rp0
+fp@ constant fp0
 : depth ( -- n ) sp@ sp0 - cell/ ;
+: fdepth ( -- n ) fp@ fp0 - 4 / ;
 
 ( Rstack nest depth )
 variable nest-depth
