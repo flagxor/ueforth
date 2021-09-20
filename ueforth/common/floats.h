@@ -12,24 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#define FDUP (*++fp = ftos)
-#define FDROP (ftos = *fp--)
-
 #define FLOATING_POINT_LIST \
-  Y(DOFLIT, FDUP; ftos = *(float *) ip++) \
+  Y(DOFLIT, *++fp = *(float *) ip++) \
   X("FP@", FPAT, DUP; tos = (cell_t) fp) \
   X("FP!", FPSTORE, fp = (float *) tos; DROP) \
-  X("SF@", FAT, FDUP; ftos = *(float *) tos; DROP) \
-  X("SF!", FSTORE, *(float *) tos = ftos; FDROP; DROP) \
-  X("FDUP", FDUP, FDUP) \
-  X("FDROP", FDROP, FDROP) \
-  X("FOVER", FOVER, FDUP; ftos = fp[-1]) \
-  X("FSWAP", FSWAP, float ft = ftos; ftos = *fp; *fp = ft) \
-  X("FNEGATE", FNEGATE, ftos = -ftos) \
-  X("F0<", FZLESS, DUP; tos = ftos < 0 ? -1 : 0; FDROP) \
-  X("F+", FPLUS, ftos += *fp--) \
-  X("F-", FMINUS, ftos = (*fp--) - ftos) \
-  X("F*", FSTAR, ftos *= *fp--) \
-  X("S>F", STOF, FDUP; ftos = (float) tos; DROP) \
-  X("F>S", FTOS, DUP; tos = (cell_t) ftos; FDROP) \
+  X("SF@", FAT, *++fp = *(float *) tos; DROP) \
+  X("SF!", FSTORE, *(float *) tos = *fp--; DROP) \
+  X("FDUP", FDUP, fp[1] = *fp; ++fp) \
+  X("FDROP", FDROP, --fp) \
+  X("FOVER", FOVER, fp[1] = fp[-1]; ++fp) \
+  X("FSWAP", FSWAP, float ft = fp[-1]; fp[-1] = *fp; *fp = ft) \
+  X("FNEGATE", FNEGATE, *fp = -*fp) \
+  X("F0<", FZLESS, DUP; tos = *fp-- < 0 ? -1 : 0) \
+  X("F+", FPLUS, fp[-1] += *fp; --fp) \
+  X("F-", FMINUS, fp[-1] -= *fp; --fp) \
+  X("F*", FSTAR, fp[-1] *= *fp; --fp) \
+  X("S>F", STOF, *++fp = (float) tos; DROP) \
+  X("F>S", FTOS, DUP; tos = (cell_t) *fp--) \
 

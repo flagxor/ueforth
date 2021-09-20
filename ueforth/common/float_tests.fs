@@ -55,3 +55,10 @@ e: test-fover
   123e 234e fover f. f. f. cr
   out: 123.000000 234.000000 123.000000 
 ;e
+
+e: test-throw
+  : bar   123e 124e 125e 1 throw ;
+  : foo   99e ['] bar catch . f. ;
+  foo cr
+  out: 1 99.000000 
+;e

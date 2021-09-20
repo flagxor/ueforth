@@ -27,10 +27,10 @@ static cell_t *forth_run(cell_t *init_rp) {
     return 0;
   }
   register cell_t *ip, *rp, *sp, tos, w;
-  register float ftos, *fp;
+  register float *fp;
   rp = init_rp;  ip = (cell_t *) *rp--;  sp = (cell_t *) *rp--;
   fp = (float *) *rp--;
-  DROP; FDROP; NEXT;
+  DROP; NEXT;
 #define X(name, op, code) OP_ ## op: { code; } NEXT;
   PLATFORM_OPCODE_LIST
   OPCODE_LIST

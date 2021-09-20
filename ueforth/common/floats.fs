@@ -34,11 +34,11 @@ $7f800000 constant exp-mask
 $3f000000 constant half-mask
 $007fffff constant mantissa-mask
 : fsplit ( r -- r f n )
-  fdup fp@ l@ dup mantissa-mask and half-mask or fp@ l!
-  dup 0< swap exp-mask and 23 rshift 126 - fdrop ;
+  fp@ l@ dup mantissa-mask and half-mask or fp@ l!
+  dup 0< swap exp-mask and 23 rshift 126 - ;
 : fjoin ( r f n -- r )
   127 + 23 lshift swap $80000000 and or
-  1e fswap fp@ @ mantissa-mask and or fp@ ! f* ;
+  1e fp@ @ mantissa-mask and or fp@ ! f* ;
 forth definitions internals
 
 : 1/f ( r -- r ) fsplit negate 1/f' fjoin ;
