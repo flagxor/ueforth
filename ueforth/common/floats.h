@@ -19,6 +19,7 @@
   X("SF@", FAT, *++fp = *(float *) tos; DROP) \
   X("SF!", FSTORE, *(float *) tos = *fp--; DROP) \
   X("FDUP", FDUP, fp[1] = *fp; ++fp) \
+  X("FNIP", FNIP, fp[-1] = *fp; --fp) \
   X("FDROP", FDROP, --fp) \
   X("FOVER", FOVER, fp[1] = fp[-1]; ++fp) \
   X("FSWAP", FSWAP, float ft = fp[-1]; fp[-1] = *fp; *fp = ft) \
@@ -27,6 +28,8 @@
   X("F+", FPLUS, fp[-1] += *fp; --fp) \
   X("F-", FMINUS, fp[-1] -= *fp; --fp) \
   X("F*", FSTAR, fp[-1] *= *fp; --fp) \
+  X("F/", FSLASH, fp[-1] /= *fp; --fp) \
+  X("1/F", FINVERSE, *fp = 1.0 / *fp) \
   X("S>F", STOF, *++fp = (float) tos; DROP) \
   X("F>S", FTOS, DUP; tos = (cell_t) *fp--) \
 

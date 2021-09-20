@@ -20,7 +20,7 @@
 
 internals definitions
 ( Leave some room for growth of starting system. )
-$4000 constant growth-gap
+$8000 constant growth-gap
 here growth-gap + growth-gap 1- + growth-gap 1- invert and constant saving-base
 : park-heap ( -- a ) saving-base ;
 : park-forth ( -- a ) saving-base cell+ ;

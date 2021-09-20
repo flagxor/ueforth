@@ -139,8 +139,11 @@ see_all_test: $(POSIX)/ueforth
      also streams \
      also ansi \
      also termios \
+     also sockets \
      also telnetd \
      also httpd \
+     also web-interface \
+     also editor \
      see-all bye | $< >/dev/null
 
 # ---- GENERATED ----

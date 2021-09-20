@@ -12,6 +12,8 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
+: fsqrt ( r -- r ) 1e 20 0 do fover fover f/ f+ 0.5e f* loop fnip ;
+
 6 value precision
 : set-precision ( n -- ) to precision ;
 
@@ -23,25 +25,13 @@ forth definitions internals
 
 : #fs ( r -- ) fdup f0< if fnegate #f+s [char] - hold else #f+s then ;
 : f. ( r -- ) <# #fs #> type space ;
-: fnip ( ra rb -- rb ) fswap fdrop ;
 
+(
 internals definitions
-: 1/f' ( r -- r )
-  2.82352941176e fover 1.88235294118e f* f-
-  20 0 do fover fover f* 2e fswap f- f* loop fnip ;
 $80000000 constant sign-mask
 $7f800000 constant exp-mask
 $3f000000 constant half-mask
 $007fffff constant mantissa-mask
-: fsplit ( r -- r f n )
-  fp@ l@ dup mantissa-mask and half-mask or fp@ l!
-  dup 0< swap exp-mask and 23 rshift 126 - ;
-: fjoin ( r f n -- r )
-  127 + 23 lshift swap $80000000 and or
-  1e fp@ @ mantissa-mask and or fp@ ! f* ;
-forth definitions internals
+)
 
-: 1/f ( r -- r ) fsplit negate 1/f' fjoin ;
-: f/ ( r r -- r ) 1/f f* ;
-: fsqrt ( r -- r ) 1e 20 0 do fover fover f/ f+ 0.5e f* loop fnip ;
-forth
+forth definitions

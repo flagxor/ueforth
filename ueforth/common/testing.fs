@@ -63,7 +63,8 @@ variable tests-found   variable tests-run    variable tests-passed
    context @ @ begin dup while dup test? if 2dup >r >r swap execute r> r> then >link repeat 2drop ;
 : reset-test-counters   0 tests-found !   0 tests-run !   0 tests-passed ! ;
 : count-test ( xt -- ) drop 1 tests-found +! ;
-: check-fresh   depth if }confirm ."  DEPTH LEAK! " depth . 1 throw then ;
+: check-fresh   depth if }confirm ."  DEPTH LEAK! " depth . 1 throw then
+                fdepth if }confirm ."  FDEPTH LEAK! " fdepth . 1 throw then ;
 : wrap-test ( xt -- ) expect-reset >r check-fresh r> execute check-fresh expect-finish ;
 : red   1 fg ;   : green   2 fg ;   : hr   40 for [char] - emit next cr ;
 : replace-line   13 emit clear-to-eol ;
