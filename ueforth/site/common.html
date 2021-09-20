@@ -124,6 +124,68 @@ SEE ( "name" -- ) Attempt to decompile a word
 ECHO ( -- a ) -- Address of flag that determines if commands are echoed
 </pre>
 
+<h5>Floating-Point</h5>
+<p><b>(Requires v7.0.6.5+)</b></p>
+<p>
+Single precision floating-point support is available as a work in progress.
+While initially left out in the name of minimalism,
+hardware support for floating-point argues some advantages to limited support.
+</p>
+<p>
+Floating point is kept on a separate stack.
+</p>
+<p>
+<b>NOTE: Tasks currently don't correctly support floating point.</b>
+A single floating point stack is shared by all tasks.
+</p>
+<pre>
+FLOAT OPCODES
+-------------
+DOFLIT ( --- ) Puts a float from the next cell onto float stack.
+FP@ ( -- a )
+FP! ( a -- )
+SF@ ( a -- r ) Single precision load
+SF! ( r a -- ) Single precision store
+FDUP ( r -- r r )
+FNIP ( ra rb -- rb )
+FDROP ( r -- )
+FOVER ( ra rb -- ra rb ra )
+FSWAP ( ra rb -- rb ra )
+F0&lt; ( r -- f )
+F0= ( r -- f )
+F+ ( r r -- r )
+F- ( r r -- r )
+F* ( r r -- r )
+F/ ( r r -- r )
+1/F ( r -- r )
+S&gt;F ( n -- r )
+F&gt;S ( r -- n )
+
+HIGH LEVEL
+----------
+F= ( r r -- f )
+F&lt; ( r r -- f )
+F&gt; ( r r -- f )
+F&lt;= ( r r -- f )
+F&gt;= ( r r -- f )
+F&lt;&gt; ( r r -- f )
+
+SFLOAT ( -- 4 )
+SFLOATS ( n -- n*4 )
+SFLOAT+ ( a -- a+4 )
+SF, ( r -- )
+
+AFLITERAL ( r -- )
+FLITERAL ( r -- ) IMMEDIATE
+
+FCONSTANT ( r "name" )
+FVARAIABLE ( "name" )
+
+PI ( -- r )
+
+FSQRT ( r r -- r )
+</pre>
+
 <h5>Locals</h5>
 
 <p>

@@ -24,7 +24,8 @@
   X("FOVER", FOVER, fp[1] = fp[-1]; ++fp) \
   X("FSWAP", FSWAP, float ft = fp[-1]; fp[-1] = *fp; *fp = ft) \
   X("FNEGATE", FNEGATE, *fp = -*fp) \
-  X("F0<", FZLESS, DUP; tos = *fp-- < 0 ? -1 : 0) \
+  X("F0<", FZLESS, DUP; tos = *fp-- < 0.0f ? -1 : 0) \
+  X("F0=", FZEQUAL, DUP; tos = *fp-- == 0.0f ? -1 : 0) \
   X("F+", FPLUS, fp[-1] += *fp; --fp) \
   X("F-", FMINUS, fp[-1] -= *fp; --fp) \
   X("F*", FSTAR, fp[-1] *= *fp; --fp) \

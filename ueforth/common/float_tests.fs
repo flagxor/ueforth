@@ -62,3 +62,40 @@ e: test-throw
   foo cr
   out: 1 99.000000 
 ;e
+
+e: test-fconstant
+  100e fconstant foo
+  foo f. cr
+  out: 100.000000 
+;e
+
+e: test-fvariable
+  fvariable foo
+  100e foo sf!
+  foo sf@ fdup f* foo sf!
+  foo sf@ f. cr
+  out: 10000.000000 
+;e
+
+e: test-fcompare
+  123e 245e f< assert
+  123e 66e f> assert
+  123e 123e f>= assert
+  124e 123e f>= assert
+  123e 123e f<= assert
+  123e 124e f<= assert
+  123e 124e f<> assert
+  123e 123e f= assert
+;e
+
+e: test-fliteral
+  : foo [ 123e ] fliteral f. cr ;
+  foo
+  out: 123.000000 
+;e
+
+e: test-afliteral
+  : foo [ 123e afliteral ] f. cr ;
+  foo
+  out: 123.000000 
+;e

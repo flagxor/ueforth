@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VERSION=7.0.6.4
+VERSION=7.0.6.5
 STABLE_VERSION=7.0.5.4
 REVISION=$(shell git rev-parse HEAD)
 REVSHORT=$(shell echo $(REVISION) | head -c 7)
@@ -248,8 +248,8 @@ $(POSIX):
 $(POSIX)/ueforth: \
     posix/posix_main.c \
     common/opcodes.h \
-    common/floats.h \
     common/calls.h \
+    common/floats.h \
     common/interp.h \
     common/core.h \
     $(GEN)/posix_boot.h | $(POSIX)
@@ -264,8 +264,8 @@ $(WINDOWS):
 $(WINDOWS)/uEf32.obj: \
     windows/windows_main.c \
     common/opcodes.h \
-    common/floats.h \
     common/calls.h \
+    common/floats.h \
     common/core.h \
     windows/windows_interp.h \
     $(GEN)/windows_boot.h | $(WINDOWS)
@@ -279,8 +279,8 @@ $(WINDOWS)/uEf32.exe: \
 $(WINDOWS)/uEf64.obj: \
     windows/windows_main.c \
     common/opcodes.h \
-    common/floats.h \
     common/calls.h \
+    common/floats.h \
     common/core.h \
     windows/windows_interp.h \
     $(GEN)/windows_boot.h | $(WINDOWS)
@@ -298,8 +298,8 @@ $(ESP32)/ESP32forth:
 
 ESP32_PARTS = esp32/template.ino \
               common/opcodes.h \
-              common/floats.h \
               common/calling.h \
+              common/floats.h \
               common/core.h \
               common/interp.h \
               $(GEN)/esp32_boot.h

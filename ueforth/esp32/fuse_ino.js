@@ -33,9 +33,9 @@ function DropCopyright(source) {
 var version = process.argv[2];
 var revision = process.argv[3];
 var code = fs.readFileSync(process.argv[4]).toString();
-var floats = DropCopyright(fs.readFileSync(process.argv[5]).toString());
-var opcodes = DropCopyright(fs.readFileSync(process.argv[6]).toString());
-var calling = DropCopyright(fs.readFileSync(process.argv[7]).toString());
+var opcodes = DropCopyright(fs.readFileSync(process.argv[5]).toString());
+var calling = DropCopyright(fs.readFileSync(process.argv[6]).toString());
+var floats = DropCopyright(fs.readFileSync(process.argv[7]).toString());
 var core = DropCopyright(fs.readFileSync(process.argv[8]).toString());
 var interp = DropCopyright(fs.readFileSync(process.argv[9]).toString());
 var boot = DropCopyright(fs.readFileSync(process.argv[10]).toString());
