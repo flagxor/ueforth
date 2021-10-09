@@ -20,6 +20,7 @@
  */
 
 {{opcodes}}
+{{floats}}
 {{calling}}
 
 // For now, default on several options.
@@ -72,7 +73,15 @@
 #endif
 #define INTERRUPT_STACK_CELLS 64
 
+// Optional hook to pull in words for userwords.h
+#if __has_include("userwords.h")
+# include "userwords.h"
+#else
+# define USER_WORDS
+#endif
+
 #define PLATFORM_OPCODE_LIST \
+  FLOATING_POINT_LIST \
   /* Memory Allocation */ \
   Y(MALLOC, SET malloc(n0)) \
   Y(SYSFREE, free(a0); DROP) \
@@ -149,6 +158,7 @@
   OPTIONAL_FREERTOS_SUPPORT \
   OPTIONAL_INTERRUPTS_SUPPORT \
   OPTIONAL_OLED_SUPPORT \
+  USER_WORDS
 
 #ifndef ENABLE_SPIFFS_SUPPORT
 // Provide a default failing SPIFFS.begin

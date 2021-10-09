@@ -18,6 +18,7 @@
 #include <sys/errno.h>
 
 #include "common/opcodes.h"
+#include "common/floats.h"
 #include "common/calling.h"
 #include "common/calls.h"
 
@@ -27,6 +28,7 @@
 #define PLATFORM_OPCODE_LIST \
   Y(errno, DUP; tos = (cell_t) errno) \
   Y(DLSYM, tos = (cell_t) dlsym(a1 ? a1 : RTLD_DEFAULT, a0); --sp) \
+  FLOATING_POINT_LIST \
   CALLING_OPCODE_LIST \
 
 #include "common/core.h"

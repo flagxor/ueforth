@@ -84,8 +84,9 @@ typedef int64_t dcell_t;
   Y(CELL, DUP; tos = sizeof(cell_t)) \
   Y(FIND, tos = find((const char *) *sp, tos); --sp) \
   Y(PARSE, DUP; tos = parse(tos, sp)) \
-  X("S>NUMBER?", CONVERT, tos = convert((const char *) *sp, tos, sp); \
+  X("S>NUMBER?", CONVERT, tos = convert((const char *) *sp, tos, g_sys.base, sp); \
                           if (!tos) --sp) \
+  X("F>NUMBER?", FCONVERT, tos = fconvert((const char *) *sp, tos, fp); --sp) \
   Y(CREATE, DUP; DUP; tos = parse(32, sp); \
             create((const char *) *sp, tos, 0, ADDR_DOCREATE); \
             COMMA(0); DROPn(2)) \
@@ -96,7 +97,9 @@ typedef int64_t dcell_t;
   X(":", COLON, DUP; DUP; tos = parse(32, sp); \
                 create((const char *) *sp, tos, SMUDGE, ADDR_DOCOLON); \
                 g_sys.state = -1; --sp; DROP) \
-  Y(EVALUATE1, DUP; sp = evaluate1(sp); w = *sp--; DROP; if (w) JMPW) \
+  Y(EVALUATE1, DUP; float *tfp = fp; \
+               sp = evaluate1(sp, &tfp); \
+               fp = tfp; w = *sp--; DROP; if (w) JMPW) \
   Y(EXIT, ip = (cell_t *) *rp--) \
   X(";", SEMICOLON, UNSMUDGE(); COMMA(g_sys.DOEXIT_XT); g_sys.state = 0) \
 

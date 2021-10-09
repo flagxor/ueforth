@@ -119,7 +119,9 @@
 ( Stack Convience )
 sp@ constant sp0
 rp@ constant rp0
+fp@ constant fp0
 : depth ( -- n ) sp@ sp0 - cell/ ;
+: fdepth ( -- n ) fp@ fp0 - 4 / ;
 
 ( Rstack nest depth )
 variable nest-depth
@@ -151,9 +153,11 @@ variable leaving
 ( Exceptions )
 variable handler
 : catch ( xt -- n )
-  sp@ >r handler @ >r rp@ handler ! execute r> handler ! r> drop 0 ;
+  fp@ >r sp@ >r handler @ >r rp@ handler ! execute
+  r> handler ! rdrop rdrop 0 ;
 : throw ( n -- )
-  dup if handler @ rp! r> handler ! r> swap >r sp! drop r> else drop then ;
+  dup if handler @ rp! r> handler !
+         r> swap >r sp! drop r> r> fp! else drop then ;
 ' throw 'notfound !
 
 ( Values )
@@ -250,6 +254,6 @@ create input-buffer   input-limit allot
                       #tib ! 'tib ! 0 >in ! evaluate-buffer
                       r> >in ! r> #tib ! r> 'tib ! ;
 : quit    begin ['] evaluate-buffer catch
-          if 0 state ! sp0 sp! rp0 rp! ." ERROR" cr then
+          if 0 state ! sp0 sp! fp0 fp! rp0 rp! ." ERROR" cr then
           prompt refill drop again ;
 : ok   ." uEForth" cr prompt refill drop quit ;
