@@ -18,12 +18,10 @@ vocabulary Wire   Wire definitions
 transfer{
   Wire.begin Wire.setClock Wire.getClock
   Wire.setTimeout Wire.getTimeout
-  Wire.lastError Wire.getErrorText
   Wire.beginTransmission Wire.endTransmission
-  Wire.requestFrom Wire.writeTransmission
-  Wire.readTransmission Wire.write
+  Wire.requestFrom Wire.write
   Wire.available Wire.read
-  Wire.peek Wire.busy Wire.flush
+  Wire.peek Wire.flush
 }transfer
 forth definitions
 
@@ -58,14 +56,15 @@ transfer{
 
 forth definitions
 
+DEFINED? SD_MMC.begin [IF]
 vocabulary SD_MMC   SD_MMC definitions
-( SD_MMC.begin - TODO: causing issues pulled in )
 transfer{
-  SD_MMC.cardType
-  SD_MMC.end
+  SD_MMC.begin SD_MMC.end
   SD_MMC.totalBytes SD_MMC.usedBytes
+  SD_MMC.cardType
 }transfer
 forth definitions
+[THEN]
 
 vocabulary SPIFFS   SPIFFS definitions
 transfer{

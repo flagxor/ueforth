@@ -28,11 +28,20 @@
 #define ENABLE_WIFI_SUPPORT
 #define ENABLE_MDNS_SUPPORT
 #define ENABLE_WEBSERVER_SUPPORT
-#define ENABLE_SDCARD_SUPPORT
 #define ENABLE_I2C_SUPPORT
 #define ENABLE_SOCKETS_SUPPORT
 #define ENABLE_FREERTOS_SUPPORT
 #define ENABLE_INTERRUPTS_SUPPORT
+
+// SD_MMC does not work on ESP32-S2 / ESP32-C3
+#if !defined(CONFIG_IDF_TARGET_ESP32S2) && !defined(CONFIG_IDF_TARGET_ESP32C3)
+# define ENABLE_SDCARD_SUPPORT
+#endif
+
+// ESP32-C3 has no DACs.
+#if !defined(CONFIG_IDF_TARGET_ESP32C3)
+# define ENABLE_DAC_SUPPORT
+#endif
 
 // Uncomment this #define for OLED Support.
 // You will need to install these libraries from the Library Manager:
@@ -103,7 +112,6 @@
   Y(digitalRead, n0 = digitalRead(n0)) \
   Y(analogRead, n0 = analogRead(n0)) \
   Y(pulseIn, n0 = pulseIn(n2, n1, n0); NIPn(2)) \
-  Y(dacWrite, dacWrite(n1, n0); DROPn(2)) \
   Y(ledcSetup, \
       n0 = (cell_t) (1000000 * ledcSetup(n2, n1 / 1000.0, n0)); NIPn(2)) \
   Y(ledcAttachPin, ledcAttachPin(n1, n0); DROPn(2)) \
@@ -146,6 +154,7 @@
   X("RESIZE-FILE", RESIZE_FILE, cell_t fd = n0; DROP; n0 = ResizeFile(fd, tos)) \
   X("FILE-SIZE", FILE_SIZE, struct stat st; w = fstat(n0, &st); \
     n0 = (cell_t) st.st_size; PUSH w < 0 ? errno : 0) \
+  OPTIONAL_DAC_SUPPORT \
   OPTIONAL_SPIFFS_SUPPORT \
   OPTIONAL_WIFI_SUPPORT \
   OPTIONAL_MDNS_SUPPORT \
@@ -159,6 +168,13 @@
   OPTIONAL_INTERRUPTS_SUPPORT \
   OPTIONAL_OLED_SUPPORT \
   USER_WORDS
+
+#ifndef ENABLE_DAC_SUPPORT
+# define OPTIONAL_DAC_SUPPORT
+# else
+# define OPTIONAL_DAC_SUPPORT \
+  Y(dacWrite, dacWrite(n1, n0); DROPn(2))
+#endif
 
 #ifndef ENABLE_SPIFFS_SUPPORT
 // Provide a default failing SPIFFS.begin
@@ -279,20 +295,13 @@
   X("Wire.getClock", WIRE_GET_CLOCK, PUSH Wire.getClock()) \
   X("Wire.setTimeout", WIRE_SET_TIMEOUT, Wire.setTimeout(n0); DROP) \
   X("Wire.getTimeout", WIRE_GET_TIMEOUT, PUSH Wire.getTimeout()) \
-  X("Wire.lastError", WIRE_LAST_ERROR, PUSH Wire.lastError()) \
-  X("Wire.getErrorText", WIRE_GET_ERROR_TEXT, PUSH Wire.getErrorText(n0)) \
   X("Wire.beginTransmission", WIRE_BEGIN_TRANSMISSION, Wire.beginTransmission(n0); DROP) \
   X("Wire.endTransmission", WIRE_END_TRANSMISSION, SET Wire.endTransmission(n0)) \
   X("Wire.requestFrom", WIRE_REQUEST_FROM, n0 = Wire.requestFrom(n2, n1, n0); NIPn(2)) \
-  X("Wire.writeTransmission", WIRE_WRITE_TRANSMISSION, \
-      n0 = Wire.writeTransmission(n3, b2, n1, n0); NIPn(3)) \
-  X("Wire.readTransmission", WIRE_READ_TRANSMISSION, \
-      n0 = Wire.readTransmission(n4, b3, n2, n1, (uint32_t *) a0); NIPn(4)) \
   X("Wire.write", WIRE_WRITE, n0 = Wire.write(b1, n0); NIP) \
   X("Wire.available", WIRE_AVAILABLE, PUSH Wire.available()) \
   X("Wire.read", WIRE_READ, PUSH Wire.read()) \
   X("Wire.peek", WIRE_PEEK, PUSH Wire.peek()) \
-  X("Wire.busy", WIRE_BUSY, PUSH Wire.busy()) \
   X("Wire.flush", WIRE_FLUSH, Wire.flush())
 #endif
 
