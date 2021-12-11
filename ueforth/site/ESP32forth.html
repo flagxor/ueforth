@@ -211,6 +211,10 @@ pinMode ( pin mode -- )   Set GPIO pin mode
 digitalWrite ( pin value -- )   Set GPIO pin state
 analogRead ( pin -- n )   Analog read from 0-4095
 pulseIn ( pin value usec -- usec/0 )  Wait for a pulse
+</pre>
+
+Available on devices other than ESP32-C3:
+<pre>
 dacWrite ( pin 0-255 -- )  Write to DAC (pin 25, 26)
 </pre>
 
@@ -316,19 +320,25 @@ Wire.setClock ( frequency -- )
 Wire.getClock ( -- frequency )
 Wire.setTimeout ( ms -- ) Default is 50ms
 Wire.getTimeout ( -- ms )
-Wire.lastError ( -- n )
-Wire.getErrorText ( n -- z )
 Wire.beginTransmission ( n -- )
 Wire.endTransmission ( sendstop -- f ) Default is true
 Wire.requestFrom ( address quantity sendstop -- n )
-Wire.writeTransmission ( addr a n sendstop -- err )
-Wire.readTransmission ( addr a n sendstop acount -- err )
 Wire.write ( a n -- n )
 Wire.available ( -- f )
 Wire.read ( -- ch )
 Wire.peek ( -- ch )
-Wire.busy ( -- f )
 Wire.flush ( -- )
+</pre>
+
+These words were available in v7.0.6.5 and before,
+but are now deprecated as the underlying Arduino functions
+have gone away in the v2.0.1 ESP32 Arduino library.
+<pre>
+Wire.lastError ( -- n )
+Wire.getErrorText ( n -- z )
+Wire.busy ( -- f )
+Wire.writeTransmission ( addr a n sendstop -- err )
+Wire.readTransmission ( addr a n sendstop acount -- err )
 </pre>
 
 <h5>Camera</h5>
@@ -351,7 +361,8 @@ server ( port -- ) Start an image server at port,
 </pre>
 
 <h5>SD_MMC</h5>
-These words are inside the <code>SD_MMC</code> vocabulary.
+These words are inside the <code>SD_MMC</code> vocabulary.<br/>
+Note, SD_MMC is unavailable on ESP32-S2 and ESP32-C3.
 <pre>
 SD_MMC.begin ( mount mode1bit )   default mode1bit=false
 SD_MMC.end ( -- )
