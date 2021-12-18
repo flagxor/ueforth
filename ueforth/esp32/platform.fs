@@ -15,7 +15,8 @@
 ( Add a yielding task so pause yields )
 internals definitions
 transfer{ yield raw-yield }transfer
-' raw-yield 100 100 task yield-task
+: yield-step   raw-yield yield ;
+' yield-step 100 100 task yield-task
 yield-task start-task
 forth definitions
 
