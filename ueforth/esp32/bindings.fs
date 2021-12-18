@@ -151,6 +151,24 @@ ESP_INTR_FLAG_DEFAULT gpio_install_isr_service drop
 
 forth definitions
 
+vocabulary rmt   rmt definitions
+transfer{
+  rmt_set_clk_div rmt_get_clk_div rmt_set_rx_idle_thresh rmt_get_rx_idle_thresh
+  rmt_set_mem_block_num rmt_get_mem_block_num rmt_set_tx_carrier
+  rmt_set_mem_pd rmt_get_mem_pd rmt_tx_start rmt_tx_stop rmt_rx_start rmt_rx_stop
+  rmt_tx_memory_reset rmt_rx_memory_reset rmt_set_memory_owner rmt_get_memory_owner
+  rmt_set_tx_loop_mode rmt_get_tx_loop_mode rmt_set_rx_filter
+  rmt_set_source_clk rmt_get_source_clk rmt_set_idle_level rmt_get_idle_level
+  rmt_get_status rmt_set_rx_intr_en rmt_set_err_intr_en rmt_set_tx_intr_en
+  rmt_set_tx_thr_intr_en
+  rmt_set_gpio rmt_config rmt_isr_register rmt_isr_deregister
+  rmt_fill_tx_items rmt_driver_install rmt_driver_uinstall
+  rmt_get_channel_status rmt_get_counter_clock rmt_write_items
+  rmt_wait_tx_done rmt_get_ringbuf_handle rmt_translator_init
+  rmt_translator_set_context rmt_translator_get_context rmt_write_sample
+}transfer
+forth definitions
+
 vocabulary rtos   rtos definitions
 transfer{
   xPortGetCoreID xTaskCreatePinnedToCore vTaskDelete

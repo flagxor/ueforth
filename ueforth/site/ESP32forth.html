@@ -442,6 +442,62 @@ esp_intr_free ( handle -- 0/err )
 timer_isr_register ( group timer xt arg ret -- 0/err )
 </pre>
 
+<h5 id="rmt">RMT</h5>
+These words are inside the <code>RMT</code> vocabulary.
+
+<pre>
+rmt_set_clk_div ( channel div8 -- err )
+rmt_get_clk_div ( channel @div8 -- err )
+rmt_set_rx_idle_thresh ( channel thresh16 -- err )
+rmt_get_rx_idle_thresh ( channel @thresh16 -- err )
+rmt_set_mem_block_num ( channel memnum8 -- err )
+rmt_get_mem_block_num ( channel @memnum8 -- err )
+rmt_set_tx_carrier ( channel enable highlev lowlev carrierlev -- err )
+rmt_set_mem_pd ( channel f -- err )
+rmt_get_mem_pd ( channel @f -- err )
+rmt_tx_start ( channel f -- err )
+rmt_tx_stop ( channel -- err )
+rmt_rx_start ( channel f -- err )
+rmt_rx_stop ( channel -- err )
+rmt_tx_memory_reset ( channel -- err )
+rmt_rx_memory_reset ( channel -- err )
+rmt_set_memory_owner ( channel owner -- err )
+rmt_get_memory_owner ( channel @owner -- err )
+rmt_set_tx_loop_mode ( channel f -- err )
+rmt_get_tx_loop_mode ( channel @f -- err )
+rmt_set_rx_filter ( channel enable thresh8 -- err )
+rmt_set_source_clk ( channel baseclk -- err )
+rmt_get_source_clk ( channel @baseclk -- err )
+rmt_set_idle_level ( channel enable level -- err )
+rmt_get_idle_level ( channel @enable @level -- err )
+rmt_get_status ( channel @status -- err )
+rmt_set_rx_intr_en ( channel enable -- err )
+rmt_set_err_intr_en ( channel enable -- err )
+rmt_set_tx_intr_en ( channel enable -- err )
+rmt_set_tx_thr_intr_en (channel enable thresh -- err )
+rmt_set_gpio ( channel mode gpio# invertsig -- err )
+rmt_config ( rmt_config_t* )
+rmt_isr_register ( fn arg allocflags handle -- err )
+rmt_isr_deregister ( handle -- err )
+rmt_fill_tx_items ( channel @items items# offset -- err )
+rmt_driver_install ( channel rxbufsize allocflags -- err )
+rmt_driver_uinstall ( channel -- err )
+rmt_get_channel_status ( channel @status -- err )
+rmt_get_counter_clock ( channel @clockhz -- err )
+rmt_write_items ( channel @items items# wait -- err )
+rmt_wait_tx_done ( channel time -- err )
+rmt_get_ringbuf_handle ( channel @handle -- err )
+rmt_translator_init ( channel fn -- err )
+rmt_translator_set_context ( channel @context -- err )
+rmt_translator_get_context ( channel @@context -- err )
+rmt_write_sample ( channel src src# wait -- err )
+rmt_register_tx_end_callback --- NOT SUPPORTED
+rmt_memory_rw_rst --- DEPRECATED USE rmt_tx_memory_reset or rmt_rx_memory_reset
+rmt_set_intr_enable_mask --- DEPRECATED interrupt handled by driver
+rmt_clr_intr_enable_mask --- DEPRECATED interrupt handled by driver
+rmt_set_pin --- DEPRECATED use rmt_set_gpio instead
+</pre>
+
 <h5 id="tasks">Tasks</h5>
 These words are inside the <code>TASKS</code> vocabulary.
 
