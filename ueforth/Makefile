@@ -352,7 +352,7 @@ publish-windows: $(WINDOWS)/uEf32.exe $(WINDOWS)/uEf64.exe
     $(ARCHIVE)/uEf64-$(VERSION).exe
 
 publish-index: | $(GEN)
-	$(GSUTIL) ls gs://eforth/releases | tools/webindex.py >$(GEN)/archive.html
+	$(GSUTIL) ls -l gs://eforth/releases | tools/webindex.py >$(GEN)/archive.html
 	$(GSUTIL_CP) \
     $(GEN)/archive.html \
     gs://eforth/releases/archive.html

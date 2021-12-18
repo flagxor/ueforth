@@ -23,9 +23,19 @@ sys.stdout.write("""<!DOCTYPE html>
 <h1>Release Archive</h1>
 """)
 
+output = []
 for line in sys.stdin.read().splitlines():
-  url = line.replace('gs://eforth/', 'https://eforth.storage.googleapis.com/')
-  name = line.replace('gs://eforth/releases/', '')
+  parts = line.split()
+  if len(parts) != 3:
+    continue
+  modes, date, path = parts
+  url = path.replace('gs://eforth/', 'https://eforth.storage.googleapis.com/')
+  name = path.replace('gs://eforth/releases/', '')
   if name == 'archive.html':
     continue
-  sys.stdout.write('<a href="%s">%s</a><br/>\n' % (name, url))
+  output.append('%s <a href="%s">%s</a><br/>\n' % (date, name, url))
+
+output.sort()
+output.reverse()
+for line in output:
+  sys.stdout.write(line)
