@@ -95,35 +95,210 @@ Download the <a href="https://www.arduino.cc/en/software">Arduino IDE</a> for yo
 
 <p>
 Go to <b>File &gt; Preferences</b>.<br/>
-Under <b>Additional Board Manager URLs</b> enter: <code>https://dl.espressif.com/dl/package_esp32_index.json</code>
+Under <b>Additional Board Manager URLs</b> add:
+<ul>
+  <li>For ESP32 - <code>https://dl.espressif.com/dl/package_esp32_index.json</code></li>
+  <li>For ESP32-S2 or ESP32-C3 - <code>https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_dev_index.json</code></li>
+</ul>
 </p>
 
 <p>
-Choose these options under Tools.
-
-<ul>
-   <li><b>ESP32 Dev Module or similar (may work better with your particular board)</b>
-     <ul>
-       <li><b>Board:</b> ESP32 Dev Module</li>
-       <li><b>Partition Scheme:</b> No OTA (2M APP, 2M SPIFFS) <b>&larr; Non-default</b></li>
-       <small>
-       <li><b>Upload Speed:</b> 921600</li>
-       <li><b>CPU Frequency:</b> 240MHz</li>
-       <li><b>Flash Frequency:</b> 80MHz</li>
-       <li><b>Flash Mode:</b> QIO</li>
-       <li><b>Flash Size:</b> 4MB</li>
-       <li><b>Core Debug Level:</b> None</li>
-       <li><b>PSRAM:</b> Disabled</li>
-       </small>
-     </ul>
-   </li>
-   <li><b>ESP32-CAM</b>
-     <ul>
-       <li><b>Board:</b> AI Thinker ESP32-CAM</li>
-     </ul>
-   </li>
-</ul>
+Select your serial port under <b>Tools &gt; Port</b>.
 </p>
+
+<p>
+Under <b>Tools</b> choose board and settings as below under <b>Tools</b>.
+</p>
+
+<table>
+  <tr>
+    <th>BOARD</th>
+    <th>ESP32 Version</th>
+    <th>Tools Settings</th>
+  </tr>
+
+  <tr>
+    <td>
+      <b>OTHER ESP32-XXX BOARDS</b><br/>
+      Use a more exact board selection or consult documentation to choose equivalent Dev Module settings.
+      Your mileage may vary.
+      <br/>
+      <b style="color: red">NOTE: Not all ESP-32 boards are compatible with Arduino.</b>
+    </td>
+    <td>2.0.1</td>
+    <td>
+      <small>
+        <b>Board:</b> <span class="hilit">Your board type OR closest Dev Module</span><br/>
+        <b>Partition Scheme:</b> <span class="hilit">Favor more App storage if option available</span><br/>
+      </small>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <b>ESP32-WROOM</b><br/>
+      <a href="static/esp32-wroom.jpg" style="border: 0"><img src="static/esp32-wroom.jpg" width="100"></a>
+    </td>
+    <td>1.0.6</td>
+    <td>
+      <small>
+        <b>Board:</b> <span class="hilit">ESP32 Dev Module</span><br/>
+        <b>Partition Scheme:</b> <span class="hilit">No OTA (2M APP, 2M SPIFFS) <b>&larr; Non-default</b></span><br/>
+        <b>Upload Speed:</b> 921600<br/>
+        <b>CPU Frequency:</b> 240MHz<br/>
+        <b>Flash Frequency:</b> 80MHz<br/>
+        <b>Flash Mode:</b> QIO<br/>
+        <b>Flash Size:</b> 4MB (32Mb)<br/>
+        <b>Core Debug Level:</b> None<br/>
+        <b>PSRAM:</b> Disable<br/>
+        <hr/>
+        <i>
+          <b>Arduino Runs On:</b> Core 1<br/>
+          <b>Events Run On:</b> Core 1<br/>
+        </i>
+      </small>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <b>ESP32-WROVER</b><br/>
+    </td>
+    <td>1.0.6</td>
+    <td>
+      <small>
+        <b>Board:</b> <span class="hilit">ESP32 Dev Module</span><br/>
+        <b>Partition Scheme:</b> <span class="hilit">No OTA (2M APP, 2M SPIFFS) <b>&larr; Non-default</b></span><br/>
+        <b>Upload Speed:</b> 921600<br/>
+        <b>CPU Frequency:</b> 240MHz<br/>
+        <b>Flash Frequency:</b> 80MHz<br/>
+        <b>Flash Mode:</b> QIO<br/>
+        <b>Flash Size:</b> 4MB (32Mb)<br/>
+        <b>Core Debug Level:</b> None<br/>
+        <b>PSRAM:</b> <span class="hilit">Enabled</span><br/>
+        <hr/>
+        <i>
+          <b>Arduino Runs On:</b> Core 1<br/>
+          <b>Events Run On:</b> Core 1<br/>
+        </i>
+      </small>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <b>ESP32-CAM</b><br/>
+      <a href="static/esp-cam-front.jpg" style="border: 0"><img src="static/esp-cam-front.jpg" width="100"></a>
+      <a href="static/esp-cam-back.jpg" style="border: 0"><img src="static/esp-cam-back.jpg" width="100"></a>
+      <a href="static/esp-cam-wiring.jpg" style="border: 0"><img src="static/esp-cam-wiring.jpg" width="200"></a>
+    </td>
+    <td>1.0.6</td>
+    <td>
+      <small>
+        <b>Board:</b> <span class="hilit">AI Thinker ESP32-CAM</span><br/>
+      </small>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <b>ESP32-MINI-1</b><br/>
+      <b>ESP32-SOLO-1</b><br/>
+      <a href="static/esp32-mini-1.jpg" style="border: 0"><img src="static/esp32-mini-1.jpg" width="100"></a>
+      <b style="color: red">NOT CURRENTLY SUPPORTED</b>
+    </td>
+    <td>N/A</td>
+    <td style="background-color: red; color: yellow">
+      <b>NOT CURRENTLY SUPPORTED</b><br/>
+      Arduino builds ESP32 assuming dual core, but the SOLO and MINI have only one core.
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <b>ESP32-S2-WROOM</b><br/>
+      <a href="static/esp32-s2-wroom.jpg" style="border: 0"><img src="static/esp32-s2-wroom.jpg" width="100"></a>
+    </td>
+    <td>2.0.1</td>
+    <td>
+      <small>
+        <b>Board:</b> <span class="hilit">ESP32S2 Dev Module</span><br/>
+        <b>Partition Scheme:</b> <span class="hilit">No OTA (2M APP, 2M SPIFFS) <b>&larr; Non-default</b></span><br/>
+        <b>Upload Speed:</b> 921600<br/>
+        <b>USB CDC On Boot:</b> Disabled<br/>
+        <b>USB Firmware MSC On Boot:</b> Disabled<br/>
+        <b>USB DFU On Boot:</b> Disabled<br/>
+        <b>Upload Mode:</b> UART0<br/>
+        <b>CPU Frequency:</b> 240MHz<br/>
+        <b>Flash Frequency:</b> 80MHz<br/>
+        <b>Flash Mode:</b> QIO<br/>
+        <b>Flash Size:</b> 4MB (32Mb)<br/>
+        <b>Core Debug Level:</b> None<br/>
+        <b>PSRAM:</b> Disabled<br/>
+      </small>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <b>ESP32-S2-WROVER</b><br/>
+      <a href="static/esp32-s2-wrover.jpg" style="border: 0"><img src="static/esp32-s2-wrover.jpg" width="100"></a>
+    </td>
+    <td>2.0.1</td>
+    <td>
+      <small>
+        <b>Board:</b> <span class="hilit">ESP32S2 Dev Module</span><br/>
+        <b>Partition Scheme:</b> <span class="hilit">No OTA (2M APP, 2M SPIFFS) <b>&larr; Non-default</b></span><br/>
+        <b>Upload Speed:</b> 921600<br/>
+        <b>USB CDC On Boot:</b> Disabled<br/>
+        <b>USB Firmware MSC On Boot:</b> Disabled<br/>
+        <b>USB DFU On Boot:</b> Disabled<br/>
+        <b>Upload Mode:</b> UART0<br/>
+        <b>CPU Frequency:</b> 240MHz<br/>
+        <b>Flash Frequency:</b> 80MHz<br/>
+        <b>Flash Mode:</b> QIO<br/>
+        <b>Flash Size:</b> 4MB (32Mb)<br/>
+        <b>Core Debug Level:</b> None<br/>
+        <b>PSRAM:</b> <span class="hilit">Enabled</span><br/>
+      </small>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <table style="border: 0">
+        <tr>
+          <td style="border: 0">
+            <b>ESP32-C3-MINI-1</b><br/>
+            <b>(ESP32-C3-DevKitM-1)</b><br/>
+            <a href="static/esp32-c3-mini-1.jpg" style="border: 0"><img src="static/esp32-c3-mini-1.jpg" width="100"></a>
+          </td>
+          <td style="border: 0">
+            <b>ESP32-C3-WROOM-02</b><br/>
+            <b>(ESP32-C3-DevKitC-02)</b><br/>
+            <a href="static/esp32-c3-wroom-02.jpg" style="border: 0"><img src="static/esp32-c3-wroom-02.jpg" width="100"></a>
+          </td>
+        </tr>
+      </table>
+    </td>
+    </td>
+    <td>2.0.1</td>
+    <td>
+      <small>
+        <b>Board:</b> <span class="hilit">ESP32C3 Dev Module</span><br/>
+        <b>Partition Scheme:</b> <span class="hilit">No OTA (2M APP, 2M SPIFFS) <b>&larr; Non-default</b></span><br/>
+        <b>Upload Speed:</b> 921600<br/>
+        <b>USB CDC On Boot:</b> Disabled<br/>
+        <b>CPU Frequency:</b> 160MHz<br/>
+        <b>Flash Frequency:</b> 80MHz<br/>
+        <b>Flash Mode:</b> QIO<br/>
+        <b>Flash Size:</b> 4MB (32Mb)<br/>
+        <b>Core Debug Level:</b> None<br/>
+        <b>PSRAM:</b> Disabled<br/>
+      </small>
+    </td>
+  </tr>
+</table>
 
 <h2>Use</h2>
 

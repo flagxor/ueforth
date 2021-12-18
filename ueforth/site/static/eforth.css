@@ -84,4 +84,20 @@ a:hover {
 .menu .picked a:hover {
   color: #fff;
 }
-
+table {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+th {
+  border: 1px solid black;
+  padding: 3px;
+  color: #fff;
+  background-color: #444;
+}
+td {
+  border: 1px solid black;
+  padding: 5px;
+}
+.hilit {
+  background-color: yellow;
+}

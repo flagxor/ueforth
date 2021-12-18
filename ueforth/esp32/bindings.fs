@@ -151,6 +151,7 @@ ESP_INTR_FLAG_DEFAULT gpio_install_isr_service drop
 
 forth definitions
 
+DEFINED? rmt_set_clk_div [IF]
 vocabulary rmt   rmt definitions
 transfer{
   rmt_set_clk_div rmt_get_clk_div rmt_set_rx_idle_thresh rmt_get_rx_idle_thresh
@@ -168,6 +169,7 @@ transfer{
   rmt_translator_set_context rmt_translator_get_context rmt_write_sample
 }transfer
 forth definitions
+[THEN]
 
 vocabulary rtos   rtos definitions
 transfer{

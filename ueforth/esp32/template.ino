@@ -32,7 +32,6 @@
 #define ENABLE_SOCKETS_SUPPORT
 #define ENABLE_FREERTOS_SUPPORT
 #define ENABLE_INTERRUPTS_SUPPORT
-#define ENABLE_RMT_SUPPORT
 
 // SD_MMC does not work on ESP32-S2 / ESP32-C3
 #if !defined(CONFIG_IDF_TARGET_ESP32S2) && !defined(CONFIG_IDF_TARGET_ESP32C3)
@@ -42,6 +41,13 @@
 // ESP32-C3 has no DACs.
 #if !defined(CONFIG_IDF_TARGET_ESP32C3)
 # define ENABLE_DAC_SUPPORT
+#endif
+
+// RMT support designed around v2.0.1 toolchain.
+// While ESP32 also has RMT, for now only include for
+// ESP32-S2 and ESP32-C3.
+#if defined(CONFIG_IDF_TARGET_ESP32S2) || defined(CONFIG_IDF_TARGET_ESP32C3)
+# define ENABLE_RMT_SUPPORT
 #endif
 
 // Uncomment this #define for OLED Support.
