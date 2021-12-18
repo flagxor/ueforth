@@ -318,7 +318,7 @@ $(ESP32)/ESP32forth.zip: $(ESP32)/ESP32forth/ESP32forth.ino
 ARCHIVE=gs://eforth/releases
 GSUTIL=CLOUDSDK_CORE_PROJECT=eforth gsutil
 GSUTIL_CP=$(GSUTIL) \
-          -h "Cache-Control:public, max-age=3600" \
+          -h "Cache-Control:public, max-age=60" \
           cp -a public-read
 
 publish-esp32: $(ESP32)/ESP32forth.zip
