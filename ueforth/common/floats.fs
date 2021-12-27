@@ -46,5 +46,7 @@ forth definitions internals
 
 : #fs ( r -- ) fdup f0< if fnegate #f+s [char] - hold else #f+s then ;
 : f. ( r -- ) <# #fs #> type space ;
+: f.s   ." <" fdepth n. ." > "
+        fdepth 0 max for aft fp@ r@ sfloats - sf@ f. then next ;
 
 forth definitions
