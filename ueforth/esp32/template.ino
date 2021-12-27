@@ -32,10 +32,11 @@
 #define ENABLE_SOCKETS_SUPPORT
 #define ENABLE_FREERTOS_SUPPORT
 #define ENABLE_INTERRUPTS_SUPPORT
+#define ENABLE_SD_SUPPORT
 
 // SD_MMC does not work on ESP32-S2 / ESP32-C3
 #if !defined(CONFIG_IDF_TARGET_ESP32S2) && !defined(CONFIG_IDF_TARGET_ESP32C3)
-# define ENABLE_SDCARD_SUPPORT
+# define ENABLE_SD_MMC_SUPPORT
 #endif
 
 // ESP32-C3 has no DACs.
@@ -170,7 +171,8 @@
   OPTIONAL_WIFI_SUPPORT \
   OPTIONAL_MDNS_SUPPORT \
   OPTIONAL_WEBSERVER_SUPPORT \
-  OPTIONAL_SDCARD_SUPPORT \
+  OPTIONAL_SD_SUPPORT \
+  OPTIONAL_SD_MMC_SUPPORT \
   OPTIONAL_I2C_SUPPORT \
   OPTIONAL_SERIAL_BLUETOOTH_SUPPORT \
   OPTIONAL_CAMERA_SUPPORT \
@@ -344,12 +346,31 @@
   Y(errno, PUSH errno)
 #endif
 
-#ifndef ENABLE_SDCARD_SUPPORT
-# define OPTIONAL_SDCARD_SUPPORT
+#ifndef ENABLE_SD_SUPPORT
+# define OPTIONAL_SD_SUPPORT
+#else
+# include "SD.h"
+# define OPTIONAL_SD_SUPPORT \
+  X("SD.begin", SD_BEGIN, PUSH SD.begin()) \
+  X("SD.beginFull", SD_BEGIN_FULL, \
+      tos = SD.begin(n5, *(SPIClass*)a4, n3, c2, n1, n0); NIPn(5)) \
+  X("SD.beginDefaults", SD_BEGIN_DEFAULTS, \
+      PUSH SS; PUSH &SPI; PUSH 4000000; PUSH "/sd"; PUSH 5; PUSH false) \
+  X("SD.end", SD_END, SD.end()) \
+  X("SD.cardType", SD_CARD_TYPE, PUSH SD.cardType()) \
+  X("SD.totalBytes", SD_TOTAL_BYTES, PUSH SD.totalBytes()) \
+  X("SD.usedBytes", SD_USED_BYTES, PUSH SD.usedBytes())
+#endif
+
+#ifndef ENABLE_SD_MMC_SUPPORT
+# define OPTIONAL_SD_MMC_SUPPORT
 #else
 # include "SD_MMC.h"
-# define OPTIONAL_SDCARD_SUPPORT \
-  X("SD_MMC.begin", SD_MMC_BEGIN, tos = SD_MMC.begin(c1, n0); NIP) \
+# define OPTIONAL_SD_MMC_SUPPORT \
+  X("SD_MMC.begin", SD_MMC_BEGIN, PUSH SD_MMC.begin()) \
+  X("SD_MMC.beginFull", SD_MMC_BEGIN_FULL, tos = SD_MMC.begin(c2, n1, n0); NIPn(2)) \
+  X("SD_MMC.beginDefaults", SD_MMC_BEGIN_DEFAULTS, \
+      PUSH "/sdcard"; PUSH false; PUSH false) \
   X("SD_MMC.end", SD_MMC_END, SD_MMC.end()) \
   X("SD_MMC.cardType", SD_MMC_CARD_TYPE, PUSH SD_MMC.cardType()) \
   X("SD_MMC.totalBytes", SD_MMC_TOTAL_BYTES, PUSH SD_MMC.totalBytes()) \

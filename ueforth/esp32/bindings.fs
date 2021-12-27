@@ -56,10 +56,22 @@ transfer{
 
 forth definitions
 
+DEFINED? SD.begin [IF]
+vocabulary SD   SD definitions
+transfer{
+  SD.begin SD.end
+  SD.beginFull SD.beginDefaults
+  SD.totalBytes SD.usedBytes
+  SD.cardType
+}transfer
+forth definitions
+[THEN]
+
 DEFINED? SD_MMC.begin [IF]
 vocabulary SD_MMC   SD_MMC definitions
 transfer{
   SD_MMC.begin SD_MMC.end
+  SD_MMC.beginFull SD_MMC.beginDefaults
   SD_MMC.totalBytes SD_MMC.usedBytes
   SD_MMC.cardType
 }transfer

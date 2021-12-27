@@ -535,11 +535,31 @@ server ( port -- ) Start an image server at port,
                    e.g. http://IP/image will produce an image
 </pre>
 
+<h5>SD</h5>
+These words are inside the <code>SD</code> vocabulary.
+They allow use of an SDcard over SPI.
+<pre>
+SD.begin ( -- ok )   uses all the defaults "/sd" etc.
+SD.beginDefaults ( -- sspin SPIClass frequency mountpointsz maxfiles format_if_empty )
+                 (    SS    SPI      4000000   "/sd"        5        false )
+SD.beginFull ( sspin SPIClass frequency mountpoint maxfiles format_if_empty -- ok )
+SD.end ( -- )
+SD.cardType ( -- n )
+SD.totalBytes ( -- n )
+SD.usedBytes ( -- n )
+</pre>
+
 <h5>SD_MMC</h5>
-These words are inside the <code>SD_MMC</code> vocabulary.<br/>
+These words are inside the <code>SD_MMC</code> vocabulary.
+They allow use of an SDcard over MMC internal interface.
+<br/>
 Note, SD_MMC is unavailable on ESP32-S2 and ESP32-C3.
 <pre>
-SD_MMC.begin ( mount mode1bit )   default mode1bit=false
+SD_MMC.begin ( -- ok )   uses all the defaults "/sdcard" etc.
+SD_MMC.beginDefaults ( -- mountsz   mode1bit format_if_fail )
+                     (    "/sdcard" false    false )
+                     (    sdmmc_freq not supported for generality )
+SD_MMC.beginFull ( mountsz mode1bit format_if_fail -- ok )
 SD_MMC.end ( -- )
 SD_MMC.cardType ( -- n )
 SD_MMC.totalBytes ( -- n )
