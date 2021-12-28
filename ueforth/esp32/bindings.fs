@@ -86,6 +86,7 @@ transfer{
 }transfer
 forth definitions
 
+DEFINED? ledcSetup [IF]
 vocabulary ledc  ledc definitions
 transfer{
   ledcSetup ledcAttachPin ledcDetachPin
@@ -93,6 +94,7 @@ transfer{
   ledcWrite ledcWriteTone ledcWriteNote
 }transfer
 forth definitions
+[THEN]
 
 vocabulary Serial   Serial definitions
 transfer{
@@ -121,6 +123,7 @@ transfer{
 
 forth definitions
 
+DEFINED? gpio_config [IF]
 vocabulary interrupts   interrupts definitions
 transfer{
   gpio_config
@@ -139,7 +142,6 @@ transfer{
   gpio_set_drive_capability gpio_get_drive_capability
   esp_intr_alloc esp_intr_free
 }transfer
-
 0 constant ESP_INTR_FLAG_DEFAULT
 : ESP_INTR_FLAG_LEVELn ( n=1-6 -- n ) 1 swap lshift ;
 1 7 lshift constant ESP_INTR_FLAG_NMI
@@ -147,7 +149,6 @@ transfer{
 1 9 lshift constant ESP_INTR_FLAG_EDGE
 1 10 lshift constant ESP_INTR_FLAG_IRAM
 1 11 lshift constant ESP_INTR_FLAG_INTRDISABLED
-
 ( Prefix these with # because GPIO_INTR_DISABLE conflicts with a function. )
 0 constant #GPIO_INTR_DISABLE
 1 constant #GPIO_INTR_POSEDGE
@@ -155,13 +156,12 @@ transfer{
 3 constant #GPIO_INTR_ANYEDGE
 4 constant #GPIO_INTR_LOW_LEVEL
 5 constant #GPIO_INTR_HIGH_LEVEL
-
 ( Easy word to trigger on any change to a pin )
 ESP_INTR_FLAG_DEFAULT gpio_install_isr_service drop
 : pinchange ( xt pin ) dup #GPIO_INTR_ANYEDGE gpio_set_intr_type throw
                        swap 0 gpio_isr_handler_add throw ;
-
 forth definitions
+[THEN]
 
 DEFINED? rmt_set_clk_div [IF]
 vocabulary rmt   rmt definitions
@@ -183,11 +183,13 @@ transfer{
 forth definitions
 [THEN]
 
+DEFINED? xPortGetCoreID [IF]
 vocabulary rtos   rtos definitions
 transfer{
   xPortGetCoreID xTaskCreatePinnedToCore vTaskDelete
 }transfer
 forth definitions
+[THEN]
 
 DEFINED? SerialBT.new [IF]
 vocabulary bluetooth   bluetooth definitions
@@ -255,4 +257,3 @@ binary
 010000000000000 constant MALLOC_CAP_RETENTION
 decimal
 forth definitions
-

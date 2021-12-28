@@ -30,10 +30,13 @@ function DropCopyright(source) {
   return cleaned.join('\n');
 }
 
-var source = DropCopyright(fs.readFileSync(process.stdin.fd).toString());
 var name = process.argv[2];
 var version = process.argv[3];
 var revision = process.argv[4];
+var source = '';
+for (var i = 5; i < process.argv.length; i++) {
+  source += DropCopyright(fs.readFileSync(process.argv[i]).toString());
+}
 
 source = source.replace('{{VERSION}}', version);
 source = source.replace('{{REVISION}}', revision);

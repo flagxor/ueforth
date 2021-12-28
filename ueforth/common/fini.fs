@@ -19,3 +19,4 @@ transfer forth
 saving-base 16 cells + 'heap !
 forth
 execute ( assumes an xt for autoboot is on the dstack )
+ok

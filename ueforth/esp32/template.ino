@@ -32,6 +32,7 @@
 #define ENABLE_SOCKETS_SUPPORT
 #define ENABLE_FREERTOS_SUPPORT
 #define ENABLE_INTERRUPTS_SUPPORT
+#define ENABLE_LEDC_SUPPORT
 #define ENABLE_SD_SUPPORT
 
 // SD_MMC does not work on ESP32-S2 / ESP32-C3
@@ -82,16 +83,8 @@
 #include <sys/stat.h>
 #include <sys/select.h>
 
-#if defined(ESP32)
-# define HEAP_SIZE (100 * 1024)
-# define STACK_SIZE 512
-#elif defined(ESP8266)
-# define HEAP_SIZE (40 * 1024)
-# define STACK_SIZE 512
-#else
-# define HEAP_SIZE 2 * 1024
-# define STACK_SIZE 32
-#endif
+#define HEAP_SIZE (100 * 1024)
+#define STACK_SIZE 512
 #define INTERRUPT_STACK_CELLS 64
 
 // Optional hook to pull in words for userwords.h
@@ -103,43 +96,59 @@
 
 #define PLATFORM_OPCODE_LIST \
   FLOATING_POINT_LIST \
-  /* Memory Allocation */ \
+  REQUIRED_MEMORY_SUPPORT \
+  REQUIRED_SERIAL_SUPPORT \
+  REQUIRED_ARDUINO_GPIO_SUPPORT \
+  REQUIRED_SYSTEM_SUPPORT \
+  REQUIRED_FILES_SUPPORT \
+  OPTIONAL_LEDC_SUPPORT \
+  OPTIONAL_DAC_SUPPORT \
+  OPTIONAL_SPIFFS_SUPPORT \
+  OPTIONAL_WIFI_SUPPORT \
+  OPTIONAL_MDNS_SUPPORT \
+  OPTIONAL_WEBSERVER_SUPPORT \
+  OPTIONAL_SD_SUPPORT \
+  OPTIONAL_SD_MMC_SUPPORT \
+  OPTIONAL_I2C_SUPPORT \
+  OPTIONAL_SERIAL_BLUETOOTH_SUPPORT \
+  OPTIONAL_CAMERA_SUPPORT \
+  OPTIONAL_SOCKETS_SUPPORT \
+  OPTIONAL_FREERTOS_SUPPORT \
+  OPTIONAL_INTERRUPTS_SUPPORT \
+  OPTIONAL_RMT_SUPPORT \
+  OPTIONAL_OLED_SUPPORT \
+  USER_WORDS
+
+#define REQUIRED_MEMORY_SUPPORT \
   Y(MALLOC, SET malloc(n0)) \
   Y(SYSFREE, free(a0); DROP) \
   Y(REALLOC, SET realloc(a1, n0); NIP) \
   Y(heap_caps_malloc, SET heap_caps_malloc(n1, n0); NIP) \
   Y(heap_caps_free, heap_caps_free(a0); DROP) \
   Y(heap_caps_realloc, \
-      tos = (cell_t) heap_caps_realloc(a2, n1, n0); NIPn(2)) \
-  /* Serial */ \
+      tos = (cell_t) heap_caps_realloc(a2, n1, n0); NIPn(2))
+
+#define REQUIRED_SYSTEM_SUPPORT \
+  X("MS-TICKS", MS_TICKS, PUSH millis()) \
+  X("RAW-YIELD", RAW_YIELD, yield()) \
+  Y(TERMINATE, exit(n0))
+
+#define REQUIRED_SERIAL_SUPPORT \
   X("Serial.begin", SERIAL_BEGIN, Serial.begin(tos); DROP) \
   X("Serial.end", SERIAL_END, Serial.end()) \
   X("Serial.available", SERIAL_AVAILABLE, PUSH Serial.available()) \
   X("Serial.readBytes", SERIAL_READ_BYTES, n0 = Serial.readBytes(b1, n0); NIP) \
   X("Serial.write", SERIAL_WRITE, n0 = Serial.write(b1, n0); NIP) \
-  X("Serial.flush", SERIAL_FLUSH, Serial.flush()) \
-  /* Pins and PWM */ \
+  X("Serial.flush", SERIAL_FLUSH, Serial.flush())
+
+#define REQUIRED_ARDUINO_GPIO_SUPPORT \
   Y(pinMode, pinMode(n1, n0); DROPn(2)) \
   Y(digitalWrite, digitalWrite(n1, n0); DROPn(2)) \
   Y(digitalRead, n0 = digitalRead(n0)) \
   Y(analogRead, n0 = analogRead(n0)) \
-  Y(pulseIn, n0 = pulseIn(n2, n1, n0); NIPn(2)) \
-  Y(ledcSetup, \
-      n0 = (cell_t) (1000000 * ledcSetup(n2, n1 / 1000.0, n0)); NIPn(2)) \
-  Y(ledcAttachPin, ledcAttachPin(n1, n0); DROPn(2)) \
-  Y(ledcDetachPin, ledcDetachPin(n0); DROP) \
-  Y(ledcRead, n0 = ledcRead(n0)) \
-  Y(ledcReadFreq, n0 = (cell_t) (1000000 * ledcReadFreq(n0))) \
-  Y(ledcWrite, ledcWrite(n1, n0); DROPn(2)) \
-  Y(ledcWriteTone, \
-      n0 = (cell_t) (1000000 * ledcWriteTone(n1, n0 / 1000.0)); NIP) \
-  Y(ledcWriteNote, \
-      tos = (cell_t) (1000000 * ledcWriteNote(n2, (note_t) n1, n0)); NIPn(2)) \
-  /* General System */ \
-  X("MS-TICKS", MS_TICKS, PUSH millis()) \
-  X("RAW-YIELD", RAW_YIELD, yield()) \
-  Y(TERMINATE, exit(n0)) \
-  /* File words */ \
+  Y(pulseIn, n0 = pulseIn(n2, n1, n0); NIPn(2))
+
+#define REQUIRED_FILES_SUPPORT \
   X("R/O", R_O, PUSH O_RDONLY) \
   X("R/W", R_W, PUSH O_RDWR) \
   X("W/O", W_O, PUSH O_WRONLY) \
@@ -165,23 +174,24 @@
     n0 = (cell_t) lseek(fd, tos, SEEK_SET); n0 = n0 < 0 ? errno : 0) \
   X("RESIZE-FILE", RESIZE_FILE, cell_t fd = n0; DROP; n0 = ResizeFile(fd, tos)) \
   X("FILE-SIZE", FILE_SIZE, struct stat st; w = fstat(n0, &st); \
-    n0 = (cell_t) st.st_size; PUSH w < 0 ? errno : 0) \
-  OPTIONAL_DAC_SUPPORT \
-  OPTIONAL_SPIFFS_SUPPORT \
-  OPTIONAL_WIFI_SUPPORT \
-  OPTIONAL_MDNS_SUPPORT \
-  OPTIONAL_WEBSERVER_SUPPORT \
-  OPTIONAL_SD_SUPPORT \
-  OPTIONAL_SD_MMC_SUPPORT \
-  OPTIONAL_I2C_SUPPORT \
-  OPTIONAL_SERIAL_BLUETOOTH_SUPPORT \
-  OPTIONAL_CAMERA_SUPPORT \
-  OPTIONAL_SOCKETS_SUPPORT \
-  OPTIONAL_FREERTOS_SUPPORT \
-  OPTIONAL_INTERRUPTS_SUPPORT \
-  OPTIONAL_RMT_SUPPORT \
-  OPTIONAL_OLED_SUPPORT \
-  USER_WORDS
+    n0 = (cell_t) st.st_size; PUSH w < 0 ? errno : 0)
+
+#ifndef ENABLE_LEDC_SUPPORT
+# define OPTIONAL_LEDC_SUPPORT
+#else
+# define OPTIONAL_LEDC_SUPPORT \
+  Y(ledcSetup, \
+      n0 = (cell_t) (1000000 * ledcSetup(n2, n1 / 1000.0, n0)); NIPn(2)) \
+  Y(ledcAttachPin, ledcAttachPin(n1, n0); DROPn(2)) \
+  Y(ledcDetachPin, ledcDetachPin(n0); DROP) \
+  Y(ledcRead, n0 = ledcRead(n0)) \
+  Y(ledcReadFreq, n0 = (cell_t) (1000000 * ledcReadFreq(n0))) \
+  Y(ledcWrite, ledcWrite(n1, n0); DROPn(2)) \
+  Y(ledcWriteTone, \
+      n0 = (cell_t) (1000000 * ledcWriteTone(n1, n0 / 1000.0)); NIP) \
+  Y(ledcWriteNote, \
+      tos = (cell_t) (1000000 * ledcWriteNote(n2, (note_t) n1, n0)); NIPn(2))
+#endif
 
 #ifndef ENABLE_DAC_SUPPORT
 # define OPTIONAL_DAC_SUPPORT
@@ -535,11 +545,16 @@ static Adafruit_SSD1306 *oled_display = 0;
 #endif
 
 static char filename[PATH_MAX];
-static String string_value;
 
+#ifdef ENABLE_WEBSERVER_SUPPORT
+static String string_value;
+#endif
+
+#ifdef ENABLE_INTERRUPTS_SUPPORT
 static cell_t EspIntrAlloc(cell_t source, cell_t flags, cell_t xt, cell_t arg, cell_t *ret);
 static cell_t GpioIsrHandlerAdd(cell_t pin, cell_t xt, cell_t arg);
 static cell_t TimerIsrRegister(cell_t group, cell_t timer, cell_t xt, cell_t arg, void *ret);
+#endif
 
 {{core}}
 {{interp}}
@@ -592,6 +607,7 @@ static void InvokeWebServerOn(WebServer *ws, const char *url, cell_t xt) {
 }
 #endif
 
+#ifdef ENABLE_INTERRUPTS_SUPPORT
 struct handle_interrupt_args {
   cell_t xt;
   cell_t arg;
@@ -634,6 +650,7 @@ static cell_t TimerIsrRegister(cell_t group, cell_t timer, cell_t xt, cell_t arg
   args->arg = arg;
   return timer_isr_register((timer_group_t) group, (timer_idx_t) timer, HandleInterrupt, args, flags, (timer_isr_handle_t *) ret);
 }
+#endif
 
 void setup() {
   cell_t *heap = (cell_t *) malloc(HEAP_SIZE);
