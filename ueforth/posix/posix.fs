@@ -148,6 +148,11 @@ z" clock_gettime" 2 sysfunc clock_gettime
 8 constant CLOCK_REALTIME_ALARM
 9 constant CLOCK_BOOTTIME_ALARM
 
+( File control )
+z" fcntl" 3 sysfunc fcntl
+4 constant F_SETFL
+2048 constant FNDELAY ( 04000 )
+
 forth definitions posix
 
 ( Generic Files )
@@ -171,6 +176,9 @@ O_RDWR constant r/w
    dup 0 SEEK_CUR lseek >r
    dup 0 SEEK_END lseek r> swap >r
          SEEK_SET lseek drop r> d0<ior ;
+
+( Non-standard )
+: non-block ( fh -- ior ) F_SETFL FNDELAY fcntl ;
 
 ( Other Utils )
 : ms ( n -- ) 1000 * usleep drop ;

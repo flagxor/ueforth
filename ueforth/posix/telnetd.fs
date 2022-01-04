@@ -32,13 +32,20 @@ defer broker
   ['] telnet-key is key
   ['] telnet-type is type quit ;
 
+: wait-for-connection
+  begin
+    sockfd client client-len sockaccept
+    dup 0 >= if exit else drop then
+  again
+;
+
 : broker-connection
   rp0 rp! sp0 sp!
   begin
     ['] default-key is key   ['] default-type is type
     -1 echo !
     ." Listening on port " telnet-port ->port@ . cr
-    sockfd client client-len sockaccept
+    wait-for-connection
     ." Connected: " dup . cr connection
   again ;
 ' broker-connection is broker
@@ -46,6 +53,7 @@ defer broker
 : server ( port -- )
   telnet-port ->port!
   AF_INET SOCK_STREAM 0 socket to sockfd
+  sockfd non-block throw
   sockfd telnet-port sizeof(sockaddr_in) bind throw
   sockfd 1 listen throw   broker ;
 

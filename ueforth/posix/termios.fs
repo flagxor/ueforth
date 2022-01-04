@@ -18,12 +18,9 @@ vocabulary termios   termios definitions also posix
 
 z" tcgetattr" 2 sysfunc tcgetattr
 z" tcsetattr" 3 sysfunc tcsetattr
-z" fcntl" 3 sysfunc fcntl
 z" ioctl" 3 sysfunc ioctl
 
 ( Blocking )
-4 constant F_SETFL
-2048 constant FNDELAY
 : nodelay-mode   stdin F_SETFL FNDELAY fcntl throw ;
 : delay-mode   stdin F_SETFL 0 fcntl throw ;
 

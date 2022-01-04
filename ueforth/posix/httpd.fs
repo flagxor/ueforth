@@ -30,16 +30,20 @@ sockaddr httpd-port   sockaddr client   variable client-len
 
 : handleClient
   clientfd close-file drop
+  -1 to clientfd
   sockfd client client-len sockaccept
-  dup 0< if drop exit then to clientfd
+  dup 0< if drop 0 exit then
+  to clientfd
   chunk chunk-size 0 fill
   chunk chunk-size clientfd read-file throw to chunk-filled
+  -1
 ;
 
 : server ( port -- )
   httpd-port ->port!  ." Listening on port " httpd-port ->port@ . cr
   AF_INET SOCK_STREAM 0 socket to sockfd
   ( sockfd SOL_SOCKET SO_REUSEADDR 1 >r rp@ 4 setsockopt rdrop throw )
+  sockfd non-block throw
   sockfd httpd-port sizeof(sockaddr_in) bind throw
   sockfd max-connections listen throw
 ;

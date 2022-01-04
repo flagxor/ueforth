@@ -36,4 +36,7 @@ z" setsockopt" 5 sysfunc setsockopt
 : ->port@ ( a -- n ) 2 + >r r@ c@ 256 * r> 1+ c@ + ;
 : ->port! ( n a --  ) 2 + >r dup 256 / r@ c! r> 1+ c! ;
 
+( Fixup return )
+: sockaccept sockaccept sign-extend ;
+
 forth definitions

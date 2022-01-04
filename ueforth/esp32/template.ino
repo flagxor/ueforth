@@ -174,7 +174,9 @@
     n0 = (cell_t) lseek(fd, tos, SEEK_SET); n0 = n0 < 0 ? errno : 0) \
   X("RESIZE-FILE", RESIZE_FILE, cell_t fd = n0; DROP; n0 = ResizeFile(fd, tos)) \
   X("FILE-SIZE", FILE_SIZE, struct stat st; w = fstat(n0, &st); \
-    n0 = (cell_t) st.st_size; PUSH w < 0 ? errno : 0)
+    n0 = (cell_t) st.st_size; PUSH w < 0 ? errno : 0) \
+  X("NON-BLOCK", NON_BLOCK, n0 = fcntl(n0, F_SETFL, O_NONBLOCK); \
+    n0 = n0 < 0 ? errno : 0)
 
 #ifndef ENABLE_LEDC_SUPPORT
 # define OPTIONAL_LEDC_SUPPORT
