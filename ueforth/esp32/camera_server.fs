@@ -66,10 +66,11 @@ Frame();
 ;
 
 : handle1
-  handleClient
-  s" /" path str= if handle-index exit then
-  s" /image" path str= if handle-image exit then
-  notfound-response
+  handleClient if
+    s" /" path str= if handle-index exit then
+    s" /image" path str= if handle-image exit then
+    notfound-response
+  then
 ;
 
 : do-serve    begin ['] handle1 catch drop pause again ;
