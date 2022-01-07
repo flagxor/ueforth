@@ -190,11 +190,11 @@ static cell_t *evaluate1(cell_t *sp, float **fp) {
 static cell_t *forth_run(cell_t *initrp);
 
 static void forth_init(int argc, char *argv[], void *heap,
-                         const char *src, cell_t src_len) {
+                       const char *src, cell_t src_len) {
   g_sys.heap = ((cell_t *) heap) + 4;  // Leave a little room.
-  cell_t *sp = g_sys.heap + 1; g_sys.heap += STACK_SIZE;
-  cell_t *rp = g_sys.heap + 1; g_sys.heap += STACK_SIZE;
   float *fp = (float *) (g_sys.heap + 1); g_sys.heap += STACK_SIZE;
+  cell_t *rp = g_sys.heap + 1; g_sys.heap += STACK_SIZE;
+  cell_t *sp = g_sys.heap + 1; g_sys.heap += STACK_SIZE;
 
   // FORTH vocabulary
   *g_sys.heap++ = 0; cell_t *forth = g_sys.heap;
@@ -221,8 +221,8 @@ static void forth_init(int argc, char *argv[], void *heap,
   g_sys.base = 10;
   g_sys.tib = src;
   g_sys.ntib = src_len;
-  *++rp = (cell_t) sp;
   *++rp = (cell_t) fp;
+  *++rp = (cell_t) sp;
   *++rp = (cell_t) start;
   g_sys.rp = rp;
   g_sys.runner = forth_run;

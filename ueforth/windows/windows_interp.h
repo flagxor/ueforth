@@ -39,9 +39,7 @@ static cell_t *forth_run(cell_t *init_rp) {
   }
   register cell_t *ip, *rp, *sp, tos, w;
   register float *fp;
-  rp = init_rp;  ip = (cell_t *) *rp--;  sp = (cell_t *) *rp--;
-  fp = (float *) *rp--;
-  DROP;
+  rp = init_rp; UNPARK;
   for (;;) {
 next:
     w = *ip++;

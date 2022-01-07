@@ -31,7 +31,9 @@ typedef uintptr_t ucell_t;
 #define DOIMMEDIATE() (*g_sys.current)[-1] |= IMMEDIATE
 #define UNSMUDGE() (*g_sys.current)[-1] &= ~SMUDGE
 #define DOES(ip) **g_sys.current = (cell_t) ADDR_DODOES; (*g_sys.current)[1] = (cell_t) ip
-#define PARK DUP; *++rp = (cell_t) fp; *++rp = (cell_t) sp; *++rp = (cell_t) ip
+
+#define PARK   DUP; *++rp = (cell_t) fp; *++rp = (cell_t) sp; *++rp = (cell_t) ip
+#define UNPARK ip = (cell_t *) *rp--;  sp = (cell_t *) *rp--; fp = (float *) *rp--; DROP
 
 #ifndef SSMOD_FUNC
 # if __SIZEOF_POINTER__ == 8

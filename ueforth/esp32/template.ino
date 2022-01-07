@@ -599,9 +599,11 @@ static void InvokeWebServerOn(WebServer *ws, const char *url, cell_t xt) {
     cell_t code[2];
     code[0] = xt;
     code[1] = g_sys.YIELD_XT;
-    cell_t stack[INTERRUPT_STACK_CELLS];
+    cell_t fstack[INTERRUPT_STACK_CELLS];
     cell_t rstack[INTERRUPT_STACK_CELLS];
+    cell_t stack[INTERRUPT_STACK_CELLS];
     cell_t *rp = rstack;
+    *++rp = (cell_t) (fstack + 1);
     *++rp = (cell_t) (stack + 1);
     *++rp = (cell_t) code;
     forth_run(rp);
@@ -620,10 +622,12 @@ static void IRAM_ATTR HandleInterrupt(void *arg) {
   cell_t code[2];
   code[0] = args->xt;
   code[1] = g_sys.YIELD_XT;
-  cell_t stack[INTERRUPT_STACK_CELLS];
+  cell_t fstack[INTERRUPT_STACK_CELLS];
   cell_t rstack[INTERRUPT_STACK_CELLS];
+  cell_t stack[INTERRUPT_STACK_CELLS];
   stack[0] = args->arg;
   cell_t *rp = rstack;
+  *++rp = (cell_t) (fstack + 1);
   *++rp = (cell_t) (stack + 1);
   *++rp = (cell_t) code;
   forth_run(rp);
