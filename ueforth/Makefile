@@ -14,7 +14,7 @@
 
 VERSION=7.0.6.10
 STABLE_VERSION=7.0.5.4
-REVISION=$(shell git rev-parse HEAD)
+REVISION=$(shell git rev-parse HEAD | head -c 20)
 REVSHORT=$(shell echo $(REVISION) | head -c 7)
 
 OUT = out

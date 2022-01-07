@@ -256,4 +256,3 @@ create input-buffer   input-limit allot
 : quit    begin ['] evaluate-buffer catch
           if 0 state ! sp0 sp! fp0 fp! rp0 rp! ." ERROR" cr then
           prompt refill drop again ;
-: ok   ." uEForth" cr prompt refill drop quit ;
