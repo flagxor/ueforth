@@ -455,6 +455,41 @@ WiFi.getTxPower ( -- powerx4 )   Get power x4
 MDNS.begin ( name-z -- )   Start multicast dns
 </pre>
 
+<h5>SPI Flash</h5>
+These words are inside the <code>spi_flash</code> vocabulary.
+<pre>
+spi_flash_init ( -- ) Init driver access.
+spi_flash_get_chip_size ( -- n ) Get flash size.
+spi_flash_erase_sector ( sector -- err ) Erase a sector.
+spi_flash_erase_range ( addr size -- err ) Erase a range.
+spi_flash_write ( destaddr src size -- err ) Write to flash.
+spi_flash_write_encrypted ( destaddr src size -- err ) Write encrypted.
+spi_flash_read ( srcaddr dst size -- err ) Read from flash.
+spi_flash_read_encrypted ( srcaddr dst size -- err ) Read encrypted.
+spi_flash_mmap ( srcaddr size memtype out outhandle -- err ) Map region.
+spi_flash_mmap_pages ( pages pages# memtype out outhandle -- err ) Map pages.
+spi_flash_munmap ( handle -- ) Unmap region.
+spi_flash_mmap_dump ( -- ) Dump memory map.
+spi_flash_mmap_get_free_pages ( memtype -- n ) Get free pages.
+spi_flash_cache2phys ( a -- addr ) Get flash addr.
+spi_flash_phys2cache ( addr memtype -- a ) Get mapped flash addr.
+spi_flash_cache_enabled ( -- f ) Is flash enabled.
+
+esp_partition_t_size ( -- n ) sizeof(esp_parition_t).
+esp_partition_find ( type subtype szlabel -- it ) Get partition iterator.
+esp_partition_find_first ( type subtype szlabel -- part ) Get first partition.
+esp_partition_get ( it -- part ) Get current partition.
+esp_partition_next ( it -- it' ) Get next partition.
+esp_partition_iterator_release ( it -- ) Free iterator.
+esp_partition_verify ( part -- part' ) Verify partition.
+esp_partition_read ( part srcoff dst size -- err ) Read from partition.
+esp_partition_write ( part dstoff src size -- err ) Write to partition.
+esp_partition_erase_range ( part start size -- err ) Erase range.
+esp_partition_mmap ( part off size memtype out outhandle -- err ) Map memory.
+esp_partition_get_sha256 ( part a -- err ) Get sha256 digest.
+esp_partition_check_identity ( part part -- f ) Check partitions for equality.
+</pre>
+
 <h5>SPIFFS</h5>
 These words are inside the <code>SPIFFS</code> vocabulary.
 <pre>

@@ -34,6 +34,7 @@
 #define ENABLE_INTERRUPTS_SUPPORT
 #define ENABLE_LEDC_SUPPORT
 #define ENABLE_SD_SUPPORT
+#define ENABLE_SPI_FLASH_SUPPORT
 
 // SD_MMC does not work on ESP32-S2 / ESP32-C3
 #if !defined(CONFIG_IDF_TARGET_ESP32S2) && !defined(CONFIG_IDF_TARGET_ESP32C3)
@@ -117,6 +118,7 @@
   OPTIONAL_INTERRUPTS_SUPPORT \
   OPTIONAL_RMT_SUPPORT \
   OPTIONAL_OLED_SUPPORT \
+  OPTIONAL_SPI_FLASH_SUPPORT \
   USER_WORDS
 
 #define REQUIRED_MEMORY_SUPPORT \
@@ -200,6 +202,66 @@
 # else
 # define OPTIONAL_DAC_SUPPORT \
   Y(dacWrite, dacWrite(n1, n0); DROPn(2))
+#endif
+
+#ifndef ENABLE_SPI_FLASH_SUPPORT
+# define OPTIONAL_SPI_FLASH_SUPPORT
+#else
+# include "esp_spi_flash.h"
+# include "esp_partition.h"
+# define OPTIONAL_SPI_FLASH_SUPPORT \
+  Y(spi_flash_init, spi_flash_init()) \
+  Y(spi_flash_get_chip_size, PUSH spi_flash_get_chip_size()) \
+  Y(spi_flash_erase_sector, n0 = spi_flash_erase_sector(n0)) \
+  Y(spi_flash_erase_range, n0 = spi_flash_erase_range(n1, n0); DROP) \
+  Y(spi_flash_write, n0 = spi_flash_write(n2, a1, n0); NIPn(2)) \
+  Y(spi_flash_write_encrypted, n0 = spi_flash_write_encrypted(n2, a1, n0); NIPn(2)) \
+  Y(spi_flash_read, n0 = spi_flash_read(n2, a1, n0); NIPn(2)) \
+  Y(spi_flash_read_encrypted, n0 = spi_flash_read_encrypted(n2, a1, n0); NIPn(2)) \
+  Y(spi_flash_mmap, \
+      n0 = spi_flash_mmap(n4, n3, (spi_flash_mmap_memory_t) n2, \
+                          (const void **) a1, (spi_flash_mmap_handle_t *) a0); NIPn(4)) \
+  Y(spi_flash_mmap_pages, \
+      n0 = spi_flash_mmap_pages((const int *) a4, n3, (spi_flash_mmap_memory_t) n2, \
+                                (const void **) a1, (spi_flash_mmap_handle_t *) a0); NIPn(4)) \
+  Y(spi_flash_munmap, spi_flash_munmap((spi_flash_mmap_handle_t) a0); DROP) \
+  Y(spi_flash_mmap_dump, spi_flash_mmap_dump()) \
+  Y(spi_flash_mmap_get_free_pages, \
+      n0 = spi_flash_mmap_get_free_pages((spi_flash_mmap_memory_t) n0)) \
+  Y(spi_flash_cache2phys, n0 = spi_flash_cache2phys(a0)) \
+  Y(spi_flash_phys2cache, \
+      n0 = (cell_t) spi_flash_phys2cache(n1, (spi_flash_mmap_memory_t) n0); NIP) \
+  Y(spi_flash_cache_enabled, PUSH spi_flash_cache_enabled()) \
+  Y(esp_partition_find, \
+      n0 = (cell_t) esp_partition_find((esp_partition_type_t) n2, \
+                                       (esp_partition_subtype_t) n1, c0); NIPn(2)) \
+  Y(esp_partition_find_first, \
+      n0 = (cell_t) esp_partition_find_first((esp_partition_type_t) n2, \
+                                             (esp_partition_subtype_t) n1, c0); NIPn(2)) \
+  Y(esp_partition_t_size, PUSH sizeof(esp_partition_t)) \
+  Y(esp_partition_get, \
+      n0 = (cell_t) esp_partition_get((esp_partition_iterator_t) a0)) \
+  Y(esp_partition_next, \
+      n0 = (cell_t) esp_partition_next((esp_partition_iterator_t) a0)) \
+  Y(esp_partition_iterator_release, \
+      esp_partition_iterator_release((esp_partition_iterator_t) a0); DROP) \
+  Y(esp_partition_verify, n0 = (cell_t) esp_partition_verify((esp_partition_t *) a0)) \
+  Y(esp_partition_read, \
+      n0 = esp_partition_read((const esp_partition_t *) a3, n2, a1, n0); NIPn(3)) \
+  Y(esp_partition_write, \
+      n0 = esp_partition_write((const esp_partition_t *) a3, n2, a1, n0); NIPn(3)) \
+  Y(esp_partition_erase_range, \
+      n0 = esp_partition_erase_range((const esp_partition_t *) a2, n1, n0); NIPn(2)) \
+  Y(esp_partition_mmap, \
+      n0 = esp_partition_mmap((const esp_partition_t *) a5, n4, n3, \
+                              (spi_flash_mmap_memory_t) n2, \
+                              (const void **) a1, \
+                              (spi_flash_mmap_handle_t *) a0); NIPn(5)) \
+  Y(esp_partition_get_sha256, \
+      n0 = esp_partition_get_sha256((const esp_partition_t *) a1, b0); NIP) \
+  Y(esp_partition_check_identity, \
+      n0 = esp_partition_check_identity((const esp_partition_t *) a1, \
+                                        (const esp_partition_t *) a0); NIP)
 #endif
 
 #ifndef ENABLE_SPIFFS_SUPPORT

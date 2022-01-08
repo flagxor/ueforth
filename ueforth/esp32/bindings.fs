@@ -78,6 +78,45 @@ transfer{
 forth definitions
 [THEN]
 
+DEFINED? spi_flash_init [IF]
+vocabulary spi_flash   spi_flash definitions
+transfer{
+  spi_flash_init spi_flash_get_chip_size
+  spi_flash_erase_sector spi_flash_erase_range
+  spi_flash_write spi_flash_write_encrypted
+  spi_flash_read spi_flash_read_encrypted
+  spi_flash_mmap spi_flash_mmap_pages spi_flash_munmap
+  spi_flash_mmap_dump spi_flash_mmap_get_free_pages
+  spi_flash_cache2phys spi_flash_phys2cache spi_flash_cache_enabled
+  esp_partition_find esp_partition_find_first esp_partition_get
+  esp_partition_next esp_partition_iterator_release
+  esp_partition_verify esp_partition_read esp_partition_write
+  esp_partition_erase_range esp_partition_mmap
+  esp_partition_get_sha256 esp_partition_check_identity
+}transfer
+0 constant SPI_PARTITION_TYPE_APP
+1 constant SPI_PARTITION_TYPE_DATA
+$ff constant SPI_PARTITION_SUBTYPE_ANY
+( Work around changing struct layout )
+: p>common ( part -- part' ) esp_partition_t_size 44 >= if cell+ then ;
+: p>type ( part -- n ) p>common @ ;
+: p>subtype ( part -- n ) p>common cell+ @ ;
+: p>address ( part -- n ) p>common 2 cells + @ ;
+: p>size ( part -- n ) p>common 3 cells + @ ;
+: p>label ( part -- a n ) p>common 4 cells + z>s ;
+: p. ( part -- )
+  base @ >r >r decimal
+  ." TYPE: " r@ p>type . ." SUBTYPE: " r@ p>subtype .
+  ." ADDR: " r@ hex p>address .  ." SIZE: " r@ p>size .
+  ." LABEL: " r> p>label type cr r> base ! ;
+: list-partition-type ( type -- )
+  SPI_PARTITION_SUBTYPE_ANY 0 esp_partition_find
+  begin dup esp_partition_get p. esp_partition_next dup 0= until drop ;
+: list-partitions   SPI_PARTITION_TYPE_APP list-partition-type
+                    SPI_PARTITION_TYPE_DATA list-partition-type ;
+forth definitions
+[THEN]
+
 vocabulary SPIFFS   SPIFFS definitions
 transfer{
   SPIFFS.begin SPIFFS.end
