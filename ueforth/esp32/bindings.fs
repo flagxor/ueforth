@@ -98,7 +98,7 @@ transfer{
 1 constant SPI_PARTITION_TYPE_DATA
 $ff constant SPI_PARTITION_SUBTYPE_ANY
 ( Work around changing struct layout )
-: p>common ( part -- part' ) esp_partition_t_size 44 >= if cell+ then ;
+: p>common ( part -- part' ) esp_partition_t_size 40 >= if cell+ then ;
 : p>type ( part -- n ) p>common @ ;
 : p>subtype ( part -- n ) p>common cell+ @ ;
 : p>address ( part -- n ) p>common 2 cells + @ ;
