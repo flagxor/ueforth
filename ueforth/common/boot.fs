@@ -107,13 +107,14 @@
 : abs ( n -- +n ) dup 0< if negate then ;
 
 ( Dictionary Format )
-: >name ( xt -- a n ) 3 cells - dup @ swap over aligned - swap ;
+: >flags& ( xt -- a ) cell - ; : >flags ( xt -- flags ) >flags& c@ ;
+: >length ( xt -- n ) >flags& @ 8 rshift ;
 : >link& ( xt -- a ) 2 cells - ;   : >link ( xt -- a ) >link& @ ;
-: >flags ( xt -- flags ) cell - ;
+: >name ( xt -- a n ) dup >length swap >link& over aligned - swap ;
 : >body ( xt -- a ) dup @ [ ' >flags @ ] literal = 2 + cells + ;
 
 ( Postpone - done here so we have ['] and IF )
-: immediate? ( xt -- f ) >flags @ 1 and 0= 0= ;
+: immediate? ( xt -- f ) >flags 1 and 0= 0= ;
 : postpone ' dup immediate? if , else aliteral ['] , , then ; immediate
 
 ( Stack Convience )

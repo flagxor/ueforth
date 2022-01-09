@@ -37,8 +37,8 @@ variable local-op   ' local@ local-op !
 : do-local ( n -- ) nest-depth @ + cells negate aliteral
                     local-op @ ,  ['] local@ local-op ! ;
 : scope-create ( a n -- )
-   dup >r $place align r> , ( name )
-   scope @ , 1 , ( IMMEDIATE ) here scope ! ( link, flags )
+   dup >r $place align ( name )
+   scope @ , r> 8 lshift 1 or , ( IMMEDIATE ) here scope ! ( link, flags&length )
    ['] scope-clear @ ( docol) ,
    nest-depth @ negate aliteral postpone do-local ['] exit ,
    1 scope-depth +!  1 nest-depth +!
@@ -64,7 +64,7 @@ also forth definitions
       recurse (local) ; immediate
 ( TODO: Hide the words overriden here. )
 : ;   scope-clear postpone ; ; immediate
-: to ( n -- ) ' dup >flags @ if (to) else ['] ! value-bind then ; immediate
-: +to ( n -- ) ' dup >flags @ if (+to) else ['] +! value-bind then ; immediate
+: to ( n -- ) ' dup >flags if (to) else ['] ! value-bind then ; immediate
+: +to ( n -- ) ' dup >flags if (+to) else ['] +! value-bind then ; immediate
 
 only forth definitions

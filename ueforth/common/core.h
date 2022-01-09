@@ -110,8 +110,8 @@ static cell_t find(const char *name, cell_t len) {
     cell_t *pos = **voc;
     cell_t clen = CELL_LEN(len);
     while (pos) {
-      if (!(pos[-1] & SMUDGE) && len == pos[-3] &&
-          same(name, (const char *) &pos[-3 - clen], len)) {
+      if (!(pos[-1] & SMUDGE) && len == (pos[-1] >> 8) &&
+          same(name, (const char *) &pos[-2 - clen], len)) {
         return (cell_t) pos;
       }
       pos = (cell_t *) pos[-2];  // Follow link
@@ -125,9 +125,8 @@ static void create(const char *name, cell_t length, cell_t flags, void *op) {
   char *pos = (char *) g_sys.heap;
   for (cell_t n = length; n; --n) { *pos++ = *name++; }  // name
   g_sys.heap += CELL_LEN(length);
-  *g_sys.heap++ = length;  // length
   *g_sys.heap++ = (cell_t) *g_sys.current;  // link
-  *g_sys.heap++ = flags;  // flags
+  *g_sys.heap++ = (length << 8) | flags;  // flags & length
   *g_sys.current = g_sys.heap;
   *g_sys.heap++ = (cell_t) op;  // code
 }
@@ -218,7 +217,7 @@ static void forth_init(int argc, char *argv[], void *heap,
   for (int i = 0; i < VOCABULARY_DEPTH; ++i) { *g_sys.heap++ = 0; }
 
   forth_run(0);
-  (*g_sys.current)[-1] = IMMEDIATE;  // Make last word ; IMMEDIATE
+  (*g_sys.current)[-1] |= IMMEDIATE;  // Make last word ; IMMEDIATE
   g_sys.DOLIT_XT = FIND("DOLIT");
   g_sys.DOFLIT_XT = FIND("DOFLIT");
   g_sys.DOEXIT_XT = FIND("EXIT");
