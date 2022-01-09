@@ -24,7 +24,7 @@
 #define VOCABULARY_DEPTH 16
 
 #if PRINT_ERRORS
-#include <unistd.h>
+#include <stdio.h>
 #endif
 
 static struct {
@@ -180,8 +180,9 @@ static cell_t *evaluate1(cell_t *sp, float **fp) {
         }
       } else {
 #if PRINT_ERRORS
-        write(2, (void *) name, len);
-        write(2, "\n", 1);
+        fprintf(stderr, "CANT FIND: ");
+        fwrite((void *) name, 1, len, stderr);
+        fprintf(stderr, "\n");
 #endif
         *++sp = name;
         *++sp = len;
@@ -219,7 +220,6 @@ static void forth_init(int argc, char *argv[], void *heap,
   for (int i = 0; i < VOCABULARY_DEPTH; ++i) { *g_sys.heap++ = 0; }
 
   forth_run(0);
-  (*g_sys.current)[-1] |= IMMEDIATE;  // Make last word ; IMMEDIATE
   g_sys.DOLIT_XT = FIND("DOLIT");
   g_sys.DOFLIT_XT = FIND("DOFLIT");
   g_sys.DOEXIT_XT = FIND("EXIT");

@@ -74,6 +74,7 @@
        sys: 'argc         sys: 'argv         sys: 'runner
 : context ( -- a ) 'context @ cell+ ;
 : remaining ( -- n ) 'heap-start @ 'heap-size @ + 'heap @ - ;
+: used ( -- n ) 'heap @ sp@ 'stack-cells @ cells + - 28 + ;
 
 ( Compilation State )
 : [ 0 state ! ; immediate
@@ -258,5 +259,7 @@ create input-buffer   input-limit allot
           if 0 state ! sp0 sp! fp0 fp! rp0 rp! ." ERROR" cr then
           prompt refill drop again ;
 : raw-ok   ."  v{{VERSION}} - rev {{REVISION}}" cr
-           remaining . ." bytes heap free" cr
+           remaining . ." bytes heap free   "
+           used . ." bytes dictionary used   "
+           'stack-cells @ cells . ." bytes x 3 stacks" cr
            prompt refill drop quit ;
