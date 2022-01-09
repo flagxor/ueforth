@@ -70,3 +70,33 @@ e: test-see-fornext
   see test
   out: : test  >R DONEXT ; 
 ;e
+
+e: test-string-strides
+  : test0 1 if ." " then ;
+  : test1 1 if ." >" then ;
+  : test2 1 if ." ->" then ;
+  : test3 1 if ." -->" then ;
+  : test4 1 if ." --->" then ;
+  : test5 1 if ." ---->" then ;
+  : test6 1 if ." ----->" then ;
+  : test7 1 if ." ------>" then ;
+  : test8 1 if ." ------->" then ;
+  see test0
+  out: : test0  1 0BRANCH s" " type ; 
+  see test1
+  out: : test1  1 0BRANCH s" >" type ; 
+  see test2
+  out: : test2  1 0BRANCH s" ->" type ; 
+  see test3
+  out: : test3  1 0BRANCH s" -->" type ; 
+  see test4
+  out: : test4  1 0BRANCH s" --->" type ; 
+  see test5
+  out: : test5  1 0BRANCH s" ---->" type ; 
+  see test6
+  out: : test6  1 0BRANCH s" ----->" type ; 
+  see test7
+  out: : test7  1 0BRANCH s" ------>" type ; 
+  see test8
+  out: : test8  1 0BRANCH s" ------->" type ; 
+;e

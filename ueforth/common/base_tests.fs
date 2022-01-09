@@ -117,3 +117,8 @@ e: test-compiler-off
   : test [ 123 111 + literal ] ;
   test 234 = assert
 ;e
+
+e: test-empty-string
+  : test s" " ;
+  test 0 = assert drop
+;e

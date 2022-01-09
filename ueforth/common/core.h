@@ -136,8 +136,10 @@ static int match(char sep, char ch) {
 }
 
 static cell_t parse(cell_t sep, cell_t *ret) {
-  while (g_sys.tin < g_sys.ntib &&
-         match(sep, g_sys.tib[g_sys.tin])) { ++g_sys.tin; }
+  if (sep == ' ') {
+    while (g_sys.tin < g_sys.ntib &&
+           match(sep, g_sys.tib[g_sys.tin])) { ++g_sys.tin; }
+  }
   *ret = (cell_t) (g_sys.tib + g_sys.tin);
   while (g_sys.tin < g_sys.ntib &&
          !match(sep, g_sys.tib[g_sys.tin])) { ++g_sys.tin; }
