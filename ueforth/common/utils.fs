@@ -44,7 +44,7 @@ internals definitions
    dup ['] DOLIT = if drop dup @ . cell+ exit then
    dup ['] DOFLIT = if drop dup sf@ <# [char] e hold #fs #> type space cell+ exit then
    dup ['] $@ = if drop ['] s" see.
-                   dup @ dup >r >r dup cell+ r> type cell+ r> aligned +
+                   dup @ dup >r >r dup cell+ r> type cell+ r> 1+ aligned +
                    [char] " emit space exit then
    dup  ['] BRANCH =
    over ['] 0BRANCH = or
