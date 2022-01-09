@@ -85,7 +85,7 @@
 #include <sys/select.h>
 
 #define HEAP_SIZE (100 * 1024)
-#define STACK_SIZE 512
+#define STACK_CELLS 512
 #define INTERRUPT_STACK_CELLS 64
 
 // Optional hook to pull in words for userwords.h

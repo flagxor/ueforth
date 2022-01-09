@@ -48,12 +48,14 @@ transfer{
   'context 'notfound notfound
   immediate? input-buffer ?echo ?arrow. arrow
   evaluate1 evaluate-buffer
-  'sys 'heap aliteral
+  'sys 'heap aliteral 'heap-start 'heap-size
+  'stack-cells 'boot 'boot-size
+  'argc 'argv 'runner
   leaving( )leaving leaving leaving,
   (do) (?do) (+loop)
   parse-quote digit $@ raw.s
   tib-setup input-limit
-  [SKIP] [SKIP]'
+  [SKIP] [SKIP]' raw-ok
 }transfer
 forth definitions
 

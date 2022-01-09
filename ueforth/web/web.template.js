@@ -17,7 +17,7 @@
 (function() {
 
 const HEAP_SIZE = (1024 * 1024);
-const STACK_SIZE = 4096;
+const STACK_CELLS = 4096;
 
 const boot = `
 {{boot}}
@@ -133,9 +133,9 @@ function Init() {
 
   InitDictionary();
   i32[g_sp>>2] = i32[g_heap>>2] + 1;
-  i32[g_heap>>2] += STACK_SIZE;
+  i32[g_heap>>2] += STACK_CELLS;
   i32[g_rp>>2] = i32[g_heap>>2] + 1;
-  i32[g_heap>>2] += STACK_SIZE;
+  i32[g_heap>>2] += STACK_CELLS;
   i32[((i32[g_current]>>2) - 4)>>2] = 1;  // Make ; IMMMEDIATE
   // Do not need DOLIT_XT, DOEXIT_XT, YIELD_XT (do by convention)
   i32[g_notfound>>2] = Find('DROP');

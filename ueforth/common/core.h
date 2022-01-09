@@ -28,12 +28,18 @@
 #endif
 
 static struct {
+  cell_t *heap, **current, ***context, notfound;
+  cell_t *heap_start;
+  cell_t heap_size, stack_cells;
+  const char *boot;
+  cell_t boot_size;
   const char *tib;
   cell_t ntib, tin, state, base;
-  cell_t *heap, **current, ***context, notfound;
   int argc;
   char **argv;
   cell_t *(*runner)(cell_t *rp);  // pointer to forth_run
+
+  // Layout not used by Forth.
   cell_t *rp;  // spot to park main thread
   cell_t DOLIT_XT, DOFLIT_XT, DOEXIT_XT, YIELD_XT;
 } g_sys;
@@ -191,10 +197,16 @@ static cell_t *forth_run(cell_t *initrp);
 
 static void forth_init(int argc, char *argv[], void *heap,
                        const char *src, cell_t src_len) {
-  g_sys.heap = ((cell_t *) heap) + 4;  // Leave a little room.
-  float *fp = (float *) (g_sys.heap + 1); g_sys.heap += STACK_SIZE;
-  cell_t *rp = g_sys.heap + 1; g_sys.heap += STACK_SIZE;
-  cell_t *sp = g_sys.heap + 1; g_sys.heap += STACK_SIZE;
+  g_sys.heap_start = (cell_t *) heap;
+  g_sys.heap_size = HEAP_SIZE;
+  g_sys.stack_cells = STACK_CELLS;
+  g_sys.boot = src;
+  g_sys.boot_size = src_len;
+
+  g_sys.heap = g_sys.heap_start + 4;  // Leave a little room.
+  float *fp = (float *) (g_sys.heap + 1); g_sys.heap += STACK_CELLS;
+  cell_t *rp = g_sys.heap + 1; g_sys.heap += STACK_CELLS;
+  cell_t *sp = g_sys.heap + 1; g_sys.heap += STACK_CELLS;
 
   // FORTH vocabulary
   *g_sys.heap++ = 0; cell_t *forth = g_sys.heap;

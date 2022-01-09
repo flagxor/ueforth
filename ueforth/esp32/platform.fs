@@ -63,4 +63,4 @@ led OUTPUT pinMode
 high led pin
 
 ( Setup entry )
-: ok   ." ESP32forth v{{VERSION}} - rev {{REVISION}}" cr prompt refill drop quit ;
+internals : ok   ." ESP32forth" raw-ok ; forth

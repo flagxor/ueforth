@@ -52,24 +52,28 @@
 : 2@ ( a -- lo hi ) dup @ swap cell+ @ ;
 : 2! ( lo hi a -- ) dup >r cell+ ! r> ! ;
 
-( System Variables )
-: 'tib ( -- a ) 'sys 0 cells + ;
-: #tib ( -- a ) 'sys 1 cells + ;
-: >in ( -- a ) 'sys 2 cells + ;
-: state ( -- a ) 'sys 3 cells + ;
-: base ( -- a ) 'sys 4 cells + ;
-: 'heap ( -- a ) 'sys 5 cells + ;
-: current ( -- a ) 'sys 6 cells + ;
-: 'context ( -- a ) 'sys 7 cells + ;  : context 'context @ cell+ ;
-: 'notfound ( -- a ) 'sys 8 cells + ;
-
 ( Dictionary )
-: here ( -- a ) 'heap @ ;
-: allot ( n -- ) 'heap +! ;
+: here ( -- a ) 'sys @ ;
+: allot ( n -- ) 'sys +! ;
 : aligned ( a -- a ) cell 1 - dup >r + r> invert and ;
 : align   here aligned here - allot ;
 : , ( n --  ) here ! cell allot ;
 : c, ( ch -- ) here c! 1 allot ;
+
+( Constants and Variables )
+: constant ( n "name" -- ) create , does> @ ;
+: variable ( "name" -- ) create 0 , ;
+
+( System Variables )
+: sys: ( a -- a' "name" ) dup constant cell+ ;
+'sys   sys: 'heap         sys: current       sys: 'context       sys: 'notfound
+       sys: 'heap-start   sys: 'heap-size    sys: 'stack-cells
+       sys: 'boot         sys: 'boot-size
+       sys: 'tib          sys: #tib          sys: >in
+       sys: state         sys: base
+       sys: 'argc         sys: 'argv         sys: 'runner
+: context ( -- a ) 'context @ cell+ ;
+: remaining ( -- n ) 'heap-start @ 'heap-size @ + 'heap @ - ;
 
 ( Compilation State )
 : [ 0 state ! ; immediate
@@ -111,10 +115,6 @@
 ( Postpone - done here so we have ['] and IF )
 : immediate? ( xt -- f ) >flags @ 1 and 0= 0= ;
 : postpone ' dup immediate? if , else aliteral ['] , , then ; immediate
-
-( Constants and Variables )
-: constant ( n "name" -- ) create , does> @ ;
-: variable ( "name" -- ) create 0 , ;
 
 ( Stack Convience )
 sp@ constant sp0
@@ -256,3 +256,6 @@ create input-buffer   input-limit allot
 : quit    begin ['] evaluate-buffer catch
           if 0 state ! sp0 sp! fp0 fp! rp0 rp! ." ERROR" cr then
           prompt refill drop again ;
+: raw-ok   ."  v{{VERSION}} - rev {{REVISION}}" cr
+           remaining . ." bytes heap free" cr
+           prompt refill drop quit ;

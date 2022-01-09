@@ -103,5 +103,4 @@ typedef int64_t dcell_t;
                sp = evaluate1(sp, &tfp); \
                fp = tfp; w = *sp--; DROP; if (w) JMPW) \
   Y(EXIT, ip = (cell_t *) *rp--) \
-  X(";", SEMICOLON, UNSMUDGE(); COMMA(g_sys.DOEXIT_XT); g_sys.state = 0) \
-
+  X(";", SEMICOLON, UNSMUDGE(); COMMA(g_sys.DOEXIT_XT); g_sys.state = 0)

@@ -47,7 +47,8 @@ create event xevent-size allot
   display gc white XSetBackground drop
   display window gc 0 0 width @ 2/ height @ 2/ XFillRectangle drop
 ;
-: de event xevent-size
+: handle-event
+  event xevent-size
   event c@ .
   event c@ Expose = if
     draw
@@ -67,5 +68,5 @@ create event xevent-size allot
   then
   event c@ MapNotify = if ." MapNotify" then
 cr ;
-: 1e display event XNextEvent drop de ;
-: gg begin draw 1e again ;
+: do-event display event XNextEvent drop handle-event ;
+: gg begin draw do-event again ;

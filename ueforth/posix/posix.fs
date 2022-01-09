@@ -189,4 +189,4 @@ O_RDWR constant r/w
 forth
 
 ( Setup entry )
-: ok   ." uEforth v{{VERSION}} - rev {{REVISION}}" cr prompt refill drop quit ;
+internals : ok   ." uEforth" raw-ok ; forth

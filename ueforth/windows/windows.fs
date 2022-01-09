@@ -160,5 +160,5 @@ r/o w/o or constant r/w
 forth
 
 ( Setup entry )
-: ok   ." uEforth v{{VERSION}} - rev {{REVISION}}" cr prompt refill drop quit ;
+internals : ok   ." uEforth" raw-ok ; forth
 ' forth ( leave on stack for fini.fs )
