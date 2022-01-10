@@ -36,9 +36,9 @@ e: test-forget
   : bar foo foo ;
   : baz bar bar * * ;
   forget foo
-  here = assert
-  current @ = assert
-  context @ @ = assert
+  here =assert
+  current @ =assert
+  context @ @ =assert
 ;e
 
 e: test-see-number

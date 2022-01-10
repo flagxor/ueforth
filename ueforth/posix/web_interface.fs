@@ -110,7 +110,7 @@ window.onload = function() {
 | constant index-html# constant index-html
 
 variable webserver
-20000 constant out-size
+2000 constant out-size
 200 stream input-stream
 out-size stream output-stream
 create out-string out-size 1+ allot align

@@ -105,13 +105,13 @@ e: test-sealed
 e: test-fixed-does>-normal
   : adder create , does> @ + ;
   3 adder foo
-  4 foo 7 = assert
-  4 ' foo execute 7 = assert
+  4 foo 7 =assert
+  4 ' foo execute 7 =assert
 ;e
 
 (
 e: test-fixed-does>-interp
   create hi 123 , does> @ + ;
-  7 hi 130 = assert
+  7 hi 130 =assert
 ;e
 )

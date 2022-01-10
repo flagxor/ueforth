@@ -12,11 +12,9 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
+( Test if we've exhaused compat threshold )
 internals
-( Bring a forth to the top of the vocabulary. )
-transfer forth
-( Move heap to save point, with a gap. )
-setup-saving-base
+: test-compat-level-exhausted
+  saving-base real-heap-start - compat-level cells =assert
+;
 forth
-execute ( assumes an xt for autoboot is on the dstack )
-ok

@@ -16,7 +16,7 @@
 
 e: test-locals-one
   : test { a } a a * ;
-  4 test 16 = assert
+  4 test 16 =assert
 ;e
 
 e: test-locals-two
@@ -29,17 +29,17 @@ e: test-locals-two
 e: test-alignment
   30 allot
   : color24 { r g b } r 16 lshift g 8 lshift b or or ;
-  1 2 3 color24 66051 = assert
+  1 2 3 color24 66051 =assert
 ;e
 
 e: test-longname
   : setPixelColor { pixelNum } pixelNum ;
-  1 setPixelColor 1 = assert
+  1 setPixelColor 1 =assert
 ;e
 
 e: test-dash
   : test { a b c -- a a b b c c } a a b b c c ;
-  1 2 3 test * + * + * 23 = assert
+  1 2 3 test * + * + * 23 =assert
 ;e
 
 e: test-for-loop
