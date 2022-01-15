@@ -26,7 +26,7 @@ WINDOWS = $(OUT)/windows
 ESP32 = $(OUT)/esp32
 DEPLOY = $(OUT)/deploy
 
-CFLAGS_COMMON = -O2 -I ./ -I $(OUT)
+CFLAGS_COMMON = -std=c++11 -O2 -I ./ -I $(OUT)
 
 CFLAGS_MINIMIZE = \
                 -s \
@@ -185,7 +185,7 @@ $(GEN)/esp32_boot.h: common/source_to_string.js $(ESP32_BOOT) | $(GEN)
 	$< boot $(VERSION) $(REVISION) $(ESP32_BOOT) >$@
 
 $(GEN)/dump_web_opcodes: web/dump_web_opcodes.c common/opcodes.h | $(GEN)
-	$(CC) $(CFLAGS) $< -o $@
+	$(CXX) $(CFLAGS) $< -o $@
 
 $(GEN)/web_cases.js: $(GEN)/dump_web_opcodes | $(GEN)
 	$< cases >$@
@@ -253,7 +253,7 @@ $(POSIX)/ueforth: \
     common/interp.h \
     common/core.h \
     $(GEN)/posix_boot.h | $(POSIX)
-	$(CC) $(CFLAGS) $< -o $@ $(LIBS)
+	$(CXX) $(CFLAGS) $< -o $@ $(LIBS)
 	strip $(STRIP_ARGS) $@
 
 # ---- WINDOWS ----

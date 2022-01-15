@@ -40,12 +40,7 @@ for (var i = 5; i < process.argv.length; i++) {
 
 source = source.replace('{{VERSION}}', version);
 source = source.replace('{{REVISION}}', revision);
-source = source.replace(/\\/g, '\\\\');
-source = source.replace(/["]/g, '\\"');
-source = '"' + source.split('\n').join('\\n"\n"') + '\\n"';
-source = source.replace(/["]  ["]/g, '');
-source = source.replace(/["] [(] ([^)]*)[)] ["]/g, '// $1');
 
-source = 'const char ' + name + '[] =\n' + source + ';\n';
+source = 'const char ' + name + '[] = R"""(\n' + source + ')""";\n';
 
 process.stdout.write(source);

@@ -24,7 +24,7 @@
 #define STACK_CELLS (8 * 1024)
 
 #define PLATFORM_OPCODE_LIST \
-  Y(DLSYM, tos = (cell_t) dlsym(a1, a0); --sp) \
+  Y(DLSYM, tos = (cell_t) dlsym(a1, c0); --sp) \
   FLOATING_POINT_LIST \
   CALLING_OPCODE_LIST \
 

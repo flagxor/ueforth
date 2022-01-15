@@ -15,7 +15,13 @@
 #ifndef CALLTYPE
 # define CALLTYPE
 #endif
+
+#ifdef __cplusplus
+typedef cell_t (CALLTYPE *call_t)(...);
+#else
 typedef cell_t (CALLTYPE *call_t)();
+#endif
+
 #define ct0 ((call_t) n0)
 
 #define CALLING_OPCODE_LIST \

@@ -56,7 +56,7 @@ static cell_t convert(const char *pos, cell_t n, cell_t base, cell_t *ret) {
       d -= 7;
       if (d < 10) { return 0; }
     }
-    if (d >= base) { return 0; }
+    if (d >= (uintptr_t) base) { return 0; }
     *ret = *ret * base + d;
     ++pos;
   }
