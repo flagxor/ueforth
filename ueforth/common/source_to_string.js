@@ -30,17 +30,33 @@ function DropCopyright(source) {
   return cleaned.join('\n');
 }
 
-var name = process.argv[2];
-var version = process.argv[3];
-var revision = process.argv[4];
+var is_windows = false;
+
+var args = process.argv.slice(2);
+if (args.length > 0 && args[0] == '-win') {
+  is_windows = true;
+  args.shift();
+}
+var name = args.shift();
+var version = args.shift();
+var revision = args.shift();
 var source = '';
-for (var i = 5; i < process.argv.length; i++) {
-  source += DropCopyright(fs.readFileSync(process.argv[i]).toString());
+while (args.length > 0) {
+  source += DropCopyright(fs.readFileSync(args.shift()).toString());
 }
 
 source = source.replace('{{VERSION}}', version);
 source = source.replace('{{REVISION}}', revision);
 
-source = 'const char ' + name + '[] = R"""(\n' + source + ')""";\n';
+if (is_windows) {
+  source = source.replace(/\\/g, '\\\\');
+  source = source.replace(/["]/g, '\\"');
+  source = '"' + source.split('\n').join('\\n"\n"') + '\\n"';
+  source = source.replace(/["]  ["]/g, '');
+  source = source.replace(/["] [(] ([^)]*)[)] ["]/g, '// $1');
+  source = 'const char ' + name + '[] =\n' + source + ';\n';
+} else {
+  source = 'const char ' + name + '[] = R"""(\n' + source + ')""";\n';
+}
 
 process.stdout.write(source);

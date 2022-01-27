@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VERSION=7.0.6.12
+VERSION=7.0.6.13
 STABLE_VERSION=7.0.5.4
 REVISION=$(shell git rev-parse HEAD | head -c 20)
 REVSHORT=$(shell echo $(REVISION) | head -c 7)
@@ -26,7 +26,7 @@ WINDOWS = $(OUT)/windows
 ESP32 = $(OUT)/esp32
 DEPLOY = $(OUT)/deploy
 
-CFLAGS_COMMON = -std=c++11 -O2 -I ./ -I $(OUT)
+CFLAGS_COMMON = -O2 -I ./ -I $(OUT)
 
 CFLAGS_MINIMIZE = \
                 -s \
@@ -43,6 +43,7 @@ CFLAGS_MINIMIZE = \
                 -fmerge-all-constants
 CFLAGS = $(CFLAGS_COMMON) \
          $(CFLAGS_MINIMIZE) \
+         -std=c++11 \
          -Wall \
          -Werror \
          -no-pie \
@@ -170,7 +171,7 @@ WINDOWS_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
                common/blocks.fs common/locals.fs \
                common/fini.fs
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
-	$< boot $(VERSION) $(REVISION) $(WINDOWS_BOOT) >$@
+	$< -win boot $(VERSION) $(REVISION) $(WINDOWS_BOOT) >$@
 
 ESP32_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
              common/tasks.fs esp32/platform.fs esp32/highlevel.fs \

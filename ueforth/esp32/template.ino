@@ -95,6 +95,8 @@
 # define USER_WORDS
 #endif
 
+static cell_t ResizeFile(cell_t fd, cell_t size);
+
 #define PLATFORM_OPCODE_LIST \
   FLOATING_POINT_LIST \
   REQUIRED_MEMORY_SUPPORT \
@@ -297,6 +299,9 @@
 # include "esp_intr_alloc.h"
 # include "driver/timer.h"
 # include "driver/gpio.h"
+static cell_t EspIntrAlloc(cell_t source, cell_t flags, cell_t xt, cell_t arg, void *ret);
+static cell_t GpioIsrHandlerAdd(cell_t pin, cell_t xt, cell_t arg);
+static cell_t TimerIsrRegister(cell_t group, cell_t timer, cell_t xt, cell_t arg, cell_t flags, void *ret);
 # define OPTIONAL_INTERRUPTS_SUPPORT \
   Y(gpio_config, n0 = gpio_config((const gpio_config_t *) a0)) \
   Y(gpio_reset_pin, n0 = gpio_reset_pin((gpio_num_t) n0)) \
@@ -546,6 +551,7 @@ static cell_t FromIP(IPAddress ip) {
 # define OPTIONAL_WEBSERVER_SUPPORT
 #else
 # include <WebServer.h>
+static void InvokeWebServerOn(WebServer *ws, const char *url, cell_t xt);
 # define ws0 ((WebServer *) a0)
 # define OPTIONAL_WEBSERVER_SUPPORT \
   /* WebServer */ \
@@ -612,12 +618,6 @@ static char filename[PATH_MAX];
 
 #ifdef ENABLE_WEBSERVER_SUPPORT
 static String string_value;
-#endif
-
-#ifdef ENABLE_INTERRUPTS_SUPPORT
-static cell_t EspIntrAlloc(cell_t source, cell_t flags, cell_t xt, cell_t arg, cell_t *ret);
-static cell_t GpioIsrHandlerAdd(cell_t pin, cell_t xt, cell_t arg);
-static cell_t TimerIsrRegister(cell_t group, cell_t timer, cell_t xt, cell_t arg, void *ret);
 #endif
 
 {{core}}
