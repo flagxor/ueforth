@@ -156,7 +156,7 @@ POSIX_BOOT =  common/boot.fs common/conditionals.fs common/vocabulary.fs \
               common/hide_calls.fs common/ansi.fs common/floats.fs \
               posix/posix.fs posix/posix_highlevel.fs posix/termios.fs \
               common/tasks.fs common/utils.fs common/highlevel.fs common/filetools.fs \
-              common/locals.fs posix/posix_desktop.fs \
+              common/locals.fs common/desktop.fs posix/posix_desktop.fs \
               common/streams.fs common/blocks.fs \
               posix/sockets.fs posix/telnetd.fs posix/httpd.fs posix/web_interface.fs \
               posix/autoboot.fs \
@@ -167,8 +167,10 @@ $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 WINDOWS_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
                common/hide_calls.fs common/ansi.fs common/floats.fs \
                windows/windows.fs windows/windows_highlevel.fs common/highlevel.fs \
-               common/tasks.fs common/utils.fs common/filetools.fs common/streams.fs \
+               common/tasks.fs common/utils.fs common/locals.fs common/desktop.fs \
+               common/filetools.fs common/streams.fs \
                common/blocks.fs common/locals.fs \
+               posix/autoboot.fs \
                common/fini.fs
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 	$< -win boot $(VERSION) $(REVISION) $(WINDOWS_BOOT) >$@

@@ -59,6 +59,7 @@ z" User32.dll" dll User32
 z" MessageBoxA" 4 User32 MessageBoxA
 
 z" Kernel32.dll" dll Kernel32
+
 z" AllocConsole" 0 Kernel32 AllocConsole
 z" ExitProcess" 1 Kernel32 ExitProcess
 z" GetStdHandle" 1 Kernel32 GetStdHandle
@@ -79,6 +80,24 @@ z" MoveFileA" 2 Kernel32 MoveFileA
 z" SetFilePointer" 4 Kernel32 SetFilePointer
 z" SetEndOfFile" 1 Kernel32 SetEndOfFile
 z" GetFileSize" 2 Kernel32 GetFileSize
+
+z" GetCommandLineW" 0 Kernel32 GetCommandLineW
+
+z" Shell32.dll" dll Shell32
+z" CommandLineToArgvW" 2 Shell32 CommandLineToArgvW
+
+variable wargc  variable wargv
+GetCommandLineW wargc CommandLineToArgvW wargv !
+: wz>sz ( a -- a n )
+   here swap begin dup sw@ 0<> while dup sw@ c, 2 + repeat drop 0 c, align ;
+: wargs-convert ( dst )
+   wargv @ wargc @ for aft
+      dup @ wz>sz >r swap r> over ! cell+ swap cell+
+   then next 2drop ;
+also internals
+wargc @ 'argc !
+here 'argv ! wargc @ cells allot
+'argv @ wargs-convert
 
 AllocConsole drop
 STD_INPUT_HANDLE GetStdHandle constant stdin
@@ -157,8 +176,7 @@ r/o w/o or constant r/w
 ( Other Utils )
 : ms ( n -- ) Sleep ;
 
-forth
+only forth
 
 ( Setup entry )
 internals : ok   ." uEforth" raw-ok ; forth
-' forth ( leave on stack for fini.fs )

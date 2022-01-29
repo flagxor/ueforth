@@ -30,7 +30,7 @@ posix
 : sysfunc ( z n "name" -- ) 0 sofunc ;
 : shared-library ( z "name" -- )
    RTLD_NOW dlopen dup 0= throw create , does> @ sofunc ;
-: sign-extend ( n -- n ) >r rp@ l@ rdrop ;
+: sign-extend ( n -- n ) >r rp@ sl@ rdrop ;
 
 ( Major Syscalls )
 z" open" 3 sysfunc open
@@ -66,7 +66,7 @@ z" readdir" 1 sysfunc readdir
 
 ( Errno )
 z" __errno_location" 0 sysfunc __errno_location
-: errno ( -- n ) __errno_location l@ ;
+: errno ( -- n ) __errno_location sl@ ;
 
 ( Default Pipes )
 0 constant stdin

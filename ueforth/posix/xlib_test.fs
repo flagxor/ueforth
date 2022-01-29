@@ -61,8 +61,8 @@ create event xevent-size allot
   event c@ MotionNotify = if ." MotionNotify" then
   event c@ DestroyNotify = if ." DestroyNotify" then
   event c@ ConfigureNotify = if
-    event 3 16 * 8 + + l@ width !
-    event 3 16 * 12 + + l@ height !
+    event 3 16 * 8 + + sl@ width !
+    event 3 16 * 12 + + sl@ height !
     ." width & height: " width @ . height @ .
     ." ConfigureNotify"
   then

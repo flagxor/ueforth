@@ -65,10 +65,12 @@ typedef int64_t dcell_t;
   Y(OVER, DUP; tos = sp[-1]) \
   Y(DROP, DROP) \
   X("@", AT, tos = *(cell_t *) tos) \
-  X("L@", LAT, tos = *(int32_t *) tos) \
+  X("SL@", SLAT, tos = *(int32_t *) tos) \
+  X("SW@", SWAT, tos = *(int16_t *) tos) \
   X("C@", CAT, tos = *(uint8_t *) tos) \
   X("!", STORE, *(cell_t *) tos = *sp--; DROP) \
   X("L!", LSTORE, *(int32_t *) tos = *sp--; DROP) \
+  X("W!", WSTORE, *(int16_t *) tos = *sp--; DROP) \
   X("C!", CSTORE, *(uint8_t *) tos = *sp--; DROP) \
   X("SP@", SPAT, DUP; tos = (cell_t) sp) \
   X("SP!", SPSTORE, sp = (cell_t *) tos; DROP) \

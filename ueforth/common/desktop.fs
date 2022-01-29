@@ -14,7 +14,7 @@
 
 forth definitions internals
 
-( Load Libraries )
-: xlib   s" posix/xlib_test.fs" included ;
+: argc ( -- n ) 'argc @ ;
+: argv ( n -- a n ) cells 'argv @ + @ z>s ;
 
 forth

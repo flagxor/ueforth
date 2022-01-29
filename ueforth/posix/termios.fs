@@ -39,7 +39,7 @@ create new-termios sizeof(termios) allot
 : termios! ( a -- ) stdin TCSAFLUSH rot tcsetattr throw ;
 old-termios termios@
 : raw-mode   new-termios termios@
-             _ECHO ICANON or invert new-termios .c_lflag l@ and new-termios .c_lflag l!
+             _ECHO ICANON or invert new-termios .c_lflag sl@ and new-termios .c_lflag l!
              0 VTIME new-termios .c_cc[] c!
              0 VMIN new-termios .c_cc[] c!
              new-termios termios! ;
@@ -50,7 +50,7 @@ $5413 constant TIOCGWINSZ
 4 2 * constant sizeof(winsize)
 create winsize sizeof(winsize) allot
 : form ( -- h w ) stdin TIOCGWINSZ winsize ioctl throw
-                  winsize l@ dup $ffff and swap $10000 / ;
+                  winsize sl@ dup $ffff and swap $10000 / ;
 
 0 value pending
 : termios-key? ( -- f ) pending if -1 else stdin-key to pending pending 0<> then ;
