@@ -71,10 +71,10 @@ e: test-fconstant
 
 e: test-fvariable
   fvariable foo
-  100e foo sf!
+  10e foo sf!
   foo sf@ fdup f* foo sf!
   foo sf@ f. cr
-  out: 10000.000000 
+  out: 100.000000 
 ;e
 
 e: test-fcompare

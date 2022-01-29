@@ -87,11 +87,14 @@ LINK64 = "$(shell $(LSQ) ${MSVS}/*/*/VC/Tools/MSVC/*/bin/Hostx86/x64/link.exe | 
 RC32 = "$(shell $(LSQ) ${MSKITS}/*/bin/*/x86/rc.exe | head -n 1)"
 RC64 = "$(shell $(LSQ) ${MSKITS}/*/bin/*/x64/rc.exe | head -n 1)"
 
+UNIT_TESTS = unit_tests_posix
+
 # Selectively enable windows if tools available
 DEPLOYABLE := 1
 ifneq ("", $(CL32))
   ifneq ("", $(RC32))
     TARGETS += $(WINDOWS)/uEf32.exe
+    UNIT_TESTS += unit_tests_win32
   else
     $(warning "Missing Visual Studio rc.exe skipping 32-bit Windows.")
     DEPLOYABLE := 0
@@ -103,6 +106,7 @@ endif
 ifneq ("", $(CL64))
   ifneq ("", $(RC64))
     TARGETS += $(WINDOWS)/uEf64.exe
+    UNIT_TESTS += unit_tests_win64
   else
     $(warning "Missing Visual Studio rc.exe skipping 64-bit Windows.")
     DEPLOYABLE := 0
@@ -129,8 +133,16 @@ clean:
 
 tests: unit_tests see_all_test
 
-unit_tests: $(POSIX)/ueforth common/all_tests.fs
+unit_tests: $(UNIT_TESTS)
+
+unit_tests_posix: $(POSIX)/ueforth common/all_tests.fs
 	$^
+
+unit_tests_win32: $(WINDOWS)/uEf32.exe common/all_tests.fs
+	wine $^
+
+unit_tests_win64: $(WINDOWS)/uEf64.exe common/all_tests.fs
+	wine $^
 
 see_all_test: $(POSIX)/ueforth
 	echo \

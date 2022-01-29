@@ -12,7 +12,14 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-also ansi also posix
+also ansi
+
+DEFINED? windows [IF]
+  also windows
+  : sysexit ( n -- ) ExitProcess ;
+[ELSE]
+  also posix
+[THEN]
 
 ( Support for eval tests )
 1000 constant expect-limit
