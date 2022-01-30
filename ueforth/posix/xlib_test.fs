@@ -1,3 +1,4 @@
+#! /usr/bin/ueforth
 \ Copyright 2021 Bradley D. Nelson
 \
 \ Licensed under the Apache License, Version 2.0 (the "License");
@@ -70,3 +71,4 @@ create event xevent-size allot
 cr ;
 : do-event display event XNextEvent drop handle-event ;
 : gg begin draw do-event again ;
+gg
