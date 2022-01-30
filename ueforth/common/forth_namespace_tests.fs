@@ -370,6 +370,11 @@ e: check-args
   out: argc 
 ;e
 
+e: check-highlevel
+  out: include 
+  out: included 
+;e
+
 DEFINED? windows [IF]
 
 e: test-forth-namespace
@@ -388,13 +393,12 @@ e: test-forth-namespace
   out: FORTH 
   check-blocks
   out: streams 
-  check-snapshots
   check-args
+  check-highlevel
+  check-snapshots
   check-locals
   check-utils
   check-tasks
-  out: include 
-  out: included 
   out: resize 
   out: free 
   out: allocate 
@@ -450,9 +454,8 @@ e: test-forth-namespace
   out: streams 
   out: xlib 
   check-args
+  check-highlevel
   check-snapshots
-  out: include 
-  out: included 
   check-locals
   check-utils
   out: ms 
