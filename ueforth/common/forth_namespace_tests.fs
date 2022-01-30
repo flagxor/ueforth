@@ -269,6 +269,24 @@ e: check-builtin
   out: FP@ 
 ;e
 
+e: check-files
+  out: file-size 
+  out: resize-file 
+  out: reposition-file 
+  out: file-position 
+  out: write-file 
+  out: read-file 
+  out: rename-file 
+  out: delete-file 
+  out: flush-file 
+  out: close-file 
+  out: create-file 
+  out: open-file 
+  out: r/w 
+  out: w/o 
+  out: r/o 
+;e
+
 e: check-blocks
   out: editor 
   out: list 
@@ -289,6 +307,48 @@ e: check-blocks
   out: block-fid 
 ;e
 
+e: check-vocabulary
+  out: sealed 
+  out: also 
+  out: only 
+  out: transfer{ 
+  out: }transfer 
+  out: transfer 
+  out: definitions 
+  out: vocabulary 
+;e
+
+e: check-[]conds
+  out: [IF] 
+  out: [ELSE] 
+  out: [THEN] 
+  out: DEFINED? 
+;e
+
+e: check-utils
+  out: words 
+  out: vlist 
+  out: order 
+  out: see 
+  out: .s 
+  out: startswith? 
+  out: str= 
+  out: :noname 
+  out: forget 
+  out: dump 
+  out: assert 
+;e
+
+e: check-snapshots
+  out: reset 
+  out: revive 
+  out: startup: 
+  out: remember 
+  out: restore 
+  out: save 
+  out: dump-file 
+;e
+
 DEFINED? windows [IF]
 
 e: test-forth-namespace
@@ -307,27 +367,11 @@ e: test-forth-namespace
   out: FORTH 
   check-blocks
   out: streams 
-  out: reset 
-  out: revive 
-  out: startup: 
-  out: remember 
-  out: restore 
-  out: save 
-  out: dump-file 
+  check-snapshots
   out: argv 
   out: argc 
   check-locals
-  out: words 
-  out: vlist 
-  out: order 
-  out: see 
-  out: .s 
-  out: startswith? 
-  out: str= 
-  out: :noname 
-  out: forget 
-  out: dump 
-  out: assert 
+  check-utils
   out: start-task 
   out: task 
   out: pause 
@@ -344,21 +388,7 @@ e: test-forth-namespace
   out: GetProcessHeap 
   out: ok 
   out: ms 
-  out: file-size 
-  out: resize-file 
-  out: reposition-file 
-  out: file-position 
-  out: write-file 
-  out: read-file 
-  out: rename-file 
-  out: delete-file 
-  out: flush-file 
-  out: close-file 
-  out: create-file 
-  out: open-file 
-  out: r/w 
-  out: w/o 
-  out: r/o 
+  check-files
   out: default-key? 
   out: default-key 
   out: default-type 
@@ -371,18 +401,8 @@ e: test-forth-namespace
   out: fg 
   out: ansi 
   out: internals 
-  out: sealed 
-  out: also 
-  out: only 
-  out: transfer{ 
-  out: }transfer 
-  out: transfer 
-  out: definitions 
-  out: vocabulary 
-  out: [IF] 
-  out: [ELSE] 
-  out: [THEN] 
-  out: DEFINED? 
+  check-vocabulary
+  check-[]conds
   check-boot
   check-builtin
   out: LOADLIBRARYA 
@@ -420,26 +440,10 @@ e: test-forth-namespace
   out: argv 
   out: argc 
   check-locals
-  out: reset 
-  out: revive 
-  out: startup: 
-  out: remember 
-  out: restore 
-  out: save 
-  out: dump-file 
+  check-snapshots
   out: include 
   out: included 
-  out: words 
-  out: vlist 
-  out: order 
-  out: see 
-  out: .s 
-  out: startswith? 
-  out: str= 
-  out: :noname 
-  out: forget 
-  out: dump 
-  out: assert 
+  check-utils
   out: ms 
   out: start-task 
   out: task 
@@ -455,21 +459,7 @@ e: test-forth-namespace
   out: ms-ticks 
   out: ms 
   out: non-block 
-  out: file-size 
-  out: resize-file 
-  out: reposition-file 
-  out: file-position 
-  out: write-file 
-  out: read-file 
-  out: rename-file 
-  out: delete-file 
-  out: flush-file 
-  out: close-file 
-  out: create-file 
-  out: open-file 
-  out: r/w 
-  out: w/o 
-  out: r/o 
+  check-files
   out: default-key 
   out: default-type 
   out: posix 
@@ -481,18 +471,8 @@ e: test-forth-namespace
   out: fg 
   out: ansi 
   out: internals 
-  out: sealed 
-  out: also 
-  out: only 
-  out: transfer{ 
-  out: }transfer 
-  out: transfer 
-  out: definitions 
-  out: vocabulary 
-  out: [IF] 
-  out: [ELSE] 
-  out: [THEN] 
-  out: DEFINED? 
+  check-vocabulary
+  check-[]conds
   check-boot
   check-builtin
   out: DLSYM 
