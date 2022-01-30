@@ -377,6 +377,27 @@ e: check-highlevel
   out: included 
 ;e
 
+e: check-phase1
+  check-highlevel-floats
+  check-vocabulary
+  check-[]conds
+  check-boot
+  check-builtin
+;e
+
+e: check-phase2
+  check-args
+  check-ansi
+  check-blocks
+  out: streams 
+  check-highlevel
+  check-snapshots
+  check-locals
+  check-utils
+  out: ms 
+  check-tasks
+;e
+
 DEFINED? windows [IF]
 
 e: test-forth-namespace
@@ -393,15 +414,7 @@ e: test-forth-namespace
 e: test-forth-namespace
   ' forth list-from
   out: FORTH 
-  check-args
-  check-ansi
-  check-blocks
-  out: streams 
-  check-highlevel
-  check-snapshots
-  check-locals
-  check-utils
-  check-tasks
+  check-phase2
   out: resize 
   out: free 
   out: allocate 
@@ -413,15 +426,12 @@ e: test-forth-namespace
   out: ok 
   out: ms 
   check-files
+  out: ms-ticks 
   out: default-key? 
   out: default-key 
   out: default-type 
   out: windows 
-  check-highlevel-floats
-  check-vocabulary
-  check-[]conds
-  check-boot
-  check-builtin
+  check-phase1
   out: LOADLIBRARYA 
   out: GETPROCADDRESS 
 ;e
@@ -451,16 +461,7 @@ e: test-forth-namespace
   out: httpd 
   out: telnetd 
   out: sockets 
-  check-args
-  check-ansi
-  check-blocks
-  out: streams 
-  check-highlevel
-  check-snapshots
-  check-locals
-  check-utils
-  out: ms 
-  check-tasks
+  check-phase2
   out: form 
   out: termios 
   out: resize 
@@ -475,11 +476,7 @@ e: test-forth-namespace
   out: default-key 
   out: default-type 
   out: posix 
-  check-highlevel-floats
-  check-vocabulary
-  check-[]conds
-  check-boot
-  check-builtin
+  check-phase1
   out: DLSYM 
 ;e 
 

@@ -156,36 +156,36 @@ save_restore_test: $(POSIX)/ueforth
 $(GEN):
 	mkdir -p $@
 
-COMMON_PREPLATFORM = common/boot.fs common/conditionals.fs common/vocabulary.fs \
+COMMON_PHASE1 = common/boot.fs common/conditionals.fs common/vocabulary.fs \
                      common/floats.fs
 
 COMMON_DESKTOP = common/hide_calls.fs common/ansi.fs common/desktop.fs
 
-COMMON_POSTPLATFORM = common/utils.fs common/locals.fs \
-                      common/filetools.fs common/highlevel.fs \
-                      common/streams.fs common/blocks.fs
+COMMON_PHASE2 = common/tasks.fs common/utils.fs common/locals.fs \
+                common/filetools.fs common/highlevel.fs \
+                common/streams.fs common/blocks.fs
 
-POSIX_BOOT =  $(COMMON_PREPLATFORM) \
+POSIX_BOOT =  $(COMMON_PHASE1) \
               posix/posix.fs posix/posix_highlevel.fs posix/termios.fs \
-              common/tasks.fs $(COMMON_POSTPLATFORM) $(COMMON_DESKTOP) \
+              $(COMMON_PHASE2) $(COMMON_DESKTOP) \
               posix/sockets.fs posix/telnetd.fs posix/httpd.fs posix/web_interface.fs \
               posix/autoboot.fs \
               common/fini.fs
 $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 	$< boot $(VERSION) $(REVISION) $(POSIX_BOOT) >$@
 
-WINDOWS_BOOT = $(COMMON_PREPLATFORM) \
+WINDOWS_BOOT = $(COMMON_PHASE1) \
                windows/windows.fs windows/windows_highlevel.fs \
-               common/tasks.fs $(COMMON_POSTPLATFORM) $(COMMON_DESKTOP) \
+               $(COMMON_PHASE2) $(COMMON_DESKTOP) \
                posix/autoboot.fs \
                common/fini.fs
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 	$< -win boot $(VERSION) $(REVISION) $(WINDOWS_BOOT) >$@
 
-ESP32_BOOT = $(COMMON_PREPLATFORM) \
-             common/tasks.fs esp32/platform.fs esp32/highlevel.fs \
-             esp32/bindings.fs \
-             $(COMMON_POSTPLATFORM) \
+ESP32_BOOT = $(COMMON_PHASE1) \
+             esp32/highlevel.fs esp32/bindings.fs \
+             $(COMMON_PHASE2) \
+             esp32/platform.fs \
              posix/httpd.fs posix/web_interface.fs esp32/web_interface.fs \
              esp32/registers.fs esp32/timers.fs \
              esp32/bterm.fs posix/telnetd.fs \

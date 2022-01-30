@@ -80,6 +80,7 @@ z" MoveFileA" 2 Kernel32 MoveFileA
 z" SetFilePointer" 4 Kernel32 SetFilePointer
 z" SetEndOfFile" 1 Kernel32 SetEndOfFile
 z" GetFileSize" 2 Kernel32 GetFileSize
+z" GetTickCount" 0 Kernel32 GetTickCount
 
 z" GetCommandLineW" 0 Kernel32 GetCommandLineW
 
@@ -120,6 +121,7 @@ also forth definitions
 : default-type win-type ;
 : default-key win-key ;
 : default-key? win-key? ;
+: ms-ticks ( -- n ) GetTickCount ;
 only windows definitions
 ' default-type is type
 ' default-key is key
