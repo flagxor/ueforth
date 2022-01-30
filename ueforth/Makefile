@@ -404,3 +404,7 @@ $(DEPLOY)/app.yaml: $(RES)/eforth.ico \
 deploy: all
 	cd out/deploy && gcloud app deploy -q --project esp32forth *.yaml
 	cd out/deploy && gcloud app deploy -q --project eforth *.yaml
+
+# ---- INSTALL ----
+install: $(POSIX)/ueforth
+	sudo cp $< /usr/bin/ueforth
