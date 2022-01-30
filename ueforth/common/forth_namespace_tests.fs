@@ -308,6 +308,7 @@ e: check-blocks
 ;e
 
 e: check-vocabulary
+  out: internals 
   out: sealed 
   out: also 
   out: only 
@@ -417,7 +418,6 @@ e: test-forth-namespace
   out: default-type 
   out: windows 
   check-highlevel-floats
-  out: internals 
   check-vocabulary
   check-[]conds
   check-boot
@@ -476,7 +476,6 @@ e: test-forth-namespace
   out: default-type 
   out: posix 
   check-highlevel-floats
-  out: internals 
   check-vocabulary
   check-[]conds
   check-boot
