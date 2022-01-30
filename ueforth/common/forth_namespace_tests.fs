@@ -47,116 +47,7 @@ e: check-highlevel-floats
   out: f= 
 ;e
 
-DEFINED? windows [IF]
-
-e: test-forth-namespace
-  internals voclist
-  out: editor 
-  out: streams 
-  out: tasks 
-  out: windows 
-  out: ansi 
-  out: internals 
-  out: FORTH 
-;e
-
-e: test-forth-namespace
-  ' forth list-from
-  out: FORTH 
-  out: editor 
-  out: list 
-  out: copy 
-  out: thru 
-  out: load 
-  out: flush 
-  out: update 
-  out: empty-buffers 
-  out: buffer 
-  out: block 
-  out: save-buffers 
-  out: default-use 
-  out: use 
-  out: open-blocks 
-  out: block-id 
-  out: scr 
-  out: block-fid 
-  out: streams 
-  out: reset 
-  out: revive 
-  out: startup: 
-  out: remember 
-  out: restore 
-  out: save 
-  out: dump-file 
-  out: argv 
-  out: argc 
-  check-locals
-  out: words 
-  out: vlist 
-  out: order 
-  out: see 
-  out: .s 
-  out: startswith? 
-  out: str= 
-  out: :noname 
-  out: forget 
-  out: dump 
-  out: assert 
-  out: start-task 
-  out: task 
-  out: pause 
-  out: tasks 
-  out: include 
-  out: included 
-  out: resize 
-  out: free 
-  out: allocate 
-  out: process-heap 
-  out: HeapReAlloc 
-  out: HeapFree 
-  out: HeapAlloc 
-  out: GetProcessHeap 
-  out: ok 
-  out: ms 
-  out: file-size 
-  out: resize-file 
-  out: reposition-file 
-  out: file-position 
-  out: write-file 
-  out: read-file 
-  out: rename-file 
-  out: delete-file 
-  out: flush-file 
-  out: close-file 
-  out: create-file 
-  out: open-file 
-  out: r/w 
-  out: w/o 
-  out: r/o 
-  out: default-key? 
-  out: default-key 
-  out: default-type 
-  out: windows 
-  check-highlevel-floats
-  out: page 
-  out: at-xy 
-  out: normal 
-  out: bg 
-  out: fg 
-  out: ansi 
-  out: internals 
-  out: sealed 
-  out: also 
-  out: only 
-  out: transfer{ 
-  out: }transfer 
-  out: transfer 
-  out: definitions 
-  out: vocabulary 
-  out: [IF] 
-  out: [ELSE] 
-  out: [THEN] 
-  out: DEFINED? 
+e: check-boot
   out: quit 
   out: evaluate 
   out: prompt 
@@ -312,6 +203,119 @@ e: test-forth-namespace
   out: nip 
   out: \ 
   out: ( 
+;e
+
+DEFINED? windows [IF]
+
+e: test-forth-namespace
+  internals voclist
+  out: editor 
+  out: streams 
+  out: tasks 
+  out: windows 
+  out: ansi 
+  out: internals 
+  out: FORTH 
+;e
+
+e: test-forth-namespace
+  ' forth list-from
+  out: FORTH 
+  out: editor 
+  out: list 
+  out: copy 
+  out: thru 
+  out: load 
+  out: flush 
+  out: update 
+  out: empty-buffers 
+  out: buffer 
+  out: block 
+  out: save-buffers 
+  out: default-use 
+  out: use 
+  out: open-blocks 
+  out: block-id 
+  out: scr 
+  out: block-fid 
+  out: streams 
+  out: reset 
+  out: revive 
+  out: startup: 
+  out: remember 
+  out: restore 
+  out: save 
+  out: dump-file 
+  out: argv 
+  out: argc 
+  check-locals
+  out: words 
+  out: vlist 
+  out: order 
+  out: see 
+  out: .s 
+  out: startswith? 
+  out: str= 
+  out: :noname 
+  out: forget 
+  out: dump 
+  out: assert 
+  out: start-task 
+  out: task 
+  out: pause 
+  out: tasks 
+  out: include 
+  out: included 
+  out: resize 
+  out: free 
+  out: allocate 
+  out: process-heap 
+  out: HeapReAlloc 
+  out: HeapFree 
+  out: HeapAlloc 
+  out: GetProcessHeap 
+  out: ok 
+  out: ms 
+  out: file-size 
+  out: resize-file 
+  out: reposition-file 
+  out: file-position 
+  out: write-file 
+  out: read-file 
+  out: rename-file 
+  out: delete-file 
+  out: flush-file 
+  out: close-file 
+  out: create-file 
+  out: open-file 
+  out: r/w 
+  out: w/o 
+  out: r/o 
+  out: default-key? 
+  out: default-key 
+  out: default-type 
+  out: windows 
+  check-highlevel-floats
+  out: page 
+  out: at-xy 
+  out: normal 
+  out: bg 
+  out: fg 
+  out: ansi 
+  out: internals 
+  out: sealed 
+  out: also 
+  out: only 
+  out: transfer{ 
+  out: }transfer 
+  out: transfer 
+  out: definitions 
+  out: vocabulary 
+  out: [IF] 
+  out: [ELSE] 
+  out: [THEN] 
+  out: DEFINED? 
+  check-boot
   out: ; 
   out: EXIT 
   out: : 
@@ -497,161 +501,7 @@ e: test-forth-namespace
   out: [ELSE] 
   out: [THEN] 
   out: DEFINED? 
-  out: quit 
-  out: evaluate 
-  out: prompt 
-  out: refill 
-  out: tib 
-  out: accept 
-  out: echo 
-  out: blank 
-  out: erase 
-  out: fill 
-  out: cmove> 
-  out: cmove 
-  out: z>s 
-  out: s>z 
-  out: r| 
-  out: r" 
-  out: z" 
-  out: ." 
-  out: s" 
-  out: zplace 
-  out: $place 
-  out: n. 
-  out: ? 
-  out: . 
-  out: u. 
-  out: binary 
-  out: decimal 
-  out: octal 
-  out: hex 
-  out: str 
-  out: #> 
-  out: sign 
-  out: #s 
-  out: # 
-  out: hold 
-  out: <# 
-  out: extract 
-  out: pad 
-  out: hld 
-  out: cr 
-  out: space 
-  out: emit 
-  out: bye 
-  out: key? 
-  out: key 
-  out: type 
-  out: is 
-  out: defer 
-  out: +to 
-  out: to 
-  out: value-bind 
-  out: value 
-  out: throw 
-  out: catch 
-  out: handler 
-  out: j 
-  out: i 
-  out: loop 
-  out: +loop 
-  out: leave 
-  out: unloop 
-  out: ?do 
-  out: do 
-  out: next 
-  out: for 
-  out: nest-depth 
-  out: fdepth 
-  out: depth 
-  out: fp0 
-  out: rp0 
-  out: sp0 
-  out: postpone 
-  out: >body 
-  out: >name 
-  out: >link 
-  out: >link& 
-  out: >length 
-  out: >flags 
-  out: >flags& 
-  out: abs 
-  out: max 
-  out: min 
-  out: recurse 
-  out: aft 
-  out: repeat 
-  out: while 
-  out: else 
-  out: if 
-  out: then 
-  out: ahead 
-  out: until 
-  out: again 
-  out: begin 
-  out: literal 
-  out: [char] 
-  out: char 
-  out: ['] 
-  out: ' 
-  out: ] 
-  out: [ 
-  out: used 
-  out: remaining 
-  out: context 
-  out: base 
-  out: state 
-  out: >in 
-  out: #tib 
-  out: 'tib 
-  out: current 
-  out: sys: 
-  out: variable 
-  out: constant 
-  out: c, 
-  out: , 
-  out: align 
-  out: aligned 
-  out: allot 
-  out: here 
-  out: 2! 
-  out: 2@ 
-  out: 2dup 
-  out: 2drop 
-  out: cell/ 
-  out: cells 
-  out: cell+ 
-  out: +! 
-  out: 4/ 
-  out: 4* 
-  out: 2/ 
-  out: 2* 
-  out: 1- 
-  out: 1+ 
-  out: nl 
-  out: bl 
-  out: 0<> 
-  out: <> 
-  out: = 
-  out: >= 
-  out: <= 
-  out: > 
-  out: < 
-  out: -rot 
-  out: rot 
-  out: - 
-  out: negate 
-  out: invert 
-  out: mod 
-  out: / 
-  out: /mod 
-  out: * 
-  out: */ 
-  out: rdrop 
-  out: nip 
-  out: \ 
-  out: ( 
+  check-boot
   out: ; 
   out: EXIT 
   out: : 
