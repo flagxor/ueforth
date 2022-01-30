@@ -131,7 +131,7 @@ clean:
 
 # ---- TESTS ----
 
-tests: unit_tests see_all_test
+tests: unit_tests see_all_test save_restore_test
 
 unit_tests: $(UNIT_TESTS)
 
@@ -146,6 +146,10 @@ unit_tests_win64: $(WINDOWS)/uEf64.exe common/all_tests.fs
 
 see_all_test: $(POSIX)/ueforth
 	echo internals see-all bye | $< >/dev/null
+
+save_restore_test: $(POSIX)/ueforth
+	echo ': square dup * ; save /tmp/save_restore_test.bin bye' | $< >/dev/null
+	echo 'restore /tmp/save_restore_test.bin 4 square 16 - posix sysexit' | $< >/dev/null
 
 # ---- GENERATED ----
 
