@@ -21,4 +21,5 @@ include common/locals_tests.fs
 include common/doloop_tests.fs
 include common/conditionals_tests.fs
 include common/float_tests.fs
+include common/forth_namespace_tests.fs
 run-tests
