@@ -410,8 +410,8 @@ e: test-forth-namespace
   out: default-key 
   out: default-type 
   out: windows 
-  check-highlevel-floats
   check-ansi
+  check-highlevel-floats
   out: internals 
   check-vocabulary
   check-[]conds
@@ -471,8 +471,8 @@ e: test-forth-namespace
   out: default-key 
   out: default-type 
   out: posix 
-  check-highlevel-floats
   check-ansi
+  check-highlevel-floats
   out: internals 
   check-vocabulary
   check-[]conds
