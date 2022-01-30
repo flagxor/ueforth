@@ -134,7 +134,7 @@ variable see-tally
   ['] tally-type is type
   see-all
   ['] default-type is type
-  see-tally @ 36000 >assert
+  see-tally @ 35000 >assert
 ;
 
 (

@@ -173,7 +173,7 @@ WINDOWS_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
                windows/windows.fs windows/windows_highlevel.fs common/highlevel.fs \
                common/tasks.fs common/utils.fs common/locals.fs common/desktop.fs \
                common/filetools.fs common/streams.fs \
-               common/blocks.fs common/locals.fs \
+               common/blocks.fs \
                posix/autoboot.fs \
                common/fini.fs
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)

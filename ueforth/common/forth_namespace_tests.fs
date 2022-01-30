@@ -15,6 +15,38 @@
 also internals
 : list-from ( xt ) begin dup >name-length while dup see. cr >link repeat drop ;
 
+e: check-locals
+  out: +to 
+  out: to 
+  out: ; 
+  out: { 
+  out: (local) 
+;e
+
+e: check-highlevel-floats
+  out: f.s 
+  out: f. 
+  out: #fs 
+  out: set-precision 
+  out: precision 
+  out: fsqrt 
+  out: pi 
+  out: fvariable 
+  out: fconstant 
+  out: fliteral 
+  out: afliteral 
+  out: sf, 
+  out: sfloat+ 
+  out: sfloats 
+  out: sfloat 
+  out: f>= 
+  out: f<= 
+  out: f<> 
+  out: f> 
+  out: f< 
+  out: f= 
+;e
+
 DEFINED? windows [IF]
 
 e: test-forth-namespace
@@ -31,11 +63,6 @@ e: test-forth-namespace
 e: test-forth-namespace
   ' forth list-from
   out: FORTH 
-  out: +to 
-  out: to 
-  out: ; 
-  out: { 
-  out: (local) 
   out: editor 
   out: list 
   out: copy 
@@ -63,11 +90,7 @@ e: test-forth-namespace
   out: dump-file 
   out: argv 
   out: argc 
-  out: +to 
-  out: to 
-  out: ; 
-  out: { 
-  out: (local) 
+  check-locals
   out: words 
   out: vlist 
   out: order 
@@ -114,27 +137,7 @@ e: test-forth-namespace
   out: default-key 
   out: default-type 
   out: windows 
-  out: f.s 
-  out: f. 
-  out: #fs 
-  out: set-precision 
-  out: precision 
-  out: fsqrt 
-  out: pi 
-  out: fvariable 
-  out: fconstant 
-  out: fliteral 
-  out: afliteral 
-  out: sf, 
-  out: sfloat+ 
-  out: sfloats 
-  out: sfloat 
-  out: f>= 
-  out: f<= 
-  out: f<> 
-  out: f> 
-  out: f< 
-  out: f= 
+  check-highlevel-floats
   out: page 
   out: at-xy 
   out: normal 
@@ -420,11 +423,7 @@ e: test-forth-namespace
   out: xlib 
   out: argv 
   out: argc 
-  out: +to 
-  out: to 
-  out: ; 
-  out: { 
-  out: (local) 
+  check-locals
   out: reset 
   out: revive 
   out: startup: 
@@ -478,27 +477,7 @@ e: test-forth-namespace
   out: default-key 
   out: default-type 
   out: posix 
-  out: f.s 
-  out: f. 
-  out: #fs 
-  out: set-precision 
-  out: precision 
-  out: fsqrt 
-  out: pi 
-  out: fvariable 
-  out: fconstant 
-  out: fliteral 
-  out: afliteral 
-  out: sf, 
-  out: sfloat+ 
-  out: sfloats 
-  out: sfloat 
-  out: f>= 
-  out: f<= 
-  out: f<> 
-  out: f> 
-  out: f< 
-  out: f= 
+  check-highlevel-floats
   out: page 
   out: at-xy 
   out: normal 

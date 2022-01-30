@@ -42,8 +42,8 @@ variable expect-used   variable result-used
 : expected ( -- a n ) expect-buffer expect-used @ ;
 : resulted ( -- a n ) result-buffer result-used @ ;
 : out:cr   nl expect-emit ;
-: out: ( "line" -- ) nl parse expect-type nl expect-emit ;
 : out:\ ( "line" -- ) nl parse expect-type ;
+: out: ( "line" -- ) out:\ out:cr ;
 variable confirm-old-type
 : confirm{   ['] type >body @ confirm-old-type ! ['] result-type is type ;
 : }confirm   confirm-old-type @ is type ;
