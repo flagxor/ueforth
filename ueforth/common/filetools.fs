@@ -27,9 +27,11 @@ internals definitions
 : setup-saving-base
   here to saving-base  16 cells allot  0 'cold ! ;
 
+' forth >body constant forth-wordlist
+
 : save-name
   'heap @ park-heap !
-  ' forth >body @ park-forth !
+  forth-wordlist @ park-forth !
   w/o create-file throw >r
   saving-base here over - r@ write-file throw
   r> close-file throw ;
@@ -39,7 +41,7 @@ internals definitions
   saving-base r@ file-size throw r@ read-file throw drop
   r> close-file throw
   park-heap @ 'heap !
-  park-forth @ ' forth >body !
+  park-forth @ forth-wordlist !
   'cold @ dup if execute else drop then ;
 
 defer remember-filename
