@@ -391,9 +391,9 @@ e: test-forth-namespace
 e: test-forth-namespace
   ' forth list-from
   out: FORTH 
+  check-args
   check-blocks
   out: streams 
-  check-args
   check-highlevel
   check-snapshots
   check-locals
@@ -450,10 +450,10 @@ e: test-forth-namespace
   out: httpd 
   out: telnetd 
   out: sockets 
-  check-blocks
-  out: streams 
   out: xlib 
   check-args
+  check-blocks
+  out: streams 
   check-highlevel
   check-snapshots
   check-locals
