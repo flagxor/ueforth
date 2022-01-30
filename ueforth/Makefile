@@ -145,19 +145,7 @@ unit_tests_win64: $(WINDOWS)/uEf64.exe common/all_tests.fs
 	wine $^
 
 see_all_test: $(POSIX)/ueforth
-	echo \
-     also internals \
-     also posix \
-     also tasks \
-     also streams \
-     also ansi \
-     also termios \
-     also sockets \
-     also telnetd \
-     also httpd \
-     also web-interface \
-     also editor \
-     see-all bye | $< >/dev/null
+	echo internals see-all bye | $< >/dev/null
 
 # ---- GENERATED ----
 

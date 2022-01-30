@@ -21,6 +21,8 @@
 #define CELL_ALIGNED(a) (((cell_t) (a) + CELL_MASK) & ~CELL_MASK)
 #define IMMEDIATE 1
 #define SMUDGE 2
+
+// Maximum ALSO layers.
 #define VOCABULARY_DEPTH 16
 
 #if PRINT_ERRORS
@@ -210,13 +212,13 @@ static void forth_init(int argc, char *argv[], void *heap,
   cell_t *rp = g_sys.heap + 1; g_sys.heap += STACK_CELLS;
   cell_t *sp = g_sys.heap + 1; g_sys.heap += STACK_CELLS;
 
-  // FORTH vocabulary
-  *g_sys.heap++ = 0; cell_t *forth = g_sys.heap;
-  *g_sys.heap++ = 0;  *g_sys.heap++ = 0;  *g_sys.heap++ = 0;
+  // FORTH worldlist (relocated when vocabularies added).
+  cell_t *forth_wordlist = g_sys.heap;
+  *g_sys.heap++ = 0;
   // Vocabulary stack
-  g_sys.current = (cell_t **) forth;
+  g_sys.current = (cell_t **) forth_wordlist;
   g_sys.context = (cell_t ***) g_sys.heap;
-  *g_sys.heap++ = (cell_t) forth;
+  *g_sys.heap++ = (cell_t) forth_wordlist;
   for (int i = 0; i < VOCABULARY_DEPTH; ++i) { *g_sys.heap++ = 0; }
 
   forth_run(0);

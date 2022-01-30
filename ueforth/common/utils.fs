@@ -56,11 +56,24 @@ internals definitions
         dup @ ['] see-loop @ <>
         if ." Unsupported word type: " see. cr exit then
         ['] : see.  dup see.  space see-loop   ['] ; see. cr ;
-: see-all   0 context @ @ begin dup while dup see-xt >link repeat 2drop cr ;
-: voc. ( voc -- ) dup forth-wordlist = if ." FORTH " drop exit then 3 cells - see. ;
+: >name-length ( xt -- n ) dup 0= if exit then >name nip ;
+: see-vocabulary ( voc ) @ begin dup >name-length while dup see-xt >link repeat drop cr ;
+: >vocnext ( xt -- xt ) >body 2 cells + @ ;
+: see-all
+  last-vocabulary @ begin dup while
+    ." VOCABULARY " dup see. cr ." ------------------------" cr
+    dup >body see-vocabulary
+    >vocnext
+  repeat drop cr ;
+: voclist   last-vocabulary @ begin dup while dup see. >vocnext repeat drop cr ;
+: voc. ( voc -- ) 2 cells - see. ;
+: vocs. ( voc -- ) dup voc. @ begin dup while
+    dup >name-length 0= if ." >> " dup 2 cells - voc. then
+    >link
+  repeat drop cr ;
 forth definitions also internals
 : see   ' see-xt ;
-: order   context begin dup @ while dup @ voc. cell+ repeat drop cr ;
+: order   context begin dup @ while dup @ vocs. cell+ repeat drop ;
 only forth definitions
 
 ( List words in Dictionary / Vocabulary )
@@ -68,7 +81,6 @@ internals definitions
 75 value line-width
 : onlines ( n xt -- n xt )
    swap dup line-width > if drop 0 cr then over >name nip + 1+ swap ;
-: >name-length ( xt -- n ) dup 0= if exit then >name nip ;
 forth definitions also internals
 : vlist   0 context @ @ begin dup >name-length while onlines dup see. >link repeat 2drop cr ;
 : words   0 context @ @ begin dup while onlines dup see. >link repeat 2drop cr ;

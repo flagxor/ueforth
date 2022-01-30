@@ -29,7 +29,7 @@ internals definitions
 
 : save-name
   'heap @ park-heap !
-  forth-wordlist @ park-forth !
+  ' forth >body @ park-forth !
   w/o create-file throw >r
   saving-base here over - r@ write-file throw
   r> close-file throw ;
@@ -39,7 +39,7 @@ internals definitions
   saving-base r@ file-size throw r@ read-file throw drop
   r> close-file throw
   park-heap @ 'heap !
-  park-forth @ forth-wordlist !
+  park-forth @ ' forth >body !
   'cold @ dup if execute else drop then ;
 
 defer remember-filename

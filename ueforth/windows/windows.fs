@@ -111,14 +111,21 @@ stdout console-mode GetConsoleMode drop
 stdout console-mode @ ENABLE_VIRTUAL_TERMINAL_PROCESSING or SetConsoleMode drop
 
 : win-type ( a n -- ) stdout -rot NULL NULL WriteFile drop ;
-' win-type is type
 : raw-key ( -- n ) 0 >r stdin rp@ 1 NULL NULL ReadFile drop r> ;
 : win-key? ( -- f ) stdin 0 WaitForSingleObject 0= ;
-' win-key? is key?
 : win-key ( -- n ) raw-key dup 13 = if drop nl then ;
-' win-key is key
 : win-bye ( -- ) 0 ExitProcess drop ;
+
+also forth definitions
+: default-type win-type ;
+: default-key win-key ;
+: default-key? win-key? ;
+only windows definitions
+' default-type is type
+' default-key is key
+' default-key? is key?
 ' win-bye is bye
+
 -1 echo !
 
 ansi

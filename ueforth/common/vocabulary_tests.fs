@@ -50,7 +50,10 @@ e: test-order
   vocabulary baz
   also foo also bar also baz
   order
-  out: baz bar foo FORTH 
+  out: baz >> FORTH 
+  out: bar >> FORTH 
+  out: foo >> FORTH 
+  out: FORTH 
   only forth definitions
 ;e
 
@@ -102,12 +105,37 @@ e: test-sealed
   only forth definitions
 ;e
 
+e: test-nested
+  vocabulary foo
+  foo definitions
+  : hi ;
+  : there ;
+  vocabulary bar
+  bar definitions
+  : a ;
+  : b ;
+  vlist
+  out: b a 
+  only forth definitions
+;e
+
 e: test-fixed-does>-normal
   : adder create , does> @ + ;
   3 adder foo
   4 foo 7 =assert
   4 ' foo execute 7 =assert
 ;e
+
+also internals
+variable see-tally
+: tally-type ( a n -- ) nip see-tally +! ;
+: test-see-all
+  0 see-tally !
+  ['] tally-type is type
+  see-all
+  ['] default-type is type
+  see-tally @ 36000 >assert
+;
 
 (
 e: test-fixed-does>-interp

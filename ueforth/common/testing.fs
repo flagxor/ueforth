@@ -58,6 +58,9 @@ variable confirm-old-type
 : <assert ( actual expected -- )
   2dup >= if }confirm ."   MUST BE LESS THAN: " .
                       ." ACTUAL: " . space 0 assert then 2drop ;
+: >assert ( actual expected -- )
+  2dup <= if }confirm ."   MUST BE GREATER THAN: " .
+                      ." ACTUAL: " . space 0 assert then 2drop ;
 
 ( Input testing )
 create in-buffer 1000 allot
