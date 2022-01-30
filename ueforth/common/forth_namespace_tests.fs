@@ -205,22 +205,71 @@ e: check-boot
   out: ( 
 ;e
 
-DEFINED? windows [IF]
-
-e: test-forth-namespace
-  internals voclist
-  out: editor 
-  out: streams 
-  out: tasks 
-  out: windows 
-  out: ansi 
-  out: internals 
-  out: FORTH 
+e: check-builtin
+  out: ; 
+  out: EXIT 
+  out: : 
+  out: YIELD 
+  out: IMMEDIATE 
+  out: DOES> 
+  out: CREATE 
+  out: F>NUMBER? 
+  out: S>NUMBER? 
+  out: PARSE 
+  out: FIND 
+  out: CELL 
+  out: EXECUTE 
+  out: R@ 
+  out: R> 
+  out: >R 
+  out: RP! 
+  out: RP@ 
+  out: SP! 
+  out: SP@ 
+  out: C! 
+  out: W! 
+  out: L! 
+  out: ! 
+  out: C@ 
+  out: SW@ 
+  out: SL@ 
+  out: @ 
+  out: DROP 
+  out: OVER 
+  out: SWAP 
+  out: DUP 
+  out: XOR 
+  out: OR 
+  out: AND 
+  out: RSHIFT 
+  out: LSHIFT 
+  out: */MOD 
+  out: U/MOD 
+  out: + 
+  out: 0< 
+  out: 0= 
+  out: F>S 
+  out: S>F 
+  out: 1/F 
+  out: F/ 
+  out: F* 
+  out: F- 
+  out: F+ 
+  out: F0= 
+  out: F0< 
+  out: FNEGATE 
+  out: FSWAP 
+  out: FOVER 
+  out: FDROP 
+  out: FNIP 
+  out: FDUP 
+  out: SF! 
+  out: SF@ 
+  out: FP! 
+  out: FP@ 
 ;e
 
-e: test-forth-namespace
-  ' forth list-from
-  out: FORTH 
+e: check-blocks
   out: editor 
   out: list 
   out: copy 
@@ -238,6 +287,25 @@ e: test-forth-namespace
   out: block-id 
   out: scr 
   out: block-fid 
+;e
+
+DEFINED? windows [IF]
+
+e: test-forth-namespace
+  internals voclist
+  out: editor 
+  out: streams 
+  out: tasks 
+  out: windows 
+  out: ansi 
+  out: internals 
+  out: FORTH 
+;e
+
+e: test-forth-namespace
+  ' forth list-from
+  out: FORTH 
+  check-blocks
   out: streams 
   out: reset 
   out: revive 
@@ -316,67 +384,7 @@ e: test-forth-namespace
   out: [THEN] 
   out: DEFINED? 
   check-boot
-  out: ; 
-  out: EXIT 
-  out: : 
-  out: YIELD 
-  out: IMMEDIATE 
-  out: DOES> 
-  out: CREATE 
-  out: F>NUMBER? 
-  out: S>NUMBER? 
-  out: PARSE 
-  out: FIND 
-  out: CELL 
-  out: EXECUTE 
-  out: R@ 
-  out: R> 
-  out: >R 
-  out: RP! 
-  out: RP@ 
-  out: SP! 
-  out: SP@ 
-  out: C! 
-  out: W! 
-  out: L! 
-  out: ! 
-  out: C@ 
-  out: SW@ 
-  out: SL@ 
-  out: @ 
-  out: DROP 
-  out: OVER 
-  out: SWAP 
-  out: DUP 
-  out: XOR 
-  out: OR 
-  out: AND 
-  out: RSHIFT 
-  out: LSHIFT 
-  out: */MOD 
-  out: U/MOD 
-  out: + 
-  out: 0< 
-  out: 0= 
-  out: F>S 
-  out: S>F 
-  out: 1/F 
-  out: F/ 
-  out: F* 
-  out: F- 
-  out: F+ 
-  out: F0= 
-  out: F0< 
-  out: FNEGATE 
-  out: FSWAP 
-  out: FOVER 
-  out: FDROP 
-  out: FNIP 
-  out: FDUP 
-  out: SF! 
-  out: SF@ 
-  out: FP! 
-  out: FP@ 
+  check-builtin
   out: LOADLIBRARYA 
   out: GETPROCADDRESS 
 ;e
@@ -406,23 +414,7 @@ e: test-forth-namespace
   out: httpd 
   out: telnetd 
   out: sockets 
-  out: editor 
-  out: list 
-  out: copy 
-  out: thru 
-  out: load 
-  out: flush 
-  out: update 
-  out: empty-buffers 
-  out: buffer 
-  out: block 
-  out: save-buffers 
-  out: default-use 
-  out: use 
-  out: open-blocks 
-  out: block-id 
-  out: scr 
-  out: block-fid 
+  check-blocks
   out: streams 
   out: xlib 
   out: argv 
@@ -502,67 +494,7 @@ e: test-forth-namespace
   out: [THEN] 
   out: DEFINED? 
   check-boot
-  out: ; 
-  out: EXIT 
-  out: : 
-  out: YIELD 
-  out: IMMEDIATE 
-  out: DOES> 
-  out: CREATE 
-  out: F>NUMBER? 
-  out: S>NUMBER? 
-  out: PARSE 
-  out: FIND 
-  out: CELL 
-  out: EXECUTE 
-  out: R@ 
-  out: R> 
-  out: >R 
-  out: RP! 
-  out: RP@ 
-  out: SP! 
-  out: SP@ 
-  out: C! 
-  out: W! 
-  out: L! 
-  out: ! 
-  out: C@ 
-  out: SW@ 
-  out: SL@ 
-  out: @ 
-  out: DROP 
-  out: OVER 
-  out: SWAP 
-  out: DUP 
-  out: XOR 
-  out: OR 
-  out: AND 
-  out: RSHIFT 
-  out: LSHIFT 
-  out: */MOD 
-  out: U/MOD 
-  out: + 
-  out: 0< 
-  out: 0= 
-  out: F>S 
-  out: S>F 
-  out: 1/F 
-  out: F/ 
-  out: F* 
-  out: F- 
-  out: F+ 
-  out: F0= 
-  out: F0< 
-  out: FNEGATE 
-  out: FSWAP 
-  out: FOVER 
-  out: FDROP 
-  out: FNIP 
-  out: FDUP 
-  out: SF! 
-  out: SF@ 
-  out: FP! 
-  out: FP@ 
+  check-builtin
   out: DLSYM 
 ;e 
 
