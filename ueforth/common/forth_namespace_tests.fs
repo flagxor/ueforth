@@ -349,6 +349,27 @@ e: check-snapshots
   out: dump-file 
 ;e
 
+e: check-ansi
+  out: page 
+  out: at-xy 
+  out: normal 
+  out: bg 
+  out: fg 
+  out: ansi 
+;e
+
+e: check-tasks
+  out: start-task 
+  out: task 
+  out: pause 
+  out: tasks 
+;e
+
+e: check-args
+  out: argv 
+  out: argc 
+;e
+
 DEFINED? windows [IF]
 
 e: test-forth-namespace
@@ -368,14 +389,10 @@ e: test-forth-namespace
   check-blocks
   out: streams 
   check-snapshots
-  out: argv 
-  out: argc 
+  check-args
   check-locals
   check-utils
-  out: start-task 
-  out: task 
-  out: pause 
-  out: tasks 
+  check-tasks
   out: include 
   out: included 
   out: resize 
@@ -394,12 +411,7 @@ e: test-forth-namespace
   out: default-type 
   out: windows 
   check-highlevel-floats
-  out: page 
-  out: at-xy 
-  out: normal 
-  out: bg 
-  out: fg 
-  out: ansi 
+  check-ansi
   out: internals 
   check-vocabulary
   check-[]conds
@@ -437,18 +449,14 @@ e: test-forth-namespace
   check-blocks
   out: streams 
   out: xlib 
-  out: argv 
-  out: argc 
+  check-args
   check-locals
   check-snapshots
   out: include 
   out: included 
   check-utils
   out: ms 
-  out: start-task 
-  out: task 
-  out: pause 
-  out: tasks 
+  check-tasks
   out: form 
   out: termios 
   out: resize 
@@ -464,12 +472,7 @@ e: test-forth-namespace
   out: default-type 
   out: posix 
   check-highlevel-floats
-  out: page 
-  out: at-xy 
-  out: normal 
-  out: bg 
-  out: fg 
-  out: ansi 
+  check-ansi
   out: internals 
   check-vocabulary
   check-[]conds
