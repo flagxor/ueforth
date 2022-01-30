@@ -161,11 +161,13 @@ COMMON_PREPLATFORM = common/boot.fs common/conditionals.fs common/vocabulary.fs 
 
 COMMON_DESKTOP = common/hide_calls.fs common/ansi.fs
 
+COMMON_POSTPLATFORM = common/utils.fs common/locals.fs
+
 POSIX_BOOT =  $(COMMON_PREPLATFORM) \
               $(COMMON_DESKTOP) \
               posix/posix.fs posix/posix_highlevel.fs posix/termios.fs \
-              common/tasks.fs common/utils.fs common/highlevel.fs common/filetools.fs \
-              common/locals.fs common/desktop.fs posix/posix_desktop.fs \
+              common/tasks.fs $(COMMON_POSTPLATFORM) common/highlevel.fs common/filetools.fs \
+              common/desktop.fs posix/posix_desktop.fs \
               common/streams.fs common/blocks.fs \
               posix/sockets.fs posix/telnetd.fs posix/httpd.fs posix/web_interface.fs \
               posix/autoboot.fs \
@@ -176,7 +178,7 @@ $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 WINDOWS_BOOT = $(COMMON_PREPLATFORM) \
                $(COMMON_DESKTOP) \
                windows/windows.fs windows/windows_highlevel.fs common/highlevel.fs \
-               common/tasks.fs common/utils.fs common/locals.fs common/desktop.fs \
+               common/tasks.fs $(COMMON_POSTPLATFORM) common/desktop.fs \
                common/filetools.fs common/streams.fs \
                common/blocks.fs \
                posix/autoboot.fs \
@@ -187,7 +189,7 @@ $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 ESP32_BOOT = $(COMMON_PREPLATFORM) \
              common/tasks.fs esp32/platform.fs esp32/highlevel.fs \
              esp32/bindings.fs common/highlevel.fs \
-             common/filetools.fs common/utils.fs common/locals.fs \
+             common/filetools.fs $(COMMON_POSTPLATFORM) \
              common/streams.fs posix/httpd.fs posix/web_interface.fs esp32/web_interface.fs \
              esp32/registers.fs esp32/timers.fs \
              esp32/bterm.fs posix/telnetd.fs \

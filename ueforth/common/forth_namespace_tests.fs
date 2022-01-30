@@ -450,10 +450,10 @@ e: test-forth-namespace
   out: streams 
   out: xlib 
   check-args
-  check-locals
   check-snapshots
   out: include 
   out: included 
+  check-locals
   check-utils
   out: ms 
   check-tasks
