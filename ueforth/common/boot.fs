@@ -1,6 +1,5 @@
 : (   41 parse drop drop ; immediate
 : \   10 parse drop drop ; immediate
-: #!   10 parse drop drop ; immediate
 
 \ Copyright 2021 Bradley D. Nelson
 \
