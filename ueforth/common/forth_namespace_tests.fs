@@ -418,11 +418,6 @@ e: test-forth-namespace
   out: resize 
   out: free 
   out: allocate 
-  out: process-heap 
-  out: HeapReAlloc 
-  out: HeapFree 
-  out: HeapAlloc 
-  out: GetProcessHeap 
   out: ok 
   out: ms 
   check-files
