@@ -156,8 +156,13 @@ save_restore_test: $(POSIX)/ueforth
 $(GEN):
 	mkdir -p $@
 
-POSIX_BOOT =  common/boot.fs common/conditionals.fs common/vocabulary.fs \
-              common/hide_calls.fs common/ansi.fs common/floats.fs \
+COMMON_PREPLATFORM = common/boot.fs common/conditionals.fs common/vocabulary.fs \
+                     common/floats.fs
+
+COMMON_DESKTOP = common/hide_calls.fs common/ansi.fs
+
+POSIX_BOOT =  $(COMMON_PREPLATFORM) \
+              $(COMMON_DESKTOP) \
               posix/posix.fs posix/posix_highlevel.fs posix/termios.fs \
               common/tasks.fs common/utils.fs common/highlevel.fs common/filetools.fs \
               common/locals.fs common/desktop.fs posix/posix_desktop.fs \
@@ -168,8 +173,8 @@ POSIX_BOOT =  common/boot.fs common/conditionals.fs common/vocabulary.fs \
 $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 	$< boot $(VERSION) $(REVISION) $(POSIX_BOOT) >$@
 
-WINDOWS_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
-               common/hide_calls.fs common/ansi.fs common/floats.fs \
+WINDOWS_BOOT = $(COMMON_PREPLATFORM) \
+               $(COMMON_DESKTOP) \
                windows/windows.fs windows/windows_highlevel.fs common/highlevel.fs \
                common/tasks.fs common/utils.fs common/locals.fs common/desktop.fs \
                common/filetools.fs common/streams.fs \
@@ -179,9 +184,9 @@ WINDOWS_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 	$< -win boot $(VERSION) $(REVISION) $(WINDOWS_BOOT) >$@
 
-ESP32_BOOT = common/boot.fs common/conditionals.fs common/vocabulary.fs \
+ESP32_BOOT = $(COMMON_PREPLATFORM) \
              common/tasks.fs esp32/platform.fs esp32/highlevel.fs \
-             esp32/bindings.fs common/highlevel.fs common/floats.fs \
+             esp32/bindings.fs common/highlevel.fs \
              common/filetools.fs common/utils.fs common/locals.fs \
              common/streams.fs posix/httpd.fs posix/web_interface.fs esp32/web_interface.fs \
              esp32/registers.fs esp32/timers.fs \
