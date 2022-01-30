@@ -350,6 +350,7 @@ e: check-snapshots
 ;e
 
 e: check-ansi
+  out: set-title 
   out: page 
   out: at-xy 
   out: normal 
@@ -379,11 +380,11 @@ DEFINED? windows [IF]
 
 e: test-forth-namespace
   internals voclist
+  out: ansi 
   out: editor 
   out: streams 
   out: tasks 
   out: windows 
-  out: ansi 
   out: internals 
   out: FORTH 
 ;e
@@ -392,6 +393,7 @@ e: test-forth-namespace
   ' forth list-from
   out: FORTH 
   check-args
+  check-ansi
   check-blocks
   out: streams 
   check-highlevel
@@ -414,7 +416,6 @@ e: test-forth-namespace
   out: default-key 
   out: default-type 
   out: windows 
-  check-ansi
   check-highlevel-floats
   out: internals 
   check-vocabulary
@@ -433,12 +434,12 @@ e: test-forth-namespace
   out: httpd 
   out: telnetd 
   out: sockets 
+  out: ansi 
   out: editor 
   out: streams 
   out: tasks 
   out: termios 
   out: posix 
-  out: ansi 
   out: internals 
   out: FORTH 
 ;e
@@ -450,8 +451,8 @@ e: test-forth-namespace
   out: httpd 
   out: telnetd 
   out: sockets 
-  out: xlib 
   check-args
+  check-ansi
   check-blocks
   out: streams 
   check-highlevel
@@ -474,7 +475,6 @@ e: test-forth-namespace
   out: default-key 
   out: default-type 
   out: posix 
-  check-ansi
   check-highlevel-floats
   out: internals 
   check-vocabulary

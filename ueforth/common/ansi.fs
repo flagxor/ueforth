@@ -29,4 +29,6 @@ forth definitions ansi
 : normal   esc ." [0m" ;
 : at-xy ( x y -- ) esc ." [" 1+ n. ." ;" 1+ n. ." H" ;
 : page   esc ." [2J" esc ." [H" ;
+: set-title ( a n -- ) esc ." ]0;" type bel ;
+s" uEforth" set-title
 forth

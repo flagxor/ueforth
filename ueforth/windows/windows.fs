@@ -128,11 +128,6 @@ only windows definitions
 
 -1 echo !
 
-ansi
-: set-title ( a n -- ) esc ." ]0;" type bel ;
-windows
-s" uEforth" set-title
-
 ( Window File Specific )
 1 constant FILE_SHARE_READ
 2 constant FILE_SHARE_WRITE

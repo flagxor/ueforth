@@ -48,8 +48,17 @@ variable confirm-old-type
 : confirm{   ['] type >body @ confirm-old-type ! ['] result-type is type ;
 : }confirm   confirm-old-type @ is type ;
 : expect-reset   0 expect-used ! 0 result-used ! ;
+: diverged ( a n a n -- a n )
+   begin
+      dup 0= if 2drop exit then
+      >r dup c@ >r rot dup c@ >r -rot r> r> <> r> swap if 2drop exit then
+      >r >r dup 0= if rdrop rdrop exit then r> r>
+      >r >r >r 1+ r> 1- r> 1+ r> 1-
+   again
+;
 : expect-finish   expected resulted str= if exit then }confirm
-   cr ." Expected:" cr expected type cr ." Resulted:" cr resulted type cr 1 throw ;
+   cr ." Expected:" cr expected resulted diverged type cr
+      ." Resulted:" cr resulted expected diverged type cr 1 throw ;
 
 ( Better error asserts )
 : =assert ( actual expected -- )

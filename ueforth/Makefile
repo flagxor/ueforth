@@ -159,17 +159,15 @@ $(GEN):
 COMMON_PREPLATFORM = common/boot.fs common/conditionals.fs common/vocabulary.fs \
                      common/floats.fs
 
-COMMON_DESKTOP = common/hide_calls.fs common/ansi.fs
+COMMON_DESKTOP = common/hide_calls.fs common/ansi.fs common/desktop.fs
 
 COMMON_POSTPLATFORM = common/utils.fs common/locals.fs \
                       common/filetools.fs common/highlevel.fs \
                       common/streams.fs common/blocks.fs
 
 POSIX_BOOT =  $(COMMON_PREPLATFORM) \
-              $(COMMON_DESKTOP) \
               posix/posix.fs posix/posix_highlevel.fs posix/termios.fs \
-              common/tasks.fs $(COMMON_POSTPLATFORM) \
-              common/desktop.fs posix/posix_desktop.fs \
+              common/tasks.fs $(COMMON_POSTPLATFORM) $(COMMON_DESKTOP) \
               posix/sockets.fs posix/telnetd.fs posix/httpd.fs posix/web_interface.fs \
               posix/autoboot.fs \
               common/fini.fs
@@ -177,9 +175,8 @@ $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 	$< boot $(VERSION) $(REVISION) $(POSIX_BOOT) >$@
 
 WINDOWS_BOOT = $(COMMON_PREPLATFORM) \
-               $(COMMON_DESKTOP) \
                windows/windows.fs windows/windows_highlevel.fs \
-               common/tasks.fs $(COMMON_POSTPLATFORM) common/desktop.fs \
+               common/tasks.fs $(COMMON_POSTPLATFORM) $(COMMON_DESKTOP) \
                posix/autoboot.fs \
                common/fini.fs
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
