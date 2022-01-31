@@ -377,6 +377,12 @@ e: check-highlevel
   out: included 
 ;e
 
+e: check-allocation
+  out: resize 
+  out: free 
+  out: allocate 
+;e
+
 e: check-phase1
   check-highlevel-floats
   check-vocabulary
@@ -415,9 +421,7 @@ e: test-forth-namespace
   ' forth list-from
   out: FORTH 
   check-phase2
-  out: resize 
-  out: free 
-  out: allocate 
+  check-allocation
   out: ok 
   out: ms 
   check-files
@@ -459,9 +463,7 @@ e: test-forth-namespace
   check-phase2
   out: form 
   out: termios 
-  out: resize 
-  out: free 
-  out: allocate 
+  check-allocation
   out: ok 
   out: #! 
   out: ms-ticks 
