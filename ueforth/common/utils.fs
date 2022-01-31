@@ -78,7 +78,7 @@ only forth definitions
 
 ( List words in Dictionary / Vocabulary )
 internals definitions
-75 value line-width
+70 value line-width
 : onlines ( n xt -- n xt )
    swap dup line-width > if drop 0 cr then over >name nip + 1+ swap ;
 forth definitions also internals
