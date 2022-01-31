@@ -44,7 +44,7 @@
   CALLING_OPCODE_LIST \
 
 #include "common/core.h"
-#include "windows/windows_interp.h"
+#include "windows/interp.h"
 
 #include "gen/windows_boot.h"
 

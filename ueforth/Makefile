@@ -162,11 +162,11 @@ COMMON_PHASE1 = common/boot.fs common/conditionals.fs common/vocabulary.fs \
 COMMON_DESKTOP = common/hide_calls.fs common/ansi.fs common/desktop.fs
 
 COMMON_PHASE2 = common/tasks.fs common/utils.fs common/locals.fs \
-                common/filetools.fs common/highlevel.fs \
+                common/filetools.fs common/including.fs \
                 common/streams.fs common/blocks.fs
 
 POSIX_BOOT =  $(COMMON_PHASE1) \
-              posix/posix.fs posix/posix_highlevel.fs posix/termios.fs \
+              posix/posix.fs posix/allocation.fs posix/termios.fs \
               $(COMMON_PHASE2) $(COMMON_DESKTOP) \
               posix/sockets.fs posix/telnetd.fs posix/httpd.fs posix/web_interface.fs \
               posix/autoboot.fs \
@@ -175,7 +175,7 @@ $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 	$< boot $(VERSION) $(REVISION) $(POSIX_BOOT) >$@
 
 WINDOWS_BOOT = $(COMMON_PHASE1) \
-               windows/windows.fs windows/windows_highlevel.fs \
+               windows/windows.fs windows/allocation.fs \
                $(COMMON_PHASE2) $(COMMON_DESKTOP) \
                posix/autoboot.fs \
                common/fini.fs
@@ -183,9 +183,9 @@ $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 	$< -win boot $(VERSION) $(REVISION) $(WINDOWS_BOOT) >$@
 
 ESP32_BOOT = $(COMMON_PHASE1) \
-             esp32/highlevel.fs esp32/bindings.fs \
+             esp32/allocation.fs \
              $(COMMON_PHASE2) \
-             esp32/platform.fs \
+             esp32/platform.fs esp32/bindings.fs \
              posix/httpd.fs posix/web_interface.fs esp32/web_interface.fs \
              esp32/registers.fs esp32/timers.fs \
              esp32/bterm.fs posix/telnetd.fs \
@@ -256,7 +256,7 @@ $(POSIX):
 	mkdir -p $@
 
 $(POSIX)/ueforth: \
-    posix/posix_main.c \
+    posix/main.c \
     common/opcodes.h \
     common/calls.h \
     common/floats.h \
@@ -272,12 +272,12 @@ $(WINDOWS):
 	mkdir -p $@
 
 $(WINDOWS)/uEf32.obj: \
-    windows/windows_main.c \
+    windows/main.c \
     common/opcodes.h \
     common/calls.h \
     common/floats.h \
     common/core.h \
-    windows/windows_interp.h \
+    windows/interp.h \
     $(GEN)/windows_boot.h | $(WINDOWS)
 	$(CL32) /c /Fo$@ $(WIN_CFLAGS) $<
 
@@ -287,12 +287,12 @@ $(WINDOWS)/uEf32.exe: \
 	$(LINK32) /OUT:$@ $(WIN_LFLAGS32) $^
 
 $(WINDOWS)/uEf64.obj: \
-    windows/windows_main.c \
+    windows/main.c \
     common/opcodes.h \
     common/calls.h \
     common/floats.h \
     common/core.h \
-    windows/windows_interp.h \
+    windows/interp.h \
     $(GEN)/windows_boot.h | $(WINDOWS)
 	$(CL64) /c /Fo$@ $(WIN_CFLAGS) $<
 
