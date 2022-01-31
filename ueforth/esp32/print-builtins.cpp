@@ -20,12 +20,15 @@
 #include "esp32/options.h"
 #define FLOATING_POINT_LIST
 #define USER_WORDS
+#define REQUIRED_MEMORY_SUPPORT
+#define REQUIRED_SYSTEM_SUPPORT
+#define REQUIRED_SERIAL_SUPPORT
 #include "builtins.h"
 
 #define Y(name, code) X(#name, name, code)
 
 int main() {
-  printf("#define PLATFORM_OPCODE_LIST \\\n");
+  printf("#define PLATFORM_MOCK_OPCODE_LIST \\\n");
 #define X(str, name, code) printf("  X(\"%s\", %s, ) \\\n", str, #name);
   PLATFORM_OPCODE_LIST
 #undef X
