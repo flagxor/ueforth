@@ -306,7 +306,8 @@ $(WINDOWS)/uEf64.exe: \
 $(ESP32)/ESP32forth:
 	mkdir -p $@
 
-ESP32_PARTS = esp32/template.ino \
+ESP32_PARTS = common/replace.js \
+              esp32/template.ino \
               common/opcodes.h \
               common/calling.h \
               common/floats.h \
@@ -314,9 +315,17 @@ ESP32_PARTS = esp32/template.ino \
               common/interp.h \
               $(GEN)/esp32_boot.h
 
-$(ESP32)/ESP32forth/ESP32forth.ino: \
-    esp32/fuse_ino.js $(ESP32_PARTS) | $(ESP32)/ESP32forth
-	$< $(VERSION) $(REVISION) $(ESP32_PARTS) >$@
+$(ESP32)/ESP32forth/ESP32forth.ino: $(ESP32_PARTS) | $(ESP32)/ESP32forth
+	cat esp32/template.ino | common/replace.js \
+     VERSION=$(VERSION) \
+     REVISION=$(REVISION) \
+     opcodes=@common/opcodes.h \
+     calling=@common/calling.h \
+     floats=@common/floats.h \
+     core=@common/core.h \
+     interp=@common/interp.h \
+     boot=@$(GEN)/esp32_boot.h \
+     >$@
 
 # ---- PACKAGE ----
 

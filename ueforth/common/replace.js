@@ -43,25 +43,23 @@ for (var i = 2; i < process.argv.length; ++i) {
   var m = item.match(/^([^=]+)=@(.+)$/);
   if (m) {
     var content = DropCopyright(fs.readFileSync(m[2]).toString());
-    replacements.push([m[1], content]);
+    replacements.push(['{{' + m[1] + '}}', content]);
     continue;
   }
   var m = item.match(/^([^=]+)=(.+)$/);
   if (m) {
-    replacements.push([m[1], m[2]]);
+    replacements.push(['{{' + m[1] + '}}', m[2]]);
     continue;
   }
   throw 'Bad replacement ' + item;
 }
-  
-var version = process.argv[3];
-var revision = process.argv[4];
 
 for (;;) {
   var old_source = source;
   for (var i = 0; i < replacements.length; ++i) {
-    source = source.replace('{{' + replacements[i][0] + '}}',
-                            replacements[i][1]);
+    source = source.replace(
+        replacements[i][0],
+        function() { return replacements[i][1]});
   }
   if (old_source == source) {
     break;
