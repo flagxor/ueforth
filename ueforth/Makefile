@@ -24,6 +24,7 @@ WEB = $(OUT)/web
 POSIX = $(OUT)/posix
 WINDOWS = $(OUT)/windows
 ESP32 = $(OUT)/esp32
+ESP32_SIM = $(OUT)/esp32-sim
 DEPLOY = $(OUT)/deploy
 
 CFLAGS_COMMON = -O2 -I ./ -I $(OUT)
@@ -301,6 +302,18 @@ $(WINDOWS)/uEf64.exe: \
     $(RES)/ueforth_res64.res | $(WINDOWS)
 	$(LINK64) /OUT:$@ $(WIN_LFLAGS64) $^
 
+# ---- ESP32-SIM ----
+
+$(ESP32_SIM):
+	mkdir -p $@
+
+$(ESP32_SIM)/print-builtins: \
+    esp32/print-builtins.c esp32/builtins.h | $(ESP32_SIM)
+	$(CC) $< -o $@
+
+print: $(ESP32_SIM)/print-builtins
+	$<
+
 # ---- ESP32 ----
 
 $(ESP32)/ESP32forth:
@@ -313,6 +326,9 @@ ESP32_PARTS = common/replace.js \
               common/floats.h \
               common/core.h \
               common/interp.h \
+              esp32/options.h \
+              esp32/builtins.h \
+              esp32/builtins.cpp \
               $(GEN)/esp32_boot.h
 
 $(ESP32)/ESP32forth/ESP32forth.ino: $(ESP32_PARTS) | $(ESP32)/ESP32forth
@@ -324,6 +340,9 @@ $(ESP32)/ESP32forth/ESP32forth.ino: $(ESP32_PARTS) | $(ESP32)/ESP32forth
      floats=@common/floats.h \
      core=@common/core.h \
      interp=@common/interp.h \
+     options=@esp32/options.h \
+     builtins.h=@esp32/builtins.h \
+     builtins.cpp=@esp32/builtins.cpp \
      boot=@$(GEN)/esp32_boot.h \
      >$@
 
