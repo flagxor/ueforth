@@ -43,8 +43,10 @@
 #define Y(name, code) X(#name, name, code)
 
 int main() {
-#define X(str, name, code) printf("%s\n", str);
+  printf("#define PLATFORM_OPCODE_LIST \\\n");
+#define X(str, name, code) printf("  X(\"%s\", %s, ) \\\n", str, #name);
   PLATFORM_OPCODE_LIST
 #undef X
+  printf("\n");
   return 0;
 }

@@ -117,12 +117,3 @@ static cell_t TimerIsrRegister(cell_t group, cell_t timer, cell_t xt, cell_t arg
   return timer_isr_register((timer_group_t) group, (timer_idx_t) timer, HandleInterrupt, args, flags, (timer_isr_handle_t *) ret);
 }
 #endif
-
-void setup() {
-  cell_t *heap = (cell_t *) malloc(HEAP_SIZE);
-  forth_init(0, 0, heap, boot, sizeof(boot));
-}
-
-void loop() {
-  g_sys.rp = forth_run(g_sys.rp);
-}

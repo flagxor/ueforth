@@ -74,7 +74,8 @@ WIN_LFLAGS64 = /LIBPATH:"c:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib
 TARGETS = $(WEB)/terminal.html \
           $(WEB)/ueforth.js \
           $(POSIX)/ueforth \
-          $(ESP32)/ESP32forth/ESP32forth.ino
+          $(ESP32)/ESP32forth/ESP32forth.ino \
+          $(ESP32_SIM)/Esp32forth-sim
 
 LSQ = ls 2>/dev/null
 
@@ -260,6 +261,7 @@ $(POSIX)/ueforth: \
     posix/main.c \
     common/opcodes.h \
     common/calls.h \
+    common/calling.h \
     common/floats.h \
     common/interp.h \
     common/core.h \
@@ -276,6 +278,7 @@ $(WINDOWS)/uEf32.obj: \
     windows/main.c \
     common/opcodes.h \
     common/calls.h \
+    common/calling.h \
     common/floats.h \
     common/core.h \
     windows/interp.h \
@@ -291,6 +294,7 @@ $(WINDOWS)/uEf64.obj: \
     windows/main.c \
     common/opcodes.h \
     common/calls.h \
+    common/calling.h \
     common/floats.h \
     common/core.h \
     windows/interp.h \
@@ -307,12 +311,26 @@ $(WINDOWS)/uEf64.exe: \
 $(ESP32_SIM):
 	mkdir -p $@
 
-$(ESP32_SIM)/print-builtins: \
-    esp32/print-builtins.c esp32/builtins.h | $(ESP32_SIM)
+$(GEN)/print-esp32-builtins: \
+    esp32/print-builtins.c esp32/builtins.h | $(GEN)
 	$(CC) $< -o $@
 
-print: $(ESP32_SIM)/print-builtins
-	$<
+$(GEN)/esp32_sim_opcodes.h: $(GEN)/print-esp32-builtins | $(GEN)
+	$< >$@
+
+$(ESP32_SIM)/Esp32forth-sim: \
+    esp32/sim_main.cpp \
+    esp32/main.cpp \
+    common/opcodes.h \
+    common/floats.h \
+    common/calling.h \
+    common/floats.h \
+    common/core.h \
+    common/interp.h \
+    $(GEN)/esp32_boot.h \
+    $(GEN)/esp32_sim_opcodes.h | $(ESP32_SIM)
+	$(CXX) $(CFLAGS) -g $< -o $@
+	strip $(STRIP_ARGS) $@
 
 # ---- ESP32 ----
 
@@ -329,12 +347,14 @@ ESP32_PARTS = common/replace.js \
               esp32/options.h \
               esp32/builtins.h \
               esp32/builtins.cpp \
+              esp32/main.cpp \
               $(GEN)/esp32_boot.h
 
 $(ESP32)/ESP32forth/ESP32forth.ino: $(ESP32_PARTS) | $(ESP32)/ESP32forth
 	cat esp32/template.ino | common/replace.js \
      VERSION=$(VERSION) \
      REVISION=$(REVISION) \
+     config=@esp32/config.h \
      opcodes=@common/opcodes.h \
      calling=@common/calling.h \
      floats=@common/floats.h \
@@ -343,6 +363,7 @@ $(ESP32)/ESP32forth/ESP32forth.ino: $(ESP32_PARTS) | $(ESP32)/ESP32forth
      options=@esp32/options.h \
      builtins.h=@esp32/builtins.h \
      builtins.cpp=@esp32/builtins.cpp \
+     main.cpp=@esp32/main.cpp \
      boot=@$(GEN)/esp32_boot.h \
      >$@
 

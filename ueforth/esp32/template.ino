@@ -19,9 +19,11 @@
  * Revision: {{REVISION}}
  */
 
+{{config}}
+{{options}}
 {{opcodes}}
 {{floats}}
 {{calling}}
-{{options}}
 {{builtins.h}}
 {{builtins.cpp}}
+{{main.cpp}}

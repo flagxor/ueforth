@@ -14,27 +14,23 @@
 
 #ifndef SIM_PRINT_ONLY
 
-#ifdef ENABLE_WEBSERVER_SUPPORT
-# include "WebServer.h"
-#endif
+# ifdef ENABLE_WEBSERVER_SUPPORT
+#  include "WebServer.h"
+# endif
 
-#include <errno.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/select.h>
-
-#define HEAP_SIZE (100 * 1024)
-#define STACK_CELLS 512
-#define INTERRUPT_STACK_CELLS 64
+# include <errno.h>
+# include <unistd.h>
+# include <fcntl.h>
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <sys/select.h>
 
 // Optional hook to pull in words for userwords.h
-#if __has_include("userwords.h")
-# include "userwords.h"
-#else
-# define USER_WORDS
-#endif
+# if __has_include("userwords.h")
+#  include "userwords.h"
+# else
+#  define USER_WORDS
+# endif
 
 static cell_t ResizeFile(cell_t fd, cell_t size);
 
