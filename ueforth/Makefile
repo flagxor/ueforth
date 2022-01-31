@@ -312,8 +312,8 @@ $(ESP32_SIM):
 	mkdir -p $@
 
 $(GEN)/print-esp32-builtins: \
-    esp32/print-builtins.c esp32/builtins.h | $(GEN)
-	$(CC) $< -o $@
+    esp32/print-builtins.cpp esp32/builtins.h | $(GEN)
+	$(CXX) $(CFLAGS) $< -o $@
 
 $(GEN)/esp32_sim_opcodes.h: $(GEN)/print-esp32-builtins | $(GEN)
 	$< >$@

@@ -38,7 +38,7 @@
 // RMT support designed around v2.0.1 toolchain.
 // While ESP32 also has RMT, for now only include for
 // ESP32-S2 and ESP32-C3.
-#if defined(CONFIG_IDF_TARGET_ESP32S2) || defined(CONFIG_IDF_TARGET_ESP32C3)
+#if defined(CONFIG_IDF_TARGET_ESP32S2) || defined(CONFIG_IDF_TARGET_ESP32C3) || defined(SIM_PRINT_ONLY)
 # define ENABLE_RMT_SUPPORT
 #endif
 
@@ -55,9 +55,9 @@
 // so this isn't an ideal indicator.
 // Some boards (e.g. ESP32-S2-WROVER) don't seem to have
 // built the serial library, so check if its enabled as well.
-#ifdef BOARD_HAS_PSRAM
+#if defined(BOARD_HAS_PSRAM) || defined(SIM_PRINT_ONLY)
 # define ENABLE_CAMERA_SUPPORT
-# if defined(CONFIG_BT_ENABLED) && defined(CONFIG_BLUEDROID_ENABLED)
+# if (defined(CONFIG_BT_ENABLED) && defined(CONFIG_BLUEDROID_ENABLED)) || defined(SIM_PRINT_ONLY)
 #  define ENABLE_SERIAL_BLUETOOTH_SUPPORT
 # endif
 #endif
