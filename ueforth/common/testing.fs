@@ -18,7 +18,11 @@ DEFINED? windows [IF]
   also windows
   : sysexit ( n -- ) ExitProcess ;
 [ELSE]
-  also posix
+  DEFINED? posix [IF]
+    also posix
+  [ELSE]
+    : sysexit ( n -- ) terminate ;
+  [THEN]
 [THEN]
 
 ( Support for eval tests )

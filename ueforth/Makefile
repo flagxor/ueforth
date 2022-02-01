@@ -89,7 +89,7 @@ LINK64 = "$(shell $(LSQ) ${MSVS}/*/*/VC/Tools/MSVC/*/bin/Hostx86/x64/link.exe | 
 RC32 = "$(shell $(LSQ) ${MSKITS}/*/bin/*/x86/rc.exe | head -n 1)"
 RC64 = "$(shell $(LSQ) ${MSKITS}/*/bin/*/x64/rc.exe | head -n 1)"
 
-UNIT_TESTS = unit_tests_posix
+UNIT_TESTS = unit_tests_posix unit_tests_esp32_sim
 
 # Selectively enable windows if tools available
 DEPLOYABLE := 1
@@ -139,6 +139,12 @@ unit_tests: $(UNIT_TESTS)
 
 unit_tests_posix: $(POSIX)/ueforth common/all_tests.fs
 	$^
+
+unit_tests_esp32_sim: \
+    $(ESP32_SIM)/Esp32forth-sim \
+    common/ansi.fs \
+    common/all_tests.fs
+	echo "include $(word 2,$^) include $(word 3,$^) \n1 terminate" | $<
 
 unit_tests_win32: $(WINDOWS)/uEf32.exe common/all_tests.fs
 	wine $^
@@ -340,8 +346,8 @@ $(ESP32)/ESP32forth:
 ESP32_PARTS = common/replace.js \
               esp32/template.ino \
               common/opcodes.h \
-              common/calling.h \
               common/floats.h \
+              common/calling.h \
               common/core.h \
               common/interp.h \
               esp32/options.h \

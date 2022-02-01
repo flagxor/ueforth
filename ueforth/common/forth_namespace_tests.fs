@@ -435,7 +435,7 @@ e: test-forth-namespace
   out: GETPROCADDRESS 
 ;e
 
-[ELSE]
+[ELSE] DEFINED? posix [IF]
 
 e: test-forth-namespace
   internals voclist
@@ -477,4 +477,4 @@ e: test-forth-namespace
   out: DLSYM 
 ;e 
 
-[THEN] 
+[THEN] [THEN] 

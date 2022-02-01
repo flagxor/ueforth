@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "esp32/config.h"
+#define HEAP_SIZE (100 * 1024 + 1024 * 1024)
+#define STACK_CELLS 512
+
 #include "esp32/options.h"
 #include "common/opcodes.h"
 #include "common/floats.h"
@@ -34,9 +36,13 @@ PLATFORM_SIMULATED_OPCODE_LIST
 #include "common/interp.h"
 #include "gen/esp32_boot.h"
 #include "esp32/main.cpp"
+#include <errno.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
-#include <stdio.h>
 
 static cell_t *simulated(cell_t *sp, const char *op) {
   if (op == STR_MALLOC) {
@@ -49,10 +55,12 @@ static cell_t *simulated(cell_t *sp, const char *op) {
     --sp;
     return sp;
   } else if (op == STR_SERIAL_READ_BYTES) {
-    sp[-1] = read(0, (void *) sp[-1], sp[0]); --sp;
+    cell_t len = *sp--;
+    *sp = read(0, (void *) *sp, len);
     return sp;
   } else if (op == STR_SERIAL_WRITE) {
-    sp[-1] = write(1, (void *) sp[-1], sp[0]); --sp;
+    cell_t len = *sp--;
+    *sp = write(1, (void *) *sp, len);
     return sp;
   } else if (op == STR_MS_TICKS) {
     struct timespec tm;
@@ -62,7 +70,8 @@ static cell_t *simulated(cell_t *sp, const char *op) {
   } else if (op == STR_RAW_YIELD) {
     return sp;
   } else if (op == STR_SPIFFS_BEGIN) {
-    sp -= 2; *sp = 0;
+    sp -= 2;
+    *sp = 0;
     return sp;
   } else if (op == STR_pinMode) {
     sp -= 2;
@@ -71,17 +80,46 @@ static cell_t *simulated(cell_t *sp, const char *op) {
     sp -= 2;
     return sp;
   } else if (op == STR_gpio_install_isr_service) {
-    --sp;
     *sp = 0;
     return sp;
   } else if (op == STR_SERIAL_AVAILABLE) {
     *++sp = 1;
     return sp;
   } else if (op == STR_TERMINATE) {
-    exit(*sp);
+    exit(*sp--);
+    return sp;
+  } else if (op == STR_R_O) {
+    *++sp = O_RDONLY;
+    return sp;
+  } else if (op == STR_OPEN_FILE) {
+    cell_t mode = *sp--;
+    cell_t len = *sp--;
+    char filename[1024];
+    memcpy(filename, (void *) *sp, len); filename[len] = 0;
+    cell_t ret = open(filename, mode, 0777);
+    *sp = ret;
+    *++sp = ret < 0 ? errno : 0;
+    return sp;
+  } else if (op == STR_FILE_SIZE) {
+    struct stat st;
+    cell_t w = fstat(*sp, &st);
+    *sp = (cell_t) st.st_size;
+    *++sp = w < 0 ? errno : 0;
+    return sp;
+  } else if (op == STR_READ_FILE) {
+    cell_t fd = *sp--;
+    cell_t len = *sp--;
+    cell_t ret = read(fd, (void *) *sp, len);
+    *sp = ret;
+    *++sp = ret < 0 ? errno : 0;
+    return sp;
+  } else if (op == STR_CLOSE_FILE) {
+    cell_t ret = close(*sp);
+    *sp = ret ? errno : 0;
     return sp;
   } else {
     fprintf(stderr, "MISSING SIM OPCODE: %s\n", op);
+    exit(1);
     return sp;
   }
 }
