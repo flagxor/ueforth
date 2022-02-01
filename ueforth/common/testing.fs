@@ -26,7 +26,7 @@ DEFINED? windows [IF]
 [THEN]
 
 ( Support for eval tests )
-10000 constant expect-limit
+20000 constant expect-limit
 create expect-buffer expect-limit allot
 create result-buffer expect-limit allot
 variable expect-used   variable result-used

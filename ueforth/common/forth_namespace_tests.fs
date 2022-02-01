@@ -205,11 +205,10 @@ e: check-boot
   out: ( 
 ;e
 
-e: check-builtin
+e: check-core-opcodes
   out: ; 
   out: EXIT 
   out: : 
-  out: YIELD 
   out: IMMEDIATE 
   out: DOES> 
   out: CREATE 
@@ -248,6 +247,9 @@ e: check-builtin
   out: + 
   out: 0< 
   out: 0= 
+;e
+
+e: check-float-opcodes
   out: F>S 
   out: S>F 
   out: 1/F 
@@ -388,12 +390,14 @@ e: check-phase1
   check-vocabulary
   check-[]conds
   check-boot
-  check-builtin
+;e
+
+e: check-desktop
+  check-args
+  check-ansi
 ;e
 
 e: check-phase2
-  check-args
-  check-ansi
   check-blocks
   out: streams 
   check-highlevel
@@ -406,7 +410,7 @@ e: check-phase2
 
 DEFINED? windows [IF]
 
-e: test-forth-namespace
+e: test-windows-forth-namespace
   internals voclist
   out: ansi 
   out: editor 
@@ -417,9 +421,10 @@ e: test-forth-namespace
   out: FORTH 
 ;e
 
-e: test-forth-namespace
+e: test-windows-forth-namespace
   ' forth list-from
   out: FORTH 
+  check-desktop
   check-phase2
   check-allocation
   out: ok 
@@ -431,13 +436,15 @@ e: test-forth-namespace
   out: default-type 
   out: windows 
   check-phase1
+  check-core-opcodes
+  check-float-opcodes
   out: LOADLIBRARYA 
   out: GETPROCADDRESS 
 ;e
 
 [ELSE] DEFINED? posix [IF]
 
-e: test-forth-namespace
+e: test-posix-forth-namespace
   internals voclist
   out: web-interface 
   out: httpd 
@@ -453,13 +460,14 @@ e: test-forth-namespace
   out: FORTH 
 ;e
 
-e: test-forth-namespace
+e: test-posix-forth-namespace
   ' forth list-from
   out: FORTH 
   out: web-interface 
   out: httpd 
   out: telnetd 
   out: sockets 
+  check-desktop
   check-phase2
   out: form 
   out: termios 
@@ -474,7 +482,131 @@ e: test-forth-namespace
   out: default-type 
   out: posix 
   check-phase1
+  check-core-opcodes
+  check-float-opcodes
   out: DLSYM 
+;e 
+
+[ELSE]
+
+e: test-esp32-forth-namespace
+  internals voclist
+  out: ansi 
+  out: camera-server 
+  out: camera 
+  out: telnetd 
+  out: timers 
+  out: registers 
+  out: web-interface 
+  out: httpd 
+  out: oled 
+  out: bluetooth 
+  out: rtos 
+  out: rmt 
+  out: interrupts 
+  out: sockets 
+  out: Serial 
+  out: ledc 
+  out: SPIFFS 
+  out: spi_flash 
+  out: SD_MMC 
+  out: SD 
+  out: WiFi 
+  out: WebServer 
+  out: Wire 
+  out: editor 
+  out: streams 
+  out: tasks 
+  out: internals 
+  out: FORTH 
+;e
+
+e: check-esp32-basics
+  out: LED 
+  out: OUTPUT 
+  out: INPUT 
+  out: HIGH 
+  out: LOW 
+  out: page 
+  out: tone 
+  out: freq 
+  out: duty 
+  out: adc 
+  out: pin 
+;e
+
+e: check-esp32-basics2
+  out: esp_partition_t_size 
+  out: OledBegin 
+  out: OledAddr 
+  out: timer_isr_register 
+  out: setsockopt 
+  out: MDNS.begin 
+  out: dacWrite 
+  out: NON-BLOCK 
+  out: FILE-SIZE 
+  out: RESIZE-FILE 
+  out: REPOSITION-FILE 
+  out: FILE-POSITION 
+  out: READ-FILE 
+  out: WRITE-FILE 
+  out: DELETE-FILE 
+  out: CREATE-FILE 
+  out: OPEN-FILE 
+  out: FLUSH-FILE 
+  out: CLOSE-FILE 
+  out: BIN 
+  out: W/O 
+  out: R/W 
+  out: R/O 
+  out: TERMINATE 
+  out: MS-TICKS 
+  out: pulseIn 
+  out: analogRead 
+  out: digitalRead 
+  out: digitalWrite 
+  out: pinMode 
+;e
+
+e: test-esp32-forth-namespace
+  ' forth list-from
+  out: FORTH 
+  out: camera-server 
+  out: camera 
+  out: telnetd 
+  out: bterm 
+  out: timers 
+  out: registers 
+  out: webui 
+  out: login 
+  out: web-interface 
+  out: httpd 
+  out: oled 
+  out: bluetooth 
+  out: rtos 
+  out: rmt 
+  out: interrupts 
+  out: sockets 
+  out: Serial 
+  out: ledc 
+  out: SPIFFS 
+  out: spi_flash 
+  out: SD_MMC 
+  out: SD 
+  out: WiFi 
+  out: WebServer 
+  out: Wire 
+  out: ok 
+  check-esp32-basics
+  out: default-key? 
+  out: default-key 
+  out: default-type 
+  check-phase2
+  check-allocation
+  check-phase1
+  check-core-opcodes
+  check-esp32-basics2
+  check-float-opcodes
 ;e 
 
 [THEN] [THEN] 

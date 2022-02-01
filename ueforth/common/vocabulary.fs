@@ -48,7 +48,7 @@ variable scope   scope context cell - !
 transfer{
   xt-find& xt-hide xt-transfer
   voc-stack-end last-vocabulary
-  branch 0branch donext dolit
+  yield branch 0branch donext dolit
   'context 'notfound notfound
   immediate? input-buffer ?echo ?arrow. arrow
   evaluate1 evaluate-buffer
