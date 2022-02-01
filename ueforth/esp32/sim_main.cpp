@@ -17,43 +17,74 @@
 #include "common/opcodes.h"
 #include "common/floats.h"
 #include "common/calling.h"
-#include <time.h>
-#include <unistd.h>
+
+static cell_t *simulated(cell_t *sp, const char *op);
 
 #define PLATFORM_OPCODE_LIST \
   FLOATING_POINT_LIST \
-  REQUIRED_MEMORY_SUPPORT \
-  REQUIRED_SYSTEM_SUPPORT \
-  REQUIRED_SERIAL_SUPPORT \
-  PLATFORM_MOCK_OPCODE_LIST
-
-#define REQUIRED_MEMORY_SUPPORT \
-  Y(MALLOC, SET malloc(n0)) \
-  Y(SYSFREE, free(a0); DROP) \
-  Y(REALLOC, SET realloc(a1, n0); NIP) \
-  Y(heap_caps_malloc, SET malloc(n1); NIP) \
-  Y(heap_caps_free, free(a0); DROP) \
-  Y(heap_caps_realloc, \
-      tos = (cell_t) realloc(a2, n1); NIPn(2))
-
-#define REQUIRED_SYSTEM_SUPPORT \
-  X("MS-TICKS", MS_TICKS, PUSH time(0) * 1000) \
-  X("RAW-YIELD", RAW_YIELD, ) \
-  Y(TERMINATE, exit(n0))
-
-#define REQUIRED_SERIAL_SUPPORT \
-  X("Serial.begin", SERIAL_BEGIN, DROP) \
-  X("Serial.end", SERIAL_END, ) \
-  X("Serial.available", SERIAL_AVAILABLE, PUSH -1) \
-  X("Serial.readBytes", SERIAL_READ_BYTES, n0 = read(0, b1, n0); NIP) \
-  X("Serial.write", SERIAL_WRITE, n0 = write(1, b1, n0); NIP) \
-  X("Serial.flush", SERIAL_FLUSH, )
+  PLATFORM_SIMULATED_OPCODE_LIST
 
 #include "gen/esp32_sim_opcodes.h"
+
+#define X(str, name, code) static const char *STR_ ## name = str;
+PLATFORM_SIMULATED_OPCODE_LIST
+#undef X
+
 #include "common/core.h"
 #include "common/interp.h"
 #include "gen/esp32_boot.h"
 #include "esp32/main.cpp"
+#include <time.h>
+#include <unistd.h>
+#include <stdio.h>
+
+static cell_t *simulated(cell_t *sp, const char *op) {
+  if (op == STR_MALLOC) {
+    *sp = (cell_t) malloc(*sp);
+    return sp;
+  } else if (op == STR_SYSFREE) {
+    free((void*) *sp--);
+    return sp;
+  } else if (op == STR_SERIAL_BEGIN) {
+    --sp;
+    return sp;
+  } else if (op == STR_SERIAL_READ_BYTES) {
+    sp[-1] = read(0, (void *) sp[-1], sp[0]); --sp;
+    return sp;
+  } else if (op == STR_SERIAL_WRITE) {
+    sp[-1] = write(1, (void *) sp[-1], sp[0]); --sp;
+    return sp;
+  } else if (op == STR_MS_TICKS) {
+    struct timespec tm;
+    clock_gettime(CLOCK_MONOTONIC, &tm);
+    *++sp = tm.tv_sec * 1000 + tm.tv_nsec / 1000000;
+    return sp;
+  } else if (op == STR_RAW_YIELD) {
+    return sp;
+  } else if (op == STR_SPIFFS_BEGIN) {
+    sp -= 2; *sp = 0;
+    return sp;
+  } else if (op == STR_pinMode) {
+    sp -= 2;
+    return sp;
+  } else if (op == STR_digitalWrite) {
+    sp -= 2;
+    return sp;
+  } else if (op == STR_gpio_install_isr_service) {
+    --sp;
+    *sp = 0;
+    return sp;
+  } else if (op == STR_SERIAL_AVAILABLE) {
+    *++sp = 1;
+    return sp;
+  } else if (op == STR_TERMINATE) {
+    exit(*sp);
+    return sp;
+  } else {
+    fprintf(stderr, "MISSING SIM OPCODE: %s\n", op);
+    return sp;
+  }
+}
 
 int main(int argc, char *argv[]) {
   setup();

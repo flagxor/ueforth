@@ -329,7 +329,7 @@ $(ESP32_SIM)/Esp32forth-sim: \
     common/interp.h \
     $(GEN)/esp32_boot.h \
     $(GEN)/esp32_sim_opcodes.h | $(ESP32_SIM)
-	$(CXX) $(CFLAGS) -g $< -o $@
+	$(CXX) $(CFLAGS) $< -o $@
 	strip $(STRIP_ARGS) $@
 
 # ---- ESP32 ----

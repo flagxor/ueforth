@@ -17,19 +17,18 @@
 #include <stdio.h>
 
 #define SIM_PRINT_ONLY
+#define ENABLE_OLED_SUPPORT
 #include "esp32/options.h"
 #define FLOATING_POINT_LIST
 #define USER_WORDS
-#define REQUIRED_MEMORY_SUPPORT
-#define REQUIRED_SYSTEM_SUPPORT
-#define REQUIRED_SERIAL_SUPPORT
 #include "builtins.h"
 
 #define Y(name, code) X(#name, name, code)
 
 int main() {
-  printf("#define PLATFORM_MOCK_OPCODE_LIST \\\n");
-#define X(str, name, code) printf("  X(\"%s\", %s, ) \\\n", str, #name);
+  printf("#define PLATFORM_SIMULATED_OPCODE_LIST \\\n");
+#define X(str, name, code) \
+  printf("  X(\"%s\", %s, DUP; sp = simulated(sp, STR_%s); DROP) \\\n", str, #name, #name);
   PLATFORM_OPCODE_LIST
 #undef X
   printf("\n");

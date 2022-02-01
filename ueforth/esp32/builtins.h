@@ -62,8 +62,6 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   OPTIONAL_SPI_FLASH_SUPPORT \
   USER_WORDS
 
-#ifndef SIM_PRINT_ONLY
-
 #define REQUIRED_MEMORY_SUPPORT \
   Y(MALLOC, SET malloc(n0)) \
   Y(SYSFREE, free(a0); DROP) \
@@ -85,8 +83,6 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   X("Serial.readBytes", SERIAL_READ_BYTES, n0 = Serial.readBytes(b1, n0); NIP) \
   X("Serial.write", SERIAL_WRITE, n0 = Serial.write(b1, n0); NIP) \
   X("Serial.flush", SERIAL_FLUSH, Serial.flush())
-
-#endif
 
 #define REQUIRED_ARDUINO_GPIO_SUPPORT \
   Y(pinMode, pinMode(n1, n0); DROPn(2)) \
