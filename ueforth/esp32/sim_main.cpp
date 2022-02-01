@@ -23,8 +23,8 @@
 static cell_t *simulated(cell_t *sp, const char *op);
 
 #define PLATFORM_OPCODE_LIST \
-  FLOATING_POINT_LIST \
-  PLATFORM_SIMULATED_OPCODE_LIST
+  PLATFORM_SIMULATED_OPCODE_LIST \
+  FLOATING_POINT_LIST
 
 #include "gen/esp32_sim_opcodes.h"
 

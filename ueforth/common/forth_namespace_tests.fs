@@ -390,6 +390,8 @@ e: check-phase1
   check-vocabulary
   check-[]conds
   check-boot
+  check-core-opcodes
+  check-float-opcodes
 ;e
 
 e: check-desktop
@@ -436,8 +438,6 @@ e: test-windows-forth-namespace
   out: default-type 
   out: windows 
   check-phase1
-  check-core-opcodes
-  check-float-opcodes
   out: LOADLIBRARYA 
   out: GETPROCADDRESS 
 ;e
@@ -482,8 +482,6 @@ e: test-posix-forth-namespace
   out: default-type 
   out: posix 
   check-phase1
-  check-core-opcodes
-  check-float-opcodes
   out: DLSYM 
 ;e 
 
@@ -604,9 +602,7 @@ e: test-esp32-forth-namespace
   check-phase2
   check-allocation
   check-phase1
-  check-core-opcodes
   check-esp32-basics2
-  check-float-opcodes
 ;e 
 
 [THEN] [THEN] 

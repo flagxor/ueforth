@@ -25,8 +25,8 @@
 
 #define PLATFORM_OPCODE_LIST \
   Y(DLSYM, tos = (cell_t) dlsym(a1, c0); --sp) \
-  FLOATING_POINT_LIST \
   CALLING_OPCODE_LIST \
+  FLOATING_POINT_LIST
 
 #include "common/core.h"
 #include "common/interp.h"

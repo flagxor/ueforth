@@ -40,8 +40,8 @@
       tos = (cell_t) GetProcAddress((HMODULE) *sp, (LPCSTR) tos); --sp) \
   Y(LOADLIBRARYA, \
       tos = (cell_t) LoadLibraryA((LPCSTR) tos)) \
-  FLOATING_POINT_LIST \
   CALLING_OPCODE_LIST \
+  FLOATING_POINT_LIST
 
 #include "common/core.h"
 #include "windows/interp.h"

@@ -37,7 +37,7 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
 #endif
 
 #define PLATFORM_OPCODE_LIST \
-  FLOATING_POINT_LIST \
+  USER_WORDS \
   REQUIRED_MEMORY_SUPPORT \
   REQUIRED_SERIAL_SUPPORT \
   REQUIRED_ARDUINO_GPIO_SUPPORT \
@@ -60,7 +60,7 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   OPTIONAL_RMT_SUPPORT \
   OPTIONAL_OLED_SUPPORT \
   OPTIONAL_SPI_FLASH_SUPPORT \
-  USER_WORDS
+  FLOATING_POINT_LIST
 
 #define REQUIRED_MEMORY_SUPPORT \
   Y(MALLOC, SET malloc(n0)) \
