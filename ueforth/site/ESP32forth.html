@@ -617,7 +617,8 @@ pinchange ( xt pin -- ) Call xt when pin changes.
 ' test 17 pinchange
 </pre>
 
-<p>Low Level words:</p>
+<h5 id="interrupts">Interrupts</h5>
+These words are inside the <code>interrupts</code> vocabulary.
 <pre>
 ESP_INTR_FLAG_DEFAULT -- Default handler allows per pin routing
 
@@ -668,7 +669,12 @@ gpio_get_drive_capability ( pin cap* -- 0/err )
 
 esp_intr_alloc ( source flags xt args handle* -- 0/err )
 esp_intr_free ( handle -- 0/err )
+</pre>
 
+<h5 id="timers">Timers</h5>
+These words are inside the <code>timers</code> vocabulary.
+
+<pre>
 timer_isr_register ( group timer xt arg ret -- 0/err )
 </pre>
 
