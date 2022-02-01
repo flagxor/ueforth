@@ -272,21 +272,23 @@ e: check-float-opcodes
 ;e
 
 e: check-files
-  out: file-size 
-  out: resize-file 
-  out: reposition-file 
-  out: file-position 
-  out: write-file 
-  out: read-file 
-  out: rename-file 
-  out: delete-file 
-  out: flush-file 
-  out: close-file 
-  out: create-file 
-  out: open-file 
-  out: r/w 
-  out: w/o 
-  out: r/o 
+  out: NON-BLOCK 
+  out: FILE-SIZE 
+  out: RESIZE-FILE 
+  out: REPOSITION-FILE 
+  out: FILE-POSITION 
+  out: READ-FILE 
+  out: WRITE-FILE 
+  out: RENAME-FILE 
+  out: DELETE-FILE 
+  out: CREATE-FILE 
+  out: OPEN-FILE 
+  out: FLUSH-FILE 
+  out: CLOSE-FILE 
+  out: BIN 
+  out: R/W 
+  out: W/O 
+  out: R/O 
 ;e
 
 e: check-blocks
@@ -476,7 +478,6 @@ e: test-posix-forth-namespace
   out: #! 
   out: ms-ticks 
   out: ms 
-  out: non-block 
   check-files
   out: default-key 
   out: default-type 
@@ -541,22 +542,7 @@ e: check-esp32-basics2
   out: setsockopt 
   out: MDNS.begin 
   out: dacWrite 
-  out: NON-BLOCK 
-  out: FILE-SIZE 
-  out: RESIZE-FILE 
-  out: REPOSITION-FILE 
-  out: FILE-POSITION 
-  out: READ-FILE 
-  out: WRITE-FILE 
-  out: DELETE-FILE 
-  out: CREATE-FILE 
-  out: OPEN-FILE 
-  out: FLUSH-FILE 
-  out: CLOSE-FILE 
-  out: BIN 
-  out: W/O 
-  out: R/W 
-  out: R/O 
+  check-files
   out: TERMINATE 
   out: MS-TICKS 
   out: pulseIn 

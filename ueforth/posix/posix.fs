@@ -156,29 +156,29 @@ z" fcntl" 3 sysfunc fcntl
 forth definitions posix
 
 ( Generic Files )
-O_RDONLY constant r/o
-O_WRONLY constant w/o
-O_RDWR constant r/w
+O_RDONLY constant R/O
+O_WRONLY constant W/O
+O_RDWR constant R/W
+: BIN ( fh -- fh ) ;
 
-: open-file ( a n fam -- fh ior ) >r s>z r> 0777 open sign-extend d0<ior ;
-: create-file ( a n fam -- fh ior )
+: CLOSE-FILE ( fh -- ior ) close sign-extend ;
+: FLUSH-FILE ( fh -- ior ) fsync sign-extend ;
+: OPEN-FILE ( a n fam -- fh ior ) >r s>z r> 0777 open sign-extend d0<ior ;
+: CREATE-FILE ( a n fam -- fh ior )
    >r s>z r> O_CREAT or 0777 open sign-extend d0<ior ;
-: close-file ( fh -- ior ) close sign-extend ;
-: flush-file ( fh -- ior ) fsync sign-extend ;
-: delete-file ( a n -- ior ) s>z unlink sign-extend ;
-: rename-file ( a n a n -- ior ) s>z -rot s>z swap rename sign-extend ;
-: read-file ( a n fh -- n ior ) -rot read d0<ior ;
-: write-file ( a n fh -- ior ) -rot dup >r write r> = 0= ;
-: file-position ( fh -- n ior ) 0 SEEK_CUR lseek d0<ior ;
-: reposition-file ( n fh -- ior ) swap SEEK_SET lseek 0< ;
-: resize-file ( n fh -- ior ) swap ftruncate 0< ;
-: file-size ( fh -- n ior )
+: DELETE-FILE ( a n -- ior ) s>z unlink sign-extend ;
+: RENAME-FILE ( a n a n -- ior ) s>z -rot s>z swap rename sign-extend ;
+: WRITE-FILE ( a n fh -- ior ) -rot dup >r write r> = 0= ;
+: READ-FILE ( a n fh -- n ior ) -rot read d0<ior ;
+: FILE-POSITION ( fh -- n ior ) 0 SEEK_CUR lseek d0<ior ;
+: REPOSITION-FILE ( n fh -- ior ) swap SEEK_SET lseek 0< ;
+: RESIZE-FILE ( n fh -- ior ) swap ftruncate 0< ;
+: FILE-SIZE ( fh -- n ior )
    dup 0 SEEK_CUR lseek >r
    dup 0 SEEK_END lseek r> swap >r
          SEEK_SET lseek drop r> d0<ior ;
-
 ( Non-standard )
-: non-block ( fh -- ior ) F_SETFL FNDELAY fcntl ;
+: NON-BLOCK ( fh -- ior ) F_SETFL FNDELAY fcntl ;
 
 ( Other Utils )
 : ms ( n -- ) 1000 * usleep drop ;

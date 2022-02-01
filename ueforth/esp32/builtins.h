@@ -93,8 +93,8 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
 
 #define REQUIRED_FILES_SUPPORT \
   X("R/O", R_O, PUSH O_RDONLY) \
-  X("R/W", R_W, PUSH O_RDWR) \
   X("W/O", W_O, PUSH O_WRONLY) \
+  X("R/W", R_W, PUSH O_RDWR) \
   Y(BIN, ) \
   X("CLOSE-FILE", CLOSE_FILE, tos = close(tos); tos = tos ? errno : 0) \
   X("FLUSH-FILE", FLUSH_FILE, fsync(tos); /* fsync has no impl and returns ENOSYS :-( */ tos = 0) \
@@ -107,6 +107,7 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   X("DELETE-FILE", DELETE_FILE, cell_t len = n0; DROP; \
     memcpy(filename, a0, len); filename[len] = 0; \
     n0 = unlink(filename); n0 = n0 ? errno : 0) \
+  X("RENAME-FILE", RENAME_FILE, NIPn(3); /* unimplemented */ n0 = 1) \
   X("WRITE-FILE", WRITE_FILE, cell_t fd = n0; DROP; cell_t len = n0; DROP; \
     n0 = write(fd, a0, len); n0 = n0 != len ? errno : 0) \
   X("READ-FILE", READ_FILE, cell_t fd = n0; DROP; cell_t len = n0; DROP; \
