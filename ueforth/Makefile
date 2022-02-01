@@ -71,11 +71,11 @@ WIN_LFLAGS64 = /LIBPATH:"c:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib
                /LIBPATH:"c:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.28.29333/lib/x64" \
                /LIBPATH:"c:/Program Files (x86)/Windows Kits/10/Lib/10.0.19041.0/ucrt/x64" \
 
-TARGETS = $(WEB)/terminal.html \
-          $(WEB)/ueforth.js \
-          $(POSIX)/ueforth \
-          $(ESP32)/ESP32forth/ESP32forth.ino \
-          $(ESP32_SIM)/Esp32forth-sim
+TARGETS = posix_target \
+          web_target \
+          esp32_target \
+          esp32_sim_target
+TESTS = posix_tests web_tests esp32_sim_tests
 
 LSQ = ls 2>/dev/null
 
@@ -89,14 +89,12 @@ LINK64 = "$(shell $(LSQ) ${MSVS}/*/*/VC/Tools/MSVC/*/bin/Hostx86/x64/link.exe | 
 RC32 = "$(shell $(LSQ) ${MSKITS}/*/bin/*/x86/rc.exe | head -n 1)"
 RC64 = "$(shell $(LSQ) ${MSKITS}/*/bin/*/x64/rc.exe | head -n 1)"
 
-UNIT_TESTS = unit_tests_posix unit_tests_esp32_sim
-
 # Selectively enable windows if tools available
 DEPLOYABLE := 1
 ifneq ("", $(CL32))
   ifneq ("", $(RC32))
-    TARGETS += $(WINDOWS)/uEf32.exe
-    UNIT_TESTS += unit_tests_win32
+    TARGETS += win32_target
+    TESTS += win32_tests
   else
     $(warning "Missing Visual Studio rc.exe skipping 32-bit Windows.")
     DEPLOYABLE := 0
@@ -107,8 +105,8 @@ else
 endif
 ifneq ("", $(CL64))
   ifneq ("", $(RC64))
-    TARGETS += $(WINDOWS)/uEf64.exe
-    UNIT_TESTS += unit_tests_win64
+    TARGETS += win64_target
+    TESTS += win64_tests
   else
     $(warning "Missing Visual Studio rc.exe skipping 64-bit Windows.")
     DEPLOYABLE := 0
@@ -126,16 +124,25 @@ else
   $(warning "Missing some platforms skipping deployment build.")
 endif
 
-all: $(TARGETS) tests $(DEPLOY_TARGETS)
+all: targets tests $(DEPLOY_TARGETS)
+fast: posix esp32_sim
+
+targets: $(TARGETS)
+tests: $(TESTS)
 
 clean:
 	rm -rf $(OUT)
 
 # ---- TESTS ----
 
-tests: unit_tests see_all_test save_restore_test
+posix_tests: unit_tests_posix see_all_test_posix save_restore_test
+win32_tests: unit_tests_win32
+win64_tests: unit_tests_win64
+web_tests:
+esp32_tests:
+esp32_sim_tests: unit_tests_esp32_sim see_all_test_esp32_sim
 
-unit_tests: $(UNIT_TESTS)
+# ---- UNIT TESTS ----
 
 unit_tests_posix: $(POSIX)/ueforth common/all_tests.fs
 	$^
@@ -152,7 +159,12 @@ unit_tests_win32: $(WINDOWS)/uEf32.exe common/all_tests.fs
 unit_tests_win64: $(WINDOWS)/uEf64.exe common/all_tests.fs
 	wine $^
 
-see_all_test: $(POSIX)/ueforth
+# ---- OTHER TESTS ----
+
+see_all_test_posix: $(POSIX)/ueforth
+	echo internals see-all bye | $< >/dev/null
+
+see_all_test_esp32_sim: $(ESP32_SIM)/Esp32forth-sim
 	echo internals see-all bye | $< >/dev/null
 
 save_restore_test: $(POSIX)/ueforth
@@ -244,6 +256,9 @@ $(RES)/ueforth_res64.res: windows/ueforth.rc $(RES)/eforth.ico
 
 # ---- WEB ----
 
+web: web_target web_tests
+web_target: $(WEB)/terminal.html $(WEB)/ueforth.js
+
 $(WEB):
 	mkdir -p $(WEB)
 
@@ -259,6 +274,9 @@ $(WEB)/ueforth.js: \
 	$^ >$@
 
 # ---- POSIX ----
+
+posix: posix_target posix_tests
+posix_target: $(POSIX)/ueforth
 
 $(POSIX):
 	mkdir -p $@
@@ -276,6 +294,11 @@ $(POSIX)/ueforth: \
 	strip $(STRIP_ARGS) $@
 
 # ---- WINDOWS ----
+
+win32: win32_target win32_tests
+win64: win64_target win64_tests
+win32_target: $(WINDOWS)/uEf32.exe
+win64_target: $(WINDOWS)/uEf64.exe
 
 $(WINDOWS):
 	mkdir -p $@
@@ -314,6 +337,9 @@ $(WINDOWS)/uEf64.exe: \
 
 # ---- ESP32-SIM ----
 
+esp32_sim: esp32_sim_target esp32_sim_tests
+esp32_sim_target: $(ESP32_SIM)/Esp32forth-sim
+
 $(ESP32_SIM):
 	mkdir -p $@
 
@@ -339,6 +365,9 @@ $(ESP32_SIM)/Esp32forth-sim: \
 	strip $(STRIP_ARGS) $@
 
 # ---- ESP32 ----
+
+esp32: esp32_target esp32_sim esp32_tests esp32_sim_tests
+esp32_target: $(ESP32)/ESP32forth/ESP32forth.ino
 
 $(ESP32)/ESP32forth:
 	mkdir -p $@
