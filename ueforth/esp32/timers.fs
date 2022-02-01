@@ -13,6 +13,7 @@
 \ limitations under the License.
 
 vocabulary timers   timers definitions   also registers also interrupts
+transfer timer_isr_register 
 
 $3ff5f000 constant TIMG_BASE
 ( group n = 0/1, timer x = 0/1, watchdog m = 0-5 )

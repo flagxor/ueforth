@@ -93,6 +93,7 @@ transfer{
   esp_partition_verify esp_partition_read esp_partition_write
   esp_partition_erase_range esp_partition_mmap
   esp_partition_get_sha256 esp_partition_check_identity
+  esp_partition_t_size
 }transfer
 0 constant SPI_PARTITION_TYPE_APP
 1 constant SPI_PARTITION_TYPE_DATA
@@ -145,7 +146,7 @@ forth definitions
 
 vocabulary sockets   sockets definitions
 transfer{
-  socket bind listen connect sockaccept select poll errno
+  socket bind listen connect sockaccept select poll errno setsockopt
 }transfer
 1 constant SOCK_STREAM
 2 constant AF_INET
@@ -246,7 +247,7 @@ forth definitions
 DEFINED? OledNew [IF]
 vocabulary oled   oled definitions
 transfer{
-  OledNew OledDelete
+  OledNew OledDelete OledBegin OledAddr
   OledHOME OledCLS
   OledTextc OledPrintln OledNumln OledNum
   OledDisplay OledPrint

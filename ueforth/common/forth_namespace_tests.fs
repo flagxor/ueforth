@@ -535,11 +535,6 @@ e: check-esp32-basics
 ;e
 
 e: check-esp32-basics2
-  out: esp_partition_t_size 
-  out: OledBegin 
-  out: OledAddr 
-  out: timer_isr_register 
-  out: setsockopt 
   out: MDNS.begin 
   out: dacWrite 
   check-files
