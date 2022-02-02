@@ -13,7 +13,7 @@
 \ limitations under the License.
 
 also internals
-: list-from ( xt ) begin dup >name-length while dup see. cr >link repeat drop ;
+: list-from ( xt ) begin dup nonvoc? while dup see. cr >link repeat drop ;
 
 e: check-locals
   out: +to 
@@ -463,6 +463,7 @@ e: test-posix-forth-namespace
 e: test-posix-forth-namespace
   ' forth list-from
   out: FORTH 
+  out:  
   out: web-interface 
   out: httpd 
   out: telnetd 
@@ -550,6 +551,8 @@ e: test-esp32-forth-namespace
   out: registers 
   out: webui 
   out: login 
+  out:  
+  out:  
   out: web-interface 
   out: httpd 
   out: oled 

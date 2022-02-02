@@ -26,10 +26,12 @@
 
 internals definitions
 2 constant SMUDGE
+8 constant NONAMED
 : mem= ( a a n -- f)
    for aft 2dup c@ swap c@ <> if 2drop rdrop 0 exit then 1+ swap 1+ then next 2drop -1 ;
 forth definitions also internals
-: :noname ( -- xt ) 0 , current @ @ , SMUDGE , here dup current @ ! ['] = @ , postpone ] ;
+: :noname ( -- xt ) 0 , current @ @ , NONAMED SMUDGE or ,
+                    here dup current @ ! ['] = @ , postpone ] ;
 : str= ( a n a n -- f) >r swap r@ <> if rdrop 2drop 0 exit then r> mem= ;
 : startswith? ( a n a n -- f ) >r swap r@ < if rdrop 2drop 0 exit then r> mem= ;
 : .s   ." <" depth n. ." > " raw.s cr ;
@@ -56,8 +58,10 @@ internals definitions
         dup @ ['] see-loop @ <>
         if ." Unsupported word type: " see. cr exit then
         ['] : see.  dup see.  space see-loop   ['] ; see. cr ;
-: >name-length ( xt -- n ) dup 0= if exit then >name nip ;
-: see-vocabulary ( voc ) @ begin dup >name-length while dup see-xt >link repeat drop cr ;
+: nonvoc? ( xt -- f )
+  dup 0= if exit then dup >name nip swap >flags NONAMED and or ;
+: see-vocabulary ( voc )
+  @ begin dup nonvoc? while dup see-xt >link repeat drop cr ;
 : >vocnext ( xt -- xt ) >body 2 cells + @ ;
 : see-all
   last-vocabulary @ begin dup while
@@ -68,9 +72,22 @@ internals definitions
 : voclist   last-vocabulary @ begin dup while dup see. cr >vocnext repeat drop ;
 : voc. ( voc -- ) 2 cells - see. ;
 : vocs. ( voc -- ) dup voc. @ begin dup while
-    dup >name-length 0= if ." >> " dup 2 cells - voc. then
+    dup nonvoc? 0= if ." >> " dup 2 cells - voc. then
     >link
   repeat drop cr ;
+
+( Words to measure size of things )
+: size-vocabulary ( voc )
+  @ begin dup nonvoc? while
+    dup see. dup dup >link - . >link
+  repeat drop cr ;
+: size-all
+  last-vocabulary @ begin dup while
+    ." VOCABULARY " dup see. cr ." ------------------------" cr
+    dup >body size-vocabulary
+    >vocnext
+  repeat drop cr ;
+
 forth definitions also internals
 : see   ' see-xt ;
 : order   context begin dup @ while dup @ vocs. cell+ repeat drop ;
@@ -82,7 +99,7 @@ internals definitions
 : onlines ( n xt -- n xt )
    swap dup line-width > if drop 0 cr then over >name nip + 1+ swap ;
 forth definitions also internals
-: vlist   0 context @ @ begin dup >name-length while onlines dup see. >link repeat 2drop cr ;
+: vlist   0 context @ @ begin dup nonvoc? while onlines dup see. >link repeat 2drop cr ;
 : words   0 context @ @ begin dup while onlines dup see. >link repeat 2drop cr ;
 only forth definitions
 
