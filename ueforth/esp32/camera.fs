@@ -12,10 +12,21 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-( Handling for ESP32-CAM )
+( Lazy loaded camera gandling for ESP32-CAM )
 DEFINED? esp_camera_init [IF]
 
+internals definitions
+transfer{
+  esp_camera_init esp_camera_deinit
+  esp_camera_fb_get esp_camera_fb_return
+  esp_camera_sensor_get
+}transfer
+forth definitions
+
+: camera r|
+
 vocabulary camera   camera definitions
+  also internals
 
 transfer{
   esp_camera_init esp_camera_deinit
@@ -53,5 +64,7 @@ constant camera-fb-count
 constant camera-format
 
 forth definitions
+camera
+| evaluate ;
 
 [THEN]

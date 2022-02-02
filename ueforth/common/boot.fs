@@ -211,6 +211,7 @@ variable hld
 : z"   postpone s" state @ if postpone drop else drop then ; immediate
 : r"   parse-quote state @ if swap aliteral aliteral then ; immediate
 : r|   [char] | parse state @ if swap aliteral aliteral then ; immediate
+: r~   [char] ~ parse state @ if swap aliteral aliteral then ; immediate
 : s>z ( a n -- z ) here >r zplace r> ;
 : z>s ( z -- a n ) 0 over begin dup c@ while 1+ swap 1+ swap repeat drop ;
 

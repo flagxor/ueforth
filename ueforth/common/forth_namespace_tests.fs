@@ -62,6 +62,7 @@ e: check-boot
   out: cmove 
   out: z>s 
   out: s>z 
+  out: r~ 
   out: r| 
   out: r" 
   out: z" 
@@ -490,8 +491,6 @@ e: test-posix-forth-namespace
 e: test-esp32-forth-namespace
   internals voclist
   out: ansi 
-  out: camera-server 
-  out: camera 
   out: registers 
   out: web-interface 
   out: httpd 

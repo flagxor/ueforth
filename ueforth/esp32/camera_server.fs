@@ -12,11 +12,14 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-( Camera Server )
+( Lazy loaded Camera Server )
 DEFINED? camera [IF]
 
+: camera-server r~
+
+camera
 vocabulary camera-server   camera-server definitions
-also camera also httpd
+  also camera also httpd
 
 r|
 <!DOCTYPE html>
@@ -82,5 +85,7 @@ Frame();
 ;
 
 only forth definitions
+camera-server
+~ evaluate ;
 
 [THEN]
