@@ -32,5 +32,5 @@ also forth definitions
 only forth definitions
 web-interface
 | evaluate ; is web-interface
-: login web-interface r| login | evaluate ;
-: webui web-interface r| webui | evaluate ;
+: login web-interface forth r| login | evaluate ;
+: webui web-interface forth r| webui | evaluate ;
