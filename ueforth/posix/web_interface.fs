@@ -12,8 +12,11 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-( Server Terminal )
+( Lazy loaded Server Terminal )
 
+defer web-interface
+:noname r~
+httpd
 also streams also httpd
 vocabulary web-interface   also web-interface definitions
 
@@ -149,3 +152,6 @@ create out-string out-size 1+ allot align
 ;
 
 only forth definitions
+web-interface
+~ evaluate ; is web-interface
+

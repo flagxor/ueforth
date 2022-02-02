@@ -12,7 +12,10 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-( HTTP Daemon )
+( Lazy loaded HTTP Daemon )
+
+: httpd r|
+
 vocabulary httpd   httpd definitions also sockets
 
 1 constant max-connections
@@ -87,3 +90,5 @@ variable goal   variable goal#
 : notfound-response ( mime$ -- ) s" text/plain" s" Not Found" 404 response ;
 
 only forth definitions
+httpd
+| evaluate ;

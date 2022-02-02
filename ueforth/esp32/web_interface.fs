@@ -12,8 +12,10 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-( Server Terminal )
+( Lazy loaded Server Terminal )
 
+:noname [ ' web-interface >body @ ] literal execute
+r|
 also streams also WiFi also web-interface definitions
 
 : ip# dup 255 and n. [char] . emit 256 / ;
@@ -28,3 +30,7 @@ also forth definitions
 : webui ( z z -- ) login 80 server ;
 
 only forth definitions
+web-interface
+| evaluate ; is web-interface
+: login web-interface r| login | evaluate ;
+: webui web-interface r| webui | evaluate ;

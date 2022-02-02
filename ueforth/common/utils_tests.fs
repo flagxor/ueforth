@@ -100,3 +100,11 @@ e: test-string-strides
   see test8
   out: : test8  1 0BRANCH s" ------->" type ; 
 ;e
+
+e: test-noname
+  :noname dup * ;
+  2 over execute
+  swap execute 
+  . cr
+  out: 16 
+;e

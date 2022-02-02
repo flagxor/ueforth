@@ -449,8 +449,6 @@ e: test-windows-forth-namespace
 
 e: test-posix-forth-namespace
   internals voclist
-  out: web-interface 
-  out: httpd 
   out: sockets 
   out: ansi 
   out: editor 
@@ -492,8 +490,6 @@ e: test-esp32-forth-namespace
   internals voclist
   out: ansi 
   out: registers 
-  out: web-interface 
-  out: httpd 
   out: oled 
   out: bluetooth 
   out: rtos 
