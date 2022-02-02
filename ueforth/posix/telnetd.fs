@@ -12,7 +12,9 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-( Telnet )
+( Lazy loaded Telnet )
+
+: telnetd r|
 
 vocabulary telnetd   telnetd definitions also sockets
 
@@ -58,3 +60,5 @@ defer broker
   sockfd 1 listen throw   broker ;
 
 only forth definitions
+telnetd
+| evaluate ;

@@ -12,7 +12,16 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-vocabulary timers   timers definitions   also registers also interrupts
+( Lazy loaded timers )
+
+internals definitions
+transfer timer_isr_register
+forth definitions
+
+: timers r|
+
+vocabulary timers   timers definitions
+  also registers also interrupts also internals
 transfer timer_isr_register 
 
 $3ff5f000 constant TIMG_BASE
@@ -74,3 +83,5 @@ $3ff5f000 constant TIMG_BASE
 : rerun ( t -- ) 1 swap alarm-enable! ;
 
 only forth definitions
+timers
+| evaluate ;

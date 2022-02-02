@@ -450,7 +450,6 @@ e: test-posix-forth-namespace
   internals voclist
   out: web-interface 
   out: httpd 
-  out: telnetd 
   out: sockets 
   out: ansi 
   out: editor 
@@ -493,8 +492,6 @@ e: test-esp32-forth-namespace
   out: ansi 
   out: camera-server 
   out: camera 
-  out: telnetd 
-  out: timers 
   out: registers 
   out: web-interface 
   out: httpd 
