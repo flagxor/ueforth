@@ -345,7 +345,7 @@ $(ESP32_SIM):
 
 $(GEN)/print-esp32-builtins: \
     esp32/print-builtins.cpp esp32/builtins.h | $(GEN)
-	$(CXX) $(CFLAGS) $< -o $@
+	$(CXX) $(CFLAGS) -m32 $< -o $@
 
 $(GEN)/esp32_sim_opcodes.h: $(GEN)/print-esp32-builtins | $(GEN)
 	$< >$@
@@ -363,6 +363,9 @@ $(ESP32_SIM)/Esp32forth-sim: \
     $(GEN)/esp32_sim_opcodes.h | $(ESP32_SIM)
 	$(CXX) $(CFLAGS) $< -o $@
 	strip $(STRIP_ARGS) $@
+
+size:
+	echo internals size-all bye | $(ESP32_SIM)/Esp32forth-sim
 
 # ---- ESP32 ----
 

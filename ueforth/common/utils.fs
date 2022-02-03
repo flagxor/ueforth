@@ -79,7 +79,7 @@ internals definitions
 ( Words to measure size of things )
 : size-vocabulary ( voc )
   @ begin dup nonvoc? while
-    dup see. dup >size . cr >link
+    dup >size . dup see. cr >link
   repeat drop cr ;
 : size-all
   last-vocabulary @ begin dup while
