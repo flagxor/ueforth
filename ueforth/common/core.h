@@ -30,7 +30,8 @@
 #endif
 
 static struct {
-  cell_t *heap, **current, ***context, notfound;
+  cell_t *heap, **current, ***context;
+  cell_t *latestxt, notfound;
   cell_t *heap_start;
   cell_t heap_size, stack_cells;
   const char *boot;
@@ -112,7 +113,7 @@ static cell_t find(const char *name, cell_t len) {
     cell_t *pos = **voc;
     cell_t clen = CELL_LEN(len);
     while (pos) {
-      if (!(pos[-1] & SMUDGE) && len == (pos[-1] >> 8) &&
+      if (!(pos[-1] & SMUDGE) && len == ((pos[-1] >> 8) & 0xff) &&
           same(name, (const char *) &pos[-2 - clen], len)) {
         return (cell_t) pos;
       }
@@ -122,14 +123,18 @@ static cell_t find(const char *name, cell_t len) {
   return 0;
 }
 
-static void create(const char *name, cell_t length, cell_t flags, void *op) {
+static void create(const char *name, cell_t nlength, cell_t flags, void *op) {
+  if (g_sys.latestxt) {
+    g_sys.latestxt[-1] |= ((g_sys.heap - &g_sys.latestxt[1]) << 16);
+  }
   g_sys.heap = (cell_t *) CELL_ALIGNED(g_sys.heap);
   char *pos = (char *) g_sys.heap;
-  for (cell_t n = length; n; --n) { *pos++ = *name++; }  // name
-  g_sys.heap += CELL_LEN(length);
+  for (cell_t n = nlength; n; --n) { *pos++ = *name++; }  // name
+  g_sys.heap += CELL_LEN(nlength);
   *g_sys.heap++ = (cell_t) *g_sys.current;  // link
-  *g_sys.heap++ = (length << 8) | flags;  // flags & length
+  *g_sys.heap++ = (nlength << 8) | flags;  // flags & length
   *g_sys.current = g_sys.heap;
+  g_sys.latestxt = g_sys.heap;
   *g_sys.heap++ = (cell_t) op;  // code
 }
 
@@ -218,6 +223,7 @@ static void forth_init(int argc, char *argv[], void *heap,
   // Vocabulary stack
   g_sys.current = (cell_t **) forth_wordlist;
   g_sys.context = (cell_t ***) g_sys.heap;
+  g_sys.latestxt = 0;
   *g_sys.heap++ = (cell_t) forth_wordlist;
   for (int i = 0; i < VOCABULARY_DEPTH; ++i) { *g_sys.heap++ = 0; }
 

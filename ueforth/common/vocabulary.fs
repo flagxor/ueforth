@@ -53,7 +53,7 @@ transfer{
   immediate? input-buffer ?echo ?arrow. arrow
   evaluate1 evaluate-buffer
   'sys 'heap aliteral 'heap-start 'heap-size
-  'stack-cells 'boot 'boot-size
+  'stack-cells 'boot 'boot-size 'latestxt
   'argc 'argv 'runner
   leaving( )leaving leaving leaving,
   (do) (?do) (+loop)

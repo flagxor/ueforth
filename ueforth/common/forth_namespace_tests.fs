@@ -125,7 +125,9 @@ e: check-boot
   out: >name 
   out: >link 
   out: >link& 
-  out: >length 
+  out: >size 
+  out: >params 
+  out: >name-length 
   out: >flags 
   out: >flags& 
   out: abs 
@@ -151,6 +153,7 @@ e: check-boot
   out: [ 
   out: used 
   out: remaining 
+  out: latestxt 
   out: context 
   out: base 
   out: state 

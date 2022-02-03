@@ -66,13 +66,15 @@
 
 ( System Variables )
 : sys: ( a -- a' "name" ) dup constant cell+ ;
-'sys   sys: 'heap         sys: current       sys: 'context       sys: 'notfound
+'sys   sys: 'heap         sys: current       sys: 'context
+       sys: 'latestxt     sys: 'notfound
        sys: 'heap-start   sys: 'heap-size    sys: 'stack-cells
        sys: 'boot         sys: 'boot-size
        sys: 'tib          sys: #tib          sys: >in
        sys: state         sys: base
        sys: 'argc         sys: 'argv         sys: 'runner
 : context ( -- a ) 'context @ cell+ ;
+: latestxt ( -- xt ) 'latestxt @ ;
 : remaining ( -- n ) 'heap-start @ 'heap-size @ + 'heap @ - ;
 : used ( -- n ) 'heap @ sp@ 'stack-cells @ cells + - 28 + ;
 
@@ -109,9 +111,11 @@
 
 ( Dictionary Format )
 : >flags& ( xt -- a ) cell - ; : >flags ( xt -- flags ) >flags& c@ ;
-: >length ( xt -- n ) >flags& @ 8 rshift ;
+: >name-length ( xt -- n ) >flags& 1+ c@ ;
+: >params ( xt -- n ) >flags& 2 + sw@ $ffff and ;
+: >size ( xt -- n ) dup >params cells swap >name-length aligned + 3 cells + ;
 : >link& ( xt -- a ) 2 cells - ;   : >link ( xt -- a ) >link& @ ;
-: >name ( xt -- a n ) dup >length swap >link& over aligned - swap ;
+: >name ( xt -- a n ) dup >name-length swap >link& over aligned - swap ;
 : >body ( xt -- a ) dup @ [ ' >flags @ ] literal = 2 + cells + ;
 
 ( Postpone - done here so we have ['] and IF )
