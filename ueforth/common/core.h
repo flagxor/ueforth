@@ -125,7 +125,9 @@ static cell_t find(const char *name, cell_t len) {
 
 static void create(const char *name, cell_t nlength, cell_t flags, void *op) {
   if (g_sys.latestxt) {
-    g_sys.latestxt[-1] |= ((g_sys.heap - &g_sys.latestxt[1]) << 16);
+    cell_t sz = g_sys.heap - &g_sys.latestxt[1];
+    if (sz < 0 || sz > 0xffff) { sz = 0xffff; }
+    g_sys.latestxt[-1] |= (sz << 16);
   }
   g_sys.heap = (cell_t *) CELL_ALIGNED(g_sys.heap);
   char *pos = (char *) g_sys.heap;
