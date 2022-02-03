@@ -365,7 +365,7 @@ $(ESP32_SIM)/Esp32forth-sim: \
 	strip $(STRIP_ARGS) $@
 
 sizes: $(ESP32_SIM)/Esp32forth-sim
-	echo internals size-all bye | $< | sort -n
+	echo internals size-all bye | $< | tools/memuse.py
 
 # ---- ESP32 ----
 
