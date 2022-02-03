@@ -80,10 +80,9 @@ internals definitions
 : size-vocabulary ( voc )
   @ begin dup nonvoc? while
     dup >size . dup see. cr >link
-  repeat drop cr ;
+  repeat drop ;
 : size-all
   last-vocabulary @ begin dup while
-    ." VOCABULARY " dup see. cr ." ------------------------" cr
     dup >body size-vocabulary
     >vocnext
   repeat drop cr ;
