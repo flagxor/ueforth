@@ -507,7 +507,6 @@ e: test-esp32-forth-namespace
   out: SD_MMC 
   out: SD 
   out: WiFi 
-  out: WebServer 
   out: Wire 
   out: editor 
   out: streams 
@@ -571,7 +570,6 @@ e: test-esp32-forth-namespace
   out: SD_MMC 
   out: SD 
   out: WiFi 
-  out: WebServer 
   out: Wire 
   out: ok 
   check-esp32-basics

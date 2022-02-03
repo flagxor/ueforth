@@ -500,8 +500,9 @@ SPIFFS.totalBytes ( -- n )
 SPIFFS.usedBytes ( -- n )
 </pre>
 
-<h5>WebServer</h5>
+<h5>WebServer (DEPRECATED)</h5>
 These words are inside the <code>WebServer</code> vocabulary.
+<p><b>Removed in 7.0.6.14</b>, use httpd instead.</p>
 <pre>
 WebServer.new ( port -- ws )   Allocate new webserver object
 WebServer.delete ( ws -- )   Delete webserver object
@@ -519,6 +520,45 @@ WebServer.sendHeader ( name-z value-z fist ws -- )
 WebServer.send ( code mimetype data ws -- )
 WebServer.sendContent ( z ws -- )
 WebServer.method ( ws -- n )   GET / POST etc.
+</pre>
+
+<h5>httpd</h5>
+These words are inside the <code>httpd</code> vocabulary.
+<pre>
+server ( port -- ) Run a webserver on a port (in background, returns immediately).
+handleClient ( -- f ) Wait for a client to connect, true if connected.
+path ( -- a n ) Get request path.
+method ( -- a n ) Get request method (GET/POST).
+header ( a n -- a n ) Get header value or empty string.
+body ( -- a n ) Get request body.
+response ( mime mime# result result# status -- ) Respond with a particular mime type result and status.
+ok-response ( mime mime# ) Response with a HTTP 200.
+bad-response ( -- ) Response with HTTP 400 Bad request.
+notfound-response ( -- ) Response with HTTP 404 Not found.
+send ( a n -- ) Send response bytes.
+
+NOTE: You may want to use this feature in tandem with tasks / streams.
+
+Example:
+
+also httpd
+
+: handle-index
+  s" text/html" ok-response r|
+<html>
+  <body>Hi!</body>
+</html>
+| send ;
+
+: handle1
+  ." Got a request for: " path type cr
+  path s" /" str= if handle-index exit then
+  notfound-response
+;
+
+: run  8080 server
+       begin handleClient if handle1 then pause again ;
+run
 </pre>
 
 <h5>Wire</h5>

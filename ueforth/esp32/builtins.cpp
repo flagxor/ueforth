@@ -14,10 +14,6 @@
 
 static char filename[PATH_MAX];
 
-#ifdef ENABLE_WEBSERVER_SUPPORT
-static String string_value;
-#endif
-
 {{core}}
 {{interp}}
 {{boot}}
@@ -52,24 +48,6 @@ static cell_t ResizeFile(cell_t fd, cell_t size) {
   if (t < 0) { return errno; }
   return 0;
 }
-
-#ifdef ENABLE_WEBSERVER_SUPPORT
-static void InvokeWebServerOn(WebServer *ws, const char *url, cell_t xt) {
-  ws->on(url, [xt]() {
-    cell_t code[2];
-    code[0] = xt;
-    code[1] = g_sys.YIELD_XT;
-    cell_t fstack[INTERRUPT_STACK_CELLS];
-    cell_t rstack[INTERRUPT_STACK_CELLS];
-    cell_t stack[INTERRUPT_STACK_CELLS];
-    cell_t *rp = rstack;
-    *++rp = (cell_t) (fstack + 1);
-    *++rp = (cell_t) (stack + 1);
-    *++rp = (cell_t) code;
-    forth_run(rp);
-  });
-}
-#endif
 
 #ifdef ENABLE_INTERRUPTS_SUPPORT
 struct handle_interrupt_args {

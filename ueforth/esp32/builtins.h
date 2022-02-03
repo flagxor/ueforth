@@ -14,10 +14,6 @@
 
 #ifndef SIM_PRINT_ONLY
 
-# ifdef ENABLE_WEBSERVER_SUPPORT
-#  include "WebServer.h"
-# endif
-
 # include <errno.h>
 # include <unistd.h>
 # include <fcntl.h>
@@ -48,7 +44,6 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   OPTIONAL_SPIFFS_SUPPORT \
   OPTIONAL_WIFI_SUPPORT \
   OPTIONAL_MDNS_SUPPORT \
-  OPTIONAL_WEBSERVER_SUPPORT \
   OPTIONAL_SD_SUPPORT \
   OPTIONAL_SD_MMC_SUPPORT \
   OPTIONAL_I2C_SUPPORT \
@@ -511,43 +506,6 @@ static cell_t FromIP(IPAddress ip) {
 # define OPTIONAL_MDNS_SUPPORT \
   /* mDNS */ \
   X("MDNS.begin", MDNS_BEGIN, n0 = MDNS.begin(c0))
-#endif
-
-#ifndef ENABLE_WEBSERVER_SUPPORT
-# define OPTIONAL_WEBSERVER_SUPPORT
-#else
-# ifndef SIM_PRINT_ONLY
-#  include <WebServer.h>
-static void InvokeWebServerOn(WebServer *ws, const char *url, cell_t xt);
-# define ws0 ((WebServer *) a0)
-# endif
-# define OPTIONAL_WEBSERVER_SUPPORT \
-  /* WebServer */ \
-  X("WebServer.new", WEBSERVER_NEW, PUSH new WebServer(tos)) \
-  X("WebServer.delete", WEBSERVER_DELETE, delete ws0; DROP) \
-  X("WebServer.begin", WEBSERVER_BEGIN, ws0->begin(n1); DROPn(2)) \
-  X("WebServer.stop", WEBSERVER_STOP, ws0->stop(); DROP) \
-  X("WebServer.on", WEBSERVER_ON, InvokeWebServerOn(ws0, c2, n1); DROPn(3)) \
-  X("WebServer.hasArg", WEBSERVER_HAS_ARG, n0 = ws0->hasArg(c1); DROP) \
-  X("WebServer.arg", WEBSERVER_ARG, \
-      string_value = ws0->arg(c1); \
-      c1 = &string_value[0]; n0 = string_value.length()) \
-  X("WebServer.argi", WEBSERVER_ARGI, \
-      string_value = ws0->arg(n1); \
-      c1 = &string_value[0]; n0 = string_value.length()) \
-  X("WebServer.argName", WEBSERVER_ARG_NAME, \
-      string_value = ws0->argName(n1); \
-      c1 = &string_value[0]; n0 = string_value.length()) \
-  X("WebServer.args", WEBSERVER_ARGS, n0 = ws0->args()) \
-  X("WebServer.setContentLength", WEBSERVER_SET_CONTENT_LENGTH, \
-      ws0->setContentLength(n1); DROPn(2)) \
-  X("WebServer.sendHeader", WEBSERVER_SEND_HEADER, \
-      ws0->sendHeader(c3, c2, n1); DROPn(4)) \
-  X("WebServer.send", WEBSERVER_SEND, ws0->send(n3, c2, c1); DROPn(4)) \
-  X("WebServer.sendContent", WEBSERVER_SEND_CONTENT, \
-      ws0->sendContent(c1); DROPn(2)) \
-  X("WebServer.method", WEBSERVER_METHOD, n0 = ws0->method()) \
-  X("WebServer.handleClient", WEBSERVER_HANDLE_CLIENT, ws0->handleClient(); DROP)
 #endif
 
 #ifndef ENABLE_OLED_SUPPORT
