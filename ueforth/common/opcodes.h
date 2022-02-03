@@ -29,7 +29,7 @@ typedef uintptr_t ucell_t;
 #define PUSH DUP; tos = (cell_t)
 #define COMMA(n) *g_sys.heap++ = (n)
 #define DOIMMEDIATE() (*g_sys.current)[-1] |= IMMEDIATE
-#define UNSMUDGE() (*g_sys.current)[-1] &= ~SMUDGE
+#define UNSMUDGE() (*g_sys.current)[-1] &= ~SMUDGE; finish()
 #define DOES(ip) **g_sys.current = (cell_t) ADDR_DODOES; (*g_sys.current)[1] = (cell_t) ip
 
 #define PARK   DUP; *++rp = (cell_t) fp; *++rp = (cell_t) sp; *++rp = (cell_t) ip
@@ -105,4 +105,4 @@ typedef int64_t dcell_t;
                sp = evaluate1(sp, &tfp); \
                fp = tfp; w = *sp--; DROP; if (w) JMPW) \
   Y(EXIT, ip = (cell_t *) *rp--) \
-  X(";", SEMICOLON, UNSMUDGE(); COMMA(g_sys.DOEXIT_XT); g_sys.state = 0)
+  X(";", SEMICOLON, COMMA(g_sys.DOEXIT_XT); UNSMUDGE(); g_sys.state = 0)

@@ -52,8 +52,8 @@ internals definitions
    over ['] DONEXT = or
        if see. cell+ exit then
    see. ;
-: exit= ( xt -- ) ['] exit = ;
-: see-loop   >body begin dup @ exit= 0= while see-one repeat drop ;
+: see-loop   dup >body swap >params 1- cells over +
+             begin 2dup < while swap see-one swap repeat 2drop ;
 : see-xt ( xt -- )
         dup @ ['] see-loop @ <>
         if ." Unsupported word type: " see. cr exit then
