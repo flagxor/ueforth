@@ -382,6 +382,7 @@ ESP32_PARTS = common/replace.js \
               common/calling.h \
               common/core.h \
               common/interp.h \
+              esp32/config.h \
               esp32/options.h \
               esp32/builtins.h \
               esp32/builtins.cpp \
