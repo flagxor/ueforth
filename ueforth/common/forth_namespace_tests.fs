@@ -170,6 +170,11 @@ e: check-boot
   out: aligned 
   out: allot 
   out: here 
+  out: \ 
+  out: ( 
+;e
+
+e: check-extra-opcodes
   out: 2! 
   out: 2@ 
   out: 2dup 
@@ -205,8 +210,6 @@ e: check-boot
   out: */ 
   out: rdrop 
   out: nip 
-  out: \ 
-  out: ( 
 ;e
 
 e: check-core-opcodes
@@ -397,6 +400,7 @@ e: check-phase1
   check-[]conds
   check-boot
   check-core-opcodes
+  check-extra-opcodes
   check-float-opcodes
 ;e
 

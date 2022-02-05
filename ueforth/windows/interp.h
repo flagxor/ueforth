@@ -24,6 +24,7 @@ enum {
   OP_DODOES,
 #define X(name, op, code) OP_ ## op,
   PLATFORM_OPCODE_LIST
+  EXTRA_OPCODE_LIST
   OPCODE_LIST
 #undef X
 };
@@ -33,6 +34,7 @@ static cell_t *forth_run(cell_t *init_rp) {
 #define X(name, op, code) \
     create(name, sizeof(name) - 1, name[0] == ';', (void *) OP_ ## op);
     PLATFORM_OPCODE_LIST
+    EXTRA_OPCODE_LIST
     OPCODE_LIST
 #undef X
     return 0;
@@ -47,6 +49,7 @@ work:
     switch (*(cell_t *) w & 0xff) {
 #define X(name, op, code) case OP_ ## op: { code; } NEXT;
   PLATFORM_OPCODE_LIST
+  EXTRA_OPCODE_LIST
   OPCODE_LIST
 #undef X
       case OP_DOCOLON: ++rp; *rp = (cell_t) ip; ip = (cell_t *) (w + sizeof(cell_t)); NEXT;

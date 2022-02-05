@@ -284,6 +284,7 @@ $(POSIX):
 $(POSIX)/ueforth: \
     posix/main.c \
     common/opcodes.h \
+    common/extra_opcodes.h \
     common/calls.h \
     common/calling.h \
     common/floats.h \
@@ -306,6 +307,7 @@ $(WINDOWS):
 $(WINDOWS)/uEf32.obj: \
     windows/main.c \
     common/opcodes.h \
+    common/extra_opcodes.h \
     common/calls.h \
     common/calling.h \
     common/floats.h \
@@ -322,6 +324,7 @@ $(WINDOWS)/uEf32.exe: \
 $(WINDOWS)/uEf64.obj: \
     windows/main.c \
     common/opcodes.h \
+    common/extra_opcodes.h \
     common/calls.h \
     common/calling.h \
     common/floats.h \
@@ -354,6 +357,7 @@ $(ESP32_SIM)/Esp32forth-sim: \
     esp32/sim_main.cpp \
     esp32/main.cpp \
     common/opcodes.h \
+    common/extra_opcodes.h \
     common/floats.h \
     common/calling.h \
     common/floats.h \
@@ -378,6 +382,7 @@ $(ESP32)/ESP32forth:
 ESP32_PARTS = common/replace.js \
               esp32/template.ino \
               common/opcodes.h \
+              common/extra_opcodes.h \
               common/floats.h \
               common/calling.h \
               common/core.h \
@@ -395,6 +400,7 @@ $(ESP32)/ESP32forth/ESP32forth.ino: $(ESP32_PARTS) | $(ESP32)/ESP32forth
      REVISION=$(REVISION) \
      config=@esp32/config.h \
      opcodes=@common/opcodes.h \
+     extra_opcodes=@common/extra_opcodes.h \
      calling=@common/calling.h \
      floats=@common/floats.h \
      core=@common/core.h \

@@ -22,6 +22,7 @@
 {{config}}
 {{options}}
 {{opcodes}}
+{{extra_opcodes}}
 {{floats}}
 {{calling}}
 {{builtins.h}}

@@ -16,6 +16,7 @@
 #include <sys/mman.h>
 
 #include "common/opcodes.h"
+#include "common/extra_opcodes.h"
 #include "common/floats.h"
 #include "common/calling.h"
 #include "common/calls.h"

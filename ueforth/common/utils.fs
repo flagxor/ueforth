@@ -31,7 +31,7 @@ internals definitions
    for aft 2dup c@ swap c@ <> if 2drop rdrop 0 exit then 1+ swap 1+ then next 2drop -1 ;
 forth definitions also internals
 : :noname ( -- xt ) 0 , current @ @ , NONAMED SMUDGE or ,
-                    here dup current @ ! ['] = @ , postpone ] ;
+                    here dup current @ ! ['] mem= @ , postpone ] ;
 : str= ( a n a n -- f) >r swap r@ <> if rdrop 2drop 0 exit then r> mem= ;
 : startswith? ( a n a n -- f ) >r swap r@ < if rdrop 2drop 0 exit then r> mem= ;
 : .s   ." <" depth n. ." > " raw.s cr ;
