@@ -26,6 +26,12 @@
   X("FNEGATE", FNEGATE, *fp = -*fp) \
   X("F0<", FZLESS, DUP; tos = *fp-- < 0.0f ? -1 : 0) \
   X("F0=", FZEQUAL, DUP; tos = *fp-- == 0.0f ? -1 : 0) \
+  X("F=", FEQUAL, DUP; tos = fp[-1] == fp[0] ? -1 : 0; fp -= 2) \
+  X("F<", FLESS, DUP; tos = fp[-1] < fp[0] ? -1 : 0; fp -= 2) \
+  X("F>", FGREATER, DUP; tos = fp[-1] > fp[0] ? -1 : 0; fp -= 2) \
+  X("F<>", FNEQUAL, DUP; tos = fp[-1] != fp[0] ? -1 : 0; fp -= 2) \
+  X("F<=", FLESSEQ, DUP; tos = fp[-1] <= fp[0] ? -1 : 0; fp -= 2) \
+  X("F>=", FGREATEREQ, DUP; tos = fp[-1] >= fp[0] ? -1 : 0; fp -= 2) \
   X("F+", FPLUS, fp[-1] += *fp; --fp) \
   X("F-", FMINUS, fp[-1] -= *fp; --fp) \
   X("F*", FSTAR, fp[-1] *= *fp; --fp) \
@@ -33,4 +39,11 @@
   X("1/F", FINVERSE, *fp = 1.0 / *fp) \
   X("S>F", STOF, *++fp = (float) tos; DROP) \
   X("F>S", FTOS, DUP; tos = (cell_t) *fp--) \
-  X("F>NUMBER?", FCONVERT, tos = fconvert((const char *) *sp, tos, fp); --sp)
+  X("F>NUMBER?", FCONVERT, tos = fconvert((const char *) *sp, tos, fp); --sp) \
+  Y(SFLOAT, DUP; tos = sizeof(float)) \
+  Y(SFLOATS, tos *= sizeof(float)) \
+  X("SFLOAT+", SFLOATPLUS, DUP; tos += sizeof(float)) \
+  Y(PI, *++fp = 3.14159265359f) \
+  Y(FSQRT, float fx = *fp; float ft = 1.0f; \
+      for (w = 0; w < 20; ++w) ft = (fx / ft + ft) * 0.5f; *fp = ft) \
+

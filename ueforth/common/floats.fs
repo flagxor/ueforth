@@ -12,16 +12,6 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-: f= ( r r -- f ) f- f0= ;
-: f< ( r r -- f ) f- f0< ;
-: f> ( r r -- f ) fswap f< ;
-: f<> ( r r -- f ) f= 0= ;
-: f<= ( r r -- f ) f> 0= ;
-: f>= ( r r -- f ) f< 0= ;
-
-4 constant sfloat
-: sfloats ( n -- n*4 ) sfloat * ;
-: sfloat+ ( a -- a ) sfloat + ;
 : sf, ( r -- ) here sf! sfloat allot ;
 
 : afliteral ( r -- ) ['] DOFLIT , sf, align ;
@@ -29,10 +19,6 @@
 
 : fconstant ( r "name" ) create sf, align does> sf@ ;
 : fvariable ( "name" ) create sfloat allot align ;
-
-3.14159265359e fconstant pi
-
-: fsqrt ( r -- r ) 1e 20 0 do fover fover f/ f+ 0.5e f* loop fnip ;
 
 6 value precision
 : set-precision ( n -- ) to precision ;

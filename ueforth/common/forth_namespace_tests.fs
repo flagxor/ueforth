@@ -29,22 +29,11 @@ e: check-highlevel-floats
   out: #fs 
   out: set-precision 
   out: precision 
-  out: fsqrt 
-  out: pi 
   out: fvariable 
   out: fconstant 
   out: fliteral 
   out: afliteral 
   out: sf, 
-  out: sfloat+ 
-  out: sfloats 
-  out: sfloat 
-  out: f>= 
-  out: f<= 
-  out: f<> 
-  out: f> 
-  out: f< 
-  out: f= 
 ;e
 
 e: check-boot
@@ -258,6 +247,11 @@ e: check-core-opcodes
 ;e
 
 e: check-float-opcodes
+  out: FSQRT 
+  out: PI 
+  out: SFLOAT+ 
+  out: SFLOATS 
+  out: SFLOAT 
   out: F>NUMBER? 
   out: F>S 
   out: S>F 
@@ -266,6 +260,12 @@ e: check-float-opcodes
   out: F* 
   out: F- 
   out: F+ 
+  out: F>= 
+  out: F<= 
+  out: F<> 
+  out: F> 
+  out: F< 
+  out: F= 
   out: F0= 
   out: F0< 
   out: FNEGATE 

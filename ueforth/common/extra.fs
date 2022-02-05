@@ -59,3 +59,19 @@
 : min 2dup < if drop else nip then ;
 : max 2dup < if nip else drop then ;
 : abs ( n -- +n ) dup 0< if negate then ;
+
+: f= ( r r -- f ) f- f0= ;
+: f< ( r r -- f ) f- f0< ;
+: f> ( r r -- f ) fswap f< ;
+: f<> ( r r -- f ) f= 0= ;
+: f<= ( r r -- f ) f> 0= ;
+: f>= ( r r -- f ) f< 0= ;
+
+4 constant sfloat
+: sfloats ( n -- n*4 ) sfloat * ;
+: sfloat+ ( a -- a ) sfloat + ;
+
+3.14159265359e fconstant pi
+
+: fsqrt ( r -- r ) 1e 20 0 do fover fover f/ f+ 0.5e f* loop fnip ;
+
