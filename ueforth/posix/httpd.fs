@@ -37,7 +37,7 @@ sockaddr httpd-port   sockaddr client   variable client-len
   sockfd client client-len sockaccept
   dup 0< if drop 0 exit then
   to clientfd
-  chunk chunk-size 0 fill
+  chunk chunk-size erase
   chunk chunk-size clientfd read-file throw to chunk-filled
   -1
 ;

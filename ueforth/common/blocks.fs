@@ -14,7 +14,7 @@
 
 ( Block Files )
 internals definitions
-: clobber-line ( a -- a' ) dup 63 bl fill 63 + nl over c! 1+ ;
+: clobber-line ( a -- a' ) dup 63 blank 63 + nl over c! 1+ ;
 : clobber ( a -- ) 15 for clobber-line next drop ;
 0 value block-dirty
 create block-data 1024 allot

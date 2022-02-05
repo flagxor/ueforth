@@ -55,11 +55,6 @@ e: check-boot
   out: tib 
   out: accept 
   out: echo 
-  out: blank 
-  out: erase 
-  out: fill 
-  out: cmove> 
-  out: cmove 
   out: z>s 
   out: s>z 
   out: r~ 
@@ -175,6 +170,12 @@ e: check-boot
 ;e
 
 e: check-extra-opcodes
+  out: blank 
+  out: erase 
+  out: fill 
+  out: cmove> 
+  out: cmove 
+
   out: 2! 
   out: 2@ 
   out: 2dup 
