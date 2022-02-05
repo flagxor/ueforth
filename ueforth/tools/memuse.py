@@ -37,6 +37,7 @@ params_size = 0
 struct_size = 0
 builtin_count = 0
 builtin_size = 0
+vocab_param_size = {}
 vocab_size = {}
 vocab_count = {}
 for start, size, params, vocab, name in layout:
@@ -45,8 +46,10 @@ for start, size, params, vocab, name in layout:
   struct_size += 3 * 4
   if vocab not in vocab_size:
     vocab_size[vocab] = 0
+    vocab_param_size[vocab] = 0
     vocab_count[vocab] = 0
   vocab_size[vocab] += size
+  vocab_param_size[vocab] += params * 4
   vocab_count[vocab] += 1
   if params == 0:
     builtin_count += 1
@@ -54,7 +57,8 @@ for start, size, params, vocab, name in layout:
 
 vocab_table = []
 for vocab in vocab_size:
-  vocab_table.append((vocab_size[vocab], vocab_count[vocab], vocab))
+  vocab_table.append(
+      (vocab_size[vocab], vocab_param_size[vocab], vocab_count[vocab], vocab))
 vocab_table.sort()
 
 def Columns(data, widths, underline=False):
@@ -62,7 +66,8 @@ def Columns(data, widths, underline=False):
   for i in range(len(data)):
     result.append((str(data[i]) + ' ' * widths[i])[:widths[i]])
   if underline:
-    return ''.join(result) + '\n' + ''.join(['-' * len(i) for i in result])
+    return (''.join(result) + '\n' +
+            Columns(['-' * len(i) for i in data], widths))
   return ''.join(result)
 
 items = len(layout)
@@ -72,8 +77,8 @@ print(Columns(['START', 'SIZE', 'PARAMS', 'VOCABULARY', 'WORD'], columns, underl
 for item in layout:
   print(Columns(item, columns))
 print()
-columns = [7, 7, 15]
-print(Columns(['SIZE', 'COUNT', 'VOCABULARY'], columns, underline=True))
+columns = [7, 12, 7, 15]
+print(Columns(['SIZE', 'PARAM SIZE', 'COUNT', 'VOCABULARY'], columns, underline=True))
 for item in vocab_table:
   print(Columns(item, columns))
 print()
