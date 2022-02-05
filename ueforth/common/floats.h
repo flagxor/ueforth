@@ -33,4 +33,4 @@
   X("1/F", FINVERSE, *fp = 1.0 / *fp) \
   X("S>F", STOF, *++fp = (float) tos; DROP) \
   X("F>S", FTOS, DUP; tos = (cell_t) *fp--) \
-
+  X("F>NUMBER?", FCONVERT, tos = fconvert((const char *) *sp, tos, fp); --sp)

@@ -90,7 +90,6 @@ typedef int64_t dcell_t;
   Y(PARSE, DUP; tos = parse(tos, sp)) \
   X("S>NUMBER?", CONVERT, tos = convert((const char *) *sp, tos, g_sys.base, sp); \
                           if (!tos) --sp) \
-  X("F>NUMBER?", FCONVERT, tos = fconvert((const char *) *sp, tos, fp); --sp) \
   Y(CREATE, DUP; DUP; tos = parse(32, sp); \
             create((const char *) *sp, tos, 0, ADDR_DOCREATE); \
             COMMA(0); DROPn(2)) \

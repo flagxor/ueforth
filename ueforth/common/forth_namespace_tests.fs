@@ -216,7 +216,6 @@ e: check-core-opcodes
   out: IMMEDIATE 
   out: DOES> 
   out: CREATE 
-  out: F>NUMBER? 
   out: S>NUMBER? 
   out: PARSE 
   out: FIND 
@@ -254,6 +253,7 @@ e: check-core-opcodes
 ;e
 
 e: check-float-opcodes
+  out: F>NUMBER? 
   out: F>S 
   out: S>F 
   out: 1/F 
