@@ -54,12 +54,13 @@ transfer{
   evaluate1 evaluate-buffer
   'sys 'heap aliteral 'heap-start 'heap-size
   'stack-cells 'boot 'boot-size 'latestxt
-  'argc 'argv 'runner
+  'argc 'argv 'runner 'tib
   leaving( )leaving leaving leaving,
   (do) (?do) (+loop)
   parse-quote digit $@ raw.s
   tib-setup input-limit
   [SKIP] [SKIP]' raw-ok
+  $place zplace sys:
 }transfer
 forth definitions
 

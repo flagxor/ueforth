@@ -52,8 +52,6 @@ e: check-boot
   out: z" 
   out: ." 
   out: s" 
-  out: zplace 
-  out: $place 
   out: n. 
   out: ? 
   out: . 
@@ -140,9 +138,7 @@ e: check-boot
   out: state 
   out: >in 
   out: #tib 
-  out: 'tib 
   out: current 
-  out: sys: 
   out: variable 
   out: constant 
   out: c, 
