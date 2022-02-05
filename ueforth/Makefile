@@ -379,7 +379,7 @@ esp32_target: $(ESP32)/ESP32forth/ESP32forth.ino
 $(ESP32)/ESP32forth:
 	mkdir -p $@
 
-ESP32_PARTS = common/replace.js \
+ESP32_PARTS = tools/replace.js \
               esp32/template.ino \
               common/opcodes.h \
               common/extra_opcodes.h \
@@ -395,7 +395,7 @@ ESP32_PARTS = common/replace.js \
               $(GEN)/esp32_boot.h
 
 $(ESP32)/ESP32forth/ESP32forth.ino: $(ESP32_PARTS) | $(ESP32)/ESP32forth
-	cat esp32/template.ino | common/replace.js \
+	cat esp32/template.ino | tools/replace.js \
      VERSION=$(VERSION) \
      REVISION=$(REVISION) \
      config=@esp32/config.h \
@@ -468,7 +468,7 @@ publish: publish-esp32 publish-linux publish-windows publish-index
 $(DEPLOY):
 	mkdir -p $@
 
-REPLACE = common/replace.js \
+REPLACE = tools/replace.js \
           COMMON=@site/common.html \
           POSIX_COMMON=@site/posix_common.html \
           DESKTOP_COMMON=@site/desktop_common.html \

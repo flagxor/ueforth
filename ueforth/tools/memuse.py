@@ -76,12 +76,12 @@ columns = [7, 7, 7, 15, 30]
 print(Columns(['START', 'SIZE', 'PARAMS', 'VOCABULARY', 'WORD'], columns, underline=True))
 for item in layout:
   print(Columns(item, columns))
-print()
+print('')
 columns = [7, 12, 7, 15]
 print(Columns(['SIZE', 'PARAM SIZE', 'COUNT', 'VOCABULARY'], columns, underline=True))
 for item in vocab_table:
   print(Columns(item, columns))
-print()
+print('')
 columns = [7, 7, 15]
 print(Columns(['SIZE', 'COUNT', 'CATEGORY'], columns, underline=True))
 print(Columns([string_size, items, 'names'], columns))
