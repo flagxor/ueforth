@@ -125,9 +125,6 @@ e: check-boot
   out: >name-length 
   out: >flags 
   out: >flags& 
-  out: abs 
-  out: max 
-  out: min 
   out: recurse 
   out: aft 
   out: repeat 
@@ -170,6 +167,10 @@ e: check-boot
 ;e
 
 e: check-extra-opcodes
+  out: abs 
+  out: max 
+  out: min 
+
   out: blank 
   out: erase 
   out: fill 

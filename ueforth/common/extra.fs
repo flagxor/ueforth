@@ -54,3 +54,8 @@
 : cmove> ( a a n -- ) for aft 2dup swap r@ + c@ swap r@ + c! then next 2drop ;
 : fill ( a n ch -- ) swap for swap aft 2dup c! 1 + then next 2drop ;
 : erase ( a n -- ) 0 fill ;   : blank ( a n -- ) bl fill ;
+
+( Compound words requiring conditionals )
+: min 2dup < if drop else nip then ;
+: max 2dup < if nip else drop then ;
+: abs ( n -- +n ) dup 0< if negate then ;

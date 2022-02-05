@@ -68,11 +68,6 @@
 ( Recursion )
 : recurse   current @ @ aliteral ['] execute , ; immediate
 
-( Compound words requiring conditionals )
-: min 2dup < if drop else nip then ;
-: max 2dup < if nip else drop then ;
-: abs ( n -- +n ) dup 0< if negate then ;
-
 ( Dictionary Format )
 : >flags& ( xt -- a ) cell - ; : >flags ( xt -- flags ) >flags& c@ ;
 : >name-length ( xt -- n ) >flags& 1+ c@ ;
