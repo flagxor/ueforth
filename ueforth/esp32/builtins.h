@@ -72,12 +72,12 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   Y(TERMINATE, exit(n0))
 
 #define REQUIRED_SERIAL_SUPPORT \
-  XV(SERIAL, "Serial.begin", SERIAL_BEGIN, Serial.begin(tos); DROP) \
-  XV(SERIAL, "Serial.end", SERIAL_END, Serial.end()) \
-  XV(SERIAL, "Serial.available", SERIAL_AVAILABLE, PUSH Serial.available()) \
-  XV(SERIAL, "Serial.readBytes", SERIAL_READ_BYTES, n0 = Serial.readBytes(b1, n0); NIP) \
-  XV(SERIAL, "Serial.write", SERIAL_WRITE, n0 = Serial.write(b1, n0); NIP) \
-  XV(SERIAL, "Serial.flush", SERIAL_FLUSH, Serial.flush())
+  XV(VOC_SERIAL, "Serial.begin", SERIAL_BEGIN, Serial.begin(tos); DROP) \
+  XV(VOC_SERIAL, "Serial.end", SERIAL_END, Serial.end()) \
+  XV(VOC_SERIAL, "Serial.available", SERIAL_AVAILABLE, PUSH Serial.available()) \
+  XV(VOC_SERIAL, "Serial.readBytes", SERIAL_READ_BYTES, n0 = Serial.readBytes(b1, n0); NIP) \
+  XV(VOC_SERIAL, "Serial.write", SERIAL_WRITE, n0 = Serial.write(b1, n0); NIP) \
+  XV(VOC_SERIAL, "Serial.flush", SERIAL_FLUSH, Serial.flush())
 
 #define REQUIRED_ARDUINO_GPIO_SUPPORT \
   Y(pinMode, pinMode(n1, n0); DROPn(2)) \
@@ -212,12 +212,12 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
 #  include "SPIFFS.h"
 # endif
 # define OPTIONAL_SPIFFS_SUPPORT \
-  XV(SPIFFS, "SPIFFS.begin", SPIFFS_BEGIN, \
+  XV(VOC_SPIFFS, "SPIFFS.begin", SPIFFS_BEGIN, \
       tos = SPIFFS.begin(n2, c1, n0); NIPn(2)) \
-  XV(SPIFFS, "SPIFFS.end", SPIFFS_END, SPIFFS.end()) \
-  XV(SPIFFS, "SPIFFS.format", SPIFFS_FORMAT, PUSH SPIFFS.format()) \
-  XV(SPIFFS, "SPIFFS.totalBytes", SPIFFS_TOTAL_BYTES, PUSH SPIFFS.totalBytes()) \
-  XV(SPIFFS, "SPIFFS.usedBytes", SPIFFS_USED_BYTES, PUSH SPIFFS.usedBytes())
+  XV(VOC_SPIFFS, "SPIFFS.end", SPIFFS_END, SPIFFS.end()) \
+  XV(VOC_SPIFFS, "SPIFFS.format", SPIFFS_FORMAT, PUSH SPIFFS.format()) \
+  XV(VOC_SPIFFS, "SPIFFS.totalBytes", SPIFFS_TOTAL_BYTES, PUSH SPIFFS.totalBytes()) \
+  XV(VOC_SPIFFS, "SPIFFS.usedBytes", SPIFFS_USED_BYTES, PUSH SPIFFS.usedBytes())
 #endif
 
 #ifndef ENABLE_FREERTOS_SUPPORT
@@ -381,15 +381,15 @@ static cell_t TimerIsrRegister(cell_t group, cell_t timer, cell_t xt, cell_t arg
 #  include "SD.h"
 # endif
 # define OPTIONAL_SD_SUPPORT \
-  XV(SD, "SD.begin", SD_BEGIN, PUSH SD.begin()) \
-  XV(SD, "SD.beginFull", SD_BEGIN_FULL, \
+  XV(VOC_SD, "SD.begin", SD_BEGIN, PUSH SD.begin()) \
+  XV(VOC_SD, "SD.beginFull", SD_BEGIN_FULL, \
       tos = SD.begin(n5, *(SPIClass*)a4, n3, c2, n1, n0); NIPn(5)) \
-  XV(SD, "SD.beginDefaults", SD_BEGIN_DEFAULTS, \
+  XV(VOC_SD, "SD.beginDefaults", SD_BEGIN_DEFAULTS, \
       PUSH SS; PUSH &SPI; PUSH 4000000; PUSH "/sd"; PUSH 5; PUSH false) \
-  XV(SD, "SD.end", SD_END, SD.end()) \
-  XV(SD, "SD.cardType", SD_CARD_TYPE, PUSH SD.cardType()) \
-  XV(SD, "SD.totalBytes", SD_TOTAL_BYTES, PUSH SD.totalBytes()) \
-  XV(SD, "SD.usedBytes", SD_USED_BYTES, PUSH SD.usedBytes())
+  XV(VOC_SD, "SD.end", SD_END, SD.end()) \
+  XV(VOC_SD, "SD.cardType", SD_CARD_TYPE, PUSH SD.cardType()) \
+  XV(VOC_SD, "SD.totalBytes", SD_TOTAL_BYTES, PUSH SD.totalBytes()) \
+  XV(VOC_SD, "SD.usedBytes", SD_USED_BYTES, PUSH SD.usedBytes())
 #endif
 
 #ifndef ENABLE_SD_MMC_SUPPORT
@@ -399,14 +399,14 @@ static cell_t TimerIsrRegister(cell_t group, cell_t timer, cell_t xt, cell_t arg
 #  include "SD_MMC.h"
 # endif
 # define OPTIONAL_SD_MMC_SUPPORT \
-  XV(SD_MMC, "SD_MMC.begin", SD_MMC_BEGIN, PUSH SD_MMC.begin()) \
-  XV(SD_MMC, "SD_MMC.beginFull", SD_MMC_BEGIN_FULL, tos = SD_MMC.begin(c2, n1, n0); NIPn(2)) \
-  XV(SD_MMC, "SD_MMC.beginDefaults", SD_MMC_BEGIN_DEFAULTS, \
+  XV(VOC_SD_MMC, "SD_MMC.begin", SD_MMC_BEGIN, PUSH SD_MMC.begin()) \
+  XV(VOC_SD_MMC, "SD_MMC.beginFull", SD_MMC_BEGIN_FULL, tos = SD_MMC.begin(c2, n1, n0); NIPn(2)) \
+  XV(VOC_SD_MMC, "SD_MMC.beginDefaults", SD_MMC_BEGIN_DEFAULTS, \
       PUSH "/sdcard"; PUSH false; PUSH false) \
-  XV(SD_MMC, "SD_MMC.end", SD_MMC_END, SD_MMC.end()) \
-  XV(SD_MMC, "SD_MMC.cardType", SD_MMC_CARD_TYPE, PUSH SD_MMC.cardType()) \
-  XV(SD_MMC, "SD_MMC.totalBytes", SD_MMC_TOTAL_BYTES, PUSH SD_MMC.totalBytes()) \
-  XV(SD_MMC, "SD_MMC.usedBytes", SD_MMC_USED_BYTES, PUSH SD_MMC.usedBytes())
+  XV(VOC_SD_MMC, "SD_MMC.end", SD_MMC_END, SD_MMC.end()) \
+  XV(VOC_SD_MMC, "SD_MMC.cardType", SD_MMC_CARD_TYPE, PUSH SD_MMC.cardType()) \
+  XV(VOC_SD_MMC, "SD_MMC.totalBytes", SD_MMC_TOTAL_BYTES, PUSH SD_MMC.totalBytes()) \
+  XV(VOC_SD_MMC, "SD_MMC.usedBytes", SD_MMC_USED_BYTES, PUSH SD_MMC.usedBytes())
 #endif
 
 #ifndef ENABLE_I2C_SUPPORT
