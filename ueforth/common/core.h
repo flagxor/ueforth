@@ -22,6 +22,7 @@
 #define IMMEDIATE 1
 #define SMUDGE 2
 #define BUILTIN_FORK 4
+#define BUILTIN_MARK 8
 
 // Maximum ALSO layers.
 #define VOCABULARY_DEPTH 16
@@ -242,7 +243,8 @@ static void forth_init(int argc, char *argv[], void *heap,
   for (int i = 0; i < VOCABULARY_DEPTH; ++i) { *g_sys.heap++ = 0; }
 
   forth_run(0);
-  g_sys.latestxt = 0;  // So ; doesn't get wrong size.
+  create("end", 3, BUILTIN_FORK, 0);
+  g_sys.latestxt = 0;  // So last builtin doesn't get wrong size.
   g_sys.DOLIT_XT = FIND("DOLIT");
   g_sys.DOFLIT_XT = FIND("DOFLIT");
   g_sys.DOEXIT_XT = FIND("EXIT");

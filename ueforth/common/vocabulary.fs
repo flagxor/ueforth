@@ -28,7 +28,9 @@ forth definitions
 ( Make it easy to transfer words between vocabularies )
 : xt-find& ( xt -- xt& ) context @ begin 2dup @ <> while @ >link& repeat nip ;
 : xt-hide ( xt -- ) xt-find& dup @ >link swap ! ;
-: xt-transfer ( xt --  ) dup xt-hide   current @ @ over >link& !   current @ ! ;
+8 constant BUILTIN_MARK
+: xt-transfer ( xt --  ) dup >flags BUILTIN_MARK and if drop exit then
+  dup xt-hide   current @ @ over >link& !   current @ ! ;
 : transfer ( "name" ) ' xt-transfer ;
 : }transfer ;
 : transfer{ begin ' dup ['] }transfer = if drop exit then xt-transfer again ;
@@ -56,11 +58,11 @@ transfer{
   'stack-cells 'boot 'boot-size 'latestxt
   'argc 'argv 'runner 'tib
   leaving( )leaving leaving leaving,
-  (do) (?do) (+loop)
+  (do) (?do) (+loop) 
   parse-quote digit $@ raw.s
   tib-setup input-limit
   [SKIP] [SKIP]' raw-ok
-  $place zplace sys:
+  $place zplace sys: BUILTIN_MARK
 }transfer
 forth definitions
 

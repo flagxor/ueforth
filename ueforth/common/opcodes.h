@@ -23,6 +23,7 @@ typedef uintptr_t ucell_t;
 #define YV(flags, op, code) XV(flags, #op, ID_ ## op, code)
 #define X(name, op, code) XV(FORTH, name, op, code)
 #define Y(op, code) XV(FORTH, #op, ID_ ## op, code)
+#define FL(vocab, flags) ((vocab) | ((flags) << 8))
 
 #define NIP (--sp)
 #define NIPn(n) (sp -= (n))
@@ -41,7 +42,8 @@ typedef uintptr_t ucell_t;
 #define TOPARAMS(xt) ((uint16_t *) (TOFLAGS(xt) + 2))
 #define TOSIZE(xt) (CELL_ALIGNED(*TONAMELEN(xt)) + sizeof(cell_t) * (3 + *TOPARAMS(xt)))
 #define TOLINK(xt) (((cell_t *) (xt)) - 2)
-#define TONAME(xt) (((char *) TOLINK(xt)) - CELL_ALIGNED(*TONAMELEN(xt)))
+#define TONAME(xt) ((*TOFLAGS(xt) & BUILTIN_MARK) ? (*(char **) TOLINK(xt)) \
+    : (((char *) TOLINK(xt)) - CELL_ALIGNED(*TONAMELEN(xt))))
 #define TOBODY(xt) (((cell_t *) xt) + ((void *) *((cell_t *) xt) == ADDR_DOCOLON ? 1 : 2))
 
 #define DOIMMEDIATE() *TOFLAGS(*g_sys.current) |= IMMEDIATE
@@ -124,4 +126,4 @@ typedef struct {
                sp = evaluate1(sp, &tfp); \
                fp = tfp; w = *sp--; DROP; if (w) JMPW) \
   Y(EXIT, ip = (cell_t *) *rp--) \
-  X(";", SEMICOLON, COMMA(g_sys.DOEXIT_XT); UNSMUDGE(); g_sys.state = 0)
+  XV(FL(FORTH, IMMEDIATE), ";", SEMICOLON, COMMA(g_sys.DOEXIT_XT); UNSMUDGE(); g_sys.state = 0)

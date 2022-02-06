@@ -26,7 +26,8 @@
 
 internals definitions
 2 constant SMUDGE
-8 constant NONAMED
+4 constant BUILTIN_FORK
+16 constant NONAMED
 : mem= ( a a n -- f)
    for aft 2dup c@ swap c@ <> if 2drop rdrop 0 exit then 1+ swap 1+ then next 2drop -1 ;
 forth definitions also internals
@@ -64,7 +65,7 @@ internals definitions
   ." Unsupported: " see. cr ;
 
 : nonvoc? ( xt -- f )
-  dup 0= if exit then dup >name nip swap >flags NONAMED and or ;
+  dup 0= if exit then dup >name nip swap >flags NONAMED BUILTIN_FORK or and or ;
 : see-vocabulary ( voc )
   @ begin dup nonvoc? while dup see-xt >link repeat drop cr ;
 : >vocnext ( xt -- xt ) >body 2 cells + @ ;

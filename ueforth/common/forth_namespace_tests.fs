@@ -397,9 +397,9 @@ e: check-phase1
   check-vocabulary
   check-[]conds
   check-boot
-  check-core-opcodes
-  check-extra-opcodes
-  check-float-opcodes
+\  check-core-opcodes
+\  check-extra-opcodes
+\  check-float-opcodes
 ;e
 
 e: check-desktop
@@ -446,8 +446,9 @@ e: test-windows-forth-namespace
   out: default-type 
   out: windows 
   check-phase1
-  out: LOADLIBRARYA 
-  out: GETPROCADDRESS 
+  \ out: LOADLIBRARYA 
+  \ out: GETPROCADDRESS 
+  out: end 
 ;e
 
 [ELSE] DEFINED? posix [IF]
@@ -487,7 +488,8 @@ e: test-posix-forth-namespace
   out: default-type 
   out: posix 
   check-phase1
-  out: DLSYM 
+\  out: DLSYM 
+  out: end 
 ;e 
 
 [ELSE]
@@ -581,7 +583,8 @@ e: test-esp32-forth-namespace
   check-phase2
   check-allocation
   check-phase1
-  check-esp32-basics2
+\  check-esp32-basics2
+  out: end 
 ;e 
 
 [THEN] [THEN] 
