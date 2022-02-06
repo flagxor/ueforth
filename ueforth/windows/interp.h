@@ -22,21 +22,33 @@ enum {
   OP_DOCOLON = 0,
   OP_DOCREATE,
   OP_DODOES,
-#define X(name, op, code) OP_ ## op,
+#define XV(flags, name, op, code) OP_ ## op,
   PLATFORM_OPCODE_LIST
   EXTRA_OPCODE_LIST
   OPCODE_LIST
-#undef X
+#undef XV
 };
 
 static cell_t *forth_run(cell_t *init_rp) {
+  static const struct {
+    const char *name;
+    cell_t flags;
+    const void *code;
+  } foo[] = {
+#define XV(flags, name, op, code) name, 0, (void *) OP_ ## op,
+    PLATFORM_OPCODE_LIST
+    EXTRA_OPCODE_LIST
+    OPCODE_LIST
+#undef XV
+  };
+
   if (!init_rp) {
-#define X(name, op, code) \
+#define XV(flags, name, op, code) \
     create(name, sizeof(name) - 1, name[0] == ';', (void *) OP_ ## op);
     PLATFORM_OPCODE_LIST
     EXTRA_OPCODE_LIST
     OPCODE_LIST
-#undef X
+#undef XV
     return 0;
   }
   register cell_t *ip, *rp, *sp, tos, w;
@@ -47,11 +59,11 @@ next:
     w = *ip++;
 work:
     switch (*(cell_t *) w & 0xff) {
-#define X(name, op, code) case OP_ ## op: { code; } NEXT;
+#define XV(flags, name, op, code) case OP_ ## op: { code; } NEXT;
   PLATFORM_OPCODE_LIST
   EXTRA_OPCODE_LIST
   OPCODE_LIST
-#undef X
+#undef XV
       case OP_DOCOLON: ++rp; *rp = (cell_t) ip; ip = (cell_t *) (w + sizeof(cell_t)); NEXT;
       case OP_DOCREATE: DUP; tos = w + sizeof(cell_t) * 2; NEXT;
       case OP_DODOES: DUP; tos = w + sizeof(cell_t) * 2;

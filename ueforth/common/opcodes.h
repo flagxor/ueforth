@@ -20,7 +20,10 @@
 typedef intptr_t cell_t;
 typedef uintptr_t ucell_t;
 
-#define Y(op, code) X(#op, id ## op, code)
+#define YV(flags, op, code) XV(flags, #op, ID_ ## op, code)
+#define X(name, op, code) XV(FORTH, name, op, code)
+#define Y(op, code) XV(FORTH, #op, ID_ ## op, code)
+
 #define NIP (--sp)
 #define NIPn(n) (sp -= (n))
 #define DROP (tos = *sp--)
@@ -56,6 +59,8 @@ typedef int64_t dcell_t;
                     --sp; cell_t a = (cell_t) (d < 0 ? ~(~d / tos) : d / tos); \
                     *sp = (cell_t) (d - ((dcell_t) a) * tos); tos = a
 #endif
+
+enum { FORTH = 0, INTERNALS };
 
 #define OPCODE_LIST \
   X("0=", ZEQUAL, tos = !tos ? -1 : 0) \
@@ -97,20 +102,22 @@ typedef int64_t dcell_t;
   Y(CELL, DUP; tos = sizeof(cell_t)) \
   Y(FIND, tos = find((const char *) *sp, tos); --sp) \
   Y(PARSE, DUP; tos = parse(tos, sp)) \
-  X("S>NUMBER?", CONVERT, tos = convert((const char *) *sp, tos, g_sys.base, sp); \
-                          if (!tos) --sp) \
+  XV(INTERNALS, "S>NUMBER?", \
+      CONVERT, tos = convert((const char *) *sp, tos, g_sys.base, sp); \
+      if (!tos) --sp) \
   Y(CREATE, DUP; DUP; tos = parse(32, sp); \
             create((const char *) *sp, tos, 0, ADDR_DOCREATE); \
             COMMA(0); DROPn(2)) \
   X("DOES>", DOES, DOES(ip); ip = (cell_t *) *rp; --rp) \
   Y(IMMEDIATE, DOIMMEDIATE()) \
-  X("'SYS", SYS, DUP; tos = (cell_t) &g_sys) \
+  XV(INTERNALS, "'SYS", SYS, DUP; tos = (cell_t) &g_sys) \
   Y(YIELD, PARK; return rp) \
   X(":", COLON, DUP; DUP; tos = parse(32, sp); \
                 create((const char *) *sp, tos, SMUDGE, ADDR_DOCOLON); \
                 g_sys.state = -1; --sp; DROP) \
-  Y(EVALUATE1, DUP; float *tfp = fp; \
+  YV(INTERNALS, EVALUATE1, DUP; float *tfp = fp; \
                sp = evaluate1(sp, &tfp); \
                fp = tfp; w = *sp--; DROP; if (w) JMPW) \
   Y(EXIT, ip = (cell_t *) *rp--) \
+  Y(foo, DUP; tos = (cell_t) foo) \
   X(";", SEMICOLON, COMMA(g_sys.DOEXIT_XT); UNSMUDGE(); g_sys.state = 0)

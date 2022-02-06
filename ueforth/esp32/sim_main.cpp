@@ -29,9 +29,9 @@ static cell_t *simulated(cell_t *sp, const char *op);
 
 #include "gen/esp32_sim_opcodes.h"
 
-#define X(str, name, code) static const char *STR_ ## name = str;
+#define XV(flags, str, name, code) static const char *STR_ ## name = str;
 PLATFORM_SIMULATED_OPCODE_LIST
-#undef X
+#undef XV
 
 #include "common/core.h"
 #include "common/interp.h"

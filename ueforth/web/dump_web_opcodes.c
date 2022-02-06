@@ -24,24 +24,24 @@ enum {
   OP_DOCOLON = 0,
   OP_DOCREATE = 1,
   OP_DODOES = 2,
-#define X(name, op, code) OP_ ## op,
+#define XV(flags, name, op, code) OP_ ## op,
   PLATFORM_OPCODE_LIST
   OPCODE_LIST
-#undef X
+#undef XV
 };
 
 int main(int argc, char *argv[]) {
   if (argc == 2 && strcmp(argv[1], "cases") == 0) {
-#define X(name, op, code) \
+#define XV(flags, name, op, code) \
     printf("          case %d:  // %s\n            %s; break;\n", OP_ ## op, name, #code);
     PLATFORM_OPCODE_LIST
     OPCODE_LIST
-#undef X
+#undef XV
   } else if (argc == 2 && strcmp(argv[1], "dict") == 0) {
-#define X(name, op, code) printf("  create(" #name ", %d);\n", OP_ ## op);
+#define XV(flags, name, op, code) printf("  create(" #name ", %d);\n", OP_ ## op);
     PLATFORM_OPCODE_LIST
     OPCODE_LIST
-#undef X
+#undef XV
   } else {
     fprintf(stderr, "USAGE: %s cases/dict\n", argv[1]);
     return 1;

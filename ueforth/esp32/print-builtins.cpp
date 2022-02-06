@@ -23,14 +23,16 @@
 #define USER_WORDS
 #include "builtins.h"
 
-#define Y(name, code) X(#name, name, code)
+#define YV(flags, op, code) XV(flags, #op, op, code)
+#define X(name, op, code) XV(FORTH, name, op, code)
+#define Y(op, code) XV(FORTH, #op, op, code)
 
 int main() {
   printf("#define PLATFORM_SIMULATED_OPCODE_LIST \\\n");
-#define X(str, name, code) \
-  printf("  X(\"%s\", %s, DUP; sp = simulated(sp, STR_%s); DROP) \\\n", str, #name, #name);
+#define XV(flags, str, name, code) \
+  printf("  XV(%s, \"%s\", %s, DUP; sp = simulated(sp, STR_%s); DROP) \\\n", #flags, str, #name, #name);
   PLATFORM_OPCODE_LIST
-#undef X
+#undef XV
   printf("\n");
   return 0;
 }
