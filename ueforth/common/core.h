@@ -233,6 +233,7 @@ static void forth_init(int argc, char *argv[], void *heap,
   for (int i = 0; i < VOCABULARY_DEPTH; ++i) { *g_sys.heap++ = 0; }
 
   forth_run(0);
+  g_sys.latestxt = 0;  // So ; doesn't get wrong size.
   g_sys.DOLIT_XT = FIND("DOLIT");
   g_sys.DOFLIT_XT = FIND("DOFLIT");
   g_sys.DOEXIT_XT = FIND("EXIT");

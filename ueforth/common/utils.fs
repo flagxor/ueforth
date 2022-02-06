@@ -55,9 +55,14 @@ internals definitions
 : see-loop   dup >body swap >params 1- cells over +
              begin 2dup < while swap see-one swap repeat 2drop ;
 : see-xt ( xt -- )
-        dup @ ['] see-loop @ <>
-        if ." Unsupported word type: " see. cr exit then
-        ['] : see.  dup see.  space see-loop   ['] ; see. cr ;
+  dup @ ['] see-loop @ = if
+    ['] : see.  dup see.  space see-loop   ['] ; see. cr  exit
+  then
+  dup @ ['] input-buffer @ = if ." CREATE/VARIABLE: " see. cr exit then
+  dup @ ['] SMUDGE @ = if ." DOES>/CONSTANT: " see. cr exit then
+  dup >params 0= if ." Built-in: " see. cr exit then
+  ." Unsupported: " see. cr ;
+
 : nonvoc? ( xt -- f )
   dup 0= if exit then dup >name nip swap >flags NONAMED and or ;
 : see-vocabulary ( voc )
