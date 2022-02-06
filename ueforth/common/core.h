@@ -18,7 +18,7 @@
 #define CELL_LEN(n) (((n) + CELL_MASK) / sizeof(cell_t))
 #define FIND(name) find((name), sizeof(name) - 1)
 #define UPPER(ch) (((ch) >= 'a' && (ch) <= 'z') ? ((ch) & 0x5F) : (ch))
-#define CELL_ALIGNED(a) (((cell_t) (a) + CELL_MASK) & ~CELL_MASK)
+#define CELL_ALIGNED(a) ((((cell_t) (a)) + CELL_MASK) & ~CELL_MASK)
 #define IMMEDIATE 1
 #define SMUDGE 2
 

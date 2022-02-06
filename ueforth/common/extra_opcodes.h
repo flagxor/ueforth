@@ -57,7 +57,13 @@
   Y(min, tos = tos < *sp ? tos : *sp; NIP) \
   Y(max, tos = tos > *sp ? tos : *sp; NIP) \
   Y(abs, tos = tos < 0 ? -tos : tos) \
+  Y(here, DUP; tos = (cell_t) g_sys.heap) \
+  Y(allot, g_sys.heap = (cell_t *) (tos + (cell_t) g_sys.heap); DROP) \
   Y(aligned, tos = CELL_ALIGNED(tos)) \
+  Y(align, g_sys.heap = (cell_t *) CELL_ALIGNED(g_sys.heap)) \
+  X(",", COMMA, *g_sys.heap++ = tos; DROP) \
+  X("c,", CCOMMA, *((uint8_t *) g_sys.heap) = tos; DROP; \
+      g_sys.heap = (cell_t *) (1 + ((cell_t) g_sys.heap))) \
   X(">flags", TOFLAGS, tos = *TOFLAGS(tos)) \
   X(">params", TOPARAMS, tos = *TOPARAMS(tos)) \
   X(">size", TOSIZE, tos = TOSIZE(tos)) \

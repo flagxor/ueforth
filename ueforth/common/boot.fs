@@ -16,13 +16,6 @@
 : \   10 parse drop drop ; immediate
 ( Now can do comments! )
 
-( Dictionary )
-: here ( -- a ) 'sys @ ;
-: allot ( n -- ) 'sys +! ;
-: align   here aligned here - allot ;
-: , ( n --  ) here ! cell allot ;
-: c, ( ch -- ) here c! 1 allot ;
-
 ( Constants and Variables )
 : constant ( n "name" -- ) create , does> @ ;
 : variable ( "name" -- ) create 0 , ;

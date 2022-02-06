@@ -60,7 +60,13 @@
 : max 2dup < if nip else drop then ;
 : abs ( n -- +n ) dup 0< if negate then ;
 
+( Dictionary )
+: here ( -- a ) 'sys @ ;
+: allot ( n -- ) 'sys +! ;
 : aligned ( a -- a ) cell 1 - dup >r + r> invert and ;
+: align   here aligned here - allot ;
+: , ( n --  ) here ! cell allot ;
+: c, ( ch -- ) here c! 1 allot ;
 
 ( Dictionary Format )
 : >flags& ( xt -- a ) cell - ; : >flags ( xt -- flags ) >flags& c@ ;

@@ -132,11 +132,6 @@ e: check-boot
   out: current 
   out: variable 
   out: constant 
-  out: c, 
-  out: , 
-  out: align 
-  out: allot 
-  out: here 
   out: \ 
   out: ( 
 ;e
@@ -150,7 +145,12 @@ e: check-extra-opcodes
   out: >params 
   out: >flags 
 
+  out: c, 
+  out: , 
+  out: align 
   out: aligned 
+  out: allot 
+  out: here 
 
   out: abs 
   out: max 
