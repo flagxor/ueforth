@@ -201,7 +201,6 @@ e: check-extra-opcodes
 
 e: check-core-opcodes
   out: ; 
-  out: foo 
   out: EXIT 
   out: : 
   out: IMMEDIATE 

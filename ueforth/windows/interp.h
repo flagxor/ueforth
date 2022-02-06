@@ -30,12 +30,9 @@ enum {
 };
 
 static cell_t *forth_run(cell_t *init_rp) {
-  static const struct {
-    const char *name;
-    cell_t flags;
-    const void *code;
-  } foo[] = {
-#define XV(flags, name, op, code) name, 0, (void *) OP_ ## op,
+  static const BUILTIN_WORD builtins[] = {
+#define XV(flags, name, op, code) \
+    name, 0, sizeof(name) - 1, (flags & 0xff), (void *) OP_ ## op,
     PLATFORM_OPCODE_LIST
     EXTRA_OPCODE_LIST
     OPCODE_LIST
@@ -43,6 +40,7 @@ static cell_t *forth_run(cell_t *init_rp) {
   };
 
   if (!init_rp) {
+    g_sys.builtins = builtins;
 #define XV(flags, name, op, code) \
     create(name, sizeof(name) - 1, name[0] == ';', (void *) OP_ ## op);
     PLATFORM_OPCODE_LIST

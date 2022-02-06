@@ -21,6 +21,7 @@
 #define CELL_ALIGNED(a) ((((cell_t) (a)) + CELL_MASK) & ~CELL_MASK)
 #define IMMEDIATE 1
 #define SMUDGE 2
+#define BUILTIN_FORK 4
 
 // Maximum ALSO layers.
 #define VOCABULARY_DEPTH 16
@@ -45,6 +46,7 @@ static struct {
   // Layout not used by Forth.
   cell_t *rp;  // spot to park main thread
   cell_t DOLIT_XT, DOFLIT_XT, DOEXIT_XT, YIELD_XT;
+  const BUILTIN_WORD *builtins;
 } g_sys;
 
 static cell_t convert(const char *pos, cell_t n, cell_t base, cell_t *ret) {
@@ -112,8 +114,15 @@ static cell_t find(const char *name, cell_t len) {
   for (cell_t ***voc = g_sys.context; *voc; ++voc) {
     cell_t xt = (cell_t) **voc;
     while (xt) {
-      if (!(*TOFLAGS(xt) & SMUDGE) && len == *TONAMELEN(xt) &&
-          same(name, TONAME(xt), len)) {
+      if ((*TOFLAGS(xt) & BUILTIN_FORK)) {
+        for (int i = 0; g_sys.builtins[i].name; ++i) {
+          if (len == g_sys.builtins[i].name_length &&
+              same(name, g_sys.builtins[i].name, len)) {
+            return (cell_t) &g_sys.builtins[i].code;
+          }
+        }
+      } else if (!(*TOFLAGS(xt) & SMUDGE) && len == *TONAMELEN(xt) &&
+                 same(name, TONAME(xt), len)) {
         return xt;
       }
       xt = *TOLINK(xt);

@@ -61,6 +61,11 @@ typedef int64_t dcell_t;
 #endif
 
 enum { FORTH = 0, INTERNALS };
+typedef struct {
+  const char *name;
+  uint8_t flags, name_length, vocabulary;
+  const void *code;
+} BUILTIN_WORD;
 
 #define OPCODE_LIST \
   X("0=", ZEQUAL, tos = !tos ? -1 : 0) \
@@ -119,5 +124,4 @@ enum { FORTH = 0, INTERNALS };
                sp = evaluate1(sp, &tfp); \
                fp = tfp; w = *sp--; DROP; if (w) JMPW) \
   Y(EXIT, ip = (cell_t *) *rp--) \
-  Y(foo, DUP; tos = (cell_t) foo) \
   X(";", SEMICOLON, COMMA(g_sys.DOEXIT_XT); UNSMUDGE(); g_sys.state = 0)
