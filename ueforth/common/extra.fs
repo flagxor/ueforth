@@ -60,6 +60,17 @@
 : max 2dup < if nip else drop then ;
 : abs ( n -- +n ) dup 0< if negate then ;
 
+: aligned ( a -- a ) cell 1 - dup >r + r> invert and ;
+
+( Dictionary Format )
+: >flags& ( xt -- a ) cell - ; : >flags ( xt -- flags ) >flags& c@ ;
+: >name-length ( xt -- n ) >flags& 1+ c@ ;
+: >params ( xt -- n ) >flags& 2 + sw@ $ffff and ;
+: >size ( xt -- n ) dup >params cells swap >name-length aligned + 3 cells + ;
+: >link& ( xt -- a ) 2 cells - ;   : >link ( xt -- a ) >link& @ ;
+: >name ( xt -- a n ) dup >name-length swap >link& over aligned - swap ;
+: >body ( xt -- a ) dup @ [ ' >flags @ ] literal = 2 + cells + ;
+
 : f= ( r r -- f ) f- f0= ;
 : f< ( r r -- f ) f- f0< ;
 : f> ( r r -- f ) fswap f< ;

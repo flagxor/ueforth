@@ -16,7 +16,7 @@
 
 #define CELL_MASK (sizeof(cell_t) - 1)
 #define CELL_LEN(n) (((n) + CELL_MASK) / sizeof(cell_t))
-#define FIND(name) find(name, sizeof(name) - 1)
+#define FIND(name) find((name), sizeof(name) - 1)
 #define UPPER(ch) (((ch) >= 'a' && (ch) <= 'z') ? ((ch) & 0x5F) : (ch))
 #define CELL_ALIGNED(a) (((cell_t) (a) + CELL_MASK) & ~CELL_MASK)
 #define IMMEDIATE 1
@@ -110,24 +110,23 @@ static cell_t same(const char *a, const char *b, cell_t len) {
 
 static cell_t find(const char *name, cell_t len) {
   for (cell_t ***voc = g_sys.context; *voc; ++voc) {
-    cell_t *pos = **voc;
-    cell_t clen = CELL_LEN(len);
-    while (pos) {
-      if (!(pos[-1] & SMUDGE) && len == ((pos[-1] >> 8) & 0xff) &&
-          same(name, (const char *) &pos[-2 - clen], len)) {
-        return (cell_t) pos;
+    cell_t xt = (cell_t) **voc;
+    while (xt) {
+      if (!(*TOFLAGS(xt) & SMUDGE) && len == *TONAMELEN(xt) &&
+          same(name, TONAME(xt), len)) {
+        return xt;
       }
-      pos = (cell_t *) pos[-2];  // Follow link
+      xt = *TOLINK(xt);
     }
   }
   return 0;
 }
 
 static void finish(void) {
-  if (g_sys.latestxt && !(g_sys.latestxt[-1] >> 16)) {
+  if (g_sys.latestxt && !*TOPARAMS(g_sys.latestxt)) {
     cell_t sz = g_sys.heap - &g_sys.latestxt[1];
     if (sz < 0 || sz > 0xffff) { sz = 0xffff; }
-    g_sys.latestxt[-1] |= (sz << 16);
+    *TOPARAMS(g_sys.latestxt) = sz;
   }
 }
 

@@ -103,15 +103,6 @@ e: check-boot
   out: rp0 
   out: sp0 
   out: postpone 
-  out: >body 
-  out: >name 
-  out: >link 
-  out: >link& 
-  out: >size 
-  out: >params 
-  out: >name-length 
-  out: >flags 
-  out: >flags& 
   out: recurse 
   out: aft 
   out: repeat 
@@ -144,7 +135,6 @@ e: check-boot
   out: c, 
   out: , 
   out: align 
-  out: aligned 
   out: allot 
   out: here 
   out: \ 
@@ -152,6 +142,16 @@ e: check-boot
 ;e
 
 e: check-extra-opcodes
+  out: >body 
+  out: >name 
+  out: >link 
+  out: >link& 
+  out: >size 
+  out: >params 
+  out: >flags 
+
+  out: aligned 
+
   out: abs 
   out: max 
   out: min 

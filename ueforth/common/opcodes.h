@@ -28,12 +28,21 @@ typedef uintptr_t ucell_t;
 #define DUP (*++sp = tos)
 #define PUSH DUP; tos = (cell_t)
 #define COMMA(n) *g_sys.heap++ = (n)
-#define DOIMMEDIATE() (*g_sys.current)[-1] |= IMMEDIATE
-#define UNSMUDGE() (*g_sys.current)[-1] &= ~SMUDGE; finish()
 #define DOES(ip) **g_sys.current = (cell_t) ADDR_DODOES; (*g_sys.current)[1] = (cell_t) ip
 
 #define PARK   DUP; *++rp = (cell_t) fp; *++rp = (cell_t) sp; *++rp = (cell_t) ip
 #define UNPARK ip = (cell_t *) *rp--;  sp = (cell_t *) *rp--; fp = (float *) *rp--; DROP
+
+#define TOFLAGS(xt) ((uint8_t *) (((cell_t *) (xt)) - 1))
+#define TONAMELEN(xt) (TOFLAGS(xt) + 1)
+#define TOPARAMS(xt) ((uint16_t *) (TOFLAGS(xt) + 2))
+#define TOSIZE(xt) (CELL_ALIGNED(*TONAMELEN(xt)) + sizeof(cell_t) * (3 + *TOPARAMS(xt)))
+#define TOLINK(xt) (((cell_t *) (xt)) - 2)
+#define TONAME(xt) (((char *) TOLINK(xt)) - CELL_ALIGNED(*TONAMELEN(xt)))
+#define TOBODY(xt) (((cell_t *) xt) + ((void *) *((cell_t *) xt) == ADDR_DOCOLON ? 1 : 2))
+
+#define DOIMMEDIATE() *TOFLAGS(*g_sys.current) |= IMMEDIATE
+#define UNSMUDGE() *TOFLAGS(*g_sys.current) &= ~SMUDGE; finish()
 
 #ifndef SSMOD_FUNC
 # if __SIZEOF_POINTER__ == 8

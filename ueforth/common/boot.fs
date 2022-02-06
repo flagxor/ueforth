@@ -19,7 +19,6 @@
 ( Dictionary )
 : here ( -- a ) 'sys @ ;
 : allot ( n -- ) 'sys +! ;
-: aligned ( a -- a ) cell 1 - dup >r + r> invert and ;
 : align   here aligned here - allot ;
 : , ( n --  ) here ! cell allot ;
 : c, ( ch -- ) here c! 1 allot ;
@@ -67,15 +66,6 @@
 
 ( Recursion )
 : recurse   current @ @ aliteral ['] execute , ; immediate
-
-( Dictionary Format )
-: >flags& ( xt -- a ) cell - ; : >flags ( xt -- flags ) >flags& c@ ;
-: >name-length ( xt -- n ) >flags& 1+ c@ ;
-: >params ( xt -- n ) >flags& 2 + sw@ $ffff and ;
-: >size ( xt -- n ) dup >params cells swap >name-length aligned + 3 cells + ;
-: >link& ( xt -- a ) 2 cells - ;   : >link ( xt -- a ) >link& @ ;
-: >name ( xt -- a n ) dup >name-length swap >link& over aligned - swap ;
-: >body ( xt -- a ) dup @ [ ' >flags @ ] literal = 2 + cells + ;
 
 ( Postpone - done here so we have ['] and IF )
 : immediate? ( xt -- f ) >flags 1 and 0= 0= ;

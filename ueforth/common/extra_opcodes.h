@@ -56,4 +56,12 @@
   Y(blank, memset((void *) *sp, ' ', tos); NIP; DROP) \
   Y(min, tos = tos < *sp ? tos : *sp; NIP) \
   Y(max, tos = tos > *sp ? tos : *sp; NIP) \
-  Y(abs, tos = tos < 0 ? -tos : tos)
+  Y(abs, tos = tos < 0 ? -tos : tos) \
+  Y(aligned, tos = CELL_ALIGNED(tos)) \
+  X(">flags", TOFLAGS, tos = *TOFLAGS(tos)) \
+  X(">params", TOPARAMS, tos = *TOPARAMS(tos)) \
+  X(">size", TOSIZE, tos = TOSIZE(tos)) \
+  X(">link&", TOLINKAT, tos = (cell_t) TOLINK(tos)) \
+  X(">link", TOLINK, tos = *TOLINK(tos)) \
+  X(">name", TONAME, DUP; *sp = (cell_t) TONAME(tos); tos = *TONAMELEN(tos)) \
+  X(">body", TOBODY, tos = (cell_t) TOBODY(tos))
