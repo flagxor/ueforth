@@ -125,7 +125,7 @@ else
 endif
 
 all: targets tests $(DEPLOY_TARGETS)
-fast: posix esp32_sim
+fast: posix esp32_sim esp32
 
 targets: $(TARGETS)
 tests: $(TESTS)

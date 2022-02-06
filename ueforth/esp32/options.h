@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// For now, default on several options.
+// Default on several options.
 #define ENABLE_SPIFFS_SUPPORT
 #define ENABLE_WIFI_SUPPORT
 #define ENABLE_MDNS_SUPPORT
