@@ -15,7 +15,7 @@
 ( Lazy loaded Camera Server )
 : camera-server r~
 
-camera
+camera httpd
 vocabulary camera-server   camera-server definitions
   also camera also httpd
 
