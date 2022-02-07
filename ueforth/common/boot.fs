@@ -195,5 +195,5 @@ variable boot-prompt
 : raw-ok   ."  v{{VERSION}} - rev {{REVISION}}" cr
            boot-prompt @ if boot-prompt @ execute then
            ." Forth dictionary: " remaining used free. cr
-           ." 3 x Forth stacks: " 'stack-cells @ cells . ." bytes" cr
+           ." 3 x Forth stacks: " 'stack-cells @ cells . ." bytes each" cr
            prompt refill drop quit ;
