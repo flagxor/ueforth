@@ -59,6 +59,7 @@ internals definitions
   dup @ ['] see-loop @ = if
     ['] : see.  dup see.  space see-loop   ['] ; see. cr  exit
   then
+  dup >flags BUILTIN_FORK and if ." Built-in fork: " see. exit then
   dup @ ['] input-buffer @ = if ." CREATE/VARIABLE: " see. cr exit then
   dup @ ['] SMUDGE @ = if ." DOES>/CONSTANT: " see. cr exit then
   dup >params 0= if ." Built-in: " see. cr exit then
@@ -102,11 +103,22 @@ only forth definitions
 ( List words in Dictionary / Vocabulary )
 internals definitions
 70 value line-width
-: onlines ( n xt -- n xt )
-   swap dup line-width > if drop 0 cr then over >name nip + 1+ swap ;
+0 value line-pos
+: onlines ( xt -- xt )
+   line-pos line-width > if cr 0 to line-pos then
+   dup >name nip 1+ line-pos + to line-pos ;
+: vins. ( voc -- )
+  >r 'builtins 2 cells + begin dup 2 cells - @ while
+    dup >params r@ = if dup onlines see. then
+    3 cells +
+  repeat drop rdrop ;
+: ins. ( n xt -- n ) cell+ @ vins. ;
+: ?ins. ( xt -- xt ) dup >flags BUILTIN_FORK and if dup ins. then ;
 forth definitions also internals
-: vlist   0 context @ @ begin dup nonvoc? while onlines dup see. >link repeat 2drop cr ;
-: words   0 context @ @ begin dup while onlines dup see. >link repeat 2drop cr ;
+: vlist   0 to line-pos context @ @
+          begin dup nonvoc? while onlines dup ?ins. see. >link repeat drop cr ;
+: words   0 to line-pos context @ @
+          begin dup while onlines dup see. >link repeat drop cr ;
 only forth definitions
 
 ( Extra Task Utils )

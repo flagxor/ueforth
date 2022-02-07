@@ -59,6 +59,7 @@ static struct {
   // Layout not used by Forth.
   cell_t *rp;  // spot to park main thread
   cell_t DOLIT_XT, DOFLIT_XT, DOEXIT_XT, YIELD_XT;
+  void *DOCREATE_OP;
   const BUILTIN_WORD *builtins;
 } g_sys;
 
@@ -260,7 +261,7 @@ static void forth_init(int argc, char *argv[], void *heap,
   forth_run(0);
 #define V(name) \
   create(#name "-builtins", sizeof(#name "-builtins") - 1, \
-      BUILTIN_FORK, 0); \
+      BUILTIN_FORK, g_sys.DOCREATE_OP); \
   *g_sys.heap++ = VOC_ ## name;
   VOCABULARY_LIST
 #undef V

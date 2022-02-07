@@ -41,6 +41,7 @@ static cell_t *forth_run(cell_t *init_rp) {
   };
 
   if (!init_rp) {
+    g_sys.DOCREATE_OP = ADDR_DOCREATE;
     g_sys.builtins = builtins;
     return 0;
   }

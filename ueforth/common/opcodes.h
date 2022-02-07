@@ -125,4 +125,5 @@ typedef struct {
                sp = evaluate1(sp, &tfp); \
                fp = tfp; w = *sp--; DROP; if (w) JMPW) \
   Y(EXIT, ip = (cell_t *) *rp--) \
+  XV(internals, "'builtins", TBUILTINS, DUP; tos = (cell_t) g_sys.builtins) \
   XV(forth_immediate, ";", SEMICOLON, COMMA(g_sys.DOEXIT_XT); UNSMUDGE(); g_sys.state = 0)
