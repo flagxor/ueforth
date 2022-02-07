@@ -448,7 +448,7 @@ e: test-windows-forth-namespace
   check-phase1
   \ out: LOADLIBRARYA 
   \ out: GETPROCADDRESS 
-  out: end 
+  out: forth-builtins 
 ;e
 
 [ELSE] DEFINED? posix [IF]
@@ -489,7 +489,7 @@ e: test-posix-forth-namespace
   out: posix 
   check-phase1
 \  out: DLSYM 
-  out: end 
+  out: forth-builtins 
 ;e 
 
 [ELSE]
@@ -584,7 +584,7 @@ e: test-esp32-forth-namespace
   check-allocation
   check-phase1
 \  check-esp32-basics2
-  out: end 
+  out: forth-builtins 
 ;e 
 
 [THEN] [THEN] 

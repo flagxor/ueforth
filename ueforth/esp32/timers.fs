@@ -12,17 +12,16 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-( Lazy loaded timers )
-
 internals definitions
-transfer timer_isr_register
+transfer timers-builtins
 forth definitions
 
+( Lazy loaded timers )
 : timers r|
 
 vocabulary timers   timers definitions
   also registers also interrupts also internals
-transfer timer_isr_register 
+transfer timers-builtins
 
 $3ff5f000 constant TIMG_BASE
 ( group n = 0/1, timer x = 0/1, watchdog m = 0-5 )

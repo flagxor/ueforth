@@ -31,6 +31,18 @@
 #include <stdio.h>
 #endif
 
+enum {
+#define V(name) VOC_ ## name,
+  VOCABULARY_LIST
+#undef V
+};
+
+enum {
+#define V(name) VOC_ ## name ## _immediate = VOC_ ## name + (IMMEDIATE << 8),
+  VOCABULARY_LIST
+#undef V
+};
+
 static struct {
   cell_t *heap, **current, ***context;
   cell_t *latestxt, notfound;
@@ -116,13 +128,16 @@ static cell_t find(const char *name, cell_t len) {
     cell_t xt = (cell_t) **voc;
     while (xt) {
       if ((*TOFLAGS(xt) & BUILTIN_FORK)) {
+        cell_t vocab = TOLINK(xt)[3];
         for (int i = 0; g_sys.builtins[i].name; ++i) {
-          if (len == g_sys.builtins[i].name_length &&
+          if (g_sys.builtins[i].vocabulary == vocab &&
+              len == g_sys.builtins[i].name_length &&
               same(name, g_sys.builtins[i].name, len)) {
             return (cell_t) &g_sys.builtins[i].code;
           }
         }
-      } else if (!(*TOFLAGS(xt) & SMUDGE) && len == *TONAMELEN(xt) &&
+      }
+      if (!(*TOFLAGS(xt) & SMUDGE) && len == *TONAMELEN(xt) &&
                  same(name, TONAME(xt), len)) {
         return xt;
       }
@@ -243,7 +258,12 @@ static void forth_init(int argc, char *argv[], void *heap,
   for (int i = 0; i < VOCABULARY_DEPTH; ++i) { *g_sys.heap++ = 0; }
 
   forth_run(0);
-  create("end", 3, BUILTIN_FORK, 0);
+#define V(name) \
+  create(#name "-builtins", sizeof(#name "-builtins") - 1, \
+      BUILTIN_FORK, 0); \
+  *g_sys.heap++ = VOC_ ## name;
+  VOCABULARY_LIST
+#undef V
   g_sys.latestxt = 0;  // So last builtin doesn't get wrong size.
   g_sys.DOLIT_XT = FIND("DOLIT");
   g_sys.DOFLIT_XT = FIND("DOFLIT");

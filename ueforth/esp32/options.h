@@ -65,8 +65,8 @@
 # endif
 #endif
 
-enum {
-  RTOS = 2, REGISTERS, VOC_SPIFFS, VOC_SERIAL, TASKS, VOC_SD, VOC_SD_MMC, LEDC,
-  WIRE, WIFI, EDITOR, BLUETOOTH, SOCKETS, STREAMS, OLED,
-  RMT, INTERRUPTS, SPI_FLASH, CAMERA,
-};
+#define VOCABULARY_LIST \
+  V(forth) V(internals) \
+  V(rtos) V(SPIFFS) V(serial) V(SD) V(SD_MMC) \
+  V(ledc) V(Wire) V(WiFi) V(bluetooth) V(sockets) V(oled) \
+  V(rmt) V(interrupts) V(spi_flash) V(camera) V(timers)

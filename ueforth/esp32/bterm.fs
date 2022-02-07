@@ -13,7 +13,6 @@
 \ limitations under the License.
 
 ( Lazy loaded Bluetooth Serial Terminal )
-
 : bterm r|
 vocabulary bterm  bterm definitions
 also bluetooth also internals

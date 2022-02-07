@@ -13,7 +13,6 @@
 \ limitations under the License.
 
 ( Lazy loaded HTTP Daemon )
-
 : httpd r|
 
 vocabulary httpd   httpd definitions also sockets

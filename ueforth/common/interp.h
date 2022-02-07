@@ -17,12 +17,12 @@
 #define ADDR_DOCOLON && OP_DOCOLON
 #define ADDR_DOCREATE && OP_DOCREATE
 #define ADDR_DODOES && OP_DODOES
- 
+
 static cell_t *forth_run(cell_t *init_rp) {
   static const BUILTIN_WORD builtins[] = {
 #define XV(flags, name, op, code) \
-    name, ((flags >> 8) & 0xff) | BUILTIN_MARK, \
-    sizeof(name) - 1, (flags & 0xff), && OP_ ## op,
+    name, ((VOC_ ## flags >> 8) & 0xff) | BUILTIN_MARK, \
+    sizeof(name) - 1, (VOC_ ## flags & 0xff), && OP_ ## op,
     PLATFORM_OPCODE_LIST
     EXTRA_OPCODE_LIST
     OPCODE_LIST

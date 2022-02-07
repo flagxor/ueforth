@@ -12,27 +12,16 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-( Lazy loaded camera gandling for ESP32-CAM )
-DEFINED? esp_camera_init [IF]
-
 internals definitions
-transfer{
-  esp_camera_init esp_camera_deinit
-  esp_camera_fb_get esp_camera_fb_return
-  esp_camera_sensor_get
-}transfer
+transfer camera-builtins
 forth definitions
 
+( Lazy loaded camera handling for ESP32-CAM )
 : camera r|
 
 vocabulary camera   camera definitions
   also internals
-
-transfer{
-  esp_camera_init esp_camera_deinit
-  esp_camera_fb_get esp_camera_fb_return
-  esp_camera_sensor_get
-}transfer
+transfer camera-builtins
 
 0 constant PIXFORMAT_RGB565
 1 constant PIXFORMAT_YUV422

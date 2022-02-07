@@ -29,6 +29,8 @@
   CALLING_OPCODE_LIST \
   FLOATING_POINT_LIST
 
+#define VOCABULARY_LIST V(forth) V(internals)
+
 #include "common/core.h"
 #include "common/interp.h"
 

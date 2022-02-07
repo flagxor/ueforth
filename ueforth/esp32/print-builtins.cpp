@@ -24,8 +24,8 @@
 #include "builtins.h"
 
 #define YV(flags, op, code) XV(flags, #op, op, code)
-#define X(name, op, code) XV(FORTH, name, op, code)
-#define Y(op, code) XV(FORTH, #op, op, code)
+#define X(name, op, code) XV(forth, name, op, code)
+#define Y(op, code) XV(forth, #op, op, code)
 
 int main() {
   printf("#define PLATFORM_SIMULATED_OPCODE_LIST \\\n");

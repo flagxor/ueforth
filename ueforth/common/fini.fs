@@ -12,7 +12,10 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-internals
+internals definitions
+( TODO: Figure out why this has to happen so late. )
+transfer internals-builtins
+forth definitions internals
 ( Bring a forth to the top of the vocabulary. )
 transfer forth
 ( Move heap to save point, with a gap. )

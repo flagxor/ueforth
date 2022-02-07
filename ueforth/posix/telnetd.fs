@@ -13,7 +13,6 @@
 \ limitations under the License.
 
 ( Lazy loaded Telnet )
-
 : telnetd r|
 
 vocabulary telnetd   telnetd definitions also sockets

@@ -13,8 +13,6 @@
 \ limitations under the License.
 
 ( Lazy loaded Camera Server )
-DEFINED? camera [IF]
-
 : camera-server r~
 
 camera
@@ -87,5 +85,3 @@ Frame();
 only forth definitions
 camera-server
 ~ evaluate ;
-
-[THEN]
