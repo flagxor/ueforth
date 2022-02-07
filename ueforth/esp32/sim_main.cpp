@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#define SIM_HEAP_SIZE (100 * 1024 + 1024 * 1024)
-#define STACK_CELLS 512
-
 #include "esp32/options.h"
 #include "common/opcodes.h"
 #include "common/extra_opcodes.h"
 #include "common/floats.h"
 #include "common/calling.h"
+
+#define SIM_HEAP_SIZE (100 * 1024 + 1024 * 1024)
 
 static cell_t *simulated(cell_t *sp, const char *op);
 
@@ -33,8 +32,9 @@ static cell_t *simulated(cell_t *sp, const char *op);
 PLATFORM_SIMULATED_OPCODE_LIST
 #undef XV
 
-#define MALLOC_CAP_INTERNAL SIM_HEAP_SIZE
-#define heap_caps_get_largest_free_block(x) (x)
+#define MALLOC_CAP_INTERNAL 0
+#define heap_caps_get_largest_free_block(x) SIM_HEAP_SIZE
+#define heap_caps_get_free_size(x) SIM_HEAP_SIZE
 
 #include "common/core.h"
 #include "common/interp.h"

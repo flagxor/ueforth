@@ -387,7 +387,6 @@ ESP32_PARTS = tools/replace.js \
               common/calling.h \
               common/core.h \
               common/interp.h \
-              esp32/config.h \
               esp32/options.h \
               esp32/builtins.h \
               esp32/builtins.cpp \
@@ -398,7 +397,6 @@ $(ESP32)/ESP32forth/ESP32forth.ino: $(ESP32_PARTS) | $(ESP32)/ESP32forth
 	cat esp32/template.ino | tools/replace.js \
      VERSION=$(VERSION) \
      REVISION=$(REVISION) \
-     config=@esp32/config.h \
      opcodes=@common/opcodes.h \
      extra_opcodes=@common/extra_opcodes.h \
      calling=@common/calling.h \

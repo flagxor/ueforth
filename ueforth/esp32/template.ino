@@ -19,7 +19,6 @@
  * Revision: {{REVISION}}
  */
 
-{{config}}
 {{options}}
 {{opcodes}}
 {{extra_opcodes}}

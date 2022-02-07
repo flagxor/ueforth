@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#define STACK_CELLS 512
+#define INTERRUPT_STACK_CELLS 64
+#define MINIMUM_FREE_SYSTEM_HEAP (64 * 1024)
+
 // Default on several options.
 #define ENABLE_SPIFFS_SUPPORT
 #define ENABLE_WIFI_SUPPORT

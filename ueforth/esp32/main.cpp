@@ -13,9 +13,13 @@
 // limitations under the License.
 
 void setup() {
-  cell_t hs = heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL);
-  cell_t *heap = (cell_t *) malloc(hs);
-  forth_init(0, 0, heap, hs, boot, sizeof(boot));
+  cell_t fh = heap_caps_get_free_size(MALLOC_CAP_INTERNAL);
+  cell_t hc = heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL);
+  if (fh - hc < MINIMUM_FREE_SYSTEM_HEAP) {
+    hc = fh - MINIMUM_FREE_SYSTEM_HEAP;
+  }
+  cell_t *heap = (cell_t *) malloc(hc);
+  forth_init(0, 0, heap, hc, boot, sizeof(boot));
 }
 
 void loop() {
