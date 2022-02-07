@@ -12,6 +12,5 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#define HEAP_SIZE (100 * 1024)
 #define STACK_CELLS 512
 #define INTERRUPT_STACK_CELLS 64

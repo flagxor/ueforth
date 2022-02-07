@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#define HEAP_SIZE (100 * 1024 + 1024 * 1024)
+#define SIM_HEAP_SIZE (100 * 1024 + 1024 * 1024)
 #define STACK_CELLS 512
 
 #include "esp32/options.h"
@@ -32,6 +32,9 @@ static cell_t *simulated(cell_t *sp, const char *op);
 #define XV(flags, str, name, code) static const char *STR_ ## name = str;
 PLATFORM_SIMULATED_OPCODE_LIST
 #undef XV
+
+#define MALLOC_CAP_INTERNAL SIM_HEAP_SIZE
+#define heap_caps_get_largest_free_block(x) (x)
 
 #include "common/core.h"
 #include "common/interp.h"

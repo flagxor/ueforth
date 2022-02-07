@@ -34,6 +34,7 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
 
 #define PLATFORM_OPCODE_LIST \
   USER_WORDS \
+  REQUIRED_ESP_SUPPORT \
   REQUIRED_MEMORY_SUPPORT \
   REQUIRED_SERIAL_SUPPORT \
   REQUIRED_ARDUINO_GPIO_SUPPORT \
@@ -65,6 +66,17 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   YV(internals, heap_caps_free, heap_caps_free(a0); DROP) \
   YV(internals, heap_caps_realloc, \
       tos = (cell_t) heap_caps_realloc(a2, n1, n0); NIPn(2))
+
+#define REQUIRED_ESP_SUPPORT \
+  YV(ESP, getHeapSize, PUSH ESP.getHeapSize()) \
+  YV(ESP, getFreeHeap, PUSH ESP.getFreeHeap()) \
+  YV(ESP, getMaxAllocHeap, PUSH ESP.getMaxAllocHeap()) \
+  YV(ESP, getChipModel, PUSH ESP.getChipModel()) \
+  YV(ESP, getChipCores, PUSH ESP.getChipCores()) \
+  YV(ESP, getFlashChipSize, PUSH ESP.getFlashChipSize()) \
+  YV(ESP, getCPUFreqMHz, PUSH ESP.getCPUFreqMHz()) \
+  YV(ESP, getSketchSize, PUSH ESP.getSketchSize()) \
+  YV(ESP, deepSleep, ESP.deepSleep(tos); DROP)
 
 #define REQUIRED_SYSTEM_SUPPORT \
   X("MS-TICKS", MS_TICKS, PUSH millis()) \

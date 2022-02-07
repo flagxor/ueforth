@@ -14,6 +14,10 @@
 
 ( Migrate various words to separate vocabularies, and constants )
 
+vocabulary ESP   ESP definitions
+transfer ESP-builtins
+forth definitions
+
 vocabulary Wire   Wire definitions
 transfer wire-builtins
 forth definitions

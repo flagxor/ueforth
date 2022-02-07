@@ -547,6 +547,7 @@ e: test-esp32-forth-namespace
   out: SD 
   out: WiFi 
   out: Wire 
+  out: ESP 
   out: editor 
   out: streams 
   out: tasks 
@@ -610,6 +611,7 @@ e: test-esp32-forth-namespace
   out: SD 
   out: WiFi 
   out: Wire 
+  out: ESP 
   out: ok 
   check-esp32-basics
   out: default-key? 

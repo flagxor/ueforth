@@ -235,10 +235,11 @@ static cell_t *evaluate1(cell_t *sp, float **fp) {
 
 static cell_t *forth_run(cell_t *initrp);
 
-static void forth_init(int argc, char *argv[], void *heap,
+static void forth_init(int argc, char *argv[],
+                       void *heap, cell_t heap_size,
                        const char *src, cell_t src_len) {
   g_sys.heap_start = (cell_t *) heap;
-  g_sys.heap_size = HEAP_SIZE;
+  g_sys.heap_size = heap_size;
   g_sys.stack_cells = STACK_CELLS;
   g_sys.boot = src;
   g_sys.boot_size = src_len;
