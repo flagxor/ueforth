@@ -121,6 +121,27 @@ static cell_t *simulated(cell_t *sp, const char *op) {
     cell_t ret = close(*sp);
     *sp = ret ? errno : 0;
     return sp;
+  } else if (op == STR_getChipModel) {
+    *++sp = (cell_t) "FAKE-ESP32";
+    return sp;
+  } else if (op == STR_getCpuFreqMHz) {
+    *++sp = 240;
+    return sp;
+  } else if (op == STR_getChipCores) {
+    *++sp = 2;
+    return sp;
+  } else if (op == STR_getFlashChipSize) {
+    *++sp = 4 * 1024 * 1024;
+    return sp;
+  } else if (op == STR_getFreeHeap) {
+    *++sp = 90000;
+    return sp;
+  } else if (op == STR_getHeapSize) {
+    *++sp = 320 * 1024;
+    return sp;
+  } else if (op == STR_getMaxAllocHeap) {
+    *++sp = 80 * 1024;
+    return sp;
   } else {
     fprintf(stderr, "MISSING SIM OPCODE: %s\n", op);
     exit(1);

@@ -20,7 +20,7 @@ yield-task start-task
 forth definitions
 
 ( Set up Basic I/O )
-internals definitions
+internals definitions also serial
 : esp32-bye   0 terminate ;
 : serial-type ( a n -- ) Serial.write drop ;
 : serial-key ( -- n )
@@ -35,6 +35,8 @@ also forth definitions
 ' default-key? is key?
 ' esp32-bye is bye
 only forth definitions
+
+also ledc also serial also SPIFFS
 
 ( Map Arduino / ESP32 things to shorter names. )
 : pin ( n pin# -- ) swap digitalWrite ;
@@ -60,6 +62,17 @@ only forth definitions
 -1 z" /spiffs" 10 SPIFFS.begin drop
 led OUTPUT pinMode
 high led pin
+
+internals definitions also ESP
+: esp32-stats
+  getChipModel z>s type ."    "
+  getCpuFreqMHz . ." MHz   "
+  getChipCores .  ." cores   "
+  getFlashChipSize . ." bytes flash" cr
+  ."      System Heap: " getFreeHeap getHeapSize free. cr
+  ."                   " getMaxAllocHeap . ." bytes max contiguous" cr ;
+' esp32-stats internals boot-prompt !
+only forth definitions
 
 ( Setup entry )
 internals : ok   ." ESP32forth" raw-ok ; forth

@@ -189,8 +189,11 @@ create input-buffer   input-limit allot
 : quit    begin ['] evaluate-buffer catch
           if 0 state ! sp0 sp! fp0 fp! rp0 rp! ." ERROR" cr then
           prompt refill drop again ;
+variable boot-prompt
+: free. ( nf nu -- ) 2dup swap . ." free + " . ." used = " 2dup + . ." total ("
+                     over + 100 -rot */ n. ." % free)" ;
 : raw-ok   ."  v{{VERSION}} - rev {{REVISION}}" cr
-           remaining . ." bytes heap free   "
-           used . ." bytes dictionary used   "
-           'stack-cells @ cells . ." bytes x 3 stacks" cr
+           boot-prompt @ if boot-prompt @ execute then
+           ." Forth dictionary: " remaining used free. cr
+           ." 3 x Forth stacks: " 'stack-cells @ cells . ." bytes" cr
            prompt refill drop quit ;

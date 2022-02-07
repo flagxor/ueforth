@@ -16,6 +16,8 @@
 
 vocabulary ESP   ESP definitions
 transfer ESP-builtins
+only forth definitions
+
 forth definitions
 
 vocabulary Wire   Wire definitions

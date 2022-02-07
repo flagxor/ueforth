@@ -555,7 +555,8 @@ e: test-esp32-forth-namespace
   out: FORTH 
 ;e
 
-e: check-esp32-basics
+e: check-esp32-platform
+  out: ok 
   out: LED 
   out: OUTPUT 
   out: INPUT 
@@ -567,6 +568,9 @@ e: check-esp32-basics
   out: duty 
   out: adc 
   out: pin 
+  out: default-key? 
+  out: default-key 
+  out: default-type 
 ;e
 
 e: check-esp32-builtins
@@ -597,6 +601,7 @@ e: test-esp32-forth-namespace
   out:  
   out: web-interface 
   out: httpd 
+  check-esp32-platform
   out: oled 
   out: bluetooth 
   out: rtos 
@@ -612,11 +617,6 @@ e: test-esp32-forth-namespace
   out: WiFi 
   out: Wire 
   out: ESP 
-  out: ok 
-  check-esp32-basics
-  out: default-key? 
-  out: default-key 
-  out: default-type 
   check-phase2
   check-allocation
   check-phase1

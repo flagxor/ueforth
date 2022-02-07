@@ -56,7 +56,7 @@ transfer{
   (do) (?do) (+loop) 
   parse-quote digit $@ raw.s
   tib-setup input-limit
-  [SKIP] [SKIP]' raw-ok
+  [SKIP] [SKIP]' raw-ok boot-prompt free.
   $place zplace BUILTIN_MARK
 }transfer
 forth definitions

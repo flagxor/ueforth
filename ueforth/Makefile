@@ -205,7 +205,7 @@ $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 ESP32_BOOT = $(COMMON_PHASE1) \
              esp32/allocation.fs \
              $(COMMON_PHASE2) \
-             esp32/platform.fs esp32/bindings.fs \
+             esp32/bindings.fs esp32/platform.fs \
              posix/httpd.fs posix/web_interface.fs esp32/web_interface.fs \
              esp32/registers.fs esp32/timers.fs \
              esp32/bterm.fs posix/telnetd.fs \

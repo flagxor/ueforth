@@ -74,7 +74,7 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   YV(ESP, getChipModel, PUSH ESP.getChipModel()) \
   YV(ESP, getChipCores, PUSH ESP.getChipCores()) \
   YV(ESP, getFlashChipSize, PUSH ESP.getFlashChipSize()) \
-  YV(ESP, getCPUFreqMHz, PUSH ESP.getCPUFreqMHz()) \
+  YV(ESP, getCpuFreqMHz, PUSH ESP.getCpuFreqMHz()) \
   YV(ESP, getSketchSize, PUSH ESP.getSketchSize()) \
   YV(ESP, deepSleep, ESP.deepSleep(tos); DROP)
 
