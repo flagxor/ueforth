@@ -140,7 +140,7 @@ win32_tests: unit_tests_win32
 win64_tests: unit_tests_win64
 web_tests:
 esp32_tests:
-esp32_sim_tests: unit_tests_esp32_sim see_all_test_esp32_sim
+esp32_sim_tests: unit_tests_esp32_sim see_all_test_esp32_sim sizes
 
 # ---- UNIT TESTS ----
 
@@ -170,6 +170,9 @@ see_all_test_esp32_sim: $(ESP32_SIM)/Esp32forth-sim
 save_restore_test: $(POSIX)/ueforth
 	echo ': square dup * ; save /tmp/save_restore_test.bin bye' | $< >/dev/null
 	echo 'restore /tmp/save_restore_test.bin 4 square 16 - posix sysexit' | $< >/dev/null
+
+sizes: $(ESP32_SIM)/Esp32forth-sim
+	echo internals size-all bye | $< | tools/memuse.py >$(ESP32_SIM)/sizes.txt
 
 # ---- GENERATED ----
 
@@ -367,9 +370,6 @@ $(ESP32_SIM)/Esp32forth-sim: \
     $(GEN)/esp32_sim_opcodes.h | $(ESP32_SIM)
 	$(CXX) $(CFLAGS) -m32 -D_FILE_OFFSET_BITS=64 $< -o $@
 	strip $(STRIP_ARGS) $@
-
-sizes: $(ESP32_SIM)/Esp32forth-sim
-	echo internals size-all bye | $< | tools/memuse.py
 
 # ---- ESP32 ----
 
