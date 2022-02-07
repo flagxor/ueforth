@@ -6,7 +6,8 @@ vocab = None
 data = []
 for line in sys.stdin.read().splitlines():
   parts = line.strip().split(' ')
-  if len(parts) != 4 or parts[0] == '-->':
+  if (len(parts) != 4 or parts[0] == '-->' or
+      parts[1] == 'bytes'):
     continue
   params = int(parts[0])
   size = int(parts[1])
