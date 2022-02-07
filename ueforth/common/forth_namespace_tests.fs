@@ -13,7 +13,18 @@
 \ limitations under the License.
 
 also internals
-: list-from ( xt ) begin dup nonvoc? while dup see. cr >link repeat drop ;
+: list-builtins ( voc )
+  >r 'builtins begin dup >link while
+    dup >params r@ = if dup see. cr then
+    3 cells +
+  repeat drop rdrop ;
+: list-from ( xt ) begin dup nonvoc? while
+    dup >flags BUILTIN_FORK and if
+      dup cell+ @ list-builtins
+    then
+    dup see. cr
+    >link
+  repeat drop ;
 
 e: check-locals
   out: +to 
@@ -137,143 +148,141 @@ e: check-boot
 ;e
 
 e: check-extra-opcodes
-  out: >body 
-  out: >name 
-  out: >link 
-  out: >link& 
-  out: >size 
-  out: >params 
-  out: >flags 
-
-  out: c, 
-  out: , 
-  out: align 
-  out: aligned 
-  out: allot 
-  out: here 
-
-  out: abs 
-  out: max 
-  out: min 
-
-  out: blank 
-  out: erase 
-  out: fill 
-  out: cmove> 
-  out: cmove 
-
-  out: 2! 
-  out: 2@ 
-  out: 2dup 
-  out: 2drop 
-  out: cell/ 
-  out: cells 
-  out: cell+ 
-  out: +! 
-  out: 4/ 
-  out: 4* 
-  out: 2/ 
-  out: 2* 
-  out: 1- 
-  out: 1+ 
-  out: nl 
-  out: bl 
-  out: 0<> 
-  out: <> 
-  out: = 
-  out: >= 
-  out: <= 
-  out: > 
-  out: < 
-  out: -rot 
-  out: rot 
-  out: - 
-  out: negate 
-  out: invert 
-  out: mod 
-  out: / 
-  out: /mod 
-  out: * 
-  out: */ 
-  out: rdrop 
   out: nip 
+  out: rdrop 
+  out: */ 
+  out: * 
+  out: /mod 
+  out: / 
+  out: mod 
+  out: invert 
+  out: negate 
+  out: - 
+  out: rot 
+  out: -rot 
+  out: < 
+  out: > 
+  out: <= 
+  out: >= 
+  out: = 
+  out: <> 
+  out: 0<> 
+  out: bl 
+  out: nl 
+  out: 1+ 
+  out: 1- 
+  out: 2* 
+  out: 2/ 
+  out: 4* 
+  out: 4/ 
+  out: +! 
+  out: cell+ 
+  out: cells 
+  out: cell/ 
+  out: 2drop 
+  out: 2dup 
+  out: 2@ 
+  out: 2! 
+
+  out: cmove 
+  out: cmove> 
+  out: fill 
+  out: erase 
+  out: blank 
+
+  out: min 
+  out: max 
+  out: abs 
+
+  out: here 
+  out: allot 
+  out: aligned 
+  out: align 
+  out: , 
+  out: c, 
+
+  out: >flags 
+  out: >params 
+  out: >size 
+  out: >link& 
+  out: >link 
+  out: >name 
+  out: >body 
 ;e
 
 e: check-core-opcodes
-  out: ; 
-  out: EXIT 
-  out: : 
-  out: IMMEDIATE 
-  out: DOES> 
-  out: CREATE 
-  out: S>NUMBER? 
-  out: PARSE 
-  out: FIND 
-  out: CELL 
-  out: EXECUTE 
-  out: R@ 
-  out: R> 
-  out: >R 
-  out: RP! 
-  out: RP@ 
-  out: SP! 
-  out: SP@ 
-  out: C! 
-  out: W! 
-  out: L! 
-  out: ! 
-  out: C@ 
-  out: SW@ 
-  out: SL@ 
-  out: @ 
-  out: DROP 
-  out: OVER 
-  out: SWAP 
-  out: DUP 
-  out: XOR 
-  out: OR 
-  out: AND 
-  out: RSHIFT 
-  out: LSHIFT 
-  out: */MOD 
-  out: U/MOD 
-  out: + 
-  out: 0< 
   out: 0= 
+  out: 0< 
+  out: + 
+  out: U/MOD 
+  out: */MOD 
+  out: LSHIFT 
+  out: RSHIFT 
+  out: AND 
+  out: OR 
+  out: XOR 
+  out: DUP 
+  out: SWAP 
+  out: OVER 
+  out: DROP 
+  out: @ 
+  out: SL@ 
+  out: SW@ 
+  out: C@ 
+  out: ! 
+  out: L! 
+  out: W! 
+  out: C! 
+  out: SP@ 
+  out: SP! 
+  out: RP@ 
+  out: RP! 
+  out: >R 
+  out: R> 
+  out: R@ 
+  out: EXECUTE 
+  out: CELL 
+  out: FIND 
+  out: PARSE 
+  out: CREATE 
+  out: DOES> 
+  out: IMMEDIATE 
+  out: : 
+  out: EXIT 
+  out: ; 
 ;e
 
 e: check-float-opcodes
-  out: FSQRT 
-  out: PI 
-  out: SFLOAT+ 
-  out: SFLOATS 
-  out: SFLOAT 
-  out: F>NUMBER? 
-  out: F>S 
-  out: S>F 
-  out: 1/F 
-  out: F/ 
-  out: F* 
-  out: F- 
-  out: F+ 
-  out: F>= 
-  out: F<= 
-  out: F<> 
-  out: F> 
-  out: F< 
-  out: F= 
-  out: F0= 
-  out: F0< 
-  out: FNEGATE 
-  out: FSWAP 
-  out: FOVER 
-  out: FDROP 
-  out: FNIP 
-  out: FDUP 
-  out: SF! 
-  out: SF@ 
-  out: FP! 
   out: FP@ 
+  out: FP! 
+  out: SF@ 
+  out: SF! 
+  out: FDUP 
+  out: FNIP 
+  out: FDROP 
+  out: FOVER 
+  out: FSWAP 
+  out: FNEGATE 
+  out: F0< 
+  out: F0= 
+  out: F= 
+  out: F< 
+  out: F> 
+  out: F<> 
+  out: F<= 
+  out: F>= 
+  out: F+ 
+  out: F- 
+  out: F* 
+  out: F/ 
+  out: 1/F 
+  out: S>F 
+  out: F>S 
+  out: SFLOAT 
+  out: SFLOATS 
+  out: SFLOAT+ 
+  out: PI 
+  out: FSQRT 
 ;e
 
 e: check-files
@@ -294,6 +303,26 @@ e: check-files
   out: R/W 
   out: W/O 
   out: R/O 
+;e
+
+e: check-files-reverse
+  out: R/O 
+  out: W/O 
+  out: R/W 
+  out: BIN 
+  out: CLOSE-FILE 
+  out: FLUSH-FILE 
+  out: OPEN-FILE 
+  out: CREATE-FILE 
+  out: DELETE-FILE 
+  out: RENAME-FILE 
+  out: WRITE-FILE 
+  out: READ-FILE 
+  out: FILE-POSITION 
+  out: REPOSITION-FILE 
+  out: RESIZE-FILE 
+  out: FILE-SIZE 
+  out: NON-BLOCK 
 ;e
 
 e: check-blocks
@@ -397,9 +426,12 @@ e: check-phase1
   check-vocabulary
   check-[]conds
   check-boot
-\  check-core-opcodes
-\  check-extra-opcodes
-\  check-float-opcodes
+;e
+
+e: check-opcodes
+  check-float-opcodes
+  check-extra-opcodes
+  check-core-opcodes
 ;e
 
 e: check-desktop
@@ -446,8 +478,9 @@ e: test-windows-forth-namespace
   out: default-type 
   out: windows 
   check-phase1
-  \ out: LOADLIBRARYA 
-  \ out: GETPROCADDRESS 
+  out: GETPROCADDRESS 
+  out: LOADLIBRARYA 
+  check-opcodes
   out: forth-builtins 
 ;e
 
@@ -488,7 +521,8 @@ e: test-posix-forth-namespace
   out: default-type 
   out: posix 
   check-phase1
-\  out: DLSYM 
+  out: DLSYM 
+  check-opcodes
   out: forth-builtins 
 ;e 
 
@@ -533,17 +567,17 @@ e: check-esp32-basics
   out: pin 
 ;e
 
-e: check-esp32-basics2
-  out: MDNS.begin 
-  out: dacWrite 
-  check-files
-  out: TERMINATE 
-  out: MS-TICKS 
-  out: pulseIn 
-  out: analogRead 
-  out: digitalRead 
-  out: digitalWrite 
+e: check-esp32-builtins
   out: pinMode 
+  out: digitalWrite 
+  out: digitalRead 
+  out: analogRead 
+  out: pulseIn 
+  out: MS-TICKS 
+  out: TERMINATE 
+  check-files-reverse
+  out: dacWrite 
+  out: MDNS.begin 
 ;e
 
 e: test-esp32-forth-namespace
@@ -583,7 +617,8 @@ e: test-esp32-forth-namespace
   check-phase2
   check-allocation
   check-phase1
-\  check-esp32-basics2
+  check-esp32-builtins
+  check-opcodes
   out: forth-builtins 
 ;e 
 

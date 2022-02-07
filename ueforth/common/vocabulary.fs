@@ -50,10 +50,9 @@ variable scope   scope context cell - !
 transfer{
   xt-find& xt-hide xt-transfer
   voc-stack-end last-vocabulary
-  yield branch 0branch donext dolit
   'context 'notfound notfound
   immediate? input-buffer ?echo ?arrow. arrow
-  evaluate1 evaluate-buffer
+  evaluate-buffer
   'sys 'heap aliteral 'heap-start 'heap-size
   'stack-cells 'boot 'boot-size 'latestxt
   'argc 'argv 'runner 'tib

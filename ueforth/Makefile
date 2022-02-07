@@ -179,7 +179,7 @@ $(GEN):
 COMMON_PHASE1 = common/boot.fs common/conditionals.fs common/vocabulary.fs \
                      common/floats.fs
 
-COMMON_DESKTOP = common/hide_calls.fs common/ansi.fs common/desktop.fs
+COMMON_DESKTOP = common/ansi.fs common/desktop.fs
 
 COMMON_PHASE2 = common/tasks.fs common/utils.fs common/locals.fs \
                 common/filetools.fs common/including.fs \

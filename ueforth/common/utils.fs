@@ -108,7 +108,7 @@ internals definitions
    line-pos line-width > if cr 0 to line-pos then
    dup >name nip 1+ line-pos + to line-pos ;
 : vins. ( voc -- )
-  >r 'builtins 2 cells + begin dup 2 cells - @ while
+  >r 'builtins begin dup >link while
     dup >params r@ = if dup onlines see. then
     3 cells +
   repeat drop rdrop ;
@@ -116,9 +116,9 @@ internals definitions
 : ?ins. ( xt -- xt ) dup >flags BUILTIN_FORK and if dup ins. then ;
 forth definitions also internals
 : vlist   0 to line-pos context @ @
-          begin dup nonvoc? while onlines dup ?ins. see. >link repeat drop cr ;
+          begin dup nonvoc? while ?ins. dup onlines see. >link repeat drop cr ;
 : words   0 to line-pos context @ @
-          begin dup while onlines dup see. >link repeat drop cr ;
+          begin dup while ?ins. dup onlines see. >link repeat drop cr ;
 only forth definitions
 
 ( Extra Task Utils )

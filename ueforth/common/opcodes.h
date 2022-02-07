@@ -63,8 +63,13 @@ typedef int64_t dcell_t;
 
 typedef struct {
   const char *name;
-  uint8_t flags, name_length;
-  uint16_t vocabulary;
+  union {
+    struct {
+      uint8_t flags, name_length;
+      uint16_t vocabulary;
+    };
+    cell_t multi;
+  };
   const void *code;
 } BUILTIN_WORD;
 
@@ -100,11 +105,11 @@ typedef struct {
   X("R>", FROMR, DUP; tos = *rp; --rp) \
   X("R@", RAT, DUP; tos = *rp) \
   Y(EXECUTE, w = tos; DROP; JMPW) \
-  Y(BRANCH, ip = (cell_t *) *ip) \
-  Y(0BRANCH, if (!tos) ip = (cell_t *) *ip; else ++ip; DROP) \
-  Y(DONEXT, *rp = *rp - 1; if (~*rp) ip = (cell_t *) *ip; else (--rp, ++ip)) \
-  Y(DOLIT, DUP; tos = *ip++) \
-  Y(ALITERAL, COMMA(g_sys.DOLIT_XT); COMMA(tos); DROP) \
+  YV(internals, BRANCH, ip = (cell_t *) *ip) \
+  YV(internals, 0BRANCH, if (!tos) ip = (cell_t *) *ip; else ++ip; DROP) \
+  YV(internals, DONEXT, *rp = *rp - 1; if (~*rp) ip = (cell_t *) *ip; else (--rp, ++ip)) \
+  YV(internals, DOLIT, DUP; tos = *ip++) \
+  YV(internals, ALITERAL, COMMA(g_sys.DOLIT_XT); COMMA(tos); DROP) \
   Y(CELL, DUP; tos = sizeof(cell_t)) \
   Y(FIND, tos = find((const char *) *sp, tos); --sp) \
   Y(PARSE, DUP; tos = parse(tos, sp)) \
@@ -117,7 +122,7 @@ typedef struct {
   X("DOES>", DOES, DOES(ip); ip = (cell_t *) *rp; --rp) \
   Y(IMMEDIATE, DOIMMEDIATE()) \
   XV(internals, "'SYS", SYS, DUP; tos = (cell_t) &g_sys) \
-  Y(YIELD, PARK; return rp) \
+  YV(internals, YIELD, PARK; return rp) \
   X(":", COLON, DUP; DUP; tos = parse(32, sp); \
                 create((const char *) *sp, tos, SMUDGE, ADDR_DOCOLON); \
                 g_sys.state = -1; --sp; DROP) \
@@ -125,5 +130,5 @@ typedef struct {
                sp = evaluate1(sp, &tfp); \
                fp = tfp; w = *sp--; DROP; if (w) JMPW) \
   Y(EXIT, ip = (cell_t *) *rp--) \
-  XV(internals, "'builtins", TBUILTINS, DUP; tos = (cell_t) g_sys.builtins) \
+  XV(internals, "'builtins", TBUILTINS, DUP; tos = (cell_t) &g_sys.builtins->code) \
   XV(forth_immediate, ";", SEMICOLON, COMMA(g_sys.DOEXIT_XT); UNSMUDGE(); g_sys.state = 0)

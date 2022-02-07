@@ -27,7 +27,6 @@ internals definitions
 : #f+s ( r -- ) fdup precision 0 ?do 10e f* loop
                 precision 0 ?do fdup f>s 10 mod [char] 0 + hold 0.1e f* loop
                 [char] . hold fdrop f>s #s ;
-transfer doflit
 forth definitions internals
 
 : #fs ( r -- ) fdup f0< if fnegate #f+s [char] - hold else #f+s then ;

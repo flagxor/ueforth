@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #define FLOATING_POINT_LIST \
-  Y(DOFLIT, *++fp = *(float *) ip++) \
+  YV(internals, DOFLIT, *++fp = *(float *) ip++) \
   X("FP@", FPAT, DUP; tos = (cell_t) fp) \
   X("FP!", FPSTORE, fp = (float *) tos; DROP) \
   X("SF@", FAT, *++fp = *(float *) tos; DROP) \
@@ -39,7 +39,7 @@
   X("1/F", FINVERSE, *fp = 1.0 / *fp) \
   X("S>F", STOF, *++fp = (float) tos; DROP) \
   X("F>S", FTOS, DUP; tos = (cell_t) *fp--) \
-  X("F>NUMBER?", FCONVERT, tos = fconvert((const char *) *sp, tos, fp); --sp) \
+  XV(internals, "F>NUMBER?", FCONVERT, tos = fconvert((const char *) *sp, tos, fp); --sp) \
   Y(SFLOAT, DUP; tos = sizeof(float)) \
   Y(SFLOATS, tos *= sizeof(float)) \
   X("SFLOAT+", SFLOATPLUS, DUP; tos += sizeof(float)) \
