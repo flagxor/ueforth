@@ -77,6 +77,18 @@
 : >name ( xt -- a n ) dup >name-length swap >link& over aligned - swap ;
 : >body ( xt -- a ) dup @ [ ' >flags @ ] literal = 2 + cells + ;
 
+( System Variables )
+: sys: ( a -- a' "name" ) dup constant cell+ ;
+'sys   sys: 'heap         sys: current       sys: 'context
+       sys: 'latestxt     sys: 'notfound
+       sys: 'heap-start   sys: 'heap-size    sys: 'stack-cells
+       sys: 'boot         sys: 'boot-size
+       sys: 'tib          sys: #tib          sys: >in
+       sys: state         sys: base
+       sys: 'argc         sys: 'argv         sys: 'runner
+: context ( -- a ) 'context @ cell+ ;
+: latestxt ( -- xt ) 'latestxt @ ;
+
 : f= ( r r -- f ) f- f0= ;
 : f< ( r r -- f ) f- f0< ;
 : f> ( r r -- f ) fswap f< ;

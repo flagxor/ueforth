@@ -49,19 +49,15 @@ variable scope   scope context cell - !
 
 transfer{
   xt-find& xt-hide xt-transfer
-  voc-stack-end last-vocabulary
-  'context 'notfound notfound
+  voc-stack-end last-vocabulary notfound
   immediate? input-buffer ?echo ?arrow. arrow
-  evaluate-buffer
-  'sys 'heap aliteral 'heap-start 'heap-size
-  'stack-cells 'boot 'boot-size 'latestxt
-  'argc 'argv 'runner 'tib
+  evaluate-buffer aliteral
   leaving( )leaving leaving leaving,
   (do) (?do) (+loop) 
   parse-quote digit $@ raw.s
   tib-setup input-limit
   [SKIP] [SKIP]' raw-ok
-  $place zplace sys: BUILTIN_MARK
+  $place zplace BUILTIN_MARK
 }transfer
 forth definitions
 

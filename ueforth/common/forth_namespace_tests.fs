@@ -108,11 +108,6 @@ e: check-boot
   out: next 
   out: for 
   out: nest-depth 
-  out: fdepth 
-  out: depth 
-  out: fp0 
-  out: rp0 
-  out: sp0 
   out: postpone 
   out: recurse 
   out: aft 
@@ -134,13 +129,11 @@ e: check-boot
   out: [ 
   out: used 
   out: remaining 
-  out: latestxt 
-  out: context 
-  out: base 
-  out: state 
-  out: >in 
-  out: #tib 
-  out: current 
+  out: fdepth 
+  out: depth 
+  out: fp0 
+  out: rp0 
+  out: sp0 
   out: variable 
   out: constant 
   out: \ 
@@ -208,6 +201,14 @@ e: check-extra-opcodes
   out: >link 
   out: >name 
   out: >body 
+
+  out: current 
+  out: #tib 
+  out: >in 
+  out: state 
+  out: base 
+  out: context 
+  out: latestxt 
 ;e
 
 e: check-core-opcodes

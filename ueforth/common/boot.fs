@@ -20,17 +20,14 @@
 : constant ( n "name" -- ) create , does> @ ;
 : variable ( "name" -- ) create 0 , ;
 
-( System Variables )
-: sys: ( a -- a' "name" ) dup constant cell+ ;
-'sys   sys: 'heap         sys: current       sys: 'context
-       sys: 'latestxt     sys: 'notfound
-       sys: 'heap-start   sys: 'heap-size    sys: 'stack-cells
-       sys: 'boot         sys: 'boot-size
-       sys: 'tib          sys: #tib          sys: >in
-       sys: state         sys: base
-       sys: 'argc         sys: 'argv         sys: 'runner
-: context ( -- a ) 'context @ cell+ ;
-: latestxt ( -- xt ) 'latestxt @ ;
+( Stack Baseline )
+sp@ constant sp0
+rp@ constant rp0
+fp@ constant fp0
+: depth ( -- n ) sp@ sp0 - cell/ ;
+: fdepth ( -- n ) fp@ fp0 - 4 / ;
+
+( Useful heap size words )
 : remaining ( -- n ) 'heap-start @ 'heap-size @ + 'heap @ - ;
 : used ( -- n ) 'heap @ sp@ 'stack-cells @ cells + - 28 + ;
 
@@ -63,13 +60,6 @@
 ( Postpone - done here so we have ['] and IF )
 : immediate? ( xt -- f ) >flags 1 and 0= 0= ;
 : postpone ' dup immediate? if , else aliteral ['] , , then ; immediate
-
-( Stack Convience )
-sp@ constant sp0
-rp@ constant rp0
-fp@ constant fp0
-: depth ( -- n ) sp@ sp0 - cell/ ;
-: fdepth ( -- n ) fp@ fp0 - 4 / ;
 
 ( Rstack nest depth )
 variable nest-depth

@@ -70,4 +70,24 @@
   X(">link&", TOLINKAT, tos = (cell_t) TOLINK(tos)) \
   X(">link", TOLINK, tos = *TOLINK(tos)) \
   X(">name", TONAME, DUP; *sp = (cell_t) TONAME(tos); tos = *TONAMELEN(tos)) \
-  X(">body", TOBODY, tos = (cell_t) TOBODY(tos))
+  X(">body", TOBODY, tos = (cell_t) TOBODY(tos)) \
+  XV(internals, "'heap", THEAP, DUP; tos = (cell_t) &g_sys.heap) \
+  Y(current, DUP; tos = (cell_t) &g_sys.current) \
+  XV(internals, "'context", TCONTEXT, DUP; tos = (cell_t) &g_sys.context) \
+  XV(internals, "'latestxt", TLATESTXT, DUP; tos = (cell_t) &g_sys.latestxt) \
+  XV(internals, "'notfound", TNOTFOUND, DUP; tos = (cell_t) &g_sys.notfound) \
+  XV(internals, "'heap-start", THEAP_START, DUP; tos = (cell_t) &g_sys.heap_start) \
+  XV(internals, "'heap-size", THEAP_SIZE, DUP; tos = (cell_t) &g_sys.heap_size) \
+  XV(internals, "'stack-cells", TSTACK_CELLS, DUP; tos = (cell_t) &g_sys.stack_cells) \
+  XV(internals, "'boot", TBOOT, DUP; tos = (cell_t) &g_sys.boot) \
+  XV(internals, "'boot-size", TBOOT_SIZE, DUP; tos = (cell_t) &g_sys.boot_size) \
+  XV(internals, "'tib", TTIB, DUP; tos = (cell_t) &g_sys.tib) \
+  X("#tib", NTIB, DUP; tos = (cell_t) &g_sys.ntib) \
+  X(">in", TIN, DUP; tos = (cell_t) &g_sys.tin) \
+  Y(state, DUP; tos = (cell_t) &g_sys.state) \
+  Y(base, DUP; tos = (cell_t) &g_sys.base) \
+  XV(internals, "'argc", ARGC, DUP; tos = (cell_t) &g_sys.argc) \
+  XV(internals, "'argv", ARGV, DUP; tos = (cell_t) &g_sys.argv) \
+  XV(internals, "'runner", RUNNER, DUP; tos = (cell_t) &g_sys.runner) \
+  Y(context, DUP; tos = (cell_t) (g_sys.context + 1)) \
+  Y(latestxt, DUP; tos = (cell_t) g_sys.latestxt)
