@@ -100,18 +100,27 @@ wargc @ 'argc !
 here 'argv ! wargc @ cells allot
 'argv @ wargs-convert
 
-AllocConsole drop
-STD_INPUT_HANDLE GetStdHandle constant stdin
-STD_OUTPUT_HANDLE GetStdHandle constant stdout
-STD_ERROR_HANDLE GetStdHandle constant stderr
+0 value console-started
+0 value stdin
+0 value stdout
+0 value stderr
 variable console-mode
-stdin console-mode GetConsoleMode drop
-stdin console-mode @ ENABLE_LINE_INPUT ENABLE_MOUSE_INPUT or
-                     ENABLE_WINDOW_INPUT or invert and SetConsoleMode drop
-stdout console-mode GetConsoleMode drop
-stdout console-mode @ ENABLE_VIRTUAL_TERMINAL_PROCESSING or SetConsoleMode drop
 
-: win-type ( a n -- ) stdout -rot NULL NULL WriteFile drop ;
+: init-console
+  console-started if exit then
+  -1 to console-started
+  AllocConsole drop
+  STD_INPUT_HANDLE GetStdHandle to stdin
+  STD_OUTPUT_HANDLE GetStdHandle to stdout
+  STD_ERROR_HANDLE GetStdHandle to stderr
+  stdin console-mode GetConsoleMode drop
+  stdin console-mode @ ENABLE_LINE_INPUT ENABLE_MOUSE_INPUT or
+                       ENABLE_WINDOW_INPUT or invert and SetConsoleMode drop
+  stdout console-mode GetConsoleMode drop
+  stdout console-mode @ ENABLE_VIRTUAL_TERMINAL_PROCESSING or SetConsoleMode drop
+;
+
+: win-type ( a n -- ) init-console stdout -rot NULL NULL WriteFile drop ;
 : raw-key ( -- n ) 0 >r stdin rp@ 1 NULL NULL ReadFile drop r> ;
 : win-key? ( -- f ) stdin 0 WaitForSingleObject 0= ;
 : win-key ( -- n ) raw-key dup 13 = if drop nl then ;
