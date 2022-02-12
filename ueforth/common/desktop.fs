@@ -17,4 +17,9 @@ forth definitions internals
 : argc ( -- n ) 'argc @ ;
 : argv ( n -- a n ) cells 'argv @ + @ z>s ;
 
-forth
+internals definitions also ansi
+
+: boot-set-title   s" uEforth" set-title ;
+' boot-set-title boot-prompt !
+
+only forth definitions
