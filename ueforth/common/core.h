@@ -104,6 +104,8 @@ static cell_t fconvert(const char *pos, cell_t n, float *ret) {
     } else if (*pos == '.') {
       if (has_dot) { return 0; }
       has_dot = -1;
+    } else {
+      return 0;
     }
     ++pos;
   }

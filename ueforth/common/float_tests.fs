@@ -99,3 +99,8 @@ e: test-afliteral
   foo
   out: 123.000000 
 ;e
+
+e: test-float-broken-parse
+  internals
+  s" teste" f>number? 0= assert
+;e
