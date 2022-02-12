@@ -368,7 +368,7 @@ $(ESP32_SIM)/Esp32forth-sim: \
     common/interp.h \
     $(GEN)/esp32_boot.h \
     $(GEN)/esp32_sim_opcodes.h | $(ESP32_SIM)
-	$(CXX) $(CFLAGS) -m32 -D_FILE_OFFSET_BITS=64 $< -o $@
+	$(CXX) $(CFLAGS) $< -o $@
 	strip $(STRIP_ARGS) $@
 
 # ---- ESP32 ----
