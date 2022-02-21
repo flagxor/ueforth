@@ -16,7 +16,7 @@ grf
 
 0 value clicking
 
-640 480 window
+-1 -1 window
 : run
   begin
     wait
