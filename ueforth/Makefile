@@ -186,11 +186,11 @@ $(GEN):
 COMMON_PHASE1 = common/boot.fs common/conditionals.fs common/vocabulary.fs \
                 common/floats.fs common/structures.fs
 
-COMMON_DESKTOP = common/ansi.fs common/desktop.fs
-
 COMMON_PHASE2 = common/tasks.fs common/utils.fs common/locals.fs \
                 common/filetools.fs common/including.fs \
                 common/streams.fs common/blocks.fs
+
+COMMON_DESKTOP = common/ansi.fs common/desktop.fs common/grf.fs
 
 POSIX_BOOT =  $(COMMON_PHASE1) \
               posix/posix.fs posix/allocation.fs posix/termios.fs \
@@ -210,6 +210,7 @@ WINDOWS_BOOT = $(COMMON_PHASE1) \
                windows/windows_messages.fs \
                windows/allocation.fs \
                $(COMMON_PHASE2) $(COMMON_DESKTOP) \
+               windows/grf.fs \
                posix/autoboot.fs \
                common/fini.fs
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)

@@ -438,6 +438,7 @@ e: check-opcodes
 ;e
 
 e: check-desktop
+  out: grf 
   check-args
   check-ansi
 ;e
@@ -457,6 +458,8 @@ DEFINED? windows [IF]
 
 e: test-windows-forth-namespace
   internals voclist
+  out: internals 
+  out: grf 
   out: ansi 
   out: editor 
   out: streams 
@@ -494,6 +497,8 @@ e: test-windows-forth-namespace
 e: test-posix-forth-namespace
   internals voclist
   out: sockets 
+  out: internals 
+  out: grf 
   out: ansi 
   out: editor 
   out: streams 
