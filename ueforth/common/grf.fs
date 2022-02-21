@@ -32,19 +32,29 @@
 \   last-keycode ( -- n )
 \   event ( -- n )
 \ Event constants:
-\   UNKNOWN TIMEOUT RESIZE EXPOSE
-\   MOTION PRESS RELEASE
+\   UNKNOWN TIMEOUT RESIZED EXPOSED
+\   MOTION PRESSED RELEASED FINISHED
 
 vocabulary grf   grf definitions
 vocabulary internals
 
 0 constant UNKNOWN
 1 constant TIMEOUT
-2 constant RESIZE
-3 constant EXPOSE
+2 constant RESIZED
+3 constant EXPOSED
 4 constant MOTION
-5 constant PRESS
-6 constant RELEASE
+5 constant PRESSED
+6 constant RELEASED
+7 constant FINISHED
+
+0 value mouse-x
+0 value mouse-y
+0 value last-key
+0 value last-keysym
+0 value last-keycode
+0 value event
+0 value width
+0 value height
 
 ( Rest of definitions per platform. )
 

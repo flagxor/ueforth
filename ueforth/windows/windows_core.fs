@@ -17,11 +17,12 @@ vocabulary windows   windows definitions
 ( DLL Handling )
 create calls
 internals
-' call0 , ' call1 , ' call2 , ' call3 , ' call4 ,  ' call5 ,
-' call6 , ' call7 , ' call8 , ' call9 , ' call10 , ' call11 , ' call12 ,
+ ' call0 ,  ' call1 ,  ' call2 ,  ' call3 ,  ' call4 ,
+ ' call5 ,  ' call6 ,  ' call7 ,  ' call8 ,  ' call9 ,
+' call10 , ' call11 , ' call12 , ' call13 , ' call14 , ' call15 ,
 windows
 : sofunc ( z n a "name" -- )
-   >r dup 12 > throw r> ( Check there aren't too many args )
+   >r dup 15 > throw r> ( Check there aren't too many args )
    swap >r swap GetProcAddress dup 0= throw create , r> cells calls + @ ,
    does> dup @ swap cell+ @ execute ;
 : dll ( z "name" -- )

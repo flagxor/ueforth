@@ -106,6 +106,7 @@ struct RECT
   i32 field ->bottom
 
 z" GetMessageA" 4 User32 GetMessageA
+z" PeekMessageA" 5 User32 PeekMessageA
 z" TranslateMessage" 1 User32 TranslateMessage
 z" DispatchMessageA" 1 User32 DispatchMessageA
 struct MSG
@@ -116,7 +117,11 @@ struct MSG
     i32 field ->time
    POINT field ->pt
     i32 field ->lPrivate
+0 constant PM_NOREMOVE
+1 constant PM_REMOVE
+2 constant PM_NOYIELD
 
+z" GetDC" 1 User32 GetDC
 z" BeginPaint" 2 User32 BeginPaint
 z" EndPaint" 2 User32 EndPaint
 struct PAINTSTRUCT
@@ -159,5 +164,8 @@ z" LoadIconA" 2 User32 LoadIconA
 IDI_EXCLAMATION constant IDI_WARNING
 IDI_HAND constant IDI_ERROR
 IDI_ASTERISK constant IDI_INFORMATION
+
+: GET_Y_LPARAM ( n -- n ) >r rp@ 2 + sw@ rdrop ;
+: GET_X_LPARAM ( n -- n ) >r rp@ sw@ rdrop ;
 
 only forth definitions

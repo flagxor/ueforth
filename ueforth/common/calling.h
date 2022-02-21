@@ -27,6 +27,9 @@
 #define n10 sp[-9]
 #define n11 sp[-10]
 #define n12 sp[-11]
+#define n13 sp[-12]
+#define n14 sp[-13]
+#define n15 sp[-14]
 
 #define a0 ((void *) tos)
 #define a1 (*(void **) &n1)

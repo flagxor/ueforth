@@ -44,4 +44,31 @@ $80000011 constant DEFAULT_GUI_FONT
 $80000012 constant DC_BRUSH
 $80000013 constant DC_PEN
 
+z" StretchDIBits" 13 Gdi32 StretchDIBits
+struct RGBQUAD
+  i8 field ->rgbBlue
+  i8 field ->rgbGreen
+  i8 field ->rgbRed
+  i8 field ->rgbReserved
+struct BITMAPINFOHEADER
+  i16 field ->biSize
+  i32 field ->biWidth
+  i32 field ->biHeight
+  i16 field ->biPlanes
+  i16 field ->biBitCount
+  i32 field ->biCompression
+  i32 field ->biSizeImage
+  i32 field ->biXPelsPerMeter
+  i32 field ->biYPelsPerMeter
+  i32 field ->biClrUsed
+  i32 field ->biClrImportant
+struct BITMAPINFO
+  BITMAPINFOHEADER field ->bmiHeader
+           RGBQUAD field ->bmiColors
+
+0 constant BI_RGB
+0 constant DIB_RGB_COLORS
+
+$00cc0020 constant SRCCOPY
+
 only forth definitions

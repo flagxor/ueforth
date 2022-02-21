@@ -15,5 +15,16 @@
 grf
 
 640 480 window
-wait
-bye
+: run
+  begin
+    wait
+    100 0 do
+      50 0 do
+        $ffcc00 i j pixel l!
+      loop
+    loop
+    flip
+  event FINISHED = until
+  bye
+;
+run
