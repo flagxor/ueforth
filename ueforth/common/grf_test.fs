@@ -31,6 +31,12 @@ $00ccff value color
   top h 1- for left over w hline 1+ next drop
 ;
 
+\ For t = 0 to 2pi
+\     x = -16 to 16
+\     y = -17 to 12
+\ Goes around clockwise
+\ x = 0 when t = pi
+\ x = 0, y = 5 when t = 0
 : heart-f ( f: t -- x y )
   fdup fsin 3e f** 16e f* fswap
   fdup fcos 13e f*
@@ -39,12 +45,44 @@ $00ccff value color
   fswap 4e f* fcos f-
 ;
 
-: heart
-  400 0 do
-    i s>f 200e f/ pi f* heart-f
-    10e f* fswap 10e f* fswap f>s f>s
-    300 + swap negate 200 +
-    4 4 box
+4000 constant heart-steps
+1024 constant heart-size
+create heart-start heart-size allot
+create heart-end heart-size allot
+
+: cmin! ( n a ) dup >r c@ min r> c! ;
+: cmax! ( n a ) dup >r c@ max r> c! ;
+: heart-make
+  heart-start heart-size 0 fill
+  heart-end heart-size 0 fill
+  heart-start heart-size 7 29 */ 128 fill
+  heart-end heart-size 7 29 */ 128 fill
+  heart-steps 0 do
+    i s>f heart-steps s>f f/ pi f* heart-f
+    fnegate 12e f+ 29.01e f/ heart-size s>f f* fswap 16e f* f>s f>s
+    2dup heart-start + cmin!
+    heart-end + cmax!
+  loop
+  heart-size 0 do
+    heart-end i + c@ heart-start i + c@ - heart-end i + c!
+  loop
+;
+heart-make
+
+512 29 32 */ constant heart-ratio
+: heart 0 { x y s r }
+  y s 2/ - to y
+  s 0 do
+    i heart-size s */ to r
+    x heart-start r + c@ s heart-ratio */ +
+      y i +
+      heart-end r + c@ s heart-ratio */
+      1 box
+    x heart-start r + c@
+      heart-end r + c@ + s heart-ratio */ -
+      y i +
+      heart-end r + c@ s heart-ratio */
+      1 box
   loop
 ;
 
@@ -58,12 +96,8 @@ $00ccff value color
     RELEASED event = if 0 to clicking then
     0 to color
     0 0 width height box
-    clicking if $00cc00 else $ffcc00 then to color
-    100 for
-      mouse-x 100 - mouse-y 50 - i + 200 1 box
-      color 2 + to color
-    next
-    heart
+    clicking if $ccccff else $ffccff then to color
+    mouse-x mouse-y height heart
     flip
   event FINISHED = until
   bye
