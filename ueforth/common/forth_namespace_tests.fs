@@ -361,6 +361,7 @@ e: check-blocks
 e: check-vocabulary
   out: internals 
   out: sealed 
+  out: previous 
   out: also 
   out: only 
   out: transfer{ 

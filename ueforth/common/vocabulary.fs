@@ -39,6 +39,9 @@ forth definitions
 : only   forth 0 context cell+ ! ;
 : voc-stack-end ( -- a ) context begin dup @ while cell+ repeat ;
 : also   context context cell+ voc-stack-end over - 2 cells + cmove> ;
+: previous
+  voc-stack-end context cell+ = throw
+  context cell+ context voc-stack-end over - cell+ cmove ;
 : sealed   0 last-vocabulary @ >body ! ;
 
 ( Hide some words in an internals vocabulary )

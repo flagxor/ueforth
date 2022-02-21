@@ -68,6 +68,7 @@ TRANSFER ( "name" ) Move a word from its current dictionary to the current vocab
                     Useful for "hiding" built-in words
 TRANSFER{ ..words.. }TRANSFER ( -- ) Transfer multiple words to the current vocabulary
 ALSO ( -- ) Duplicate the vocabulary at the top of the vocabulary stack
+PREVIOUS ( -- ) Drop the vocabulary at the top of the vocabulary stack
 ONLY ( -- ) Reset context stack to one item, the FORTH dictionary
             Non-standard, as there's no distinct ONLY vocabulary
 ORDER ( -- ) Print the vocabulary search order

@@ -39,4 +39,4 @@ z" setsockopt" 5 sysfunc setsockopt
 ( Fixup return )
 : sockaccept sockaccept sign-extend ;
 
-forth definitions
+only forth definitions

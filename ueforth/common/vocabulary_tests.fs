@@ -57,6 +57,32 @@ e: test-order
   only forth definitions
 ;e
 
+e: test-order-previous
+  vocabulary foo
+  vocabulary bar
+  vocabulary baz
+  also foo also bar also baz
+  order
+  out: baz >> FORTH 
+  out: bar >> FORTH 
+  out: foo >> FORTH 
+  out: FORTH 
+  previous order
+  out: bar >> FORTH 
+  out: foo >> FORTH 
+  out: FORTH 
+  previous order
+  out: foo >> FORTH 
+  out: FORTH 
+  previous order
+  out: FORTH 
+;e
+
+e: test-previous-throw
+  only forth definitions
+  ' previous catch 0<> assert
+;e
+
 e: test-vocab-define-order
   vocabulary foo
   foo definitions
