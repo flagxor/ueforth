@@ -13,8 +13,6 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-include posix/xlib.fs
-
 also x11
 
 0 XOpenDisplay constant display

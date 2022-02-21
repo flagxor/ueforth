@@ -60,9 +60,10 @@ variable confirm-old-type
       >r >r >r 1+ r> 1- r> 1+ r> 1-
    again
 ;
+: stars ( n -- ) 1- for 42 emit next ;
 : expect-finish   expected resulted str= if exit then }confirm
-   cr ." Expected:" cr expected resulted diverged type cr
-      ." Resulted:" cr resulted expected diverged type cr 1 throw ;
+   cr ." Expected:" cr expected resulted diverged type 30 stars cr
+      ." Resulted:" cr resulted expected diverged type 30 stars cr 1 throw ;
 
 ( Better error asserts )
 : =assert ( actual expected -- )

@@ -196,6 +196,8 @@ COMMON_DESKTOP = common/ansi.fs common/desktop.fs \
 POSIX_BOOT =  $(COMMON_PHASE1) \
               posix/posix.fs posix/allocation.fs posix/termios.fs \
               $(COMMON_PHASE2) $(COMMON_DESKTOP) \
+              posix/x11.fs \
+              posix/grf.fs \
               posix/sockets.fs posix/telnetd.fs posix/httpd.fs posix/web_interface.fs \
               posix/autoboot.fs \
               common/fini.fs

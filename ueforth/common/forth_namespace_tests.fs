@@ -529,6 +529,7 @@ e: test-posix-forth-namespace
   out: httpd 
   out: telnetd 
   out: sockets 
+  out: x11 
   check-desktop
   check-phase2
   out: form 

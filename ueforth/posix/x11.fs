@@ -12,8 +12,11 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-( Bindings for Xlib )
-also posix
+( Lazy load bindings for Xlib )
+
+: x11 r|
+
+forth also posix
 vocabulary x11   also x11 definitions
 
 z" libX11.so" shared-library xlib
@@ -114,3 +117,5 @@ xevent GenericEvent
 drop
 
 only forth definitions
+x11
+| evaluate ;
