@@ -38,7 +38,7 @@ create side RECT allot
 200 side ->right !
 100 side ->bottom !
 
-: foo { hwnd msg w l }
+: MyWindowProc { hwnd msg w l }
   WM_DESTROY msg = if
     0 PostQuitMessage
     0 exit
@@ -52,11 +52,11 @@ create side RECT allot
   then
   hwnd msg w l DefWindowProcA
 ;
-create bar ' foo , ' yield ,
 
 0 myclass MyWindowTitle WS_OVERLAPPEDWINDOW
-CW_USEDEFAULT CW_USEDEFAULT 640 480
-NULL NULL hinst bar CreateWindowExA constant hwnd
+  CW_USEDEFAULT CW_USEDEFAULT 640 480
+  NULL NULL hinst ' MyWindowProc callback
+  CreateWindowExA constant hwnd
 
 hwnd SW_SHOWMAXIMIZED ShowWindow drop
 hwnd SetForegroundWindow drop

@@ -14,6 +14,7 @@
 
 windows definitions
 also structures
+also internals
 
 z" User32.dll" dll User32
 
@@ -57,6 +58,8 @@ SW_MAXIMIZED constant SW_SHOWMAXIMIZED
 
 z" SetForegroundWindow" 1 User32 SetForegroundWindow
 z" DefWindowProcA" 4 User32 DefWindowProcA
+
+: callback ( xt -- ) here >r , ['] yield , r> ;
 
 z" CreateWindowExA" 12 User32 CreateWindowExA
 $00000000 constant WS_OVERLAPPED
