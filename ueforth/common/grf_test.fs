@@ -25,10 +25,10 @@ $00ccff value color
   top 0 max to top
   right width min to right
   bottom height min to bottom
-  left right >= top bottom >= if exit then
+  left right >= top bottom >= or if exit then
   right left - to w
   bottom top - to h
-  top h 1- for left over w hline 1+ next
+  top h 1- for left over w hline 1+ next drop
 ;
 
 0 value clicking
@@ -41,8 +41,11 @@ $00ccff value color
     RELEASED event = if 0 to clicking then
     0 to color
     0 0 width height box
-    clicking if $00ccff else $ffcc00 then to color
-    mouse-x 100 - mouse-y 50 - 200 100 box
+    clicking if $00cc00 else $ffcc00 then to color
+    100 for
+      mouse-x 100 - mouse-y 50 - i + 200 1 box
+      color 2 + to color
+    next
     flip
   event FINISHED = until
   bye
