@@ -29,10 +29,13 @@
 \   last-key ( -- n )
 \   last-keysym ( -- n )
 \   last-keycode ( -- n )
+\   pressed? ( k -- f )
 \   event ( -- n )
 \ Event constants:
 \   UNKNOWN TIMEOUT RESIZED EXPOSED
 \   MOTION PRESSED RELEASED FINISHED
+\ Key/Button constants:
+\   LEFT-BUTTON MIDDLE-BUTTON RIGHT-BUTTON
 
 vocabulary grf   grf definitions
 vocabulary internals
@@ -45,6 +48,10 @@ vocabulary internals
 5 constant PRESSED
 6 constant RELEASED
 7 constant FINISHED
+
+255 constant LEFT-BUTTON
+254 constant MIDDLE-BUTTON
+253 constant RIGHT-BUTTON
 
 0 value mouse-x
 0 value mouse-y
@@ -59,9 +66,17 @@ internals definitions
 
 0 value backbuffer
 
+256 constant key-count
+create key-state key-count allot
+key-state key-count erase
+
+: key-state! ( f k ) key-state + c! ;
+
 grf definitions also internals
 
 : pixel ( w h -- a ) width * + 4* backbuffer + ;
+
+: pressed? ( k -- f ) key-state + c@ 0<> ;
 
 ( Rest of the core definitions per platform. )
 

@@ -44,6 +44,26 @@ cell allocate throw to backbuffer
   RESIZED to event
 ;
 
+: msg>button ( n -- n )
+  dup WM_LBUTTONDOWN = over WM_LBUTTONUP = or if
+    drop LEFT-BUTTON exit
+  then
+  dup WM_MBUTTONDOWN = over WM_MBUTTONUP = or if
+    drop MIDDLE-BUTTON exit
+  then
+  dup WM_RBUTTONDOWN = over WM_RBUTTONUP = or if
+    drop RIGHT-BUTTON exit
+  then
+  drop 0
+;
+
+: msg>pressed ( n -- 0/1 )
+  dup WM_LBUTTONDOWN =
+  over WM_MBUTTONDOWN = or
+  over WM_RBUTTONDOWN = or if drop 1 exit then
+  drop 0
+;
+
 : GrfWindowProc { hwnd msg w l }
   WM_QUIT msg = if
     FINISHED to event
@@ -72,15 +92,12 @@ cell allocate throw to backbuffer
   then
   WM_CHAR msg = if
   then
-  WM_LBUTTONDOWN msg = if
+  msg msg>button if
     l GET_X_LPARAM to mouse-x
     l GET_Y_LPARAM to mouse-y
-    PRESSED to event
-  then
-  WM_LBUTTONUP msg = if
-    l GET_X_LPARAM to mouse-x
-    l GET_Y_LPARAM to mouse-y
-    RELEASED to event
+    msg msg>pressed msg msg>button key-state!
+    msg msg>button to last-keycode
+    msg msg>pressed if PRESSED else RELEASED then to event
   then
   WM_MOUSEMOVE msg = if
     l GET_X_LPARAM to mouse-x

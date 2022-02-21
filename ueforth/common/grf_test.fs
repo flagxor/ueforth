@@ -14,17 +14,13 @@
 
 grf
 
-0 value clicking
-
 -1 -1 window
 : run
   begin
     wait
-    PRESSED event = if 1 to clicking then
-    RELEASED event = if 0 to clicking then
     0 to color
     0 0 width height box
-    clicking if $ccccff else $ffccff then to color
+    LEFT-BUTTON pressed? if $ccccff else $ffccff then to color
     mouse-x mouse-y height heart
     flip
   event FINISHED = until
