@@ -35,4 +35,6 @@ typedef cell_t (CALLTYPE *call_t)();
   YV(internals, CALL7, n0 = ct0(n7, n6, n5, n4, n3, n2, n1); sp -= 7) \
   YV(internals, CALL8, n0 = ct0(n8, n7, n6, n5, n4, n3, n2, n1); sp -= 8) \
   YV(internals, CALL9, n0 = ct0(n9, n8, n7, n6, n5, n4, n3, n2, n1); sp -= 9) \
-  YV(internals, CALL10, n0 = ct0(n10, n9, n8, n7, n6, n5, n4, n3, n2, n1); sp -= 10)
+  YV(internals, CALL10, n0 = ct0(n10, n9, n8, n7, n6, n5, n4, n3, n2, n1); sp -= 10) \
+  YV(internals, CALL11, n0 = ct0(n11, n10, n9, n8, n7, n6, n5, n4, n3, n2, n1); sp -= 11) \
+  YV(internals, CALL12, n0 = ct0(n12, n11, n10, n9, n8, n7, n6, n5, n4, n3, n2, n1); sp -= 12)

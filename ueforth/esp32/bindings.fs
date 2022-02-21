@@ -47,25 +47,31 @@ DEFINED? spi_flash_init [IF]
 0 constant SPI_PARTITION_TYPE_APP
 1 constant SPI_PARTITION_TYPE_DATA
 $ff constant SPI_PARTITION_SUBTYPE_ANY
-( Work around changing struct layout )
-: p>common ( part -- part' ) esp_partition_t_size 40 >= if cell+ then ;
-: p>type ( part -- n ) p>common @ ;
-: p>subtype ( part -- n ) p>common cell+ @ ;
-: p>address ( part -- n ) p>common 2 cells + @ ;
-: p>size ( part -- n ) p>common 3 cells + @ ;
-: p>label ( part -- a n ) p>common 4 cells + z>s ;
+
+also structures
+struct esp_partition_t
+  ( Work around changing struct layout )
+  esp_partition_t_size 40 >= [IF]
+    ptr field p>gap
+  [THEN]
+  ptr field p>type
+  ptr field p>subtype
+  ptr field p>address
+  ptr field p>size
+  ptr field p>label
+
 : p. ( part -- )
   base @ >r >r decimal
-  ." TYPE: " r@ p>type . ." SUBTYPE: " r@ p>subtype .
-  ." ADDR: " r@ hex p>address .  ." SIZE: " r@ p>size .
-  ." LABEL: " r> p>label type cr r> base ! ;
+  ." TYPE: " r@ p>type @ . ." SUBTYPE: " r@ p>subtype @ .
+  ." ADDR: " r@ hex p>address @ .  ." SIZE: " r@ p>size @ .
+  ." LABEL: " r> p>label @ z>s type cr r> base ! ;
 : list-partition-type ( type -- )
   SPI_PARTITION_SUBTYPE_ANY 0 esp_partition_find
   begin dup esp_partition_get p. esp_partition_next dup 0= until drop ;
 : list-partitions   SPI_PARTITION_TYPE_APP list-partition-type
                     SPI_PARTITION_TYPE_DATA list-partition-type ;
 [THEN]
-forth definitions
+only forth definitions
 
 vocabulary SPIFFS   SPIFFS definitions
 transfer SPIFFS-builtins

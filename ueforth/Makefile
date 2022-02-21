@@ -65,11 +65,15 @@ WIN_CFLAGS = $(CFLAGS_COMMON) \
 
 WIN_LFLAGS32 = /LIBPATH:"c:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib" \
                /LIBPATH:"c:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.28.29333/lib/x86" \
-               /LIBPATH:"c:/Program Files (x86)/Windows Kits/10/Lib/10.0.19041.0/ucrt/x86"
+               /LIBPATH:"c:/Program Files (x86)/Windows Kits/10/Lib/10.0.19041.0/ucrt/x86" \
+               $(WIN_LIBS)
 
 WIN_LFLAGS64 = /LIBPATH:"c:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64" \
                /LIBPATH:"c:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.28.29333/lib/x64" \
                /LIBPATH:"c:/Program Files (x86)/Windows Kits/10/Lib/10.0.19041.0/ucrt/x64" \
+               $(WIN_LIBS)
+
+WIN_LIBS=user32.lib
 
 TARGETS = posix_target \
           web_target \
@@ -180,7 +184,7 @@ $(GEN):
 	mkdir -p $@
 
 COMMON_PHASE1 = common/boot.fs common/conditionals.fs common/vocabulary.fs \
-                     common/floats.fs
+                common/floats.fs common/structures.fs
 
 COMMON_DESKTOP = common/ansi.fs common/desktop.fs
 
@@ -198,7 +202,13 @@ $(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
 	$< boot $(VERSION) $(REVISION) $(POSIX_BOOT) >$@
 
 WINDOWS_BOOT = $(COMMON_PHASE1) \
-               windows/windows.fs windows/allocation.fs \
+               windows/windows_core.fs \
+               windows/windows_files.fs \
+               windows/windows_console.fs \
+               windows/windows_user.fs \
+               windows/windows_gdi.fs \
+               windows/windows_messages.fs \
+               windows/allocation.fs \
                $(COMMON_PHASE2) $(COMMON_DESKTOP) \
                posix/autoboot.fs \
                common/fini.fs

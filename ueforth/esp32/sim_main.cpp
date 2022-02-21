@@ -142,6 +142,9 @@ static cell_t *simulated(cell_t *sp, const char *op) {
   } else if (op == STR_getMaxAllocHeap) {
     *++sp = 80 * 1024;
     return sp;
+  } else if (op == STR_esp_partition_t_size) {
+    *++sp = 64;
+    return sp;
   } else {
     fprintf(stderr, "MISSING SIM OPCODE: %s\n", op);
     exit(1);

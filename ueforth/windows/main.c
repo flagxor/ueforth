@@ -36,11 +36,13 @@
 #define HEAP_SIZE (10 * 1024 * 1024)
 #define STACK_CELLS (8 * 1024)
 
+static LRESULT WindowProcShim(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 #define PLATFORM_OPCODE_LIST \
-  Y(GETPROCADDRESS, \
+  Y(GetProcAddress, \
       tos = (cell_t) GetProcAddress((HMODULE) *sp, (LPCSTR) tos); --sp) \
-  Y(LOADLIBRARYA, \
-      tos = (cell_t) LoadLibraryA((LPCSTR) tos)) \
+  Y(LoadLibraryA, tos = (cell_t) LoadLibraryA((LPCSTR) tos)) \
+  Y(WindowProcShim, DUP; tos = (cell_t) &WindowProcShim) \
   CALLING_OPCODE_LIST \
   FLOATING_POINT_LIST
 
@@ -50,6 +52,33 @@
 #include "windows/interp.h"
 
 #include "gen/windows_boot.h"
+
+static LRESULT WindowProcShim(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+  if (msg == WM_NCCREATE) {
+    SetWindowLongPtr(
+        hwnd, GWLP_USERDATA,
+        (LONG_PTR) ((CREATESTRUCT *) lParam)->lpCreateParams);
+  }
+  if (!GetWindowLongPtr(hwnd, GWLP_USERDATA)) {
+    return DefWindowProc(hwnd, msg, wParam, lParam);
+  }
+  cell_t stacks[STACK_CELLS * 3 + 4];
+  cell_t *at = stacks;
+  at += 4;
+  float *fp = (float *) (at + 1); at += STACK_CELLS;
+  cell_t *rp = at + 1; at += STACK_CELLS;
+  cell_t *sp = at + 1; at += STACK_CELLS;
+  cell_t *ip = (cell_t *) GetWindowLongPtr(hwnd, GWLP_USERDATA);
+  cell_t tos = 0;
+  DUP; tos = (cell_t) hwnd;
+  DUP; tos = (cell_t) msg;
+  DUP; tos = (cell_t) wParam;
+  DUP; tos = (cell_t) lParam;
+  PARK;
+  rp = forth_run(rp);
+  UNPARK;
+  return tos;
+}
 
 #ifdef UEFORTH_MINIMAL
 int WINAPI WinMainCRTStartup(void) {

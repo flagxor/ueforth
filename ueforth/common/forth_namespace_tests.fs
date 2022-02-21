@@ -29,6 +29,7 @@ also internals
 e: check-locals
   out: +to 
   out: to 
+  out: exit 
   out: ; 
   out: { 
   out: (local) 
@@ -423,6 +424,7 @@ e: check-allocation
 ;e
 
 e: check-phase1
+  out: structures 
   check-highlevel-floats
   check-vocabulary
   check-[]conds
@@ -460,6 +462,7 @@ e: test-windows-forth-namespace
   out: streams 
   out: tasks 
   out: windows 
+  out: structures 
   out: internals 
   out: FORTH 
 ;e
@@ -470,17 +473,18 @@ e: test-windows-forth-namespace
   check-desktop
   check-phase2
   check-allocation
-  out: ok 
-  out: ms 
-  check-files
-  out: ms-ticks 
   out: default-key? 
   out: default-key 
   out: default-type 
+  check-files
+  out: ok 
+  out: ms-ticks 
+  out: ms 
   out: windows 
   check-phase1
-  out: GETPROCADDRESS 
-  out: LOADLIBRARYA 
+  out: GetProcAddress 
+  out: LoadLibraryA 
+  out: WindowProcShim 
   check-opcodes
   out: forth-builtins 
 ;e
@@ -496,6 +500,7 @@ e: test-posix-forth-namespace
   out: tasks 
   out: termios 
   out: posix 
+  out: structures 
   out: internals 
   out: FORTH 
 ;e
@@ -551,6 +556,7 @@ e: test-esp32-forth-namespace
   out: editor 
   out: streams 
   out: tasks 
+  out: structures 
   out: internals 
   out: FORTH 
 ;e

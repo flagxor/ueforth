@@ -30,9 +30,10 @@ variable locals-here  locals-area locals-here !
 
 variable scope-depth
 variable local-op   ' local@ local-op !
+: scope-exit   scope-depth @ for aft postpone rdrop then next ;
 : scope-clear
+   scope-exit
    scope-depth @ negate nest-depth +!
-   scope-depth @ for aft postpone rdrop then next
    0 scope-depth !   0 scope !   locals-area locals-here ! ;
 : do-local ( n -- ) nest-depth @ + cells negate aliteral
                     local-op @ ,  ['] local@ local-op ! ;
@@ -64,6 +65,7 @@ also forth definitions
       recurse (local) ; immediate
 ( TODO: Hide the words overriden here. )
 : ;   scope-clear postpone ; ; immediate
+: exit   scope-exit postpone exit ; immediate
 : to ( n -- ) ' dup >flags if (to) else ['] ! value-bind then ; immediate
 : +to ( n -- ) ' dup >flags if (+to) else ['] +! value-bind then ; immediate
 
