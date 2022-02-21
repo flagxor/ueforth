@@ -511,5 +511,9 @@ deploy: all
 	cd out/deploy && gcloud app deploy -q --project eforth *.yaml
 
 # ---- INSTALL ----
+
 install: $(POSIX)/ueforth
 	sudo cp $< /usr/bin/ueforth
+
+win-install: $(WINDOWS)/uEf32.exe $(WINDOWS)/uEf64.exe
+	cp $^ ~/Desktop/

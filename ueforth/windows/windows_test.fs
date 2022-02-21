@@ -55,7 +55,7 @@ create bar ' foo , ' yield ,
 CW_USEDEFAULT CW_USEDEFAULT 640 480
 NULL NULL DefaultInstance bar CreateWindowExA constant hwnd
 
-hwnd SW_SHOWDEFAULT ShowWindow drop
+hwnd SW_SHOWMAXIMIZED ShowWindow drop
 hwnd SetForegroundWindow drop
 
 create mymsg msg allot
