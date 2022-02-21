@@ -18,6 +18,7 @@ grf
 : run
   begin
     wait
+(
     PRESSED event = if
       ." DOWN: " last-key . cr
     then
@@ -27,6 +28,7 @@ grf
     TYPED event = if
       ." CHAR: " last-char . cr
     then
+)
     0 to color 0 0 width height box
     LEFT-BUTTON pressed? if $ccccff else $ffccff then to color
     mouse-x mouse-y height heart
