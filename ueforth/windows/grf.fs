@@ -38,7 +38,7 @@ cell allocate throw to backbuffer
   binfo BITMAPINFO erase
   BITMAPINFOHEADER binfo ->bmiHeader ->biSize !
   w binfo ->bmiHeader ->biWidth !
-  h binfo ->bmiHeader ->biHeight !
+  h negate binfo ->bmiHeader ->biHeight !
   1 binfo ->bmiHeader ->biPlanes !
   32 binfo ->bmiHeader ->biBitCount !
   BI_RGB binfo ->bmiHeader ->biCompression !
@@ -66,13 +66,9 @@ cell allocate throw to backbuffer
     0 exit
   then
   WM_KEYDOWN msg = if
-    l GET_X_LPARAM to mouse-x
-    l GET_Y_LPARAM to mouse-y
     PRESSED to event
   then
   WM_KEYUP msg = if
-    l GET_X_LPARAM to mouse-x
-    l GET_Y_LPARAM to mouse-y
     RELEASED to event
   then
   WM_CHAR msg = if
@@ -91,6 +87,7 @@ cell allocate throw to backbuffer
     l GET_X_LPARAM to mouse-x
     l GET_Y_LPARAM to mouse-y
     MOTION to event
+    0 exit
   then
   hwnd msg w l DefWindowProcA
 ;
@@ -100,6 +97,9 @@ also internals
 also windows
 
 : window { width height }
+  width 0< { fullscreen }
+  fullscreen if 640 to width 480 to height then
+
   NULL GetModuleHandleA to hinstance
   1 1 rescale
 
@@ -118,7 +118,8 @@ also windows
 
   hwnd GetDC to hdc
 
-  hwnd SW_SHOWMAXIMIZED ShowWindow drop
+  fullscreen if SW_SHOWMAXIMIZED else SW_SHOWDEFAULT then
+  hwnd swap ShowWindow drop
   hwnd SetForegroundWindow drop
 ;
 

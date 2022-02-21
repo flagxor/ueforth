@@ -14,15 +14,35 @@
 
 grf
 
+$00ccff value color
+
+: hline { x y w }
+  x y pixel w 1- for color over l! 4 + next drop ;
+
+: box { left top w h }
+  left w + top h + { right bottom }
+  left 0 max to left
+  top 0 max to top
+  right width min to right
+  bottom height min to bottom
+  left right >= top bottom >= if exit then
+  right left - to w
+  bottom top - to h
+  top h 1- for left over w hline 1+ next
+;
+
+0 value clicking
+
 640 480 window
 : run
   begin
     wait
-    100 0 do
-      50 0 do
-        $ffcc00 i j pixel l!
-      loop
-    loop
+    PRESSED event = if 1 to clicking then
+    RELEASED event = if 0 to clicking then
+    0 to color
+    0 0 width height box
+    clicking if $00ccff else $ffcc00 then to color
+    mouse-x 100 - mouse-y 50 - 200 100 box
     flip
   event FINISHED = until
   bye
