@@ -27,13 +27,12 @@
 \   mouse-x ( -- n )
 \   mouse-y ( -- n )
 \   last-key ( -- n )
-\   last-keysym ( -- n )
-\   last-keycode ( -- n )
+\   last-char ( -- n )
 \   pressed? ( k -- f )
 \   event ( -- n )
 \ Event constants:
-\   UNKNOWN TIMEOUT RESIZED EXPOSED
-\   MOTION PRESSED RELEASED FINISHED
+\   UNKNOWN TIMEOUT RESIZED EXPOSED MOTION
+\   PRESSED RELEASED TYPED FINISHED
 \ Key/Button constants:
 \   LEFT-BUTTON MIDDLE-BUTTON RIGHT-BUTTON
 
@@ -47,7 +46,8 @@ vocabulary internals
 4 constant MOTION
 5 constant PRESSED
 6 constant RELEASED
-7 constant FINISHED
+7 constant TYPED
+8 constant FINISHED
 
 255 constant LEFT-BUTTON
 254 constant MIDDLE-BUTTON
@@ -56,8 +56,7 @@ vocabulary internals
 0 value mouse-x
 0 value mouse-y
 0 value last-key
-0 value last-keysym
-0 value last-keycode
+0 value last-char
 0 value event
 0 value width
 0 value height

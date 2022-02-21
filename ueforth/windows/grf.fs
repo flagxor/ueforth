@@ -85,19 +85,27 @@ cell allocate throw to backbuffer
     0 exit
   then
   WM_KEYDOWN msg = if
+    w 0 max 255 min to last-key
+    1 last-key key-state!
     PRESSED to event
   then
   WM_KEYUP msg = if
+    w 0 max 255 min to last-key
+    0 last-key key-state!
     RELEASED to event
   then
   WM_CHAR msg = if
+    w to last-char
+    TYPED to event
+    0 exit
   then
   msg msg>button if
     l GET_X_LPARAM to mouse-x
     l GET_Y_LPARAM to mouse-y
-    msg msg>pressed msg msg>button key-state!
-    msg msg>button to last-keycode
-    msg msg>pressed if PRESSED else RELEASED then to event
+    msg msg>button to last-key
+    msg msg>pressed dup last-key key-state!
+    if PRESSED else RELEASED then to event
+    0 exit
   then
   WM_MOUSEMOVE msg = if
     l GET_X_LPARAM to mouse-x
