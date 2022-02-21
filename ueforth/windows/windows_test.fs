@@ -21,6 +21,7 @@ pad WINDCLASSA erase
   WindowProcShim pad ->lpfnWndProc !
   DefaultInstance pad ->hInstance !
   MyClassName pad ->lpszClassName !
+  NULL IDC_ARROW LoadCursorA pad ->hCursor !
 pad RegisterClassA constant myclass
 
 create ps PAINTSTRUCT allot

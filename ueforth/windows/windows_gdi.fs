@@ -18,10 +18,30 @@ also structures
 z" Gdi32.dll" dll Gdi32
 
 z" DeleteObject" 1 Gdi32 DeleteObject
+
 z" CreateSolidBrush" 1 Gdi32 CreateSolidBrush
+: RGB ( r g b -- n ) 16 lshift swap 8 lshift + + ;
 
 5 constant COLOR_WINDOW
 
-: RGB ( r g b -- n ) 16 lshift swap 8 lshift + + ;
+z" GetStockObject" 1 Gdi32 GetStockObject
+$80000000 constant WHITE_BRUSH
+$80000001 constant LTGRAY_BRUSH
+$80000002 constant GRAY_BRUSH
+$80000003 constant DKGRAY_BRUSH
+$80000004 constant BLACK_BRUSH
+$80000005 constant NULL_BRUSH
+$80000006 constant WHITE_PEN
+$80000007 constant BLACK_PEN
+$8000000a constant OEM_FIXED_FONT
+$8000000b constant ANSI_FIXED_FONT
+$8000000c constant ANSI_VAR_FONT
+$8000000d constant SYSTEM_FONT
+$8000000e constant DEVICE_DEFAULT_PALETTE
+$8000000f constant DEFAULT_PALETTE
+$80000010 constant SYSTEM_FIXED_FONT
+$80000011 constant DEFAULT_GUI_FONT
+$80000012 constant DC_BRUSH
+$80000013 constant DC_PEN
 
 only forth definitions

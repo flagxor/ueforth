@@ -126,4 +126,22 @@ struct PAINTSTRUCT
 z" FillRect" 3 User32 FillRect
 z" PostQuitMessage" 1 User32 PostQuitMessage
 
+z" LoadCursorA" 2 User32 LoadCursorA
+32650 constant IDC_APPSTARTING
+32512 constant IDC_ARROW
+32515 constant IDC_CROSS
+32649 constant IDC_HAND
+32651 constant IDC_HELP
+32513 constant IDC_IBEAM
+32641 constant IDC_ICON
+32648 constant IDC_NO
+32640 constant IDC_SIZE
+32646 constant IDC_SIZEALL
+32643 constant IDC_SIZENESW
+32645 constant IDC_SIZENS
+32642 constant IDC_SIZENWSE
+32644 constant IDC_SIZEWE
+32516 constant IDC_UPARROW
+32514 constant IDC_WAIT
+
 only forth definitions
