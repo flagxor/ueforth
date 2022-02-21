@@ -64,6 +64,7 @@ hwnd SetForegroundWindow drop
 create mymsg msg allot
 : pump
   begin mymsg NULL 0 0 GetMessageA while
+    \ mymsg ->message @ WM_>name type cr
     mymsg TranslateMessage drop
     mymsg DispatchMessageA drop
   repeat

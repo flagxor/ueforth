@@ -171,7 +171,6 @@ windows definitions
 
 255 constant WM_INPUT
 256 constant WM_KEYDOWN
-256 constant WM_KEYFIRST
 257 constant WM_KEYUP
 258 constant WM_CHAR
 259 constant WM_DEADCHAR
