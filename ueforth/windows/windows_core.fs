@@ -35,6 +35,7 @@ z" GetTickCount" 0 Kernel32 GetTickCount
 z" WaitForSingleObject" 2 Kernel32 WaitForSingleObject
 z" GetLastError" 0 Kernel32 GetLastError
 z" GetCommandLineW" 0 Kernel32 GetCommandLineW
+z" GetModuleHandleA" 1 Kernel32 GetModuleHandleA
 
 z" Shell32.dll" dll Shell32
 z" CommandLineToArgvW" 2 Shell32 CommandLineToArgvW

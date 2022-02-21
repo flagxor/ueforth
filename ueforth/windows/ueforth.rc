@@ -12,4 +12,5 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#define IDI_MAIN_ICON 1001
 IDI_MAIN_ICON ICON "out/resources/eforth.ico"

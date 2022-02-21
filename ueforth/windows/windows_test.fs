@@ -17,11 +17,14 @@ also windows also internals
 z" MyClass" constant MyClassName
 z" Test Window" constant MyWindowTitle
 
+NULL GetModuleHandleA constant hinst
+
 pad WINDCLASSA erase
   WindowProcShim pad ->lpfnWndProc !
-  DefaultInstance pad ->hInstance !
+  hinst pad ->hInstance !
   MyClassName pad ->lpszClassName !
   NULL IDC_ARROW LoadCursorA pad ->hCursor !
+  hinst IDI_MAIN_ICON LoadIconA pad ->hIcon !
 pad RegisterClassA constant myclass
 
 create ps PAINTSTRUCT allot
@@ -53,7 +56,7 @@ create bar ' foo , ' yield ,
 
 0 myclass MyWindowTitle WS_OVERLAPPEDWINDOW
 CW_USEDEFAULT CW_USEDEFAULT 640 480
-NULL NULL DefaultInstance bar CreateWindowExA constant hwnd
+NULL NULL hinst bar CreateWindowExA constant hwnd
 
 hwnd SW_SHOWMAXIMIZED ShowWindow drop
 hwnd SetForegroundWindow drop

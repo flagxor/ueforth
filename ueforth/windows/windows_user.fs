@@ -89,6 +89,7 @@ WS_OVERLAPPEDWINDOW constant WS_TILEDWINDOW
 
 ( General use )
 $400000 constant DefaultInstance
+1001 constant IDI_MAIN_ICON
 $80000000 constant CW_USEDEFAULT
 
 struct POINT
@@ -127,21 +128,33 @@ z" FillRect" 3 User32 FillRect
 z" PostQuitMessage" 1 User32 PostQuitMessage
 
 z" LoadCursorA" 2 User32 LoadCursorA
-32650 constant IDC_APPSTARTING
 32512 constant IDC_ARROW
-32515 constant IDC_CROSS
-32649 constant IDC_HAND
-32651 constant IDC_HELP
 32513 constant IDC_IBEAM
-32641 constant IDC_ICON
-32648 constant IDC_NO
-32640 constant IDC_SIZE
-32646 constant IDC_SIZEALL
-32643 constant IDC_SIZENESW
-32645 constant IDC_SIZENS
-32642 constant IDC_SIZENWSE
-32644 constant IDC_SIZEWE
-32516 constant IDC_UPARROW
 32514 constant IDC_WAIT
+32515 constant IDC_CROSS
+32516 constant IDC_UPARROW
+32640 constant IDC_SIZE
+32641 constant IDC_ICON
+32642 constant IDC_SIZENWSE
+32643 constant IDC_SIZENESW
+32644 constant IDC_SIZEWE
+32645 constant IDC_SIZENS
+32646 constant IDC_SIZEALL
+32648 constant IDC_NO
+32649 constant IDC_HAND
+32650 constant IDC_APPSTARTING
+32651 constant IDC_HELP
+
+z" LoadIconA" 2 User32 LoadIconA
+32512 constant IDI_APPLICATION
+32513 constant IDI_HAND
+32514 constant IDI_QUESTION
+32515 constant IDI_EXCLAMATION
+32516 constant IDI_ASTERISK
+32517 constant IDI_WINLOGO
+32518 constant IDI_SHIELD
+IDI_EXCLAMATION constant IDI_WARNING
+IDI_HAND constant IDI_ERROR
+IDI_ASTERISK constant IDI_INFORMATION
 
 only forth definitions
