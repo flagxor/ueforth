@@ -31,6 +31,23 @@ $00ccff value color
   top h 1- for left over w hline 1+ next drop
 ;
 
+: heart-f ( f: t -- x y )
+  fdup fsin 3e f** 16e f* fswap
+  fdup fcos 13e f*
+  fover 2e f* fcos 5e f* f-
+  fover 3e f* fcos 2e f* f-
+  fswap 4e f* fcos f-
+;
+
+: heart
+  400 0 do
+    i s>f 200e f/ pi f* heart-f
+    10e f* fswap 10e f* fswap f>s f>s
+    300 + swap negate 200 +
+    4 4 box
+  loop
+;
+
 0 value clicking
 
 640 480 window
@@ -46,6 +63,7 @@ $00ccff value color
       mouse-x 100 - mouse-y 50 - i + 200 1 box
       color 2 + to color
     next
+    heart
     flip
   event FINISHED = until
   bye

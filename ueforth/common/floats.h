@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <math.h>
+
 #define FLOATING_POINT_LIST \
   YV(internals, DOFLIT, *++fp = *(float *) ip++) \
   X("FP@", FPAT, DUP; tos = (cell_t) fp) \
@@ -44,6 +46,16 @@
   Y(SFLOATS, tos *= sizeof(float)) \
   X("SFLOAT+", SFLOATPLUS, DUP; tos += sizeof(float)) \
   Y(PI, *++fp = 3.14159265359f) \
-  Y(FSQRT, float fx = *fp; float ft = 1.0f; \
-      for (w = 0; w < 20; ++w) ft = (fx / ft + ft) * 0.5f; *fp = ft) \
+  Y(FSIN, *fp = sin(*fp)) \
+  Y(FCOS, *fp = cos(*fp)) \
+  Y(FSINCOS, fp[1] = cos(*fp); *fp = sin(*fp); ++fp) \
+  Y(FATAN2, fp[-1] = atan2(fp[-1], *fp); --fp) \
+  X("F**", FSTARSTAR, fp[-1] = pow(fp[-1], *fp); --fp) \
+  Y(FLOOR, *fp = floor(*fp)) \
+  Y(FEXP, *fp = exp(*fp)) \
+  Y(FLN, *fp = log(*fp)) \
+  Y(FABS, *fp = fabs(*fp)) \
+  Y(FMIN, fp[-1] = fmin(fp[-1], *fp); --fp) \
+  Y(FMAX, fp[-1] = fmax(fp[-1], *fp); --fp) \
+  Y(FSQRT, *fp = sqrt(*fp))
 

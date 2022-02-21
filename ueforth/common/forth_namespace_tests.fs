@@ -284,6 +284,17 @@ e: check-float-opcodes
   out: SFLOATS 
   out: SFLOAT+ 
   out: PI 
+  out: FSIN 
+  out: FCOS 
+  out: FSINCOS 
+  out: FATAN2 
+  out: F** 
+  out: FLOOR 
+  out: FEXP 
+  out: FLN 
+  out: FABS 
+  out: FMIN 
+  out: FMAX 
   out: FSQRT 
 ;e
 
