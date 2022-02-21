@@ -27,7 +27,6 @@ z" uEforth" constant GrfWindowTitle
 create ps PAINTSTRUCT allot
 create msgbuf MSG allot
 create binfo BITMAPINFO allot
-0 value backbuffer
 cell allocate throw to backbuffer
 
 : rescale { w h }
@@ -146,7 +145,5 @@ also windows
   hdc 0 0 width height 0 0 width height
     backbuffer binfo DIB_RGB_COLORS SRCCOPY StretchDIBits drop
 ;
-
-: pixel ( w h -- a ) width * + 4* backbuffer + ;
 
 only forth definitions

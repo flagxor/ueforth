@@ -1,4 +1,3 @@
-( ------------------------------------------------------------ )
 \ Copyright 2022 Bradley D. Nelson
 \
 \ Licensed under the Apache License, Version 2.0 (the "License");
@@ -55,7 +54,35 @@ vocabulary internals
 0 value event
 0 value width
 0 value height
+0 value color
+
+internals definitions
+
+0 value backbuffer
+
+grf definitions also internals
+
+: pixel ( w h -- a ) width * + 4* backbuffer + ;
+
+internals definitions
+
+: hline { x y w }
+  x y pixel w 1- for color over l! 4 + next drop ;
+
+grf definitions also internals
+
+: box { left top w h }
+  left w + top h + { right bottom }
+  left 0 max to left
+  top 0 max to top
+  right width min to right
+  bottom height min to bottom
+  left right >= top bottom >= or if exit then
+  right left - to w
+  bottom top - to h
+  top h 1- for left over w hline 1+ next drop
+;
 
 ( Rest of definitions per platform. )
 
-forth definitions
+only forth definitions

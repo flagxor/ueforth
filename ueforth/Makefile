@@ -190,7 +190,7 @@ COMMON_PHASE2 = common/tasks.fs common/utils.fs common/locals.fs \
                 common/filetools.fs common/including.fs \
                 common/streams.fs common/blocks.fs
 
-COMMON_DESKTOP = common/ansi.fs common/desktop.fs common/grf.fs
+COMMON_DESKTOP = common/ansi.fs common/desktop.fs common/grf.fs common/heart.fs
 
 POSIX_BOOT =  $(COMMON_PHASE1) \
               posix/posix.fs posix/allocation.fs posix/termios.fs \
