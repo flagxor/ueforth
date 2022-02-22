@@ -84,15 +84,19 @@ cell allocate throw to backbuffer
     l GET_Y_LPARAM $ffff and rescale
     0 exit
   then
-  WM_KEYDOWN msg = if
+  WM_SYSKEYDOWN msg =
+  WM_KEYDOWN msg = or if
     w 0 max 255 min to last-key
     1 last-key key-state!
     PRESSED to event
+    last-key VK_ALT = if 0 exit then
   then
-  WM_KEYUP msg = if
+  WM_SYSKEYUP msg =
+  WM_KEYUP msg = or if
     w 0 max 255 min to last-key
     0 last-key key-state!
     RELEASED to event
+    last-key VK_ALT = if 0 exit then
   then
   WM_CHAR msg = if
     w to last-char

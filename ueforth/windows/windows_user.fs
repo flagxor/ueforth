@@ -168,4 +168,6 @@ IDI_ASTERISK constant IDI_INFORMATION
 : GET_Y_LPARAM ( n -- n ) >r rp@ 2 + sw@ rdrop ;
 : GET_X_LPARAM ( n -- n ) >r rp@ sw@ rdrop ;
 
+18 constant VK_ALT
+
 only forth definitions
