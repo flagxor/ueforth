@@ -16,7 +16,7 @@
 
 : x11 r|
 
-forth also posix
+forth also posix also structures
 vocabulary x11   also x11 definitions
 
 z" libX11.so" shared-library xlib
@@ -47,8 +47,100 @@ z" XSetForeground" 3 xlib XSetForeground ( a a n -- void )
 z" XSetBackground" 3 xlib XSetBackground ( a a n -- void )
 z" XFillRectangle" 7 xlib XFillRectangle ( a n n n n n n -- void )
 
+0 constant XYBitmap
+1 constant XYPixmap
+2 constant ZPixmap
+
 0 constant NULL
+
 32 cells constant xevent-size
+
+: win ( n "name" ) long ;
+: time ( n "name" ) long ;
+: bool ( n "name" ) i32 ;
+
+vocabulary xany  also xany definitions
+struct XAnyEvent
+   i32 field ->type
+  long field ->serial
+  bool field ->send_event  ( Bool )
+   ptr field ->display
+   win field ->window
+previous definitions
+
+vocabulary xbutton  also xbutton definitions
+struct XButtonEvent
+   i32 field ->type
+  long field ->serial
+  bool field ->send_event
+   ptr field ->display
+   win field ->window
+   win field ->root
+   win field ->subwindow
+  time field ->time
+   i32 field ->x
+   i32 field ->y
+   i32 field ->x_root
+   i32 field ->y_root
+   i32 field ->state
+   i32 field ->button
+  bool field ->same_screen
+previous definitions
+
+vocabulary xkey  also xkey definitions
+struct XKeyEvent
+   i32 field ->type
+  long field ->serial
+  bool field ->send_event
+   ptr field ->display
+   win field ->window
+   win field ->root
+   win field ->subwindow
+  time field ->time
+   i32 field ->x
+   i32 field ->y
+   i32 field ->x_root
+   i32 field ->y_root
+   i32 field ->state
+   i32 field ->keycode
+  bool field ->same_screen
+previous definitions
+
+vocabulary xmotion  also xmotion definitions
+struct XMotionEvent
+   i32 field ->type
+  long field ->serial
+  bool field ->send_event
+   ptr field ->display
+   win field ->window
+   win field ->root
+   win field ->subwindow
+  time field ->time
+   i32 field ->x
+   i32 field ->y
+   i32 field ->x_root
+   i32 field ->y_root
+   i32 field ->state
+    i8 field ->is_hint
+  bool field ->same_screen
+previous definitions
+
+vocabulary xconfigure  also xconfigure definitions
+struct XConfigureEvent
+   i32 field ->type
+  long field ->serial
+  bool field ->send_event
+   ptr field ->display
+   win field ->event
+   win field ->window
+   i32 field ->x
+   i32 field ->y
+   i32 field ->width
+   i32 field ->height
+   i32 field ->border_width
+   win field ->above
+  bool field ->override_redirect
+previous definitions
 
 0 constant NoEventMask
 1 : xmask   dup constant 2* ;
@@ -79,43 +171,43 @@ xmask ColormapChangeMask
 xmask OwnerGrabButtonMask
 drop
 
-2 : xevent   dup constant 1+ ; 
-xevent KeyPress
-xevent KeyRelease
-xevent ButtonPress
-xevent ButtonRelease
-xevent MotionNotify
-xevent EnterNotify
-xevent LeaveNotify
-xevent FocusIn
-xevent FocusOut
-xevent KeymapNotify
-xevent Expose
-xevent GraphicsExpose
-xevent NoExpose
-xevent VisibilityNotify
-xevent CreateNotify
-xevent DestroyNotify
-xevent UnmapNotify
-xevent MapNotify
-xevent MapRequest
-xevent ReparentNotify
-xevent ConfigureNotify
-xevent ConfigureRequest
-xevent GravityNotify
-xevent ResizeRequest
-xevent CirculateNotify
-xevent CirculateRequest
-xevent PropertyNotify
-xevent SelectionClear
-xevent SelectionRequest
-xevent SelectionNotify
-xevent ColormapNotify
-xevent ClientMessage
-xevent MappingNotify
-xevent GenericEvent
+2 : xevent#   dup constant 1+ ;
+xevent# KeyPress
+xevent# KeyRelease
+xevent# ButtonPress
+xevent# ButtonRelease
+xevent# MotionNotify
+xevent# EnterNotify
+xevent# LeaveNotify
+xevent# FocusIn
+xevent# FocusOut
+xevent# KeymapNotify
+xevent# Expose
+xevent# GraphicsExpose
+xevent# NoExpose
+xevent# VisibilityNotify
+xevent# CreateNotify
+xevent# DestroyNotify
+xevent# UnmapNotify
+xevent# MapNotify
+xevent# MapRequest
+xevent# ReparentNotify
+xevent# ConfigureNotify
+xevent# ConfigureRequest
+xevent# GravityNotify
+xevent# ResizeRequest
+xevent# CirculateNotify
+xevent# CirculateRequest
+xevent# PropertyNotify
+xevent# SelectionClear
+xevent# SelectionRequest
+xevent# SelectionNotify
+xevent# ColormapNotify
+xevent# ClientMessage
+xevent# MappingNotify
+xevent# GenericEvent
 drop
 
-only forth definitions
+previous previous forth definitions
 x11
 | evaluate ;

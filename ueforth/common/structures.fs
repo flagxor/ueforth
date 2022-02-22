@@ -19,12 +19,15 @@ vocabulary structures   structures definitions
 variable last-align
 : typer ( align sz "name" ) create , ,
                             does> dup cell+ @ last-align ! @ ;
-   1    1 typer i8
-   2    2 typer i16
-   4    4 typer i32
-cell    8 typer i64
+1 1 typer i8
+2 2 typer i16
+4 4 typer i32
+cell 8 typer i64
 cell cell typer ptr
+long-size long-size typer long
+
 variable last-struct
+
 : struct ( "name" ) 1 0 typer latestxt >body last-struct ! ;
 : align-by ( a n -- a ) 1- dup >r + r> invert and ;
 : struct-align ( n -- )

@@ -1,3 +1,4 @@
+#! /usr/bin/env ueforth
 \ Copyright 2022 Bradley D. Nelson
 \
 \ Licensed under the Apache License, Version 2.0 (the "License");

@@ -14,6 +14,7 @@
 
 : (   41 parse drop drop ; immediate
 : \   10 parse drop drop ; immediate
+: #!   10 parse drop drop ; immediate  ( shebang for scripts )
 ( Now can do comments! )
 
 ( Constants and Variables )

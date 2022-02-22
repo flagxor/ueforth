@@ -137,6 +137,7 @@ e: check-boot
   out: sp0 
   out: variable 
   out: constant 
+  out: #! 
   out: \ 
   out: ( 
 ;e
@@ -229,7 +230,9 @@ e: check-core-opcodes
   out: DROP 
   out: @ 
   out: SL@ 
+  out: UL@ 
   out: SW@ 
+  out: UW@ 
   out: C@ 
   out: ! 
   out: L! 
@@ -537,7 +540,6 @@ e: test-posix-forth-namespace
   out: termios 
   check-allocation
   out: ok 
-  out: #! 
   out: ms-ticks 
   out: ms 
   check-files

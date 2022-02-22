@@ -188,8 +188,5 @@ O_RDWR constant R/W
 
 forth
 
-( Support shebang for running in scripts. )
-: #!   10 parse drop drop ; immediate
-
 ( Setup entry )
 internals : ok   ." uEforth" raw-ok ; forth

@@ -91,7 +91,9 @@ typedef struct {
   Y(DROP, DROP) \
   X("@", AT, tos = *(cell_t *) tos) \
   X("SL@", SLAT, tos = *(int32_t *) tos) \
+  X("UL@", ULAT, tos = *(uint32_t *) tos) \
   X("SW@", SWAT, tos = *(int16_t *) tos) \
+  X("UW@", UWAT, tos = *(uint16_t *) tos) \
   X("C@", CAT, tos = *(uint8_t *) tos) \
   X("!", STORE, *(cell_t *) tos = *sp--; DROP) \
   X("L!", LSTORE, *(int32_t *) tos = *sp--; DROP) \
@@ -111,6 +113,7 @@ typedef struct {
   YV(internals, DOLIT, DUP; tos = *ip++) \
   YV(internals, ALITERAL, COMMA(g_sys.DOLIT_XT); COMMA(tos); DROP) \
   Y(CELL, DUP; tos = sizeof(cell_t)) \
+  XV(internals, "LONG-SIZE", LONG_SIZE, DUP; tos = sizeof(long)) \
   Y(FIND, tos = find((const char *) *sp, tos); --sp) \
   Y(PARSE, DUP; tos = parse(tos, sp)) \
   XV(internals, "S>NUMBER?", \
