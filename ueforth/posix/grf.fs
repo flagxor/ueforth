@@ -35,6 +35,9 @@ also posix also x11
 0 value image
 0 value xevent-type
 create xevent xevent-size allot
+256 constant keybuffer-size
+create keybuffer keybuffer-size allot
+0 value keybuffer-used
 
 ExposureMask
 ButtonPressMask or
@@ -52,7 +55,31 @@ StructureNotifyMask or constant EVENT-MASK
     width height 32 width 4* XCreateImage to image
 ;
 
+: update-mouse
+  [ xbutton ]
+  xevent ->x sl@ to mouse-x
+  xevent ->y sl@ to mouse-y
+;
+
+: update-key
+  [ xkey ]
+  xevent keybuffer keybuffer-size
+    0 >r rp@ NULL XLookupString to keybuffer-used
+    r> to last-key
+  PRESSED event = negate last-key key-state!
+;
+
+: pending-key?
+  keybuffer-used 0 <= if 0 exit then
+  keybuffer c@ to last-char
+  keybuffer 1+ keybuffer keybuffer-size 1- cmove>
+  keybuffer-used 1- to keybuffer-used
+  TYPED to event
+  -1
+;
+
 : update-event
+  UNKNOWN to event
   xevent [ xany ] ->type sl@ to xevent-type
   Expose xevent-type = if
     EXPOSED to event
@@ -66,25 +93,37 @@ StructureNotifyMask or constant EVENT-MASK
   then
   KeyPress xevent-type = if
     PRESSED to event
+    update-mouse
+    update-key
     exit
   then
   KeyRelease xevent-type = if
     RELEASED to event
+    update-mouse
+    update-key
     exit
   then
   ButtonPress xevent-type = if
     PRESSED to event
+    update-mouse
+    ( uses carnal knowledge )
+    [ xbutton ] 256 xevent ->button sl@ - to last-key
+    1 last-key key-state!
     exit
   then
   ButtonRelease xevent-type = if
     RELEASED to event
+    update-mouse
+    ( uses carnal knowledge )
+    [ xbutton ] 256 xevent ->button sl@ - to last-key
+    0 last-key key-state!
     exit
   then
   MotionNotify xevent-type = if
     MOTION to event
+    update-mouse
     exit
   then
-  UNKNOWN to event
 ;
 
 also grf definitions
@@ -113,11 +152,13 @@ also grf definitions
 ;
 
 : wait
+  pending-key? if exit then
   display xevent XNextEvent drop
   update-event
 ;
 
 : poll
+  pending-key? if exit then
   display event-mask xevent XCheckMaskEvent
     if update-event else TIMEOUT to event then
 ;

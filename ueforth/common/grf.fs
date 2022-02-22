@@ -69,7 +69,7 @@ internals definitions
 create key-state key-count allot
 key-state key-count erase
 
-: key-state! ( f k ) key-state + c! ;
+: key-state! ( f k ) key-count mod key-state + c! ;
 
 grf definitions also internals
 
