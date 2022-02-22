@@ -63,6 +63,13 @@ create entity-array entity-limit EntityStruct * allot
   entity-count dup 1+ to entity-count
 ;
 
+create arrow-table
+1 c, 1 c, 2 c, 2 c, 3 c, 3 c, 1 c, 1 c, 1 c, 1 c,
+1 c, 1 c, 1 c, 1 c, 1 c, 1 c, 1 c, 1 c, 1 c, 1 c,
+1 c, 1 c, 1 c, 1 c, 1 c, 1 c, 1 c, 1 c, 1 c, 1 c,
+2 c, 3 c, 3 c, 3 c, 4 c, 4 c, 5 c, 5 c, 5 c, 5 c,
+: arrow-- ( n -- ) 39 swap - arrow-table + c@ ;
+
 : draw-one { e } e ->kind @ { kind }
   HEART-GOAL kind = if
     $ff0000 128 random dup 8 lshift + + to color
@@ -80,6 +87,12 @@ create entity-array entity-limit EntityStruct * allot
     exit
   then
   ARROW kind = if
+    $ffff00 256 random + to color
+    39 for
+      e ->x @ 100 / e ->vx @ i 200 */ + i arrow-- 2/ -
+      e ->y @ 100 / e ->vy @ i 200 */ + i arrow-- 2/ -
+      i arrow-- dup box
+    next
     exit
   then
 ;
@@ -132,12 +145,20 @@ create entity-array entity-limit EntityStruct * allot
   height 100 * random e ->y !
   200 random 100 - e ->vx !
   200 random 200 - e ->vy !
-  20 random 20 + e ->step !
+;
+
+: random-arrow { e }
+  ARROW e ->kind !
+  width 100 * random e ->x !
+  height 100 * random e ->y !
+  200 random 100 - e ->vx !
+  200 random 200 - e ->vy !
 ;
 
 : init
   10 for new entity random-heart next
   10 for new entity random-fire next
+  10 for new entity random-arrow next
 ;
 
 : run
