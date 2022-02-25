@@ -97,8 +97,19 @@ create arrow-table
   then
 ;
 
+: volcano
+  height 2/ for
+    $334400 i 100 height */ + to color
+    width 2/ i 2/ - i height 2/ + i height 8 / + 1 box
+  next
+  0 to color
+  width 2/ height 2/
+    height 8 / 20 box
+;
+
 : draw
   $003300 to color 0 0 width height box
+  volcano
   entity-count 0 ?do i entity draw-one loop
   flip
 ;
@@ -141,10 +152,10 @@ create arrow-table
 
 : random-fire { e }
   FIRE e ->kind !
-  width 100 * random e ->x !
-  height 100 * random e ->y !
+  width 10 * random width 50 * + e ->x !
+  height 1 * random height 50 * + 100 + e ->y !
   200 random 100 - e ->vx !
-  200 random 200 - e ->vy !
+  200 random 400 - e ->vy !
 ;
 
 : random-arrow { e }
@@ -155,16 +166,44 @@ create arrow-table
   200 random 200 - e ->vy !
 ;
 
+: mouse-direction ( -- x y )
+  mouse-x 3 2 */
+  height mouse-y - negate 3 2 */ ;
+
+: targeted-arrow
+  new entity { e }
+  ARROW e ->kind !
+  0 e ->x !
+  height 100 * e ->y !
+  mouse-direction e ->vy ! e ->vx !
+;
+
 : init
   10 for new entity random-heart next
   10 for new entity random-fire next
   10 for new entity random-arrow next
 ;
 
+: volcano-spew
+  1 for new entity random-fire next
+;
+
+: fire
+  targeted-arrow
+;
+
 : run
   begin
-    PRESSED event = if init then
+    PRESSED event = if
+      65 last-key = if
+        init
+      then
+      LEFT-BUTTON last-key = if
+        fire
+      then
+    then
     poll
+    100 random 0= if volcano-spew then
     draw
     tick
     cleanup
