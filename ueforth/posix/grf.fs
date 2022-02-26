@@ -79,7 +79,7 @@ StructureNotifyMask or constant EVENT-MASK
 ;
 
 : update-event
-  UNKNOWN to event
+  IDLE to event
   xevent [ xany ] ->type sl@ to xevent-type
   Expose xevent-type = if
     EXPOSED to event
@@ -160,7 +160,7 @@ also grf definitions
 : poll
   pending-key? if exit then
   display event-mask xevent XCheckMaskEvent
-    if update-event else TIMEOUT to event then
+    if update-event else IDLE to event then
 ;
 
 forth definitions

@@ -31,7 +31,7 @@
 \   pressed? ( k -- f )
 \   event ( -- n )
 \ Event constants:
-\   UNKNOWN TIMEOUT RESIZED EXPOSED MOTION
+\   IDLE RESIZED EXPOSED MOTION
 \   PRESSED RELEASED TYPED FINISHED
 \ Key/Button constants:
 \   LEFT-BUTTON MIDDLE-BUTTON RIGHT-BUTTON
@@ -39,15 +39,14 @@
 vocabulary grf   grf definitions
 vocabulary internals
 
-0 constant UNKNOWN
-1 constant TIMEOUT
-2 constant RESIZED
-3 constant EXPOSED
-4 constant MOTION
-5 constant PRESSED
-6 constant RELEASED
-7 constant TYPED
-8 constant FINISHED
+0 constant IDLE
+1 constant RESIZED
+2 constant EXPOSED
+3 constant MOTION
+4 constant PRESSED
+5 constant RELEASED
+6 constant TYPED
+7 constant FINISHED
 
 255 constant LEFT-BUTTON
 254 constant MIDDLE-BUTTON

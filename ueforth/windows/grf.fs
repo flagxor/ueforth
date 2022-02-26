@@ -163,7 +163,7 @@ also windows
 
 : poll
   event FINISHED = if exit then
-  UNKNOWN to event
+  IDLE to event
   msgbuf NULL 0 0 PM_REMOVE PeekMessageA if
     msgbuf TranslateMessage drop
     msgbuf DispatchMessageA drop

@@ -206,7 +206,7 @@ create arrow-table
         fire
       then
     then
-    event UNKNOWN = if
+    event IDLE = if
       begin ms-ticks to next-tm next-tm last-tm - 10 < while 1 ms repeat
       next-tm to last-tm
       100 random 0= if volcano-spew then
