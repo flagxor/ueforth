@@ -30,8 +30,8 @@ grf
       ." CHAR: " last-char . cr
     then
 )
-    0 to color 0 0 width height box
-    LEFT-BUTTON pressed? if $ccccff else $ffccff then to color
+    0 color! 0 0 width height box
+    LEFT-BUTTON pressed? if $ccccff else $ffccff then color!
     mouse-x mouse-y height heart
     flip
   event FINISHED = until

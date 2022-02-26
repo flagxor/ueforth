@@ -200,12 +200,12 @@ function VM(stdlib, foreign, heap) {
         ir = u8[w]|0;
         log(ir|0);
         switch (ir&0xff) {
-          case 0:  // OP_DOCOLON
+          case 0:  // OP_DOCOL
             rp = (rp + 4) | 0;
             i32[rp>>2] = ip;
             ip = (w + 4) | 0;
             break;
-          case 1:  // OP_DOCREATE
+          case 1:  // OP_DOVAR
             sp = (sp + 4) | 0;
             i32[sp>>2] = tos;
             tos = (w + 8) | 0;  // 4 * 2

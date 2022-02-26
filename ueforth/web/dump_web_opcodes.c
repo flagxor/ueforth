@@ -21,8 +21,8 @@
   X("CALL", CALL, sp = Call(sp|0, tos|0) | 0; DROP) \
 
 enum {
-  OP_DOCOLON = 0,
-  OP_DOCREATE = 1,
+  OP_DOCOL = 0,
+  OP_DOVAR = 1,
   OP_DODOES = 2,
 #define XV(flags, name, op, code) OP_ ## op,
   PLATFORM_OPCODE_LIST

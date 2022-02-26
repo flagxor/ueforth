@@ -14,7 +14,9 @@
 
 #define JMPW goto **(void **) w
 #define NEXT w = *ip++; JMPW
-#define ADDR_DOCOLON && OP_DOCOLON
+#define ADDR_DOCOL && OP_DOCOL
+#define ADDR_DOCON && OP_DOCON
+#define ADDR_DOVAR && OP_DOVAR
 #define ADDR_DOCREATE && OP_DOCREATE
 #define ADDR_DODOES && OP_DODOES
 
@@ -43,7 +45,9 @@ static cell_t *forth_run(cell_t *init_rp) {
   EXTRA_OPCODE_LIST
   OPCODE_LIST
 #undef XV
-  OP_DOCOLON: ++rp; *rp = (cell_t) ip; ip = (cell_t *) (w + sizeof(cell_t)); NEXT;
+  OP_DOCOL: ++rp; *rp = (cell_t) ip; ip = (cell_t *) (w + sizeof(cell_t)); NEXT;
+  OP_DOCON: DUP; tos = *(cell_t *) (w + sizeof(cell_t)); NEXT;
+  OP_DOVAR: DUP; tos = w + sizeof(cell_t); NEXT;
   OP_DOCREATE: DUP; tos = w + sizeof(cell_t) * 2; NEXT;
   OP_DODOES: DUP; tos = w + sizeof(cell_t) * 2;
              ++rp; *rp = (cell_t) ip; ip = (cell_t *) *(cell_t *) (w + sizeof(cell_t)); NEXT;

@@ -43,7 +43,8 @@ typedef uintptr_t ucell_t;
 #define TOLINK(xt) (((cell_t *) (xt)) - 2)
 #define TONAME(xt) ((*TOFLAGS(xt) & BUILTIN_MARK) ? (*(char **) TOLINK(xt)) \
     : (((char *) TOLINK(xt)) - CELL_ALIGNED(*TONAMELEN(xt))))
-#define TOBODY(xt) (((cell_t *) xt) + ((void *) *((cell_t *) xt) == ADDR_DOCOLON ? 1 : 2))
+#define TOBODY(xt) (((cell_t *) xt) + ((void *) *((cell_t *) xt) == ADDR_DOCREATE || \
+                                       (void *) *((cell_t *) xt) == ADDR_DODOES ? 2 : 1))
 
 #define DOIMMEDIATE() *TOFLAGS(*g_sys.current) |= IMMEDIATE
 #define UNSMUDGE() *TOFLAGS(*g_sys.current) &= ~SMUDGE; finish()
@@ -122,12 +123,18 @@ typedef struct {
   Y(CREATE, DUP; DUP; tos = parse(32, sp); \
             create((const char *) *sp, tos, 0, ADDR_DOCREATE); \
             COMMA(0); DROPn(2)) \
+  Y(VARIABLE, DUP; DUP; tos = parse(32, sp); \
+              create((const char *) *sp, tos, 0, ADDR_DOVAR); \
+              COMMA(0); DROPn(2)) \
+  Y(CONSTANT, DUP; DUP; tos = parse(32, sp); \
+              create((const char *) *sp, tos, 0, ADDR_DOCON); \
+              DROPn(2); COMMA(tos); DROP) \
   X("DOES>", DOES, DOES(ip); ip = (cell_t *) *rp; --rp) \
   Y(IMMEDIATE, DOIMMEDIATE()) \
   XV(internals, "'SYS", SYS, DUP; tos = (cell_t) &g_sys) \
   YV(internals, YIELD, PARK; return rp) \
   X(":", COLON, DUP; DUP; tos = parse(32, sp); \
-                create((const char *) *sp, tos, SMUDGE, ADDR_DOCOLON); \
+                create((const char *) *sp, tos, SMUDGE, ADDR_DOCOL); \
                 g_sys.state = -1; --sp; DROP) \
   YV(internals, EVALUATE1, DUP; float *tfp = fp; \
                sp = evaluate1(sp, &tfp); \

@@ -135,8 +135,6 @@ e: check-boot
   out: fp0 
   out: rp0 
   out: sp0 
-  out: variable 
-  out: constant 
   out: #! 
   out: \ 
   out: ( 
@@ -250,6 +248,8 @@ e: check-core-opcodes
   out: FIND 
   out: PARSE 
   out: CREATE 
+  out: VARIABLE 
+  out: CONSTANT 
   out: DOES> 
   out: IMMEDIATE 
   out: : 

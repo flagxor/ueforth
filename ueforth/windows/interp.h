@@ -14,12 +14,16 @@
 
 #define NEXT goto next
 #define JMPW goto work
-#define ADDR_DOCOLON ((void *) OP_DOCOLON)
+#define ADDR_DOCOL ((void *) OP_DOCOL)
+#define ADDR_DOCON ((void *) OP_DOCON)
+#define ADDR_DOVAR ((void *) OP_DOVAR)
 #define ADDR_DOCREATE ((void *) OP_DOCREATE)
 #define ADDR_DODOES ((void *) OP_DODOES)
 
 enum {
-  OP_DOCOLON = 0,
+  OP_DOCOL = 0,
+  OP_DOCON,
+  OP_DOVAR,
   OP_DOCREATE,
   OP_DODOES,
 #define XV(flags, name, op, code) OP_ ## op,
@@ -59,7 +63,9 @@ work:
   EXTRA_OPCODE_LIST
   OPCODE_LIST
 #undef XV
-      case OP_DOCOLON: ++rp; *rp = (cell_t) ip; ip = (cell_t *) (w + sizeof(cell_t)); NEXT;
+      case OP_DOCOL: ++rp; *rp = (cell_t) ip; ip = (cell_t *) (w + sizeof(cell_t)); NEXT;
+      case OP_DOCON: DUP; tos = *(cell_t *) (w + sizeof(cell_t)); NEXT;
+      case OP_DOVAR: DUP; tos = w + sizeof(cell_t); NEXT;
       case OP_DOCREATE: DUP; tos = w + sizeof(cell_t) * 2; NEXT;
       case OP_DODOES: DUP; tos = w + sizeof(cell_t) * 2;
                       ++rp; *rp = (cell_t) ip;

@@ -17,10 +17,6 @@
 : #!   10 parse drop drop ; immediate  ( shebang for scripts )
 ( Now can do comments! )
 
-( Constants and Variables )
-: constant ( n "name" -- ) create , does> @ ;
-: variable ( "name" -- ) create 0 , ;
-
 ( Stack Baseline )
 sp@ constant sp0
 rp@ constant rp0
@@ -100,7 +96,7 @@ variable handler
 ' throw 'notfound !
 
 ( Values )
-: value ( n -- ) create , does> @ ;
+: value ( n -- ) constant ;
 : value-bind ( xt-val xt )
    >r >body state @ if aliteral r> , else r> execute then ;
 : to ( n -- ) ' ['] ! value-bind ; immediate

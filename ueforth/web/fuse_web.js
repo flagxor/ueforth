@@ -58,8 +58,8 @@ cases = ReplaceAll(cases, 'g_sys.state', 'i32[(i32[g_sys>>2] + (3 * 4))>>2]');
 cases = ReplaceAll(cases, 'g_sys.DOLIT_XT', 'i32[(i32[g_sys>>2] + (10 * 4))>>2]|0');
 cases = ReplaceAll(cases, 'g_sys.DOEXIT_XT', 'i32[(i32[g_sys>>2] + (11 * 4))>>2]|0');
 cases = ReplaceAll(cases, '&g_sys', 'g_sys');
-cases = ReplaceAll(cases, '&& OP_DOCOLON', '0');
-cases = ReplaceAll(cases, '&& OP_DOCREATE', '1');
+cases = ReplaceAll(cases, '&& OP_DOCOL', '0');
+cases = ReplaceAll(cases, '&& OP_DOVAR', '1');
 cases = ReplaceAll(cases, 'goto **(void **) w', 'break decode');
 cases = ReplaceAll(cases, 'SSMOD_FUNC', '');
 // Keep Together   vvv
