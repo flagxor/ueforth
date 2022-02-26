@@ -45,7 +45,7 @@
   Y(SFLOAT, DUP; tos = sizeof(float)) \
   Y(SFLOATS, tos *= sizeof(float)) \
   X("SFLOAT+", SFLOATPLUS, DUP; tos += sizeof(float)) \
-  Y(PI, *++fp = 3.14159265359f) \
+  X("PI", PI_CONST, *++fp = 3.14159265359f) \
   Y(FSIN, *fp = sin(*fp)) \
   Y(FCOS, *fp = cos(*fp)) \
   Y(FSINCOS, fp[1] = cos(*fp); *fp = sin(*fp); ++fp) \
