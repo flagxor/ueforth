@@ -23,6 +23,7 @@
 \   translate ( x y -- )
 \   scale ( nx dx ny dy -- )
 \   viewport ( w h -- )
+\   vertical-flip ( -- ) Use math style viewport.
 \ Conversions:
 \   screen>g ( x y -- x' y' ) Transform screen to viewport
 
@@ -49,6 +50,8 @@ gstack value gp
 
 : raw-box { left top w h }
   left w + top h + { right bottom }
+  left right 2dup min to left max to right
+  top bottom 2dup min to top max to bottom
   left 0 max to left
   top 0 max to top
   right width min to right
@@ -86,6 +89,12 @@ grf definitions also internals
     height w h */ w  height h scale
   then
   w 2/ negate h 2/ negate translate
+;
+
+: vertical-flip
+  0 height 2/ translate
+  1 1 -1 1 scale
+  0 height 2/ negate translate
 ;
 
 only forth definitions

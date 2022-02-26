@@ -61,6 +61,10 @@ heart-end heart-size 0 fill
 : raw-heart 0 { x y sx sy r }
   heart-start c@ 0= if heart-initialize then
   y sy 2/ - to y
+  sy 0< if 
+    y sy + to y
+    sy abs to sy
+  then
   sy 0 do
     i heart-size sy */ to r
     x heart-start r + c@ sx heart-ratio */ +

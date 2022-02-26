@@ -16,6 +16,9 @@
 grf
 
 -1 -1 window
+
+internals
+
 : run
   begin
     wait
@@ -30,8 +33,10 @@ grf
       ." CHAR: " last-char . cr
     then
 )
+
     0 to color 0 0 width height box
     g{
+      vertical-flip
       640 480 viewport
       $ff0000 to color
       0 0 640 480 box

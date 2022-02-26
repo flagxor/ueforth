@@ -68,29 +68,29 @@ create arrow-table
 1 c, 1 c, 1 c, 1 c, 1 c, 1 c, 1 c, 1 c, 1 c, 1 c,
 1 c, 1 c, 1 c, 1 c, 1 c, 1 c, 1 c, 1 c, 1 c, 1 c,
 2 c, 3 c, 3 c, 3 c, 4 c, 4 c, 5 c, 5 c, 5 c, 5 c,
-: arrow-- ( n -- ) 39 swap - arrow-table + c@ ;
+: arrow-- ( n -- ) 39 swap - arrow-table + c@ 100 * ;
 
 : draw-one { e } e ->kind @ { kind }
   HEART-GOAL kind = if
     $ff0000 128 random dup 8 lshift + + to color
-    e ->x @ 100 / e ->y @ 100 / e ->step @ heart
+    e ->x @ e ->y @ e ->step @ heart
     exit
   then
   FIRE kind = if
     $222222 to color
-    e ->x @ 100 / 4 - e ->y @ 100 / 4 - 8 8 box
+    e ->x @ 400 - e ->y @ 400 - 800 800 box
     exit
   then
   SPARK kind = if
     $ff7700 128 random 8 lshift + to color
-    e ->x @ 100 / 4 - e ->y @ 100 / 4 - 8 8 box
+    e ->x @ 400 - e ->y @ 400 - 800 800 box
     exit
   then
   ARROW kind = if
     $ffff00 256 random + to color
     39 for
-      e ->x @ 100 / e ->vx @ i 200 */ + i arrow-- 2/ -
-      e ->y @ 100 / e ->vy @ i 200 */ + i arrow-- 2/ -
+      e ->x @ e ->vx @ i 10 */ + i arrow-- 2/ -
+      e ->y @ e ->vy @ i 10 */ + i arrow-- 2/ -
       i arrow-- dup box
     next
     exit
@@ -98,19 +98,25 @@ create arrow-table
 ;
 
 : volcano
-  height 2/ for
-    $334400 i 100 height */ + to color
-    width 2/ i 2/ - i height 2/ + i height 8 / + 1 box
+  240 for
+    $334400 i 100 240 */ + to color
+    32000 i 50 * - 5000 - 24000 i 100 * -
+    i 100 * 10000 + 100 box
   next
   0 to color
-  width 2/ height 2/
-    height 8 / 20 box
+  32000 4000 - 24000 3000 - 8000 3000 box
 ;
 
 : draw
-  $003300 to color 0 0 width height box
-  volcano
-  entity-count 0 ?do i entity draw-one loop
+  0 to color 0 0 width height box
+  g{
+    vertical-flip
+    100000 48000 viewport
+    $003300 to color 0 0 100000 48000 box
+    $0044cc to color 0 30000 100000 48000 box
+    volcano
+    entity-count 0 ?do i entity draw-one loop
+  }g
   flip
 ;
 
@@ -125,10 +131,10 @@ create arrow-table
 ;
 
 : tick-one { e }
-  e ->vy @ 4 + e ->vy !
+  e ->vy @ 4 - e ->vy !
   e ->vx @ e ->x @ + e ->x !
   e ->vy @ e ->y @ + e ->y !
-  e ->y @ height 100 * > if DEAD e ->kind ! then
+  e ->y @ 0< if DEAD e ->kind ! then
   e ->kind @ { kind }
   FIRE kind = if
     e random-spark
@@ -143,39 +149,44 @@ create arrow-table
 
 : random-heart { e }
   HEART-GOAL e ->kind !
-  width 100 * random e ->x !
-  height 100 * random e ->y !
+  64000 random e ->x !
+  48000 random e ->y !
   2000 random 1000 - e ->vx !
-  2000 random 2000 - e ->vy !
-  20 random 20 + e ->step !
+  2000 random e ->vy !
+  40 random 40 + 100 * e ->step !
 ;
 
 : random-fire { e }
   FIRE e ->kind !
-  width 10 * random width 50 * + e ->x !
-  height 1 * random height 50 * + 100 + e ->y !
+  32000 8000 random + 4000 - e ->x !
+  24000 1000 random + 2000 - e ->y !
   200 random 100 - e ->vx !
-  200 random 400 - e ->vy !
+  200 random 200 + e ->vy !
 ;
 
 : random-arrow { e }
   ARROW e ->kind !
-  width 100 * random e ->x !
-  height 100 * random e ->y !
+  64000 random e ->x !
+  48000 random e ->y !
   200 random 100 - e ->vx !
-  200 random 200 - e ->vy !
+  200 random e ->vy !
 ;
 
-: mouse-direction ( -- x y )
-  mouse-x 3 2 */
-  height mouse-y - negate 3 2 */ ;
+: mouse-direction ( -- x y ) mouse-x mouse-y screen>g ;
 
-: targeted-arrow
+: shoot-arrow
   new entity { e }
   ARROW e ->kind !
   0 e ->x !
-  height 100 * e ->y !
-  mouse-direction e ->vy ! e ->vx !
+  0 e ->y !
+  g{
+    vertical-flip
+    64000 48000 viewport
+    g{
+      70 1 70 1 scale
+      mouse-direction e ->vy ! e ->vx !
+    }g
+  }g
 ;
 
 : init
@@ -185,12 +196,10 @@ create arrow-table
 ;
 
 : volcano-spew
-  1 for new entity random-fire next
+  2 for new entity random-fire next
 ;
 
-: fire
-  targeted-arrow
-;
+: fire shoot-arrow ;
 
 0 value last-tm
 0 value next-tm
