@@ -14,18 +14,9 @@
 
 #define NEXT goto next
 #define JMPW goto work
-#define ADDR_DOCOL ((void *) OP_DOCOL)
-#define ADDR_DOCON ((void *) OP_DOCON)
-#define ADDR_DOVAR ((void *) OP_DOVAR)
-#define ADDR_DOCREATE ((void *) OP_DOCREATE)
-#define ADDR_DODOES ((void *) OP_DODOES)
+#define ADDROF(x) ((void *) OP_ ## x)
 
 enum {
-  OP_DOCOL = 0,
-  OP_DOCON,
-  OP_DOVAR,
-  OP_DOCREATE,
-  OP_DODOES,
 #define XV(flags, name, op, code) OP_ ## op,
   PLATFORM_OPCODE_LIST
   EXTRA_OPCODE_LIST
@@ -46,7 +37,7 @@ static cell_t *forth_run(cell_t *init_rp) {
   };
 
   if (!init_rp) {
-    g_sys.DOCREATE_OP = ADDR_DOCREATE;
+    g_sys.DOCREATE_OP = ADDROF(DOCREATE);
     g_sys.builtins = builtins;
     return 0;
   }
@@ -63,13 +54,6 @@ work:
   EXTRA_OPCODE_LIST
   OPCODE_LIST
 #undef XV
-      case OP_DOCOL: ++rp; *rp = (cell_t) ip; ip = (cell_t *) (w + sizeof(cell_t)); NEXT;
-      case OP_DOCON: DUP; tos = *(cell_t *) (w + sizeof(cell_t)); NEXT;
-      case OP_DOVAR: DUP; tos = w + sizeof(cell_t); NEXT;
-      case OP_DOCREATE: DUP; tos = w + sizeof(cell_t) * 2; NEXT;
-      case OP_DODOES: DUP; tos = w + sizeof(cell_t) * 2;
-                      ++rp; *rp = (cell_t) ip;
-                      ip = (cell_t *) *(cell_t *) (w + sizeof(cell_t)); NEXT;
     }
   }
 }

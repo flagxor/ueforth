@@ -20,9 +20,9 @@
 typedef intptr_t cell_t;
 typedef uintptr_t ucell_t;
 
-#define YV(flags, op, code) XV(flags, #op, ID_ ## op, code)
+#define YV(flags, op, code) XV(flags, #op, op, code)
 #define X(name, op, code) XV(forth, name, op, code)
-#define Y(op, code) XV(forth, #op, ID_ ## op, code)
+#define Y(op, code) XV(forth, #op, op, code)
 
 #define NIP (--sp)
 #define NIPn(n) (sp -= (n))
@@ -31,7 +31,7 @@ typedef uintptr_t ucell_t;
 #define DUP (*++sp = tos)
 #define PUSH DUP; tos = (cell_t)
 #define COMMA(n) *g_sys.heap++ = (n)
-#define DOES(ip) **g_sys.current = (cell_t) ADDR_DODOES; (*g_sys.current)[1] = (cell_t) ip
+#define DOES(ip) **g_sys.current = (cell_t) ADDROF(DODOES); (*g_sys.current)[1] = (cell_t) ip
 
 #define PARK   DUP; *++rp = (cell_t) fp; *++rp = (cell_t) sp; *++rp = (cell_t) ip
 #define UNPARK ip = (cell_t *) *rp--;  sp = (cell_t *) *rp--; fp = (float *) *rp--; DROP
@@ -43,8 +43,8 @@ typedef uintptr_t ucell_t;
 #define TOLINK(xt) (((cell_t *) (xt)) - 2)
 #define TONAME(xt) ((*TOFLAGS(xt) & BUILTIN_MARK) ? (*(char **) TOLINK(xt)) \
     : (((char *) TOLINK(xt)) - CELL_ALIGNED(*TONAMELEN(xt))))
-#define TOBODY(xt) (((cell_t *) xt) + ((void *) *((cell_t *) xt) == ADDR_DOCREATE || \
-                                       (void *) *((cell_t *) xt) == ADDR_DODOES ? 2 : 1))
+#define TOBODY(xt) (((cell_t *) xt) + ((void *) *((cell_t *) xt) == ADDROF(DOCREATE) || \
+                                       (void *) *((cell_t *) xt) == ADDROF(DODOES) ? 2 : 1))
 
 #define DOIMMEDIATE() *TOFLAGS(*g_sys.current) |= IMMEDIATE
 #define UNSMUDGE() *TOFLAGS(*g_sys.current) &= ~SMUDGE; finish()
@@ -86,10 +86,10 @@ typedef struct {
   Y(AND, tos &= *sp--) \
   Y(OR, tos |= *sp--) \
   Y(XOR, tos ^= *sp--) \
-  Y(DUP, DUP) \
+  XV(forth, "DUP", ALTDUP, DUP) \
   Y(SWAP, w = tos; tos = *sp; *sp = w) \
   Y(OVER, DUP; tos = sp[-1]) \
-  Y(DROP, DROP) \
+  XV(forth, "DROP", ALTDROP, DROP) \
   X("@", AT, tos = *(cell_t *) tos) \
   X("SL@", SLAT, tos = *(int32_t *) tos) \
   X("UL@", ULAT, tos = *(uint32_t *) tos) \
@@ -112,6 +112,13 @@ typedef struct {
   YV(internals, 0BRANCH, if (!tos) ip = (cell_t *) *ip; else ++ip; DROP) \
   YV(internals, DONEXT, *rp = *rp - 1; if (~*rp) ip = (cell_t *) *ip; else (--rp, ++ip)) \
   YV(internals, DOLIT, DUP; tos = *ip++) \
+  YV(internals, DOCOL, ++rp; *rp = (cell_t) ip; ip = (cell_t *) (w + sizeof(cell_t))) \
+  YV(internals, DOCON, DUP; tos = *(cell_t *) (w + sizeof(cell_t))) \
+  YV(internals, DOVAR, DUP; tos = w + sizeof(cell_t)) \
+  YV(internals, DOCREATE, DUP; tos = w + sizeof(cell_t) * 2) \
+  YV(internals, DODOES, DUP; tos = w + sizeof(cell_t) * 2; \
+                        ++rp; *rp = (cell_t) ip; \
+                        ip = (cell_t *) *(cell_t *) (w + sizeof(cell_t))) \
   YV(internals, ALITERAL, COMMA(g_sys.DOLIT_XT); COMMA(tos); DROP) \
   Y(CELL, DUP; tos = sizeof(cell_t)) \
   XV(internals, "LONG-SIZE", LONG_SIZE, DUP; tos = sizeof(long)) \
@@ -121,20 +128,20 @@ typedef struct {
       CONVERT, tos = convert((const char *) *sp, tos, g_sys.base, sp); \
       if (!tos) --sp) \
   Y(CREATE, DUP; DUP; tos = parse(32, sp); \
-            create((const char *) *sp, tos, 0, ADDR_DOCREATE); \
+            create((const char *) *sp, tos, 0, ADDROF(DOCREATE)); \
             COMMA(0); DROPn(2)) \
   Y(VARIABLE, DUP; DUP; tos = parse(32, sp); \
-              create((const char *) *sp, tos, 0, ADDR_DOVAR); \
+              create((const char *) *sp, tos, 0, ADDROF(DOVAR)); \
               COMMA(0); DROPn(2)) \
   Y(CONSTANT, DUP; DUP; tos = parse(32, sp); \
-              create((const char *) *sp, tos, 0, ADDR_DOCON); \
+              create((const char *) *sp, tos, 0, ADDROF(DOCON)); \
               DROPn(2); COMMA(tos); DROP) \
   X("DOES>", DOES, DOES(ip); ip = (cell_t *) *rp; --rp) \
   Y(IMMEDIATE, DOIMMEDIATE()) \
   XV(internals, "'SYS", SYS, DUP; tos = (cell_t) &g_sys) \
   YV(internals, YIELD, PARK; return rp) \
   X(":", COLON, DUP; DUP; tos = parse(32, sp); \
-                create((const char *) *sp, tos, SMUDGE, ADDR_DOCOL); \
+                create((const char *) *sp, tos, SMUDGE, ADDROF(DOCOL)); \
                 g_sys.state = -1; --sp; DROP) \
   YV(internals, EVALUATE1, DUP; float *tfp = fp; \
                sp = evaluate1(sp, &tfp); \
