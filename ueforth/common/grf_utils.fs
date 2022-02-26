@@ -76,7 +76,7 @@ grf definitions also internals
                             16 lshift tx - sx / swap ;
 
 : g{   sx >g   sy >g   tx >g   ty >g ;
-: }g   g> to ty  g> to tx   g> to sy   g> to sx ;
+: }g   g> to ty   g> to tx   g> to sy   g> to sx ;
 : translate ( x y -- ) sy * +to ty   sx * +to tx ;
 : scale ( nx dx ny dy -- )
   sy -rot */ to sy
