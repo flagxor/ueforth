@@ -44,6 +44,7 @@ internals definitions
 : see-one ( xt -- xt+1 )
    dup cell+ swap @
    dup ['] DOLIT = if drop dup @ . cell+ exit then
+   dup ['] DOSET = if drop ." TO " dup @ cell - see. cell+ exit then
    dup ['] DOFLIT = if drop dup sf@ <# [char] e hold #fs #> type space cell+ exit then
    dup ['] $@ = if drop ['] s" see.
                    dup @ dup >r >r dup cell+ r> type cell+ r> 1+ aligned +

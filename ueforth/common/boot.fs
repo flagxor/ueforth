@@ -98,7 +98,9 @@ variable handler
 ( Values )
 : value ( n -- ) constant ;
 : value-bind ( xt-val xt )
-   >r >body state @ if aliteral r> , else r> execute then ;
+   >r >body state @ if
+     r@ ['] ! = if rdrop ['] doset , , else aliteral r> , then
+   else r> execute then ;
 : to ( n -- ) ' ['] ! value-bind ; immediate
 : +to ( n -- ) ' ['] +! value-bind ; immediate
 

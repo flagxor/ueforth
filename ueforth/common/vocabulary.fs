@@ -54,7 +54,7 @@ transfer{
   xt-find& xt-hide xt-transfer
   voc-stack-end last-vocabulary notfound
   immediate? input-buffer ?echo ?arrow. arrow
-  evaluate-buffer aliteral
+  evaluate-buffer aliteral value-bind
   leaving( )leaving leaving leaving,
   (do) (?do) (+loop) 
   parse-quote digit $@ raw.s

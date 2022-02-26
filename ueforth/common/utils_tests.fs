@@ -71,7 +71,7 @@ e: test-see-fornext
   out: : test  >R DONEXT ; 
 ;e
 
-e: test-string-strides
+e: test-see-string-strides
   : test0 1 if ." " then ;
   : test1 1 if ." >" then ;
   : test2 1 if ." ->" then ;
@@ -107,4 +107,32 @@ e: test-noname
   swap execute 
   . cr
   out: 16 
+;e
+
+e: test-see-variable
+  variable foo
+  : bar foo @ . ;
+  see bar
+  out: : bar  foo @ . ; 
+;e
+
+e: test-see-create
+  create foo
+  : bar foo @ . ;
+  see bar
+  out: : bar  foo @ . ; 
+;e
+
+e: test-see-value
+  0 value foo
+  : bar foo . ;
+  see bar
+  out: : bar  foo . ; 
+;e
+
+e: test-see-to
+  0 value foo
+  : bar 123 to foo ;
+  see bar
+  out: : bar  123 TO foo ; 
 ;e

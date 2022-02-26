@@ -112,6 +112,7 @@ typedef struct {
   YV(internals, 0BRANCH, if (!tos) ip = (cell_t *) *ip; else ++ip; DROP) \
   YV(internals, DONEXT, *rp = *rp - 1; if (~*rp) ip = (cell_t *) *ip; else (--rp, ++ip)) \
   YV(internals, DOLIT, DUP; tos = *ip++) \
+  YV(internals, DOSET, *((cell_t *) *ip++) = tos; DROP) \
   YV(internals, DOCOL, ++rp; *rp = (cell_t) ip; ip = (cell_t *) (w + sizeof(cell_t))) \
   YV(internals, DOCON, DUP; tos = *(cell_t *) (w + sizeof(cell_t))) \
   YV(internals, DOVAR, DUP; tos = w + sizeof(cell_t)) \

@@ -93,7 +93,6 @@ e: check-boot
   out: defer 
   out: +to 
   out: to 
-  out: value-bind 
   out: value 
   out: throw 
   out: catch 
