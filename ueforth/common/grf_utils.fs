@@ -17,6 +17,14 @@
 \   ( $rrggbb ) to color
 \ Drawing:
 \   box ( x y w h -- )
+\ Transforms:
+\   g{ ( -- ) Preserve transform
+\   }g ( -- ) Restore transform
+\   translate ( x y -- )
+\   scale ( nx dx ny dy -- )
+\   viewport ( w h -- )
+\ Conversions:
+\   screen>g ( x y -- x' y' ) Transform screen to viewport
 
 also internals
 grf definitions
@@ -34,14 +42,12 @@ $10000 value sx   $10000 value sy
   \ x y pixel w 1- for color over l! 4 + next drop ;
   x y pixel w color fill32 ;
 
-grf definitions also internals
+create gstack 1024 cells allot
+gstack value gp
+: >g ( n -- ) gp ! gp cell+ to gp ;
+: g> ( -- n ) gp cell - to gp gp @ ;
 
-: box { left top w h }
-  left sx * tx + 16 rshift to left
-  top sy * ty + 16 rshift to top
-  w sx * 16 rshift to w
-  h sy * 16 rshift to h
-
+: raw-box { left top w h }
   left w + top h + { right bottom }
   left 0 max to left
   top 0 max to top
@@ -51,6 +57,35 @@ grf definitions also internals
   right left - to w
   bottom top - to h
   top h 1- for left over w hline 1+ next drop
+;
+
+grf definitions also internals
+
+: box { left top w h }
+  left sx * tx + 16 rshift
+  top sy * ty + 16 rshift
+  w sx * 16 rshift
+  h sy * 16 rshift
+  raw-box
+;
+
+: screen>g ( x y -- x' y' ) 16 lshift ty - sy / swap
+                            16 lshift tx - sx / swap ;
+
+: g{   sx >g   sy >g   tx >g   ty >g ;
+: }g   g> to ty  g> to tx   g> to sy   g> to sx ;
+: translate ( x y -- ) sy * +to ty   sx * +to tx ;
+: scale ( nx dx ny dy -- )
+  sy -rot */ to sy
+  sx -rot */ to sx ;
+: viewport { w h }
+  width 2/ height 2/ translate
+  10000 width height */ 10000 w h */ < if
+    width w  width h w */ h scale
+  else
+    height w h */ w  height h scale
+  then
+  w 2/ negate h 2/ negate translate
 ;
 
 only forth definitions

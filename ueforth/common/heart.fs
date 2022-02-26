@@ -58,23 +58,31 @@ heart-end heart-size 0 fill
 
 512 29 32 */ constant heart-ratio
 
+: raw-heart 0 { x y sx sy r }
+  heart-start c@ 0= if heart-initialize then
+  y sy 2/ - to y
+  sy 0 do
+    i heart-size sy */ to r
+    x heart-start r + c@ sx heart-ratio */ +
+      y i +
+      heart-end r + c@ sx heart-ratio */
+      1 raw-box
+    x heart-start r + c@
+      heart-end r + c@ + sx heart-ratio */ -
+      y i +
+      heart-end r + c@ sx heart-ratio */
+      1 raw-box
+  loop
+;
+
 grf definitions also internals
 
 : heart 0 { x y s r }
-  heart-start c@ 0= if heart-initialize then
-  y s 2/ - to y
-  s 0 do
-    i heart-size s */ to r
-    x heart-start r + c@ s heart-ratio */ +
-      y i +
-      heart-end r + c@ s heart-ratio */
-      1 box
-    x heart-start r + c@
-      heart-end r + c@ + s heart-ratio */ -
-      y i +
-      heart-end r + c@ s heart-ratio */
-      1 box
-  loop
+  x sx * tx + 16 rshift
+  y sy * ty + 16 rshift
+  s sx * 16 rshift
+  s sy * 16 rshift
+  raw-heart
 ;
 
 only forth definitions

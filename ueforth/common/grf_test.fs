@@ -31,8 +31,23 @@ grf
     then
 )
     0 to color 0 0 width height box
-    LEFT-BUTTON pressed? if $ccccff else $ffccff then to color
-    mouse-x mouse-y height heart
+    g{
+      640 480 viewport
+      $ff0000 to color
+      0 0 640 480 box
+      $ff7700 to color
+      0 0 400 300 box
+
+      g{
+        mouse-x mouse-y screen>g translate
+        LEFT-BUTTON pressed? if $ccccff else $ffccff then to color
+        g{ -100 -100 translate 0 0 100 heart }g
+        g{ 100 -100 translate 0 0 100 heart }g
+        g{ -100 100 translate 0 0 100 heart }g
+        g{ 100 100 translate 0 0 100 heart }g
+        g{ -50 -50 100 100 box }g
+      }g
+    }g
     flip
   event FINISHED = until
   bye
