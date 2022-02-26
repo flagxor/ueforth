@@ -84,9 +84,9 @@ grf definitions also internals
 : viewport { w h }
   width 2/ height 2/ translate
   10000 width height */ 10000 w h */ < if
-    width w  width h w */ h scale
+    width w  width h w */ 1 max h scale
   else
-    height w h */ w  height h scale
+    height w h */ 1 max w  height h scale
   then
   w 2/ negate h 2/ negate translate
 ;
