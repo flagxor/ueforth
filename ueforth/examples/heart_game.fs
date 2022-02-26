@@ -72,22 +72,22 @@ create arrow-table
 
 : draw-one { e } e ->kind @ { kind }
   HEART-GOAL kind = if
-    $ff0000 128 random dup 8 lshift + + color!
+    $ff0000 128 random dup 8 lshift + + to color
     e ->x @ 100 / e ->y @ 100 / e ->step @ heart
     exit
   then
   FIRE kind = if
-    $222222 color!
+    $222222 to color
     e ->x @ 100 / 4 - e ->y @ 100 / 4 - 8 8 box
     exit
   then
   SPARK kind = if
-    $ff7700 128 random 8 lshift + color!
+    $ff7700 128 random 8 lshift + to color
     e ->x @ 100 / 4 - e ->y @ 100 / 4 - 8 8 box
     exit
   then
   ARROW kind = if
-    $ffff00 256 random + color!
+    $ffff00 256 random + to color
     39 for
       e ->x @ 100 / e ->vx @ i 200 */ + i arrow-- 2/ -
       e ->y @ 100 / e ->vy @ i 200 */ + i arrow-- 2/ -
@@ -99,16 +99,16 @@ create arrow-table
 
 : volcano
   height 2/ for
-    $334400 i 100 height */ + color!
+    $334400 i 100 height */ + to color
     width 2/ i 2/ - i height 2/ + i height 8 / + 1 box
   next
-  0 color!
+  0 to color
   width 2/ height 2/
     height 8 / 20 box
 ;
 
 : draw
-  $003300 color! 0 0 width height box
+  $003300 to color 0 0 width height box
   volcano
   entity-count 0 ?do i entity draw-one loop
   flip

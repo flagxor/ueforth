@@ -14,35 +14,33 @@
 
 ( Graphics Utilities )
 \ Pen:
-\   color! ( col -- )
+\   ( $rrggbb ) to color
 \ Drawing:
 \   box ( x y w h -- )
 
 also internals
 grf definitions
+
+0 value color
+
 internals definitions
 
-variable color
-
 ( Scale to be divided by $10000 )
-variable sx   variable sy
-$10000 sx !   $10000 sy !
+$10000 value sx   $10000 value sy
 ( Translation )
-variable tx   variable ty
+0 value tx   0 value ty
 
 : hline { x y w }
-  \ x y pixel w 1- for color @ over l! 4 + next drop ;
-  x y pixel w color @ fill32 ;
+  \ x y pixel w 1- for color over l! 4 + next drop ;
+  x y pixel w color fill32 ;
 
 grf definitions also internals
 
-: color! ( col -- ) color ! ;
-
 : box { left top w h }
-  left sx @ * tx @ + 16 rshift to left
-  top sy @ * ty @ + 16 rshift to top
-  w sx @ * 16 rshift to w
-  h sy @ * 16 rshift to h
+  left sx * tx + 16 rshift to left
+  top sy * ty + 16 rshift to top
+  w sx * 16 rshift to w
+  h sy * 16 rshift to h
 
   left w + top h + { right bottom }
   left 0 max to left
