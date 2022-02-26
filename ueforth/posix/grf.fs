@@ -82,8 +82,11 @@ StructureNotifyMask or constant EVENT-MASK
   IDLE to event
   xevent [ xany ] ->type sl@ to xevent-type
   Expose xevent-type = if
-    EXPOSED to event
-    exit
+    [ xexposure ]
+    xevent ->count @ 0= if
+      EXPOSED to event
+      exit
+    then
   then
   ConfigureNotify xevent-type = if
     RESIZED to event

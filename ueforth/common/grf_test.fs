@@ -33,6 +33,7 @@ internals
       ." CHAR: " last-char . cr
     then
 )
+    MOTION event = EXPOSED event = or if
     0 to color 0 0 width height box
     g{
       vertical-flip
@@ -52,6 +53,7 @@ internals
       }g
     }g
     flip
+    then
   event FINISHED = until
   bye
 ;

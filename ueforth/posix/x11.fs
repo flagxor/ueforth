@@ -142,6 +142,20 @@ struct XConfigureEvent
   bool field ->override_redirect
 previous definitions
 
+vocabulary xexposure  also xexposure definitions
+struct XExposeEvent
+   i32 field ->type
+  long field ->serial
+  bool field ->send_event
+   ptr field ->display
+   win field ->window
+   i32 field ->x
+   i32 field ->y
+   i32 field ->width
+   i32 field ->height
+   i32 field ->count
+previous definitions
+
 0 constant NoEventMask
 1 : xmask   dup constant 2* ;
 xmask KeyPressMask
