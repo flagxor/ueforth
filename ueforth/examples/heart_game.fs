@@ -35,9 +35,10 @@ struct EntityStruct
 
 0 constant DEAD
 1 constant HEART-GOAL
-2 constant FIRE
-3 constant SPARK
-4 constant ARROW
+2 constant HEART-HIT
+3 constant FIRE
+4 constant SPARK
+5 constant ARROW
 
 create entity-array entity-limit EntityStruct * allot
 : entity ( n -- a ) EntityStruct * entity-array + ;
@@ -73,6 +74,11 @@ create arrow-table
 : draw-one { e } e ->kind @ { kind }
   HEART-GOAL kind = if
     $ff0000 128 random dup 8 lshift + + to color
+    e ->x @ e ->y @ e ->step @ heart
+    exit
+  then
+  HEART-HIT kind = if
+    $ffff00 256 random + to color
     e ->x @ e ->y @ e ->step @ heart
     exit
   then
@@ -130,12 +136,42 @@ create arrow-table
   0 s ->step !
 ;
 
+: square ( n -- n2 ) dup * ;
+
+: distance2 { e f }
+  e ->x @ f ->x @ - square
+  e ->y @ f ->y @ - square +
+  e ->step @ square - f ->step @ square - ;
+
 : tick-one { e }
-  e ->vy @ 4 - e ->vy !
+  -4 e ->vy +!
   e ->vx @ e ->x @ + e ->x !
   e ->vy @ e ->y @ + e ->y !
   e ->y @ 0< if DEAD e ->kind ! then
   e ->kind @ { kind }
+  ARROW kind = if
+    entity-count 0 ?do
+      e i entity distance2 0< if
+        i entity ->kind @
+        dup HEART-GOAL = if
+          0 i entity ->vx !
+          1000 i entity ->vy !
+          HEART-HIT i entity ->kind !
+          DEAD e ->kind !
+        then
+        dup FIRE = swap SPARK = or if
+          FIRE e ->kind !
+        then
+      then
+    loop
+  then
+  HEART-HIT kind = if
+    e ->y @ 76800 > if DEAD e ->kind ! then
+  then
+  HEART-GOAL kind = if
+    3 e ->vy +!
+    e ->y @ 76800 > if DEAD e ->kind ! then
+  then
   FIRE kind = if
     e random-spark
   then
@@ -149,10 +185,10 @@ create arrow-table
 
 : random-heart { e }
   HEART-GOAL e ->kind !
-  64000 random e ->x !
-  48000 random e ->y !
-  2000 random 1000 - e ->vx !
-  2000 random e ->vy !
+  50000 random 50000 + e ->x !
+  10000 random 1000 + e ->y !
+  200 random 100 - e ->vx !
+  300 random e ->vy !
   40 random 40 + 100 * e ->step !
 ;
 
@@ -161,7 +197,8 @@ create arrow-table
   32000 8000 random + 4000 - e ->x !
   24000 1000 random + 2000 - e ->y !
   200 random 100 - e ->vx !
-  200 random 200 + e ->vy !
+  200 random 300 + e ->vy !
+  800 e ->step !
 ;
 
 : random-arrow { e }
@@ -170,6 +207,7 @@ create arrow-table
   48000 random e ->y !
   200 random 100 - e ->vx !
   200 random e ->vy !
+  800 e ->step !
 ;
 
 : mouse-direction ( -- x y ) mouse-x mouse-y screen>g ;
@@ -189,14 +227,12 @@ create arrow-table
   }g
 ;
 
-: init
-  10 for new entity random-heart next
-  10 for new entity random-fire next
-  10 for new entity random-arrow next
+: hearts-spew
+  2 for new entity random-heart next
 ;
 
 : volcano-spew
-  2 for new entity random-fire next
+  3 for new entity random-fire next
 ;
 
 : fire shoot-arrow ;
@@ -209,7 +245,7 @@ create arrow-table
     poll
     PRESSED event = if
       65 last-key = if
-        init
+        hearts-spew
       then
       LEFT-BUTTON last-key = if
         fire
@@ -219,6 +255,7 @@ create arrow-table
       begin ms-ticks to next-tm next-tm last-tm - 10 < while 1 ms repeat
       next-tm to last-tm
       100 random 0= if volcano-spew then
+      300 random 0= if hearts-spew then
       draw
       tick
       cleanup
