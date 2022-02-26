@@ -33,7 +33,6 @@ internals
       ." CHAR: " last-char . cr
     then
 )
-
     0 to color 0 0 width height box
     g{
       vertical-flip
@@ -42,7 +41,6 @@ internals
       0 0 640 480 box
       $ff7700 to color
       0 0 400 300 box
-
       g{
         mouse-x mouse-y screen>g translate
         LEFT-BUTTON pressed? if $ccccff else $ffccff then to color

@@ -65,10 +65,6 @@ cell allocate throw to backbuffer
 ;
 
 : GrfWindowProc { hwnd msg w l }
-  WM_QUIT msg = if
-    FINISHED to event
-    0 exit
-  then
   WM_DESTROY msg = if
     0 PostQuitMessage
     0 exit
@@ -165,6 +161,10 @@ also windows
   event FINISHED = if exit then
   IDLE to event
   msgbuf NULL 0 0 PM_REMOVE PeekMessageA if
+    WM_QUIT msgbuf ->message @ = if
+      FINISHED to event
+      exit
+    then
     msgbuf TranslateMessage drop
     msgbuf DispatchMessageA drop
   then
