@@ -192,8 +192,12 @@ create arrow-table
   targeted-arrow
 ;
 
+0 value last-tm
+0 value next-tm
+
 : run
   begin
+    poll
     PRESSED event = if
       65 last-key = if
         init
@@ -202,11 +206,14 @@ create arrow-table
         fire
       then
     then
-    poll
-    100 random 0= if volcano-spew then
-    draw
-    tick
-    cleanup
+    event UNKNOWN = if
+      begin ms-ticks to next-tm next-tm last-tm - 10 < while 1 ms repeat
+      next-tm to last-tm
+      100 random 0= if volcano-spew then
+      draw
+      tick
+      cleanup
+    then
   FINISHED event = until
   bye
 ;

@@ -89,5 +89,8 @@
   XV(internals, "'argc", ARGC, DUP; tos = (cell_t) &g_sys.argc) \
   XV(internals, "'argv", ARGV, DUP; tos = (cell_t) &g_sys.argv) \
   XV(internals, "'runner", RUNNER, DUP; tos = (cell_t) &g_sys.runner) \
+  YV(internals, fill32, cell_t c = tos; DROP; cell_t n = tos; DROP; \
+                        uint32_t *a = (uint32_t *) tos; DROP; \
+                        for (;n;--n) *a++ = c) \
   Y(context, DUP; tos = (cell_t) (g_sys.context + 1)) \
   Y(latestxt, DUP; tos = (cell_t) g_sys.latestxt)

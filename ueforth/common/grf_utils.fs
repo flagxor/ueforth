@@ -18,6 +18,7 @@
 \ Drawing:
 \   box ( x y w h -- )
 
+also internals
 grf definitions
 
 0 value color
@@ -25,7 +26,8 @@ grf definitions
 internals definitions
 
 : hline { x y w }
-  x y pixel w 1- for color over l! 4 + next drop ;
+  \ x y pixel w 1- for color over l! 4 + next drop ;
+  x y pixel w color fill32 ;
 
 grf definitions also internals
 
