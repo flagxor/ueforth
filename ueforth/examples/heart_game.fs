@@ -31,6 +31,7 @@ struct EntityStruct
   ptr field ->vx
   ptr field ->vy
   ptr field ->kind
+  ptr field ->radius
   ptr field ->step
 
 0 constant DEAD
@@ -74,20 +75,15 @@ create arrow-table
 : draw-one { e } e ->kind @ { kind }
   HEART-GOAL kind = if
     $ff0000 128 random dup 8 lshift + + to color
-    e ->x @ e ->y @ e ->step @ heart
+    e ->x @ e ->y @ e ->radius @ heart
     exit
   then
   HEART-HIT kind = if
     $ffff00 256 random + to color
-    e ->x @ e ->y @ e ->step @ heart
+    e ->x @ e ->y @ e ->radius @ heart
     exit
   then
-  FIRE kind = if
-    $222222 to color
-    e ->x @ 400 - e ->y @ 400 - 800 800 box
-    exit
-  then
-  SPARK kind = if
+  FIRE kind = SPARK kind = or if
     $ff7700 128 random 8 lshift + to color
     e ->x @ 400 - e ->y @ 400 - 800 800 box
     exit
@@ -134,14 +130,15 @@ create arrow-table
   e ->vx @ 200 random 100 - + s ->vx !
   e ->vy @ 200 random 200 - + s ->vy !
   0 s ->step !
+  800 s ->radius !
 ;
 
 : square ( n -- n2 ) dup * ;
 
 : distance2 { e f }
-  e ->x @ f ->x @ - square
-  e ->y @ f ->y @ - square +
-  e ->step @ square - f ->step @ square - ;
+  e ->x @ f ->x @ - 100 / square
+  e ->y @ f ->y @ - 100 / square +
+  e ->radius @ f ->radius @ + 100 / square - ;
 
 : tick-one { e }
   -4 e ->vy +!
@@ -189,7 +186,7 @@ create arrow-table
   10000 random 1000 + e ->y !
   200 random 100 - e ->vx !
   300 random e ->vy !
-  40 random 40 + 100 * e ->step !
+  40 random 40 + 100 * e ->radius !
 ;
 
 : random-fire { e }
@@ -198,7 +195,7 @@ create arrow-table
   24000 1000 random + 2000 - e ->y !
   200 random 100 - e ->vx !
   200 random 300 + e ->vy !
-  800 e ->step !
+  800 e ->radius !
 ;
 
 : random-arrow { e }
@@ -207,7 +204,7 @@ create arrow-table
   48000 random e ->y !
   200 random 100 - e ->vx !
   200 random e ->vy !
-  800 e ->step !
+  800 e ->radius !
 ;
 
 : mouse-direction ( -- x y ) mouse-x mouse-y screen>g ;
