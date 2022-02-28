@@ -152,6 +152,7 @@ e: check-extra-opcodes
   out: - 
   out: rot 
   out: -rot 
+  out: ?dup 
   out: < 
   out: > 
   out: <= 

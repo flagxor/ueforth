@@ -25,6 +25,7 @@
   X("-", MINUS, tos = (*sp--) - tos) \
   Y(rot, w = sp[-1]; sp[-1] = *sp; *sp = tos; tos = w) \
   X("-rot", MROT, w = tos; tos = *sp; *sp = sp[-1]; sp[-1] = w) \
+  X("?dup", QDUP, if (tos) DUP) \
   X("<", LESS, tos = (*sp--) < tos ? -1 : 0) \
   X(">", GREATER, tos = (*sp--) > tos ? -1 : 0) \
   X("<=", LESSEQ, tos = (*sp--) <= tos ? -1 : 0) \

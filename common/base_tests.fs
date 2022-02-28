@@ -122,3 +122,10 @@ e: test-empty-string
   : test s" " ;
   test 0 =assert drop
 ;e
+
+e: test-?dup
+  123 ?dup 123 =assert 123 =assert
+  depth 0 =assert
+  0 ?dup 0 =assert
+  depth 0 =assert
+;e
