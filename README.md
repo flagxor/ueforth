@@ -1,12 +1,17 @@
-# EForth
+# µEforth / ESP32forth
 
-EForth is a delightfully minimalist approach to Forth originated by Bill Muench and Dr. C. H. Ting.
+This EForth inspired implementation of Forth is bootstraped from a minimalist C kernel.
 
-For documentation visit:
+## Building from Source
 
-[https://eforth.appspot.com/](https://eforth.appspot.com/)
+To build:
 
-## Directories
+```
+make
+```
 
-* [ueforth/ - µEforth / ESP32forth](ueforth/README.md) - EForth refactored to allow source boostraping.
-* [circleforth/ - CircleForth](circleforth/README.md) - A minimalist Forth modeled after toy Lisps.
+The resulting output will have this structure:
+
+* out/deploy - A copy of the eforth.appspot.com / esp32forth.appspot.com ready to deploy.
+* out/windows - A build for Windows.
+* out/linux - A build for Linux.
