@@ -16,7 +16,7 @@
 \ Drawing:
 \   heart ( x y h -- )
 
-grf internals definitions
+graphics internals definitions
 
 \ For t = 0 to 2pi
 \     x = -16 to 16
@@ -79,7 +79,7 @@ heart-end heart-size 0 fill
   loop
 ;
 
-grf definitions also internals
+graphics definitions also internals
 
 : heart 0 { x y s r }
   x sx * tx + 16 rshift

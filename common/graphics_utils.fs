@@ -28,7 +28,7 @@
 \   screen>g ( x y -- x' y' ) Transform screen to viewport
 
 also internals
-grf definitions
+graphics definitions
 
 0 value color
 
@@ -62,7 +62,7 @@ gstack value gp
   top h 1- for left over w hline 1+ next drop
 ;
 
-grf definitions also internals
+graphics definitions also internals
 
 : box { left top w h }
   left sx * tx + 16 rshift

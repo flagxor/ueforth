@@ -14,7 +14,7 @@
 
 ( Expand Graphics for Windows )
 
-grf internals definitions
+graphics internals definitions
 also windows
 
 z" GrfClass" constant GrfClassName
@@ -116,7 +116,7 @@ cell allocate throw to backbuffer
   hwnd msg w l DefWindowProcA
 ;
 
-grf definitions
+graphics definitions
 also internals
 also windows
 

@@ -14,7 +14,7 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-grf
+graphics
 640 480 window
 
 : run

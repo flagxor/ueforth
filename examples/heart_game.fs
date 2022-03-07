@@ -14,7 +14,7 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-grf also structures
+graphics also structures
 640 480 window
 
 1 31 lshift 1- constant max-random

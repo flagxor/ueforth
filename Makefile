@@ -191,13 +191,13 @@ COMMON_PHASE2 = common/tasks.fs common/utils.fs common/locals.fs \
                 common/streams.fs common/blocks.fs
 
 COMMON_DESKTOP = common/ansi.fs common/desktop.fs \
-                 common/grf.fs common/grf_utils.fs common/heart.fs
+                 common/graphics.fs common/graphics_utils.fs common/heart.fs
 
 POSIX_BOOT =  $(COMMON_PHASE1) \
               posix/posix.fs posix/allocation.fs posix/termios.fs \
               $(COMMON_PHASE2) $(COMMON_DESKTOP) \
               posix/x11.fs \
-              posix/grf.fs \
+              posix/graphics.fs \
               posix/sockets.fs posix/telnetd.fs posix/httpd.fs posix/web_interface.fs \
               posix/autoboot.fs \
               common/fini.fs
@@ -213,7 +213,7 @@ WINDOWS_BOOT = $(COMMON_PHASE1) \
                windows/windows_messages.fs \
                windows/allocation.fs \
                $(COMMON_PHASE2) $(COMMON_DESKTOP) \
-               windows/grf.fs \
+               windows/graphics.fs \
                posix/autoboot.fs \
                common/fini.fs
 $(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)

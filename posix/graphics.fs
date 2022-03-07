@@ -14,12 +14,12 @@
 
 ( Lazy load expand Graphics for Xlib )
 
-grf definitions
+graphics definitions
 
 : window r|
 
 also x11
-forth grf internals definitions
+forth graphics internals definitions
 also posix also x11
 
 0 value display
@@ -129,7 +129,7 @@ StructureNotifyMask or constant EVENT-MASK
   then
 ;
 
-also grf definitions
+also graphics definitions
 
 : window { w h }
   w 0< if 640 to w 480 to h then

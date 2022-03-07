@@ -36,7 +36,7 @@
 \ Key/Button constants:
 \   LEFT-BUTTON MIDDLE-BUTTON RIGHT-BUTTON
 
-vocabulary grf   grf definitions
+vocabulary graphics   graphics definitions
 vocabulary internals
 
 0 constant IDLE
@@ -70,7 +70,7 @@ key-state key-count erase
 
 : key-state! ( f k ) key-count mod key-state + c! ;
 
-grf definitions also internals
+graphics definitions also internals
 
 : pixel ( w h -- a ) width * + 4* backbuffer + ;
 
