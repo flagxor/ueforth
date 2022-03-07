@@ -34,15 +34,18 @@ graphics internals definitions
 
 4000 constant heart-steps
 1024 constant heart-size
-create heart-start heart-size allot
-create heart-end heart-size allot
-heart-start heart-size 0 fill
-heart-end heart-size 0 fill
+0 value heart-start
+0 value heart-end
 
 : cmin! ( n a ) dup >r c@ min r> c! ;
 : cmax! ( n a ) dup >r c@ max r> c! ;
 
 : heart-initialize
+  heart-start if exit then
+  heart-size allocate throw to heart-start
+  heart-size allocate throw to heart-end
+  heart-start heart-size 0 fill
+  heart-end heart-size 0 fill
   heart-start heart-size 7 29 */ 128 fill
   heart-end heart-size 7 29 */ 128 fill
   heart-steps 0 do
@@ -59,7 +62,7 @@ heart-end heart-size 0 fill
 512 29 32 */ constant heart-ratio
 
 : raw-heart 0 { x y sx sy r }
-  heart-start c@ 0= if heart-initialize then
+  heart-initialize
   y sy 2/ - to y
   sy 0< if 
     y sy + to y
