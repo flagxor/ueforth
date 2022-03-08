@@ -65,12 +65,15 @@ scanlines max-scanlines cells erase
 ;
 : draw-spans max-scanlines 0 do i draw-row loop ;
 
+: 0.<< 16 lshift ;
+: 0.>> 16 rshift ;
+
 : 2span { a b -- n } a b max a b min - ;
 : 3span { a b c -- n } a b max c max a b min c min - ;
 : bezier 0 0 0 0 0 0 { x1 y1 x2 y2 x3 y3 x1.5 x2.5 y1.5 y2.5 xn yn }
   y1 y2 y3 3span 2 < if
     y1 y3 2span if
-      x1 x3 + 2/ y1 y2 min y3 min add-edge
+      x1 x3 + 2/ 0.>> y1 y2 min y3 min add-edge
     then
   else
     x1 x2 + 2/ to x1.5   x2 x3 + 2/ to x2.5
@@ -81,12 +84,23 @@ scanlines max-scanlines cells erase
     xn yn x2.5 y2.5 x3 y3 recurse
   then
 ;
-: line ( x1 y1 x2 y2 ) 2dup bezier ;
+: line 0 0 { x1 y1 x2 y2 dx dy }
+  y1 y2 > if
+    y1 y2 to y1 to y2
+    x1 x2 to x1 to x2
+  then
+  y2 y1 - to dy
+  x2 x1 - to dx
+  dy 0 ?do
+    x1 dx i dy */ + 0.>> y1 i + add-edge
+  loop
+;
+\ : line ( x1 y1 x2 y2 ) 2dup bezier ;
 
 0 value pen-x   0 value pen-y
-: move-to { x y } x to pen-x   y to pen-y ;
-: line-to { x y } pen-x pen-y x y line   x y move-to ;
-: bezier-to { x' y' x y } pen-x pen-y x' y' x y bezier  x y move-to ;
+: move-to { x y } x 0.<< to pen-x   y to pen-y ;
+: line-to { x y } pen-x pen-y x 0.<< y line   x y move-to ;
+: bezier-to { x' y' x y } pen-x pen-y x' 0.<< y' x 0.<< y bezier  x y move-to ;
 
 -1 -1 window
 
