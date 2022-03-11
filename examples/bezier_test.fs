@@ -65,42 +65,53 @@ scanlines max-scanlines cells erase
 ;
 : draw-spans max-scanlines 0 do i draw-row loop ;
 
-: 0.<< 16 lshift ;
-: 0.>> 16 rshift ;
-
 : 2span { a b -- n } a b max a b min - ;
 : 3span { a b c -- n } a b max c max a b min c min - ;
-: bezier 0 0 0 0 0 0 { x1 y1 x2 y2 x3 y3 x1.5 x2.5 y1.5 y2.5 xn yn }
-  y1 y2 y3 3span 2 < if
-    y1 y3 2span if
-      x1 x3 + 2/ 0.>> y1 y2 min y3 min add-edge
+: raw-bezier 0 0 { x1 y1 x2 y2 x3 y3 d xn yn }
+  y1 d rshift y2 d rshift y3 d rshift 3span 2 < if
+    y1 d rshift y3 d rshift 2span if
+      y1 y3 = if
+        x1 x3 + 2/ d lshift y1 d rshift add-edge
+        exit
+      then
+      y1 y3 < if
+        x1 x3 x1 - y1 1 d lshift 1- and y3 y1 - */ - d rshift
+          y1 d rshift add-edge
+      else
+        x3 x1 x3 - y3 1 d lshift 1- and y1 y3 - */ - d rshift
+          y3 d rshift add-edge
+      then
     then
   else
-    x1 x2 + 2/ to x1.5   x2 x3 + 2/ to x2.5
-    y1 y2 + 2/ to y1.5   y2 y3 + 2/ to y2.5
-    x1 x2 2* + x3 + 2/ 2/ to xn
-    y1 y2 2* + y3 + 2/ 2/ to yn
-    x1 y1 x1.5 y1.5 xn yn recurse
-    xn yn x2.5 y2.5 x3 y3 recurse
+    x1 x2 2* + x3 + to xn
+    y1 y2 2* + y3 + to yn
+    x1 4* y1 4*   x1 x2 + 2* y1 y2 + 2*   xn yn         d 2 + recurse
+    xn yn         x2 x3 + 2* y2 y3 + 2*   x3 4* y3 4*   d 2 + recurse
   then
 ;
+
+(
 : line 0 0 { x1 y1 x2 y2 dx dy }
   y1 y2 > if
     y1 y2 to y1 to y2
     x1 x2 to x1 to x2
   then
-  y2 y1 - to dy
+  y2 y1 - 0.>> to dy
   x2 x1 - to dx
   dy 0 ?do
-    x1 dx i dy */ + 0.>> y1 i + add-edge
+    x1 dx i dy */ + 0.>> y1 0.>> i + add-edge
   loop
 ;
-\ : line ( x1 y1 x2 y2 ) 2dup bezier ;
+)
+
+: bezier 0 raw-bezier ;
+
+: line ( x1 y1 x2 y2 ) 2dup bezier ;
 
 0 value pen-x   0 value pen-y
-: move-to { x y } x 0.<< to pen-x   y to pen-y ;
-: line-to { x y } pen-x pen-y x 0.<< y line   x y move-to ;
-: bezier-to { x' y' x y } pen-x pen-y x' 0.<< y' x 0.<< y bezier  x y move-to ;
+: move-to { x y } x to pen-x   y to pen-y ;
+: line-to { x y } pen-x pen-y x y line   x y move-to ;
+: bezier-to { x' y' x y } pen-x pen-y x' y' x y bezier  x y move-to ;
 
 -1 -1 window
 
