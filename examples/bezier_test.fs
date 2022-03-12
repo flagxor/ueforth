@@ -39,6 +39,7 @@ scanlines max-scanlines cells erase
 ;
 : row-span ( y -- a ) cells scanlines + ;
 : add-edge { x y }
+  y 0< y max-scanlines >= or if exit then
   y row-span { yp }
   begin yp @ while
     x yp @ ->edge @ <= if
@@ -65,53 +66,43 @@ scanlines max-scanlines cells erase
 ;
 : draw-spans max-scanlines 0 do i draw-row loop ;
 
-: 2span { a b -- n } a b max a b min - ;
-: 3span { a b c -- n } a b max c max a b min c min - ;
-: raw-bezier 0 0 { x1 y1 x2 y2 x3 y3 d xn yn }
-  y1 d rshift y2 d rshift y3 d rshift 3span 2 < if
-    y1 d rshift y3 d rshift 2span if
-      y1 y3 = if
-        x1 x3 + 2/ d lshift y1 d rshift add-edge
-        exit
-      then
-      y1 y3 < if
-        x1 x3 x1 - y1 1 d lshift 1- and y3 y1 - */ - d rshift
-          y1 d rshift add-edge
-      else
-        x3 x1 x3 - y3 1 d lshift 1- and y1 y3 - */ - d rshift
-          y3 d rshift add-edge
-      then
-    then
-  else
-    x1 x2 2* + x3 + to xn
-    y1 y2 2* + y3 + to yn
-    x1 4* y1 4*   x1 x2 + 2* y1 y2 + 2*   xn yn         d 2 + recurse
-    xn yn         x2 x3 + 2* y2 y3 + 2*   x3 4* y3 4*   d 2 + recurse
-  then
-;
+: 0.<< ( n -- n ) 16 lshift ;
+: 0.>> ( n -- n ) 16 rshift ;
 
-(
-: line 0 0 { x1 y1 x2 y2 dx dy }
+: line ( x1 y1 x2 y2 )
+  0 0 0 0 { x1 y1 x2 y2 dx dy sy ey }
   y1 y2 > if
     y1 y2 to y1 to y2
     x1 x2 to x1 to x2
   then
-  y2 y1 - 0.>> to dy
   x2 x1 - to dx
+  y1 0.>> to sy
+  y2 0.>> to ey
+  ey sy - to dy
   dy 0 ?do
-    x1 dx i dy */ + 0.>> y1 0.>> i + add-edge
+    x1 dx i dy */ + 0.>> sy i + add-edge
   loop
 ;
-)
 
-: bezier 0 raw-bezier ;
+: distance2 { x1 y1 x2 y2 } x1 x2 - dup * y1 y2 - dup * + ;
 
-: line ( x1 y1 x2 y2 ) 2dup bezier ;
+: raw-bezier 0 0 { x1 y1 x2 y2 x3 y3 d xn yn }
+  d 0< if
+    x1 y1 x3 y3 line
+  else
+    x1 x2 2* + x3 + 2/ 2/ to xn
+    y1 y2 2* + y3 + 2/ 2/ to yn
+    x1 y1   x1 x2 + 2/ y1 y2 + 2/  xn yn   d 1- recurse
+    xn yn   x2 x3 + 2/ y2 y3 + 2/  x3 y3   d 1- recurse
+  then
+;
+
+: bezier 10 raw-bezier ;
 
 0 value pen-x   0 value pen-y
-: move-to { x y } x to pen-x   y to pen-y ;
-: line-to { x y } pen-x pen-y x y line   x y move-to ;
-: bezier-to { x' y' x y } pen-x pen-y x' y' x y bezier  x y move-to ;
+: move-to { x y } x 0.<< to pen-x   y 0.<< to pen-y ;
+: line-to { x y } pen-x pen-y x 0.<< y 0.<< line   x y move-to ;
+: bezier-to { x' y' x y } pen-x pen-y x' 0.<< y' 0.<< x 0.<< y 0.<< bezier  x y move-to ;
 
 -1 -1 window
 
