@@ -49,7 +49,7 @@ StructureNotifyMask or constant EVENT-MASK
 
 : image-resize { w h }
   w to width   h to height
-  image if image XDestroyImage then
+  image if image XDestroyImage drop then
   w h * 4* malloc dup 0= throw to backbuffer
   display visual screen-depth ZPixmap 0 backbuffer
     width height 32 width 4* XCreateImage to image
