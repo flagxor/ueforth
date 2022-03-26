@@ -27,6 +27,7 @@ windows
    does> dup @ swap cell+ @ execute ;
 : dll ( z "name" -- )
    LoadLibraryA dup 0= throw create , does> @ sofunc ;
+: contains? ( z 'lib -- f ) >body @ swap GetProcAddress ;
 
 z" Kernel32.dll" dll Kernel32
 

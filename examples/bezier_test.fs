@@ -14,6 +14,7 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
+windows dpi-aware
 also graphics
 also structures
 
@@ -21,7 +22,7 @@ struct ScanSpan
   ptr field ->next
   ptr field ->edge
 
-1024 constant max-scanlines
+2048 constant max-scanlines
 create scanlines max-scanlines cells allot
 scanlines max-scanlines cells erase
 0 value free-edges

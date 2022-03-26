@@ -170,4 +170,12 @@ IDI_ASTERISK constant IDI_INFORMATION
 
 18 constant VK_ALT
 
+( Check for Windows 10 DPI awareness )
+z" SetThreadDpiAwarenessContext" ' User32 contains? [IF]
+  z" SetThreadDpiAwarenessContext" 1 User32 SetThreadDpiAwarenessContext
+  : dpi-aware   -2 SetThreadDpiAwarenessContext drop ;
+[ELSE]
+  : dpi-aware ;
+[THEN]
+
 only forth definitions
