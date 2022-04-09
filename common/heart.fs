@@ -64,7 +64,7 @@ graphics internals definitions
 : raw-heart 0 { x y sx sy r }
   heart-initialize
   y sy 2/ - to y
-  sy 0< if 
+  sy 0< if
     y sy + to y
     sy abs to sy
   then
