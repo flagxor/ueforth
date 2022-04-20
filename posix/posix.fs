@@ -21,8 +21,9 @@ vocabulary posix   posix definitions
 : dlopen ( z n -- a ) 'dlopen [ internals ] call2 [ posix ] ;
 create calls
 internals
-' call0 , ' call1 , ' call2 , ' call3 , ' call4 , ' call5 ,
-' call6 , ' call7 , ' call8 , ' call9 , ' call10 ,
+ ' call0 ,  ' call1 ,  ' call2 ,  ' call3 ,  ' call4 ,
+ ' call5 ,  ' call6 ,  ' call7 ,  ' call8 ,  ' call9 ,
+' call10 , ' call11 , ' call12 , ' call13 , ' call14 , ' call15 ,
 posix
 : sofunc ( z n a "name" -- )
    swap >r swap dlsym dup 0= throw create , r> cells calls + @ ,
