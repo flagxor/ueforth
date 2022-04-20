@@ -267,6 +267,7 @@ e: check-float-opcodes
   out: FDROP 
   out: FOVER 
   out: FSWAP 
+  out: FROT 
   out: FNEGATE 
   out: F0< 
   out: F0= 

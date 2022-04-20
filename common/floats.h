@@ -20,12 +20,13 @@
   X("FP!", FPSTORE, fp = (float *) tos; DROP) \
   X("SF@", FAT, *++fp = *(float *) tos; DROP) \
   X("SF!", FSTORE, *(float *) tos = *fp--; DROP) \
-  X("FDUP", FDUP, fp[1] = *fp; ++fp) \
-  X("FNIP", FNIP, fp[-1] = *fp; --fp) \
-  X("FDROP", FDROP, --fp) \
-  X("FOVER", FOVER, fp[1] = fp[-1]; ++fp) \
-  X("FSWAP", FSWAP, float ft = fp[-1]; fp[-1] = *fp; *fp = ft) \
-  X("FNEGATE", FNEGATE, *fp = -*fp) \
+  Y(FDUP, fp[1] = *fp; ++fp) \
+  Y(FNIP, fp[-1] = *fp; --fp) \
+  Y(FDROP, --fp) \
+  Y(FOVER, fp[1] = fp[-1]; ++fp) \
+  Y(FSWAP, float ft = fp[-1]; fp[-1] = *fp; *fp = ft) \
+  Y(FROT, float ft = fp[-2]; fp[-2] = fp[-1]; fp[-1] = *fp; *fp = ft) \
+  Y(FNEGATE, *fp = -*fp) \
   X("F0<", FZLESS, DUP; tos = *fp-- < 0.0f ? -1 : 0) \
   X("F0=", FZEQUAL, DUP; tos = *fp-- == 0.0f ? -1 : 0) \
   X("F=", FEQUAL, DUP; tos = fp[-1] == fp[0] ? -1 : 0; fp -= 2) \
