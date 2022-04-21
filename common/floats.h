@@ -45,7 +45,7 @@
   XV(internals, "F>NUMBER?", FCONVERT, tos = fconvert((const char *) *sp, tos, fp); --sp) \
   Y(SFLOAT, DUP; tos = sizeof(float)) \
   Y(SFLOATS, tos *= sizeof(float)) \
-  X("SFLOAT+", SFLOATPLUS, DUP; tos += sizeof(float)) \
+  X("SFLOAT+", SFLOATPLUS, tos += sizeof(float)) \
   X("PI", PI_CONST, *++fp = 3.14159265359f) \
   Y(FSIN, *fp = sin(*fp)) \
   Y(FCOS, *fp = cos(*fp)) \

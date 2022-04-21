@@ -104,3 +104,15 @@ e: test-float-broken-parse
   internals
   s" teste" f>number? 0= assert
 ;e
+
+e: test-sfloats
+  10 sfloats 40 =assert
+;e
+
+e: test-sfloat+
+  1 sfloat+ 5 =assert
+;e
+
+e: test-sfloat
+  sfloat 4 =assert
+;e
