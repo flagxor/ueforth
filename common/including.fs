@@ -16,10 +16,18 @@
 
 internals definitions
 
+: ends/ ( a n -- f ) 1- + c@ [char] / = ;
 : dirname ( a n -- )
+   dup if
+     2dup ends/ if 1- then
+   then
    begin dup while
-     2dup 1- + c@ [char] / = if exit then 1-
+     2dup ends/ if exit then 1-
    repeat ;
+
+: starts../ ( a n -- f )
+   3 < if drop 0 exit then
+   3 s" ../" str= ;
 
 0 value sourcefilename&
 0 value sourcefilename#
@@ -46,6 +54,11 @@ internals definitions
   a# b# + { r# } r# cell+ cell+ allocate throw { r }
   2 cells +to r
   b c@ [char] / = if 0 to a# then
+  begin b b# starts../ while
+    3 +to b -3 +to b#
+    a a# dirname to a# to a
+    a# b# + to r#
+  repeat
   a r a# cmove b r a# + b# cmove
   r# r cell - !
   r r# ;

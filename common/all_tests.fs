@@ -23,4 +23,5 @@ needs conditionals_tests.fs
 needs float_tests.fs
 needs forth_namespace_tests.fs
 needs structures_tests.fs
+needs including_tests/including_tests.fs
 run-tests
