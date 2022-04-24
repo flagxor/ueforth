@@ -12,15 +12,15 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-include common/testing.fs
-include common/utils.fs
-include common/base_tests.fs
-include common/utils_tests.fs
-include common/vocabulary_tests.fs
-include common/locals_tests.fs
-include common/doloop_tests.fs
-include common/conditionals_tests.fs
-include common/float_tests.fs
-include common/forth_namespace_tests.fs
-include common/structures_tests.fs
+needs testing.fs
+needs utils.fs
+needs base_tests.fs
+needs utils_tests.fs
+needs vocabulary_tests.fs
+needs locals_tests.fs
+needs doloop_tests.fs
+needs conditionals_tests.fs
+needs float_tests.fs
+needs forth_namespace_tests.fs
+needs structures_tests.fs
 run-tests
