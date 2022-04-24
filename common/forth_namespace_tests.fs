@@ -97,6 +97,7 @@ e: check-boot
   out: throw 
   out: catch 
   out: handler 
+  out: k 
   out: j 
   out: i 
   out: loop 

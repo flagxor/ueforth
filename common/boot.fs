@@ -84,6 +84,7 @@ variable leaving
 : loop   1 aliteral postpone +loop ; immediate
 : i ( -- n ) postpone r@ ; immediate
 : j ( -- n ) rp@ 3 cells - @ ;
+: k ( -- n ) rp@ 5 cells - @ ;
 
 ( Exceptions )
 variable handler
