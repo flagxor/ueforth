@@ -25,6 +25,10 @@ internals definitions
      2dup ends/ if exit then 1-
    repeat ;
 
+: starts./ ( a n -- f )
+   2 < if drop 0 exit then
+   2 s" ./" str= ;
+
 : starts../ ( a n -- f )
    3 < if drop 0 exit then
    3 s" ../" str= ;
@@ -54,6 +58,10 @@ internals definitions
   a# b# + { r# } r# cell+ cell+ allocate throw { r }
   2 cells +to r
   b c@ [char] / = if 0 to a# then
+  begin b b# starts./ while
+    2 +to b -2 +to b#
+    a# b# + to r#
+  repeat
   begin b b# starts../ a# 0<> and while
     3 +to b -3 +to b#
     a a# dirname to a# to a
