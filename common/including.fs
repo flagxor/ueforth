@@ -54,7 +54,7 @@ internals definitions
   a# b# + { r# } r# cell+ cell+ allocate throw { r }
   2 cells +to r
   b c@ [char] / = if 0 to a# then
-  begin b b# starts../ while
+  begin b b# starts../ a# 0<> and while
     3 +to b -3 +to b#
     a a# dirname to a# to a
     a# b# + to r#
