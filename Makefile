@@ -34,8 +34,6 @@ CFLAGS_MINIMIZE = \
                 -DUEFORTH_MINIMAL \
                 -fno-exceptions \
                 -ffreestanding \
-                -fno-stack-check \
-                -fno-stack-protector \
                 -fno-stack-protector \
                 -fomit-frame-pointer \
                 -mno-stack-arg-probe \
