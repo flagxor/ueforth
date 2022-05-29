@@ -129,3 +129,12 @@ e: test-?dup
   0 ?dup 0 =assert
   depth 0 =assert
 ;e
+
+e: test-lshift
+  $1234 4 lshift $12340 =assert
+;e
+
+e: test-rshift
+  $1234 4 rshift $123 =assert
+  -1 cell 8 * 1- rshift 1 =assert
+;e
