@@ -77,7 +77,8 @@ internals definitions
     dup >body see-vocabulary
     >vocnext
   repeat drop cr ;
-: voclist   last-vocabulary @ begin dup while dup see. cr >vocnext repeat drop ;
+: voclist-from ( voc -- ) begin dup while dup see. cr >vocnext repeat drop ;
+: voclist   last-vocabulary @ voclist-from ;
 : voc. ( voc -- ) 2 cells - see. ;
 : vocs. ( voc -- ) dup voc. @ begin dup while
     dup nonvoc? 0= if ." >> " dup 2 cells - voc. then
