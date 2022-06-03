@@ -478,7 +478,6 @@ DEFINED? windows [IF]
 
 e: test-windows-forth-namespace
   internals ' graphics voclist-from
-  out: internals 
   out: graphics 
   out: ansi 
   out: editor 
