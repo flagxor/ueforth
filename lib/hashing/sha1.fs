@@ -16,22 +16,6 @@ needs hashing.fs
 
 internals hashing definitions
 
-0 VALUE h0  0 VALUE h1  0 VALUE h2  0 VALUE h3  0 VALUE h4
-0 VALUE a   0 VALUE b   0 VALUE c   0 VALUE d   0 VALUE e
-
-CREATE w 80 4* ALLOT
-: w@ ( n -- n ) 4* w + UL@ ;
-: w! ( n n -- ) 4* w + L! ;
-
-: 32-bit ( n -- n ) $ffffffff AND ;
-: L+ ( n n -- n ) + 32-bit ;
-
-: <<< ( n n -- n ) 2DUP LSHIFT -ROT 32 SWAP - RSHIFT OR 32-bit ;
-
-VARIABLE ends
-: <-> ( n - n ) ends ! 0 4 0 DO 8 LSHIFT ends I + C@ OR LOOP ;
-: <->* ( a n -- ) 0 ?DO DUP UL@ <-> OVER L! 4 + LOOP DROP ;
-
 : init   $67452301 TO h0  $EFCDAB89 TO h1
          $98BADCFE TO h2  $10325476 TO h3  $C3D2E1F0 TO h4 ;
 

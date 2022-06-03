@@ -16,26 +16,6 @@ needs hashing.fs
 
 internals hashing definitions
 
-0 VALUE h0  0 VALUE h1  0 VALUE h2  0 VALUE h3
-0 VALUE h4  0 VALUE h5  0 VALUE h6  0 VALUE h7
-0 VALUE a   0 VALUE b   0 VALUE c   0 VALUE d
-0 VALUE e   0 VALUE f   0 VALUE g   0 VALUE h
-0 VALUE temp1           0 VALUE temp2
-
-CREATE w 64 4* ALLOT
-: w@ ( n -- n ) 4* w + UL@ ;
-: w! ( n n -- ) 4* w + L! ;
-
-: L, ( n -- ) HERE L! 4 ALLOT ;
-: 32-bit ( n -- n ) $ffffffff AND ;
-: L+ ( n n -- n ) + 32-bit ;
-
-: >>> ( n n -- n ) 2DUP RSHIFT -ROT 32 SWAP - LSHIFT OR 32-bit ;
-
-VARIABLE ends
-: <-> ( n - n ) ends ! 0 4 0 DO 8 LSHIFT ends I + C@ OR LOOP ;
-: <->* ( a n -- ) 0 ?DO DUP UL@ <-> OVER L! 4 + LOOP DROP ;
-
 CREATE k HEX
   428a2f98 L, 71374491 L, b5c0fbcf L, e9b5dba5 L, 3956c25b L, 59f111f1 L, 923f82a4 L, ab1c5ed5 L,
   d807aa98 L, 12835b01 L, 243185be L, 550c7dc3 L, 72be5d74 L, 80deb1fe L, 9bdc06a7 L, c19bf174 L,
@@ -87,9 +67,6 @@ DECIMAL
 64 constant sha256-size
 create sha256-hash  sha256-size allot
 
-: >dig ( a n -- a )
-  BASE @ >R HEX <# # # # # # # # # #> R> BASE !
-  ROT 2DUP + >R SWAP CMOVE R> ;
 : format
   sha256-hash  h0 >dig  h1 >dig  h2 >dig  h3 >dig
                h4 >dig  h5 >dig  h6 >dig  h7 >dig DROP ;
