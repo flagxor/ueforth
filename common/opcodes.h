@@ -83,6 +83,7 @@ typedef struct {
   X("*/MOD", SSMOD, SSMOD_FUNC) \
   Y(LSHIFT, tos = (*sp-- << tos)) \
   Y(RSHIFT, tos = (((ucell_t) *sp--) >> tos)) \
+  Y(ARSHIFT, tos = (*sp-- >> tos)) \
   Y(AND, tos &= *sp--) \
   Y(OR, tos |= *sp--) \
   Y(XOR, tos ^= *sp--) \

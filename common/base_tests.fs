@@ -138,3 +138,8 @@ e: test-rshift
   $1234 4 rshift $123 =assert
   -1 cell 8 * 1- rshift 1 =assert
 ;e
+
+e: test-arshift
+  $1234 4 arshift $123 =assert
+  -1 cell 8 * 1- arshift -1 =assert
+;e

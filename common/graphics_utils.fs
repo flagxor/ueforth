@@ -65,10 +65,10 @@ gstack value gp
 graphics definitions also internals
 
 : box { left top w h }
-  left sx * tx + 16 rshift
-  top sy * ty + 16 rshift
-  w sx * 16 rshift
-  h sy * 16 rshift
+  left sx * tx + 16 arshift
+  top sy * ty + 16 arshift
+  w sx * 16 arshift
+  h sy * 16 arshift
   raw-box
 ;
 

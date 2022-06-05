@@ -85,10 +85,10 @@ graphics internals definitions
 graphics definitions also internals
 
 : heart 0 { x y s r }
-  x sx * tx + 16 rshift
-  y sy * ty + 16 rshift
-  s sx * 16 rshift
-  s sy * 16 rshift
+  x sx * tx + 16 arshift
+  y sy * ty + 16 arshift
+  s sx * 16 arshift
+  s sy * 16 arshift
   raw-heart
 ;
 
