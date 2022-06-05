@@ -238,6 +238,14 @@ $(GEN)/web_cases.js: $(GEN)/dump_web_opcodes | $(GEN)
 $(GEN)/web_dict.js: $(GEN)/dump_web_opcodes | $(GEN)
 	$< dict >$@
 
+WEB_BOOT =  $(COMMON_PHASE1) \
+            posix/posix.fs posix/allocation.fs posix/termios.fs \
+            $(COMMON_PHASE2) \
+            posix/autoboot.fs \
+            common/fini.fs
+$(GEN)/web_boot.js: common/source_to_string.js $(WEB_BOOT) | $(GEN)
+	$< -web boot $(VERSION) $(REVISION) $(WEB_BOOT) >$@
+
 # ---- RESOURCES ----
 
 $(RES):
@@ -283,7 +291,7 @@ $(WEB)/terminal.html: web/terminal.html | $(WEB)
 $(WEB)/ueforth.js: \
         web/fuse_web.js \
         web/web.template.js \
-        common/boot.fs \
+        $(GEN)/web_boot.js \
         $(GEN)/web_dict.js \
         $(GEN)/web_cases.js | $(WEB)
 	$^ >$@
