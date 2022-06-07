@@ -448,6 +448,15 @@ WiFi.localIP ( -- ip )
 WiFi.mode ( mode -- ) WIFI_MODE_NULL WIFI_MODE_STA WIFI_MODE_AP WIFI_MODE_APSTA
 WiFi.setTxPower ( powerx4 -- )   Set power x4
 WiFi.getTxPower ( -- powerx4 )   Get power x4
+
+( In 7.0.6.17 and up )
+WiFi.softAP ( ssid password/0 -- success )
+WiFi.softAPIP ( -- ip )
+WiFi.softAPBroadcastIP ( -- ip )
+WiFi.softAPNetworkID ( -- ip )
+WiFi.softAPConfig ( localip gateway subnet -- success )
+WiFi.softAPdisconnect ( wifioff -- success )
+WiFi.softAPgetStationNum ( -- num )
 </pre>
 
 <h5>mDNS</h5>
