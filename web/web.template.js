@@ -19,9 +19,7 @@
 const HEAP_SIZE = (1024 * 1024);
 const STACK_CELLS = 4096;
 
-const boot = `
 {{boot}}
-`;
 
 var heap = new ArrayBuffer(HEAP_SIZE);
 var i32 = new Int32Array(heap);

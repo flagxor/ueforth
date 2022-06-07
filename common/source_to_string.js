@@ -31,10 +31,15 @@ function DropCopyright(source) {
 }
 
 var is_windows = false;
+var is_web = false;
 
 var args = process.argv.slice(2);
 if (args.length > 0 && args[0] == '-win') {
   is_windows = true;
+  args.shift();
+}
+if (args.length > 0 && args[0] == '-web') {
+  is_web = true;
   args.shift();
 }
 var name = args.shift();
@@ -55,6 +60,8 @@ if (is_windows) {
   source = source.replace(/["]  ["]/g, '');
   source = source.replace(/["] [(] ([^)]*)[)] ["]/g, '// $1');
   source = 'const char ' + name + '[] =\n' + source + ';\n';
+} else if (is_web) {
+  source = 'const ' + name + ' = `\n' + source + '`;\n';
 } else {
   source = 'const char ' + name + '[] = R"""(\n' + source + ')""";\n';
 }

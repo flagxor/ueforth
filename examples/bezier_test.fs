@@ -68,7 +68,7 @@ scanlines max-scanlines cells erase
 : draw-spans max-scanlines 0 do i draw-row loop ;
 
 : 0.<< ( n -- n ) 16 lshift ;
-: 0.>> ( n -- n ) 16 rshift ;
+: 0.>> ( n -- n ) 16 arshift ;
 
 : line ( x1 y1 x2 y2 )
   0 0 0 0 { x1 y1 x2 y2 dx dy sy ey }

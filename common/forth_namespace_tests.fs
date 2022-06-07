@@ -220,6 +220,7 @@ e: check-core-opcodes
   out: */MOD 
   out: LSHIFT 
   out: RSHIFT 
+  out: ARSHIFT 
   out: AND 
   out: OR 
   out: XOR 
