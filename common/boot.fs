@@ -158,12 +158,16 @@ variable hld
 
 ( Input )
 : raw.s   depth 0 max for aft sp@ r@ cells - @ . then next ;
-variable echo -1 echo !   variable arrow -1 arrow !
-: ?echo ( n -- ) echo @ if emit else drop then ;
+variable echo -1 echo !   variable arrow -1 arrow !  variable wascr
+: *emit ( n -- ) dup emit 13 = if cr then ;
+: ?echo ( n -- ) echo @ if *emit else drop then ;
 : ?arrow.   arrow @ if >r >r raw.s r> r> ." --> " then ;
+: *key ( -- n )
+  begin key dup nl = wascr @ 0= and if drop 13 exit then dup until
+  dup 13 = wascr ! ;
 : accept ( a n -- n ) ?arrow. 0 swap begin 2dup < while
-     key
-     dup nl = over 13 = or if ?echo drop nip exit then
+     *key
+     dup 13 = if ?echo drop nip exit then
      dup 8 = over 127 = or if
        drop over if rot 1- rot 1- rot 8 ?echo bl ?echo 8 ?echo then
      else
@@ -172,7 +176,7 @@ variable echo -1 echo !   variable arrow -1 arrow !
      then
    repeat drop nip
    ( Eat rest of the line if buffer too small )
-   begin key dup nl = over 13 = or if ?echo exit else drop then again
+   begin *key dup 13 = if ?echo exit else drop then again
 ;
 200 constant input-limit
 : tib ( -- a ) 'tib @ ;
