@@ -115,7 +115,7 @@ defer key
 defer key?
 defer bye
 : emit ( n -- ) >r rp@ 1 type rdrop ;
-: space bl emit ;   : cr nl emit ;
+: space bl emit ;   : cr 13 emit nl emit ;
 
 ( Numeric Output )
 variable hld
@@ -158,13 +158,20 @@ variable hld
 
 ( Input )
 : raw.s   depth 0 max for aft sp@ r@ cells - @ . then next ;
-variable echo -1 echo !   variable arrow -1 arrow !  variable wascr
+variable echo -1 echo !   variable arrow -1 arrow !  0 value wascr
 : *emit ( n -- ) dup emit 13 = if cr then ;
 : ?echo ( n -- ) echo @ if *emit else drop then ;
 : ?arrow.   arrow @ if >r >r raw.s r> r> ." --> " then ;
 : *key ( -- n )
-  begin key dup nl = wascr @ 0= and if drop 13 exit then dup until
-  dup 13 = wascr ! ;
+  begin
+    key
+    dup nl = if
+      drop wascr if 0 else 13 exit then
+    then
+    dup 13 = to wascr
+    dup if exit else drop then
+  again ;
+: eat-till-cr   begin *key dup 13 = if ?echo exit else drop then again ;
 : accept ( a n -- n ) ?arrow. 0 swap begin 2dup < while
      *key
      dup 13 = if ?echo drop nip exit then
@@ -175,8 +182,7 @@ variable echo -1 echo !   variable arrow -1 arrow !  variable wascr
        >r rot r> over c! 1+ -rot swap 1+ swap
      then
    repeat drop nip
-   ( Eat rest of the line if buffer too small )
-   begin *key dup 13 = if ?echo exit else drop then again
+   eat-till-cr
 ;
 200 constant input-limit
 : tib ( -- a ) 'tib @ ;

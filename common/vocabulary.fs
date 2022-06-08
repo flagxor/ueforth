@@ -53,7 +53,7 @@ variable scope   scope context cell - !
 transfer{
   xt-find& xt-hide xt-transfer
   voc-stack-end last-vocabulary notfound
-  *key *emit wascr
+  *key *emit wascr eat-till-cr
   immediate? input-buffer ?echo ?arrow. arrow
   evaluate-buffer aliteral value-bind
   leaving( )leaving leaving leaving,
