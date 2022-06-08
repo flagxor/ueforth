@@ -22,8 +22,7 @@ sockaddr telnet-port   sockaddr client   variable client-len
 
 defer broker
 
-: telnet-emit' ( ch -- ) >r rp@ 1 clientfd write-file rdrop if broker then ;
-: telnet-emit ( ch -- ) dup nl = if 13 telnet-emit' then telnet-emit' ;
+: telnet-emit ( ch -- ) >r rp@ 1 clientfd write-file rdrop if broker then ;
 : telnet-type ( a n -- ) for aft dup c@ telnet-emit 1+ then next drop ;
 : telnet-key ( -- n ) 0 >r rp@ 1 clientfd read-file swap 1 <> or if rdrop broker then r> ;
 
