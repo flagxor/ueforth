@@ -159,7 +159,7 @@ variable hld
 ( Input )
 : raw.s   depth 0 max for aft sp@ r@ cells - @ . then next ;
 variable echo -1 echo !   variable arrow -1 arrow !  0 value wascr
-: *emit ( n -- ) dup emit 13 = if cr then ;
+: *emit ( n -- ) dup 13 = if drop cr else emit then ;
 : ?echo ( n -- ) echo @ if *emit else drop then ;
 : ?arrow.   arrow @ if >r >r raw.s r> r> ." --> " then ;
 : *key ( -- n )

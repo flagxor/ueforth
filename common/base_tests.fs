@@ -103,16 +103,12 @@ e: test-accept
   in: 1234567890xxxxxx
   pad 10 accept
   pad swap type cr
-  out:\ --> 1234567890
-  out:cr!
-  out:cr
+  out: --> 1234567890
   out: 1234567890
   in: foo
   pad 10 accept
   pad swap type cr
-  out:\ --> foo
-  out:cr!
-  out:cr
+  out: --> foo
   out: foo
 ;e
 
