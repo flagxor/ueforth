@@ -21,8 +21,8 @@ internals vocabulary hashing  hashing definitions
 0 VALUE temp1           0 VALUE temp2
 
 CREATE w 80 4* ALLOT
-: w@ ( n -- n ) 4* w + UL@ ;
-: w! ( n n -- ) 4* w + L! ;
+: @w ( n -- n ) 4* w + UL@ ;
+: !w ( n n -- ) 4* w + L! ;
 
 : 32-bit ( n -- n ) $ffffffff AND ;
 : L+ ( n n -- n ) + 32-bit ;

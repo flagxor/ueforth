@@ -21,10 +21,10 @@ internals hashing definitions
 
 : extend
   80 16 DO
-    I 3 - w@  I 8 - w@ XOR  I 14 - w@ XOR  I 16 - w@ XOR  1 <<< I w!
+    I 3 - @w  I 8 - @w XOR  I 14 - @w XOR  I 16 - @w XOR  1 <<< I !w
   LOOP
 ;
-: step ( n i -- ) w@ +  a 5 <<< + e L+ ( to temp )
+: step ( n i -- ) @w +  a 5 <<< + e L+ ( to temp )
                   d TO e  c TO d  b 30 <<< TO c  a TO b  ( from temp ) TO a ;
 : start   h0 TO A  h1 TO b  h2 TO c  h3 TO d  h4 TO e ;
 : chunk1   20  0 DO b c AND b INVERT d AND XOR      $5A827999 +  I step LOOP ;
@@ -53,8 +53,8 @@ create sha1-hash  sha1-size allot
     msg edge >w
     edge 56 >= IF chunk w 64 ERASE THEN
   THEN
-  n 8 * 16 RSHIFT 16 RSHIFT 14 w!
-  n 8 * 15 w! chunk
+  n 8 * 16 RSHIFT 16 RSHIFT 14 !w
+  n 8 * 15 !w chunk
   format sha1-hash sha1-size
 ;
 

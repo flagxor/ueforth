@@ -37,7 +37,7 @@ DECIMAL
 : s1 { x } x 17 >>> x 19 >>> XOR x 10 RSHIFT XOR ;
 : extend
   64 16 DO
-    I 16 - w@  I 7 - w@ +  I 15 - w@ s0 +  I 2 - w@ s1 + I w!
+    I 16 - @w  I 7 - @w +  I 15 - @w s0 +  I 2 - @w s1 + I !w
   LOOP
 ;
 
@@ -46,7 +46,7 @@ DECIMAL
 : sh0 { x -- n } x 2 >>> x 13 >>> XOR x 22 >>> XOR ;
 : sh1 { x -- n } x 6 >>> x 11 >>> XOR x 25 >>> XOR ;
 : step { i }
-  h  e sh1 +  e f g ch +  i k@ +  i w@ L+ TO temp1
+  h  e sh1 +  e f g ch +  i k@ +  i @w L+ TO temp1
   a sh0  a b c maj L+ TO temp2
   g TO h  f TO g  e TO f  d temp1 L+ TO e
   c TO d  b TO c  a TO b  temp1 temp2 L+ TO a
@@ -80,8 +80,8 @@ create sha256-hash  sha256-size allot
     msg edge >w
     edge 56 >= IF chunk w 64 ERASE THEN
   THEN
-  n 8 * 16 RSHIFT 16 RSHIFT 14 w!
-  n 8 * 15 w! chunk
+  n 8 * 16 RSHIFT 16 RSHIFT 14 !w
+  n 8 * 15 !w chunk
   format sha256-hash sha256-size
 ;
 
