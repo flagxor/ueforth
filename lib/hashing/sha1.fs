@@ -41,9 +41,6 @@ internals hashing definitions
 40 constant sha1-size
 create sha1-hash  sha1-size allot
 
-: >dig ( a n -- a )
-  BASE @ >R HEX <# # # # # # # # # #> R> BASE !
-  ROT 2DUP + >R SWAP CMOVE R> ;
 : format
   sha1-hash  h0 >dig  h1 >dig  h2 >dig  h3 >dig  h4 >dig  DROP ;
 
