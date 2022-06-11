@@ -24,9 +24,19 @@ $3ff03084 constant sha1_continue
 $3ff03088 constant sha1_load
 $3ff0308c constant sha1_busy
 
+$f peri_clk_en !
+$0 peri_rst_en !
+
+: WMOVE ( a a n -- )
+  0 ?DO
+    2DUP SWAP UL@ SWAP L!
+    4 + SWAP 4 + SWAP
+  LOOP 2DROP ;
+
 : wait   begin sha1_busy @ 0= until ;
 variable started
 : chunk
+  w sha_text 16 WMOVE
   started @ if
     1 sha1_continue !
   else
@@ -36,10 +46,7 @@ variable started
 ;
 
 : >w { msg n }
-  sha_text 64 ERASE
-  msg sha_text n CMOVE
-  $80 sha_text n + c!
-  sha_text 64 <->* ;
+  w 64 ERASE  msg w n CMOVE  $80 w n + c!  w 64 <->* ;
 
 40 constant sha1-size
 create sha1-hash  sha1-size allot
@@ -48,23 +55,21 @@ create sha1-hash  sha1-size allot
   BASE @ >R HEX <# # # # # # # # # #> R> BASE !
   ROT 2DUP + >R SWAP CMOVE R> ;
 : format
-  sha1-hash
-  5 0 DO i cells sha_text + @ >dig LOOP
-  DROP ;
+  sha_text w 20 CMOVE
+  sha1-hash 5 0 DO I @w >dig LOOP DROP ;
 
 : sha1 { msg n -- hash n } n 64 /mod { edge wholes }
-  0 started !
   wholes 0 ?DO msg 64 >w chunk 64 +TO msg LOOP
   edge 0= IF
     0 0 >w
   ELSE
     msg edge >w
-    edge 56 >= IF chunk sha_text 64 ERASE THEN
+    edge 56 >= IF chunk w 64 ERASE THEN
   THEN
-  n 8 * 16 RSHIFT 16 RSHIFT 14 4* sha_text + L!
-  n 8 * 15 4* sha_text + L!
-  chunk
+  n 8 * 16 RSHIFT 16 RSHIFT 14 !w
+  n 8 * 15 !w chunk
   1 sha1_load ! wait
+  sha_text w 5 WMOVE
   format sha1-hash sha1-size
 ;
 
