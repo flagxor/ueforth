@@ -148,3 +148,12 @@ e: test-arshift
   $1234 4 arshift $123 =assert
   -1 cell 8 * 1- arshift -1 =assert
 ;e
+
+e: test-2@2!
+  create foo 2 cells allot
+  123 456 foo 2!
+  999 foo 2@
+  456 =assert
+  123 =assert
+  999 =assert
+;e
