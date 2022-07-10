@@ -31,6 +31,7 @@ typedef uintptr_t ucell_t;
 #define DUP (*++sp = tos)
 #define PUSH DUP; tos = (cell_t)
 #define COMMA(n) *g_sys.heap++ = (n)
+#define CCOMMA(n) *(uint8_t *) g_sys.heap = (n); g_sys.heap = (cell_t *) (1 + ((cell_t) g_sys.heap));
 #define DOES(ip) **g_sys.current = (cell_t) ADDROF(DODOES); (*g_sys.current)[1] = (cell_t) ip
 
 #define PARK   DUP; *++rp = (cell_t) fp; *++rp = (cell_t) sp; *++rp = (cell_t) ip
@@ -80,10 +81,10 @@ typedef struct {
   X("+", PLUS, tos += *sp--) \
   X("U/MOD", USMOD, w = *sp; *sp = (ucell_t) w % (ucell_t) tos; \
                     tos = (ucell_t) w / (ucell_t) tos) \
-  X("*/MOD", SSMOD, SSMOD_FUNC) \
-  Y(LSHIFT, tos = (*sp-- << tos)) \
-  Y(RSHIFT, tos = (((ucell_t) *sp--) >> tos)) \
-  Y(ARSHIFT, tos = (*sp-- >> tos)) \
+  XV(forth, "*/MOD", SSMOD, SSMOD_FUNC) \
+  Y(LSHIFT, tos = (*sp << tos); --sp) \
+  Y(RSHIFT, tos = (((ucell_t) *sp) >> tos); --sp) \
+  Y(ARSHIFT, tos = (*sp >> tos); --sp) \
   Y(AND, tos &= *sp--) \
   Y(OR, tos |= *sp--) \
   Y(XOR, tos ^= *sp--) \
@@ -113,7 +114,7 @@ typedef struct {
   YV(internals, 0BRANCH, if (!tos) ip = (cell_t *) *ip; else ++ip; DROP) \
   YV(internals, DONEXT, *rp = *rp - 1; if (~*rp) ip = (cell_t *) *ip; else (--rp, ++ip)) \
   YV(internals, DOLIT, DUP; tos = *ip++) \
-  YV(internals, DOSET, *((cell_t *) *ip++) = tos; DROP) \
+  YV(internals, DOSET, *((cell_t *) *ip) = tos; ++ip; DROP) \
   YV(internals, DOCOL, ++rp; *rp = (cell_t) ip; ip = (cell_t *) (w + sizeof(cell_t))) \
   YV(internals, DOCON, DUP; tos = *(cell_t *) (w + sizeof(cell_t))) \
   YV(internals, DOVAR, DUP; tos = w + sizeof(cell_t)) \

@@ -34,7 +34,7 @@ static cell_t *forth_run(cell_t *init_rp) {
     return 0;
   }
   register cell_t *ip, *rp, *sp, tos, w;
-  register float *fp;
+  register float *fp, ft;
   rp = init_rp; UNPARK; NEXT;
 #define XV(flags, name, op, code) OP_ ## op: { code; } NEXT;
   PLATFORM_OPCODE_LIST

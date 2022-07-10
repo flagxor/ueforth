@@ -156,9 +156,22 @@ function VM(stdlib, foreign, heap) {
 
   var imul = stdlib.Math.imul;
 
+  var sqrt = stdlib.Math.sqrt;
+  var sin = stdlib.Math.sin;
+  var cos = stdlib.Math.cos;
+  var atan2 = stdlib.Math.atan2;
+  var floor = stdlib.Math.floor;
+  var exp = stdlib.Math.exp;
+  var log = stdlib.Math.log;
+  var pow = stdlib.Math.pow;
+  var fabs = stdlib.Math.abs;
+  var fmin = stdlib.Math.min;
+  var fmax = stdlib.Math.max;
+
   var SSMOD = foreign.SSMOD;
   var Call = foreign.Call;
   var COMMA = foreign.COMMA;
+  var CCOMMA = foreign.CCOMMA;
   var DOES = foreign.DOES;
   var DOIMMEDIATE = foreign.DOIMMEDIATE;
   var UNSMUDGE = foreign.UNSMUDGE;
@@ -172,7 +185,9 @@ function VM(stdlib, foreign, heap) {
   var log = foreign.log;
 
   var u8 = new stdlib.Uint8Array(heap);
+  var i16 = new stdlib.Int16Array(heap);
   var i32 = new stdlib.Int32Array(heap);
+  var f32 = new stdlib.Float32Array(heap);
 
   const g_sys = 256;
   const g_ip = 296;  // g_sys + 10 * 4
@@ -184,6 +199,7 @@ function VM(stdlib, foreign, heap) {
     var ip = 0;
     var sp = 0;
     var rp = 0;
+    var fp = 0;
     var w = 0;
     var ir = 0;
     sp = i32[g_sp>>2]|0;
@@ -232,6 +248,7 @@ var ffi = {
   create: function() { console.log('create'); },
   parse: function() { console.log('parse'); },
   COMMA: function(n) { i32[i32[g_heap>>2]] = n; i32[g_heap>>2] += 4; console.log('comma'); },
+  CCOMMA: function(n) { u8[i32[g_heap>>2]] = n; i32[g_heap>>2] += 1; console.log('ccomma'); },
   SSMOD: function() { console.log('ssmod'); },
   DOES: function() { console.log('does'); },
   DOIMMEDIATE: function() { console.log('immediate'); },

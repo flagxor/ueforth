@@ -16,13 +16,17 @@
 #include <string.h>
 
 #include "common/opcodes.h"
+#include "common/extra_opcodes.h"
+#include "common/floats.h"
 
 #define PLATFORM_OPCODE_LIST \
   X("CALL", CALL, sp = Call(sp|0, tos|0) | 0; DROP) \
+  FLOATING_POINT_LIST
 
 enum {
 #define XV(flags, name, op, code) OP_ ## op,
   PLATFORM_OPCODE_LIST
+  EXTRA_OPCODE_LIST
   OPCODE_LIST
 #undef XV
 };
@@ -32,11 +36,13 @@ int main(int argc, char *argv[]) {
 #define XV(flags, name, op, code) \
     printf("          case %d:  // %s\n            %s; break;\n", OP_ ## op, name, #code);
     PLATFORM_OPCODE_LIST
+    EXTRA_OPCODE_LIST
     OPCODE_LIST
 #undef XV
   } else if (argc == 2 && strcmp(argv[1], "dict") == 0) {
 #define XV(flags, name, op, code) printf("  create(" #name ", %d);\n", OP_ ## op);
     PLATFORM_OPCODE_LIST
+    EXTRA_OPCODE_LIST
     OPCODE_LIST
 #undef XV
   } else {

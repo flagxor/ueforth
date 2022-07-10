@@ -15,7 +15,7 @@
 #include <math.h>
 
 #define FLOATING_POINT_LIST \
-  YV(internals, DOFLIT, *++fp = *(float *) ip++) \
+  YV(internals, DOFLIT, *++fp = *(float *) ip; ++ip) \
   X("FP@", FPAT, DUP; tos = (cell_t) fp) \
   X("FP!", FPSTORE, fp = (float *) tos; DROP) \
   X("SF@", FAT, *++fp = *(float *) tos; DROP) \
@@ -24,21 +24,21 @@
   Y(FNIP, fp[-1] = *fp; --fp) \
   Y(FDROP, --fp) \
   Y(FOVER, fp[1] = fp[-1]; ++fp) \
-  Y(FSWAP, float ft = fp[-1]; fp[-1] = *fp; *fp = ft) \
-  Y(FROT, float ft = fp[-2]; fp[-2] = fp[-1]; fp[-1] = *fp; *fp = ft) \
+  Y(FSWAP, ft = fp[-1]; fp[-1] = *fp; *fp = ft) \
+  Y(FROT, ft = fp[-2]; fp[-2] = fp[-1]; fp[-1] = *fp; *fp = ft) \
   Y(FNEGATE, *fp = -*fp) \
-  X("F0<", FZLESS, DUP; tos = *fp-- < 0.0f ? -1 : 0) \
-  X("F0=", FZEQUAL, DUP; tos = *fp-- == 0.0f ? -1 : 0) \
+  X("F0<", FZLESS, DUP; tos = *fp < 0.0f ? -1 : 0; --fp) \
+  X("F0=", FZEQUAL, DUP; tos = *fp == 0.0f ? -1 : 0; --fp) \
   X("F=", FEQUAL, DUP; tos = fp[-1] == fp[0] ? -1 : 0; fp -= 2) \
   X("F<", FLESS, DUP; tos = fp[-1] < fp[0] ? -1 : 0; fp -= 2) \
   X("F>", FGREATER, DUP; tos = fp[-1] > fp[0] ? -1 : 0; fp -= 2) \
   X("F<>", FNEQUAL, DUP; tos = fp[-1] != fp[0] ? -1 : 0; fp -= 2) \
   X("F<=", FLESSEQ, DUP; tos = fp[-1] <= fp[0] ? -1 : 0; fp -= 2) \
   X("F>=", FGREATEREQ, DUP; tos = fp[-1] >= fp[0] ? -1 : 0; fp -= 2) \
-  X("F+", FPLUS, fp[-1] += *fp; --fp) \
-  X("F-", FMINUS, fp[-1] -= *fp; --fp) \
-  X("F*", FSTAR, fp[-1] *= *fp; --fp) \
-  X("F/", FSLASH, fp[-1] /= *fp; --fp) \
+  X("F+", FPLUS, fp[-1] = fp[-1] + *fp; --fp) \
+  X("F-", FMINUS, fp[-1] = fp[-1] - *fp; --fp) \
+  X("F*", FSTAR, fp[-1] = fp[-1] * *fp; --fp) \
+  X("F/", FSLASH, fp[-1] = fp[-1] / *fp; --fp) \
   X("1/F", FINVERSE, *fp = 1.0 / *fp) \
   X("S>F", STOF, *++fp = (float) tos; DROP) \
   X("F>S", FTOS, DUP; tos = (cell_t) *fp--) \
@@ -46,7 +46,7 @@
   Y(SFLOAT, DUP; tos = sizeof(float)) \
   Y(SFLOATS, tos *= sizeof(float)) \
   X("SFLOAT+", SFLOATPLUS, tos += sizeof(float)) \
-  X("PI", PI_CONST, *++fp = 3.14159265359f) \
+  X("PI", PI_CONST, *++fp = (float) 3.14159265359) \
   Y(FSIN, *fp = sin(*fp)) \
   Y(FCOS, *fp = cos(*fp)) \
   Y(FSINCOS, fp[1] = cos(*fp); *fp = sin(*fp); ++fp) \
