@@ -123,7 +123,7 @@ typedef struct {
   YV(internals, DODOES, DUP; tos = w + sizeof(cell_t) * 2; \
                         ++rp; *rp = (cell_t) ip; \
                         ip = (cell_t *) *(cell_t *) (w + sizeof(cell_t))) \
-  YV(internals, ALITERAL, COMMA(g_sys->DOLIT_XT); COMMA(tos); DROP) \
+  XV(internals, "ALITERAL", ALITERAL, COMMA(g_sys->DOLIT_XT); COMMA(tos); DROP) \
   Y(CELL, DUP; tos = sizeof(cell_t)) \
   XV(internals, "LONG-SIZE", LONG_SIZE, DUP; tos = sizeof(long)) \
   Y(FIND, tos = find((const char *) *sp, tos); --sp) \
@@ -131,15 +131,15 @@ typedef struct {
   XV(internals, "S>NUMBER?", \
       CONVERT, tos = convert((const char *) *sp, tos, g_sys->base, sp); \
       if (!tos) --sp) \
-  Y(CREATE, DUP; DUP; tos = parse(32, sp); \
-            create((const char *) *sp, tos, 0, ADDROF(DOCREATE)); \
-            COMMA(0); DROPn(2)) \
-  Y(VARIABLE, DUP; DUP; tos = parse(32, sp); \
-              create((const char *) *sp, tos, 0, ADDROF(DOVAR)); \
-              COMMA(0); DROPn(2)) \
-  Y(CONSTANT, DUP; DUP; tos = parse(32, sp); \
-              create((const char *) *sp, tos, 0, ADDROF(DOCON)); \
-              DROPn(2); COMMA(tos); DROP) \
+  XV(forth, "CREATE", CREATE, DUP; DUP; tos = parse(32, sp); \
+                      create((const char *) *sp, tos, 0, ADDROF(DOCREATE)); \
+                      COMMA(0); DROPn(2)) \
+  XV(forth, "VARIABLE", VARIABLE, DUP; DUP; tos = parse(32, sp); \
+                                  create((const char *) *sp, tos, 0, ADDROF(DOVAR)); \
+                                  COMMA(0); DROPn(2)) \
+  XV(forth, "CONSTANT", CONSTANT, DUP; DUP; tos = parse(32, sp); \
+                        create((const char *) *sp, tos, 0, ADDROF(DOCON)); \
+                        DROPn(2); COMMA(tos); DROP) \
   X("DOES>", DOES, DOES(ip); ip = (cell_t *) *rp; --rp) \
   Y(IMMEDIATE, DOIMMEDIATE()) \
   XV(internals, "'SYS", SYS, DUP; tos = (cell_t) g_sys) \

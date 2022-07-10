@@ -232,7 +232,6 @@ $(GEN)/esp32_boot.h: tools/source_to_string.js $(ESP32_BOOT) | $(GEN)
 $(GEN)/dump_web_opcodes: \
     web/dump_web_opcodes.c \
     common/opcodes.h \
-    common/extra_opcodes.h \
     common/floats.h | $(GEN)
 	$(CXX) $(CFLAGS) $< -o $@
 
@@ -242,7 +241,7 @@ $(GEN)/web_cases.js: $(GEN)/dump_web_opcodes | $(GEN)
 $(GEN)/web_dict.js: $(GEN)/dump_web_opcodes | $(GEN)
 	$< dict >$@
 
-WEB_BOOT =  $(COMMON_PHASE1) \
+WEB_BOOT =  $(COMMON_PHASE1) common/extra.fs \
             posix/posix.fs posix/allocation.fs posix/termios.fs \
             $(COMMON_PHASE2) \
             posix/autoboot.fs \
