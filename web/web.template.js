@@ -107,7 +107,7 @@ function create(name, opcode) {
   i32[i32[g_heap>>2]>>2] = name.length;  // length
   i32[g_heap>>2] += 4;
 
-  i32[i32[g_heap>>2]>>2] = i32[i32[g_current]>>2]>>2];  // link
+  i32[i32[g_heap>>2]>>2] = i32[i32[i32[g_current]>>2]>>2];  // link
   i32[g_heap>>2] += 4;
 
   i32[i32[g_heap>>2]>>2] = 0;  // flags

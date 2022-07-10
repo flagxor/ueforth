@@ -199,7 +199,7 @@ POSIX_BOOT =  $(COMMON_PHASE1) \
               posix/sockets.fs posix/telnetd.fs posix/httpd.fs posix/web_interface.fs \
               posix/autoboot.fs \
               common/fini.fs
-$(GEN)/posix_boot.h: common/source_to_string.js $(POSIX_BOOT) | $(GEN)
+$(GEN)/posix_boot.h: tools/source_to_string.js $(POSIX_BOOT) | $(GEN)
 	$< boot $(VERSION) $(REVISION) $(POSIX_BOOT) >$@
 
 WINDOWS_BOOT = $(COMMON_PHASE1) \
@@ -214,7 +214,7 @@ WINDOWS_BOOT = $(COMMON_PHASE1) \
                windows/graphics.fs \
                posix/autoboot.fs \
                common/fini.fs
-$(GEN)/windows_boot.h: common/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
+$(GEN)/windows_boot.h: tools/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 	$< -win boot $(VERSION) $(REVISION) $(WINDOWS_BOOT) >$@
 
 ESP32_BOOT = $(COMMON_PHASE1) \
@@ -226,7 +226,7 @@ ESP32_BOOT = $(COMMON_PHASE1) \
              esp32/bterm.fs posix/telnetd.fs \
              esp32/camera.fs esp32/camera_server.fs \
              esp32/autoboot.fs common/fini.fs
-$(GEN)/esp32_boot.h: common/source_to_string.js $(ESP32_BOOT) | $(GEN)
+$(GEN)/esp32_boot.h: tools/source_to_string.js $(ESP32_BOOT) | $(GEN)
 	$< boot $(VERSION) $(REVISION) $(ESP32_BOOT) >$@
 
 $(GEN)/dump_web_opcodes: web/dump_web_opcodes.c common/opcodes.h | $(GEN)
@@ -243,7 +243,7 @@ WEB_BOOT =  $(COMMON_PHASE1) \
             $(COMMON_PHASE2) \
             posix/autoboot.fs \
             common/fini.fs
-$(GEN)/web_boot.js: common/source_to_string.js $(WEB_BOOT) | $(GEN)
+$(GEN)/web_boot.js: tools/source_to_string.js $(WEB_BOOT) | $(GEN)
 	$< -web boot $(VERSION) $(REVISION) $(WEB_BOOT) >$@
 
 # ---- RESOURCES ----
