@@ -88,7 +88,7 @@ cases = ReplaceAll(cases, 'COMMA(tos)', 'COMMA(tos|0)');
 cases = ReplaceAll(cases, /find\(([^\n]+)\);/, 'find($1)|0;');
 cases = ReplaceAll(cases, 'tos = parse(tos, sp)', 'tos = parse(tos|0, sp|0)|0');
 cases = ReplaceAll(cases, 'tos = parse(32, sp)', 'tos = parse(32, sp|0)|0');
-cases = ReplaceAll(cases, 'sp = evaluate1(sp)', 'sp = evaluate1(sp|0)|0');
+cases = ReplaceAll(cases, 'rp = evaluate1(rp)', 'rp = evaluate1(rp|0)|0');
 cases = ReplaceAll(cases, /convert\(([^\n]+), sp\)/, 'convert($1, sp|0)|0');
 cases = ReplaceAll(cases, 'DOES(ip)', 'DOES(ip|0)');
 cases = ReplaceAll(cases, 'PARK;', '');  // TODO

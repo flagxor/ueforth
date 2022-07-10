@@ -140,16 +140,14 @@ typedef struct {
   XV(forth, "CONSTANT", CONSTANT, DUP; DUP; tos = parse(32, sp); \
                         create((const char *) *sp, tos, 0, ADDROF(DOCON)); \
                         DROPn(2); COMMA(tos); DROP) \
-  X("DOES>", DOES, DOES(ip); ip = (cell_t *) *rp; --rp) \
-  Y(IMMEDIATE, DOIMMEDIATE()) \
+  XV(forth, "DOES>", DOES, DOES(ip); ip = (cell_t *) *rp; --rp) \
+  XV(forth, "IMMEDIATE", IMMEDIATE, DOIMMEDIATE()) \
   XV(internals, "'SYS", SYS, DUP; tos = (cell_t) g_sys) \
   YV(internals, YIELD, PARK; return rp) \
   X(":", COLON, DUP; DUP; tos = parse(32, sp); \
                 create((const char *) *sp, tos, SMUDGE, ADDROF(DOCOL)); \
                 g_sys->state = -1; --sp; DROP) \
-  YV(internals, EVALUATE1, DUP; float *tfp = fp; \
-               sp = evaluate1(sp, &tfp); \
-               fp = tfp; w = *sp--; DROP; if (w) JMPW) \
+  YV(internals, EVALUATE1, PARK; rp = evaluate1(rp); UNPARK; w = tos; DROP; if (w) JMPW) \
   Y(EXIT, ip = (cell_t *) *rp--) \
   XV(internals, "'builtins", TBUILTINS, DUP; tos = (cell_t) &g_sys->builtins->code) \
   XV(forth_immediate, ";", SEMICOLON, COMMA(g_sys->DOEXIT_XT); UNSMUDGE(); g_sys->state = 0)

@@ -189,11 +189,14 @@ static cell_t parse(cell_t sep, cell_t *ret) {
   return len;
 }
 
-static cell_t *evaluate1(cell_t *sp, float **fp) {
+static cell_t *evaluate1(cell_t *rp) {
   cell_t call = 0;
+  cell_t tos, *sp, *ip;
+  float *fp;
+  UNPARK;
   cell_t name;
   cell_t len = parse(' ', &name);
-  if (len == 0) { *++sp = 0; return sp; }  // ignore empty
+  if (len == 0) { DUP; tos = 0; PARK; return rp; }  // ignore empty
   cell_t xt = find((const char *) name, len);
   if (xt) {
     if (g_sys->state && !(((cell_t *) xt)[-1] & IMMEDIATE)) {
@@ -208,7 +211,7 @@ static cell_t *evaluate1(cell_t *sp, float **fp) {
         *g_sys->heap++ = g_sys->DOLIT_XT;
         *g_sys->heap++ = n;
       } else {
-        *++sp = n;
+        PUSH n;
       }
     } else {
       float f;
@@ -217,7 +220,7 @@ static cell_t *evaluate1(cell_t *sp, float **fp) {
           *g_sys->heap++ = g_sys->DOFLIT_XT;
           *(float *) g_sys->heap++ = f;
         } else {
-          *++(*fp) = f;
+          *++fp = f;
         }
       } else {
 #if PRINT_ERRORS
@@ -225,15 +228,16 @@ static cell_t *evaluate1(cell_t *sp, float **fp) {
         fwrite((void *) name, 1, len, stderr);
         fprintf(stderr, "\n");
 #endif
-        *++sp = name;
-        *++sp = len;
+        PUSH name;
+        PUSH len;
         *++sp = -1;
         call = g_sys->notfound;
       }
     }
   }
-  *++sp = call;
-  return sp;
+  PUSH call;
+  PARK;
+  return rp;
 }
 
 static cell_t *forth_run(cell_t *initrp);
