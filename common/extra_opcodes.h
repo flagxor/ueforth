@@ -58,10 +58,10 @@
   Y(min, tos = tos < *sp ? tos : *sp; NIP) \
   Y(max, tos = tos > *sp ? tos : *sp; NIP) \
   Y(abs, tos = tos < 0 ? -tos : tos) \
-  Y(here, DUP; tos = (cell_t) g_sys.heap) \
-  Y(allot, g_sys.heap = (cell_t *) (tos + (cell_t) g_sys.heap); DROP) \
+  Y(here, DUP; tos = (cell_t) g_sys->heap) \
+  Y(allot, g_sys->heap = (cell_t *) (tos + (cell_t) g_sys->heap); DROP) \
   Y(aligned, tos = CELL_ALIGNED(tos)) \
-  Y(align, g_sys.heap = (cell_t *) CELL_ALIGNED(g_sys.heap)) \
+  Y(align, g_sys->heap = (cell_t *) CELL_ALIGNED(g_sys->heap)) \
   XV(forth, ",", COMMA, COMMA(tos); DROP) \
   XV(forth, "c,", CCOMMA, CCOMMA(tos); DROP) \
   X(">flags", TOFLAGS, tos = *TOFLAGS(tos)) \
@@ -71,26 +71,26 @@
   X(">link", TOLINK, tos = *TOLINK(tos)) \
   X(">name", TONAME, DUP; *sp = (cell_t) TONAME(tos); tos = *TONAMELEN(tos)) \
   X(">body", TOBODY, tos = (cell_t) TOBODY(tos)) \
-  XV(internals, "'heap", THEAP, DUP; tos = (cell_t) &g_sys.heap) \
-  Y(current, DUP; tos = (cell_t) &g_sys.current) \
-  XV(internals, "'context", TCONTEXT, DUP; tos = (cell_t) &g_sys.context) \
-  XV(internals, "'latestxt", TLATESTXT, DUP; tos = (cell_t) &g_sys.latestxt) \
-  XV(internals, "'notfound", TNOTFOUND, DUP; tos = (cell_t) &g_sys.notfound) \
-  XV(internals, "'heap-start", THEAP_START, DUP; tos = (cell_t) &g_sys.heap_start) \
-  XV(internals, "'heap-size", THEAP_SIZE, DUP; tos = (cell_t) &g_sys.heap_size) \
-  XV(internals, "'stack-cells", TSTACK_CELLS, DUP; tos = (cell_t) &g_sys.stack_cells) \
-  XV(internals, "'boot", TBOOT, DUP; tos = (cell_t) &g_sys.boot) \
-  XV(internals, "'boot-size", TBOOT_SIZE, DUP; tos = (cell_t) &g_sys.boot_size) \
-  XV(internals, "'tib", TTIB, DUP; tos = (cell_t) &g_sys.tib) \
-  X("#tib", NTIB, DUP; tos = (cell_t) &g_sys.ntib) \
-  X(">in", TIN, DUP; tos = (cell_t) &g_sys.tin) \
-  Y(state, DUP; tos = (cell_t) &g_sys.state) \
-  Y(base, DUP; tos = (cell_t) &g_sys.base) \
-  XV(internals, "'argc", ARGC, DUP; tos = (cell_t) &g_sys.argc) \
-  XV(internals, "'argv", ARGV, DUP; tos = (cell_t) &g_sys.argv) \
-  XV(internals, "'runner", RUNNER, DUP; tos = (cell_t) &g_sys.runner) \
+  XV(internals, "'heap", THEAP, DUP; tos = (cell_t) &g_sys->heap) \
+  Y(current, DUP; tos = (cell_t) &g_sys->current) \
+  XV(internals, "'context", TCONTEXT, DUP; tos = (cell_t) &g_sys->context) \
+  XV(internals, "'latestxt", TLATESTXT, DUP; tos = (cell_t) &g_sys->latestxt) \
+  XV(internals, "'notfound", TNOTFOUND, DUP; tos = (cell_t) &g_sys->notfound) \
+  XV(internals, "'heap-start", THEAP_START, DUP; tos = (cell_t) &g_sys->heap_start) \
+  XV(internals, "'heap-size", THEAP_SIZE, DUP; tos = (cell_t) &g_sys->heap_size) \
+  XV(internals, "'stack-cells", TSTACK_CELLS, DUP; tos = (cell_t) &g_sys->stack_cells) \
+  XV(internals, "'boot", TBOOT, DUP; tos = (cell_t) &g_sys->boot) \
+  XV(internals, "'boot-size", TBOOT_SIZE, DUP; tos = (cell_t) &g_sys->boot_size) \
+  XV(internals, "'tib", TTIB, DUP; tos = (cell_t) &g_sys->tib) \
+  X("#tib", NTIB, DUP; tos = (cell_t) &g_sys->ntib) \
+  X(">in", TIN, DUP; tos = (cell_t) &g_sys->tin) \
+  Y(state, DUP; tos = (cell_t) &g_sys->state) \
+  Y(base, DUP; tos = (cell_t) &g_sys->base) \
+  XV(internals, "'argc", ARGC, DUP; tos = (cell_t) &g_sys->argc) \
+  XV(internals, "'argv", ARGV, DUP; tos = (cell_t) &g_sys->argv) \
+  XV(internals, "'runner", RUNNER, DUP; tos = (cell_t) &g_sys->runner) \
   YV(internals, fill32, cell_t c = tos; DROP; cell_t n = tos; DROP; \
                         uint32_t *a = (uint32_t *) tos; DROP; \
                         for (;n;--n) *a++ = c) \
-  Y(context, DUP; tos = (cell_t) (g_sys.context + 1)) \
-  Y(latestxt, DUP; tos = (cell_t) g_sys.latestxt)
+  Y(context, DUP; tos = (cell_t) (g_sys->context + 1)) \
+  Y(latestxt, DUP; tos = (cell_t) g_sys->latestxt)

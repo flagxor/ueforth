@@ -23,5 +23,5 @@ void setup() {
 }
 
 void loop() {
-  g_sys.rp = forth_run(g_sys.rp);
+  g_sys->rp = forth_run(g_sys->rp);
 }
