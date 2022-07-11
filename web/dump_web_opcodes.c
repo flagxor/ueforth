@@ -15,6 +15,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#define JMPW break decode
+
 #include "common/opcodes.h"
 #include "common/floats.h"
 #include "common/bits.h"

@@ -180,6 +180,7 @@ function VM(stdlib, foreign, heap) {
   "use asm";
 
   var imul = stdlib.Math.imul;
+  var fround = stdlib.Math.fround;
 
   var sqrt = stdlib.Math.sqrt;
   var sin = stdlib.Math.sin;
@@ -224,6 +225,7 @@ function VM(stdlib, foreign, heap) {
     var fp = 0;
     var w = 0;
     var ir = 0;
+    var ft = fround(0.0);
 
     // UNPARK
     rp = i32[g_sys_rp>>2]|0;

@@ -32,6 +32,10 @@ function ReplaceAll(haystack, needle, replacement) {
 
 cases = ReplaceAll(cases, 'DROP;', 'tos = *sp--;');
 cases = ReplaceAll(cases, 'DUP;', '*++sp = tos;');
+
+cases = ReplaceAll(cases, 'tos += sizeof(float)', 'tos = (tos + 4)|0');
+cases = ReplaceAll(cases, 'tos *= sizeof(float)', 'tos = (tos * 4)|0');
+
 cases = ReplaceAll(cases, 'tos += *sp--', 'tos = (tos + *sp)|0; --sp');
 cases = ReplaceAll(cases, /tos (.)= /, 'tos = tos $1 ');
 cases = ReplaceAll(cases, '*((cell_t *) *ip) = ', 'i32[i32[ip>>2]>>2] = ');
@@ -40,48 +44,67 @@ cases = ReplaceAll(cases, /[*](.)p[-][-]/, '*$1p, --$1p');
 cases = ReplaceAll(cases, /[*][+][+](.)p/, '++$1p, *$1p');
 cases = ReplaceAll(cases, '*(cell_t *) tos = ', 'i32[tos>>2] = ');
 cases = ReplaceAll(cases, '*(int32_t *) tos = ', 'i32[tos>>2] = ');
-cases = ReplaceAll(cases, '*(int16_t *) tos = ', 'i16[tos>>2] = ');
+cases = ReplaceAll(cases, '*(int16_t *) tos = ', 'i16[tos>>1] = ');
 cases = ReplaceAll(cases, '*(uint8_t *) tos = ', 'u8[tos] = ');
 cases = ReplaceAll(cases, '*(float *) tos = ', 'f32[tos>>2] = ');
 cases = ReplaceAll(cases, '*(cell_t *) tos', '(i32[tos>>2]|0)');
 cases = ReplaceAll(cases, '*(int32_t *) tos', '(i32[tos>>2]|0)');
 cases = ReplaceAll(cases, '*(uint32_t *) tos', '(i32[tos>>2]>>>0)');
-cases = ReplaceAll(cases, '*(int16_t *) tos', '(i16[tos>>2]|0)');
-cases = ReplaceAll(cases, '*(uint16_t *) tos', '(i16[tos>>2]>>>0)');
+cases = ReplaceAll(cases, '*(int16_t *) tos', '(i16[tos>>1]|0)');
+cases = ReplaceAll(cases, '*(uint16_t *) tos', '(i16[tos>>1]>>>0)');
 cases = ReplaceAll(cases, '*(uint8_t *) tos', '(u8[tos]|0)');
 cases = ReplaceAll(cases, '*(float *) tos', 'f32[tos>>2]');
 cases = ReplaceAll(cases, '*(float *) ip', 'f32[ip>>2]');
+
+cases = ReplaceAll(cases, '(float) tos', 'fround(tos|0)');
+cases = ReplaceAll(cases, 'tos = (cell_t) *fp', 'tos = ~~fround(f32[fp>>2])');
+
 cases = ReplaceAll(cases, '*fp = ', 'f32[fp>>2] = ');
-cases = ReplaceAll(cases, /[*](.)p = /, 'i32[$1p>>2] = ');
-cases = ReplaceAll(cases, 'sp[-1] = ', 'i32[(sp - 4)>>2] = ');
 cases = ReplaceAll(cases, 'fp[-2] = ', 'f32[(fp - 8)>>2] = ');
 cases = ReplaceAll(cases, 'fp[-1] = ', 'f32[(fp - 4)>>2] = ');
 cases = ReplaceAll(cases, 'fp[1] = ', 'f32[(fp + 4)>>2] = ');
-cases = ReplaceAll(cases, '*fp', 'f32[fp>>2]');
+cases = ReplaceAll(cases, '*fp', 'fround(f32[fp>>2])');
+cases = ReplaceAll(cases, 'fp[0]', 'fround(f32[fp>>2])');
+cases = ReplaceAll(cases, 'fp[-1]', 'fround(f32[(fp - 4)>>2])');
+cases = ReplaceAll(cases, 'fp[-2]', 'fround(f32[(fp - 8)>>2])');
+
+cases = ReplaceAll(cases, /[*](.)p = /, 'i32[$1p>>2] = ');
+cases = ReplaceAll(cases, 'sp[-1] = ', 'i32[(sp - 4)>>2] = ');
 cases = ReplaceAll(cases, /[*](.)p/, '(i32[$1p>>2]|0)');
 cases = ReplaceAll(cases, 'sp[-1]', '(i32[(sp - 4)>>2]|0)');
-cases = ReplaceAll(cases, 'fp[0]', '(f32[fp>>2]|0)');
-cases = ReplaceAll(cases, 'fp[-1]', '(f32[(fp - 4)>>2]|0)');
-cases = ReplaceAll(cases, 'fp[-2]', '(f32[(fp - 8)>>2]|0)');
+
 cases = ReplaceAll(cases, /([+-]).(.)p/, '$2p = ($2p $1 4) | 0');
 cases = ReplaceAll(cases, 'sp -= 2', 'sp = (sp - 8) | 0');
 cases = ReplaceAll(cases, 'fp -= 2', 'fp = (fp - 8) | 0');
 cases = ReplaceAll(cases, 'sizeof(cell_t)', '4');
 cases = ReplaceAll(cases, 'sizeof(float)', '4');
+cases = ReplaceAll(cases, 'sizeof(long)', '4');
 cases = ReplaceAll(cases, '(void *) ', '');
 cases = ReplaceAll(cases, '(const char *) ', '');
 cases = ReplaceAll(cases, '(cell_t *) ', '');
 cases = ReplaceAll(cases, '(cell_t) ', '');
 cases = ReplaceAll(cases, '(float *) ', '');
 cases = ReplaceAll(cases, '(float) ', '');
-cases = ReplaceAll(cases, '0.0f', '0.0');
+cases = ReplaceAll(cases, '0.0f', 'fround(0.0)');
+cases = ReplaceAll(cases, '1.0f', 'fround(1.0)');
 cases = ReplaceAll(cases, /[(]ucell_t[)] ([^ ;)]+)/, '($1>>>0)');
-cases = ReplaceAll(cases, '*(w + 4)', '((i32[w>>2]|0+4||0))');
+
+cases = ReplaceAll(cases, '*(w + 4)', '(i32[(w + 4)>>2]|0)');
+cases = ReplaceAll(cases, 'w + 4 * 2', '(w+8)|0');
+cases = ReplaceAll(cases, 'w + 4', '(w+4)|0');
+
 cases = ReplaceAll(cases, '&g_sys->builtins->code', '((i32[g_sys_builtins>>2] + 8)|0)');
 cases = ReplaceAll(cases, /[&]g_sys[-][>]([A-Za-z_]+)/, 'g_sys_$1');
-cases = ReplaceAll(cases, /g_sys[-][>]([A-Za-z_]+)/, 'i32[g_sys_$1>>2]');
-cases = ReplaceAll(cases, '&& OP_DOCOL', '0');
-cases = ReplaceAll(cases, '&& OP_DOVAR', '1');
+cases = ReplaceAll(cases, /g_sys[-][>]([A-Za-z_]+) [=] /, 'i32[g_sys_$1>>2] = ');
+cases = ReplaceAll(cases, /g_sys[-][>]([A-Za-z_]+)/, '(i32[g_sys_$1>>2]|0)');
+
+cases = ReplaceAll(cases, 'ADDROF(DOCREATE)', '0');  // TODO: might be wrong
+cases = ReplaceAll(cases, 'ADDROF(DOVAR)', '1');
+cases = ReplaceAll(cases, 'ADDROF(DOCON)', '2');
+cases = ReplaceAll(cases, 'ADDROF(DOCOL)', '3');
+
+cases = ReplaceAll(cases, 'return rp', 'i32[g_sys_rp>>2] = rp | 0; return');
+
 cases = ReplaceAll(cases, 'goto **(void **) w', 'break decode');
 cases = ReplaceAll(cases, 'SSMOD_FUNC', '');
 // Keep Together   vvv

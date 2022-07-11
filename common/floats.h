@@ -39,24 +39,24 @@
   X("F-", FMINUS, fp[-1] = fp[-1] - *fp; --fp) \
   X("F*", FSTAR, fp[-1] = fp[-1] * *fp; --fp) \
   X("F/", FSLASH, fp[-1] = fp[-1] / *fp; --fp) \
-  X("1/F", FINVERSE, *fp = 1.0 / *fp) \
+  X("1/F", FINVERSE, *fp = 1.0f / *fp) \
   X("S>F", STOF, *++fp = (float) tos; DROP) \
   X("F>S", FTOS, DUP; tos = (cell_t) *fp--) \
-  XV(internals, "F>NUMBER?", FCONVERT, tos = fconvert((const char *) *sp, tos, fp); --sp) \
+  XV(internals, "F>NUMBER?", FCONVERT, tos = fconvert((const char *) *sp, tos, fp)|0; --sp) \
   Y(SFLOAT, DUP; tos = sizeof(float)) \
   Y(SFLOATS, tos *= sizeof(float)) \
   X("SFLOAT+", SFLOATPLUS, tos += sizeof(float)) \
   X("PI", PI_CONST, *++fp = (float) 3.14159265359) \
-  Y(FSIN, *fp = sin(*fp)) \
-  Y(FCOS, *fp = cos(*fp)) \
-  Y(FSINCOS, fp[1] = cos(*fp); *fp = sin(*fp); ++fp) \
-  Y(FATAN2, fp[-1] = atan2(fp[-1], *fp); --fp) \
-  X("F**", FSTARSTAR, fp[-1] = pow(fp[-1], *fp); --fp) \
-  Y(FLOOR, *fp = floor(*fp)) \
-  Y(FEXP, *fp = exp(*fp)) \
-  Y(FLN, *fp = log(*fp)) \
-  Y(FABS, *fp = fabs(*fp)) \
-  Y(FMIN, fp[-1] = fmin(fp[-1], *fp); --fp) \
-  Y(FMAX, fp[-1] = fmax(fp[-1], *fp); --fp) \
-  Y(FSQRT, *fp = sqrt(*fp))
+  Y(FSIN, *fp = sin(+*fp)) \
+  Y(FCOS, *fp = cos(+*fp)) \
+  Y(FSINCOS, fp[1] = cos(+*fp); *fp = sin(+*fp); ++fp) \
+  Y(FATAN2, fp[-1] = atan2(+fp[-1], +*fp); --fp) \
+  X("F**", FSTARSTAR, fp[-1] = pow(+fp[-1], +*fp); --fp) \
+  Y(FLOOR, *fp = floor(+*fp)) \
+  Y(FEXP, *fp = exp(+*fp)) \
+  Y(FLN, *fp = log(+*fp)) \
+  Y(FABS, *fp = fabs(+*fp)) \
+  Y(FMIN, fp[-1] = fmin(+fp[-1], +*fp); --fp) \
+  Y(FMAX, fp[-1] = fmax(+fp[-1], +*fp); --fp) \
+  Y(FSQRT, *fp = sqrt(+*fp))
 
