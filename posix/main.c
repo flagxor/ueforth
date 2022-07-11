@@ -31,6 +31,7 @@
 
 #define VOCABULARY_LIST V(forth) V(internals)
 
+#include "common/bits.h"
 #include "common/core.h"
 #include "common/interp.h"
 

@@ -26,32 +26,8 @@ var heap = new ArrayBuffer(HEAP_SIZE);
 var i32 = new Int32Array(heap);
 var u8 = new Uint8Array(heap);
 var objects = [SetEval];
-var g_sys = 256;  // Placed past a gap.
-var g_sys_heap = g_sys + 0 * 4;
-var g_sys_current = g_sys + 1 * 4;
-var g_sys_context = g_sys + 2 * 4;
-var g_sys_latestxt = g_sys + 3 * 4;
-var g_sys_notfound = g_sys + 4 * 4;
-var g_sys_heap_start = g_sys + 5 * 4;
-var g_sys_heap_size = g_sys + 6 * 4;
-var g_sys_stack_cells = g_sys + 7 * 4;
-var g_sys_boot = g_sys + 8 * 4;
-var g_sys_boot_size = g_sys + 9 * 4;
-var g_sys_tib = g_sys + 10 * 4;
-var g_sys_ntib = g_sys + 11 * 4;
-var g_sys_tin = g_sys + 12 * 4;
-var g_sys_state = g_sys + 13 * 4;
-var g_sys_base = g_sys + 14 * 4;
-var g_sys_argc = g_sys + 15 * 4;
-var g_sys_argv = g_sys + 16 * 4;
-var g_sys_runner = g_sys + 17 * 4;
-var g_sys_rp = g_sys + 18 * 4;
-var g_sys_DOLIT_XT = g_sys + 19 * 4;
-var g_sys_DOFLIT_XT = g_sys + 20 * 4;
-var g_sys_DOEXIT_XT = g_sys + 21 * 4;
-var g_sys_YIELD_XT = g_sys + 22 * 4;
-var g_sys_DOCREATE_OP = g_sys + 23 * 4;
-var g_sys_builtins = g_sys + 24 * 4;
+
+{{sys}}
 
 function SetEval(sp) {
   var index = i32[sp--];
@@ -119,7 +95,7 @@ function comma(value) {
 
 function create(name, flags, opcode) {
   i32[g_sys_heap>>2] = Load(i32[g_sys_heap>>2], name);  // name
-  g_sys_heap = (g_sys_heap + 3) & ~3;
+  i32[g_sys_heap>>2] = (i32[g_sys_heap>>2] + 3) & ~3;
 
   i32[i32[g_sys_heap>>2]>>2] = name.length;  // length
   i32[g_sys_heap>>2] += 4;
@@ -231,39 +207,14 @@ function VM(stdlib, foreign, heap) {
   var memmove = foreign.memmove;
   var convert = foreign.convert;
   var evaluate1 = foreign.evaluate1;
-  var log = foreign.log;
+  var emitlog = foreign.log;
 
   var u8 = new stdlib.Uint8Array(heap);
   var i16 = new stdlib.Int16Array(heap);
   var i32 = new stdlib.Int32Array(heap);
   var f32 = new stdlib.Float32Array(heap);
 
-  const g_sys = 256;
-  var g_sys_heap = g_sys + 0 * 4;
-  var g_sys_current = g_sys + 1 * 4;
-  var g_sys_context = g_sys + 2 * 4;
-  var g_sys_latestxt = g_sys + 3 * 4;
-  var g_sys_notfound = g_sys + 4 * 4;
-  var g_sys_heap_start = g_sys + 5 * 4;
-  var g_sys_heap_size = g_sys + 6 * 4;
-  var g_sys_stack_cells = g_sys + 7 * 4;
-  var g_sys_boot = g_sys + 8 * 4;
-  var g_sys_boot_size = g_sys + 9 * 4;
-  var g_sys_tib = g_sys + 10 * 4;
-  var g_sys_ntib = g_sys + 11 * 4;
-  var g_sys_tin = g_sys + 12 * 4;
-  var g_sys_state = g_sys + 13 * 4;
-  var g_sys_base = g_sys + 14 * 4;
-  var g_sys_argc = g_sys + 15 * 4;
-  var g_sys_argv = g_sys + 16 * 4;
-  var g_sys_runner = g_sys + 17 * 4;
-  var g_sys_rp = g_sys + 18 * 4;
-  var g_sys_DOLIT_XT = g_sys + 19 * 4;
-  var g_sys_DOFLIT_XT = g_sys + 20 * 4;
-  var g_sys_DOEXIT_XT = g_sys + 21 * 4;
-  var g_sys_YIELD_XT = g_sys + 22 * 4;
-  var g_sys_DOCREATE_OP = g_sys + 23 * 4;
-  var g_sys_builtins = g_sys + 24 * 4;
+{{sys}}
 
   function run() {
     var tos = 0;
@@ -282,11 +233,11 @@ function VM(stdlib, foreign, heap) {
     tos = i32[sp>>2]|0; sp = (sp - 4)|0;
     for (;;) {
       w = i32[ip>>2]|0;
-      log(ip|0);
+      emitlog(ip|0);
       ip = (ip + 4)|0;
       decode: for (;;) {
         ir = u8[w]|0;
-        log(ir|0);
+        emitlog(ir|0);
         switch (ir&0xff) {
 {{cases}}
           default:

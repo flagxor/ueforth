@@ -242,6 +242,9 @@ $(GEN)/web_cases.js: $(GEN)/dump_web_opcodes | $(GEN)
 $(GEN)/web_dict.js: $(GEN)/dump_web_opcodes | $(GEN)
 	$< dict >$@
 
+$(GEN)/web_sys.js: $(GEN)/dump_web_opcodes | $(GEN)
+	$< sys >$@
+
 WEB_BOOT =  $(COMMON_PHASE1) common/extra.fs \
             posix/posix.fs posix/allocation.fs posix/termios.fs \
             $(COMMON_PHASE2) \
@@ -297,7 +300,8 @@ $(WEB)/ueforth.js: \
         web/web.template.js \
         $(GEN)/web_boot.js \
         $(GEN)/web_dict.js \
-        $(GEN)/web_cases.js | $(WEB)
+        $(GEN)/web_cases.js \
+        $(GEN)/web_sys.js | $(WEB)
 	$^ >$@
 
 # ---- POSIX ----

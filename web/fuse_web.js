@@ -18,6 +18,7 @@ var code = fs.readFileSync(process.argv[2]).toString();
 var boot = fs.readFileSync(process.argv[3]).toString();
 var dict = fs.readFileSync(process.argv[4]).toString();
 var cases = fs.readFileSync(process.argv[5]).toString();
+var sys = fs.readFileSync(process.argv[6]).toString();
 
 function ReplaceAll(haystack, needle, replacement) {
   for (;;) {
@@ -98,5 +99,6 @@ cases = ReplaceAll(cases, '; ', ';\n            ');
 code = code.replace('{{boot}}', function() { return boot; });
 code = code.replace('{{dict}}', function() { return dict; });
 code = code.replace('{{cases}}', function() { return cases; });
+code = code.replace(/[{][{]sys[}][}]/g, function() { return sys; });
 
 console.log(code);

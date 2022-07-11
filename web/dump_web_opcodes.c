@@ -65,8 +65,39 @@ int main(int argc, char *argv[]) {
     PLATFORM_OPCODE_LIST
     OPCODE_LIST
 #undef XV
+  } else if (argc == 2 && strcmp(argv[1], "sys") == 0) {
+    G_SYS *g_sys = 0;
+    #define G_SYS 256
+    printf("  const g_sys = %d;\n", G_SYS);
+    #define EMITSYS(name) \
+    printf("  const g_sys_%s = %d;\n", #name, 256 + 4 * (((cell_t*) g_sys) - ((cell_t *) &g_sys->name)));
+    EMITSYS(heap);
+    EMITSYS(current);
+    EMITSYS(context);
+    EMITSYS(latestxt);
+    EMITSYS(notfound);
+    EMITSYS(heap_start);
+    EMITSYS(heap_size);
+    EMITSYS(stack_cells);
+    EMITSYS(boot);
+    EMITSYS(boot_size);
+    EMITSYS(tib);
+    EMITSYS(ntib);
+    EMITSYS(tin);
+    EMITSYS(state);
+    EMITSYS(base);
+    EMITSYS(argc);
+    EMITSYS(argv);
+    EMITSYS(runner);
+    EMITSYS(rp);
+    EMITSYS(DOLIT_XT);
+    EMITSYS(DOFLIT_XT);
+    EMITSYS(DOEXIT_XT);
+    EMITSYS(YIELD_XT);
+    EMITSYS(DOCREATE_OP);
+    EMITSYS(builtins);
   } else {
-    fprintf(stderr, "USAGE: %s cases/dict\n", argv[1]);
+    fprintf(stderr, "USAGE: %s cases/dict/sys\n", argv[1]);
     return 1;
   }
   return 0;

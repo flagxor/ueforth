@@ -36,6 +36,7 @@ PLATFORM_SIMULATED_OPCODE_LIST
 #define heap_caps_get_largest_free_block(x) SIM_HEAP_SIZE
 #define heap_caps_get_free_size(x) SIM_HEAP_SIZE
 
+#include "common/bits.h"
 #include "common/core.h"
 #include "common/interp.h"
 #include "gen/esp32_boot.h"

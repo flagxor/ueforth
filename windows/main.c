@@ -48,6 +48,7 @@ static LRESULT WindowProcShim(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 #define VOCABULARY_LIST V(forth) V(internals)
 
+#include "common/bits.h"
 #include "common/core.h"
 #include "windows/interp.h"
 
