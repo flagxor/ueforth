@@ -71,7 +71,7 @@ typedef struct {
       uint8_t flags, name_length;
       uint16_t vocabulary;
     };
-    cell_t multi;
+    cell_t multi;  // Forces cell alignment throughout.
   };
   const void *code;
 } BUILTIN_WORD;

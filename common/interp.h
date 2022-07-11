@@ -25,7 +25,7 @@ static cell_t *forth_run(cell_t *init_rp) {
     EXTRA_OPCODE_LIST
     OPCODE_LIST
 #undef XV
-    0, 0, 0,
+    0, 0, 0, 0, 0,
   };
 
   if (!init_rp) {
