@@ -250,12 +250,12 @@ static void forth_init(int argc, char *argv[],
   g_sys->heap_start = (cell_t *) heap;
   g_sys->heap_size = heap_size;
   g_sys->stack_cells = STACK_CELLS;
-  g_sys->boot = src;
-  g_sys->boot_size = src_len;
 
   // Start heap after G_SYS area.
   g_sys->heap = g_sys->heap_start + sizeof(G_SYS) / sizeof(cell_t);
   g_sys->heap += 4;  // Leave a little room.
+
+  // Allocate stacks.
   float *fp = (float *) (g_sys->heap + 1); g_sys->heap += STACK_CELLS;
   cell_t *rp = g_sys->heap + 1; g_sys->heap += STACK_CELLS;
   cell_t *sp = g_sys->heap + 1; g_sys->heap += STACK_CELLS;
@@ -263,12 +263,16 @@ static void forth_init(int argc, char *argv[],
   // FORTH worldlist (relocated when vocabularies added).
   cell_t *forth_wordlist = g_sys->heap;
   *g_sys->heap++ = 0;
-  // Vocabulary stack
+  // Vocabulary stack.
   g_sys->current = (cell_t **) forth_wordlist;
   g_sys->context = (cell_t ***) g_sys->heap;
   g_sys->latestxt = 0;
   *g_sys->heap++ = (cell_t) forth_wordlist;
   for (int i = 0; i < VOCABULARY_DEPTH; ++i) { *g_sys->heap++ = 0; }
+
+  // Setup boot text.
+  g_sys->boot = src;
+  g_sys->boot_size = src_len;
 
   forth_run(0);
 #define V(name) \
@@ -283,15 +287,19 @@ static void forth_init(int argc, char *argv[],
   g_sys->DOEXIT_XT = FIND("EXIT");
   g_sys->YIELD_XT = FIND("YIELD");
   g_sys->notfound = FIND("DROP");
+
+  // Init code.
   cell_t *start = g_sys->heap;
   *g_sys->heap++ = FIND("EVALUATE1");
   *g_sys->heap++ = FIND("BRANCH");
   *g_sys->heap++ = (cell_t) start;
+
   g_sys->argc = argc;
   g_sys->argv = argv;
   g_sys->base = 10;
   g_sys->tib = src;
   g_sys->ntib = src_len;
+
   *++rp = (cell_t) fp;
   *++rp = (cell_t) sp;
   *++rp = (cell_t) start;

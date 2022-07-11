@@ -72,6 +72,7 @@ cases = ReplaceAll(cases, '(float) ', '');
 cases = ReplaceAll(cases, '0.0f', '0.0');
 cases = ReplaceAll(cases, /[(]ucell_t[)] ([^ ;)]+)/, '($1>>>0)');
 cases = ReplaceAll(cases, '*(w + 4)', '((i32[w>>2]|0+4||0))');
+cases = ReplaceAll(cases, '&g_sys->builtins->code', '((i32[g_sys_builtins>>2] + 8)|0)');
 cases = ReplaceAll(cases, /[&]g_sys[-][>]([A-Za-z_]+)/, 'g_sys_$1');
 cases = ReplaceAll(cases, /g_sys[-][>]([A-Za-z_]+)/, 'i32[g_sys_$1>>2]');
 cases = ReplaceAll(cases, '&& OP_DOCOL', '0');

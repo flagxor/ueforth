@@ -18,6 +18,7 @@
 
 const HEAP_SIZE = (1024 * 1024);
 const STACK_CELLS = 4096;
+const VOCABULARY_DEPTH = 16;
 
 {{boot}}
 
@@ -101,7 +102,7 @@ function GetName(xt) {
 }
 
 function Find(name) {
-  var pos = i32[i32[g_context>>2]>>2];
+  var pos = i32[i32[g_sys_context>>2]>>2];
   while (pos) {
     if (Same(GetName(pos), name)) {
       return pos;
@@ -111,23 +112,31 @@ function Find(name) {
   return 0;
 }
 
-function create(name, opcode) {
-  i32[g_heap>>2] = Load(i32[g_heap>>2], name);  // name
-  g_heap = (g_heap + 3) & ~3;
+function comma(value) {
+  i32[i32[g_sys_heap>>2]>>2] = value;
+  i32[g_sys_heap>>2] = (i32[g_sys_heap>>2] + 4) | 0;
+}
 
-  i32[i32[g_heap>>2]>>2] = name.length;  // length
-  i32[g_heap>>2] += 4;
+function create(name, flags, opcode) {
+  i32[g_sys_heap>>2] = Load(i32[g_sys_heap>>2], name);  // name
+  g_sys_heap = (g_sys_heap + 3) & ~3;
 
-  i32[i32[g_heap>>2]>>2] = i32[i32[i32[g_current]>>2]>>2];  // link
-  i32[g_heap>>2] += 4;
+  i32[i32[g_sys_heap>>2]>>2] = name.length;  // length
+  i32[g_sys_heap>>2] += 4;
 
-  i32[i32[g_heap>>2]>>2] = 0;  // flags
-  i32[g_heap>>2] += 4;
+  i32[i32[g_sys_heap>>2]>>2] = i32[i32[i32[g_sys_current]>>2]>>2];  // link
+  i32[g_sys_heap>>2] += 4;
 
-  i32[i32[g_current>>2]>>2] = i32[g_heap>>2];
+  i32[i32[g_sys_heap>>2]>>2] = 0;  // flags
+  i32[g_sys_heap>>2] += 4;
 
-  i32[i32[i32[g_current>>2]>>2]>>2] = opcode;  // code
-  i32[g_heap>>2] += 4;
+  i32[i32[g_sys_current>>2]>>2] = i32[g_sys_heap>>2];
+
+  i32[i32[i32[g_sys_current>>2]>>2]>>2] = opcode;  // code
+  i32[g_sys_heap>>2] += 4;
+}
+
+function builtin(name, flags, vocab, opcode) {
 }
 
 function InitDictionary() {
@@ -135,31 +144,60 @@ function InitDictionary() {
 }
 
 function Init() {
-  i32[g_heap>>2] = g_sys + 16 * 4;
-  var source = g_heap;
-  i32[g_heap>>2] = Load(i32[g_heap>>2], boot);
-  var source_len = g_heap - source;
+  i32[g_sys_heap_start>>2] = 0;
+  i32[g_sys_heap_size>>2] = HEAP_SIZE;
+  i32[g_sys_stack_cells>>2] = STACK_CELLS;
+
+  // Start heap after G_SYS area.
+  i32[g_sys_heap>>2] = i32[g_sys_heap_start>>2] + 256;
+  i32[g_sys_heap>>2] += 4;
+
+  // Allocate stacks.
+  var fp = i32[g_sys_heap>>2] + 4; i32[g_sys_heap>>2] += STACK_CELLS * 4;
+  var rp = i32[g_sys_heap>>2] + 4; i32[g_sys_heap>>2] += STACK_CELLS * 4;
+  var sp = i32[g_sys_heap>>2] + 4; i32[g_sys_heap>>2] += STACK_CELLS * 4;
+
+  // FORTH worldlist (relocated when vocabularies added).
+  var forth_wordlist = i32[g_sys_heap>>2];
+  comma(0);
+  // Vocabulary stack.
+  i32[g_sys_current>>2] = forth_wordlist;
+  i32[g_sys_context>>2] = i32[g_sys_heap>>2];
+  i32[g_sys_latestxt>>2] = 0;
+  comma(forth_wordlist);
+  for (var i = 0; i < VOCABULARY_DEPTH; ++i) { comma(0); }
+
+  // setup boot text.
+  var source = g_sys_heap;
+  i32[g_sys_heap>>2] = Load(i32[g_sys_heap>>2], boot);
+  var source_len = g_sys_heap - source;
+  i32[g_sys_boot>>2] = source;
+  i32[g_sys_boot_size>>2] = source_len;
 
   InitDictionary();
-  i32[g_sp>>2] = i32[g_heap>>2] + 1;
-  i32[g_heap>>2] += STACK_CELLS;
-  i32[g_rp>>2] = i32[g_heap>>2] + 1;
-  i32[g_heap>>2] += STACK_CELLS;
-  i32[((i32[g_current]>>2) - 4)>>2] = 1;  // Make ; IMMMEDIATE
-  // Do not need DOLIT_XT, DOEXIT_XT, YIELD_XT (do by convention)
-  i32[g_notfound>>2] = Find('DROP');
-  i32[g_ip>>2] = i32[g_heap>>2];
-  i32[i32[g_heap>>2]>>2] = Find('EVALUATE1');
-  i32[g_heap>>2] += 4;
-  i32[i32[g_heap>>2]>>2] = Find('BRANCH');
-  i32[g_heap>>2] += 4;
-  i32[i32[g_heap>>2]>>2] = g_ip;
-  i32[g_heap>>2] += 4;
-  // argc, argv would have gone here.
-  i32[g_heap>>2] += 4;
-  i32[g_base>>2] = 10;
-  i32[g_tib>>2] = source;
-  i32[g_ntib>>2] = source_len;
+
+  i32[g_sys_latestxt>>2] = 0;  // So last builtin doesn't get wrong size.
+  i32[g_sys_DOLIT_XT>>2] = Find("DOLIT");
+  i32[g_sys_DOFLIT_XT>>2] = Find("DOFLIT");
+  i32[g_sys_DOEXIT_XT>>2] = Find("EXIT");
+  i32[g_sys_YIELD_XT>>2] = Find("YIELD");
+
+  // Init code.
+  var start = i32[g_sys_heap>>2];
+  comma(Find("EVALUATE1"));
+  comma(Find("BRANCH"));
+  comma(start);
+
+  i32[g_sys_argc>>2] = 0;
+  i32[g_sys_argv>>2] = 0;
+  i32[g_sys_base>>2] = 10;
+  i32[g_sys_tib>>2] = source;
+  i32[g_sys_ntib>>2] = source_len;
+
+  i32[rp>>2] = fp; rp += 4;
+  i32[rp>>2] = sp; rp += 4;
+  i32[rp>>2] = start; rp += 4;
+  i32[g_sys_rp] = rp;
 }
 
 function VM(stdlib, foreign, heap) {
@@ -235,9 +273,12 @@ function VM(stdlib, foreign, heap) {
     var fp = 0;
     var w = 0;
     var ir = 0;
-    sp = i32[g_sp>>2]|0;
-    rp = i32[g_rp>>2]|0;
-    ip = i32[g_ip>>2]|0;
+
+    // UNPARK
+    rp = i32[g_sys_rp>>2]|0;
+    ip = i32[rp>>2]|0; rp = (rp - 4)|0;
+    sp = i32[rp>>2]|0; rp = (rp - 4)|0;
+    fp = i32[rp>>2]|0; rp = (rp - 4)|0;
     tos = i32[sp>>2]|0; sp = (sp - 4)|0;
     for (;;) {
       w = i32[ip>>2]|0;
@@ -247,27 +288,9 @@ function VM(stdlib, foreign, heap) {
         ir = u8[w]|0;
         log(ir|0);
         switch (ir&0xff) {
-          case 0:  // OP_DOCOL
-            rp = (rp + 4) | 0;
-            i32[rp>>2] = ip;
-            ip = (w + 4) | 0;
-            break;
-          case 1:  // OP_DOVAR
-            sp = (sp + 4) | 0;
-            i32[sp>>2] = tos;
-            tos = (w + 8) | 0;  // 4 * 2
-            break;
-          case 2:  // OP_DODOES
-            sp = (sp + 4) | 0;
-            i32[sp>>2] = tos;
-            tos = (w + 8) | 0;  // 4 * 2
-            rp = (rp + 4) | 0;
-            i32[rp>>2] = ip;
-            ip = i32[(w + 4)>>2] | 0;
-            break;
 {{cases}}
           default:
-            return;
+            break;
         }
         break;
       }
@@ -280,8 +303,8 @@ var ffi = {
   Call: Call,
   create: function() { console.log('create'); },
   parse: function() { console.log('parse'); },
-  COMMA: function(n) { i32[i32[g_heap>>2]] = n; i32[g_heap>>2] += 4; console.log('comma'); },
-  CCOMMA: function(n) { u8[i32[g_heap>>2]] = n; i32[g_heap>>2] += 1; console.log('ccomma'); },
+  COMMA: function(n) { i32[i32[g_sys_heap>>2]] = n; i32[g_sys_heap>>2] += 4; console.log('comma'); },
+  CCOMMA: function(n) { u8[i32[g_sys_heap>>2]] = n; i32[g_sys_heap>>2] += 1; console.log('ccomma'); },
   SSMOD: function() { console.log('ssmod'); },
   DOES: function() { console.log('does'); },
   DOIMMEDIATE: function() { console.log('immediate'); },

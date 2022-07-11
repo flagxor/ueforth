@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
   } else if (argc == 2 && strcmp(argv[1], "dict") == 0) {
 #define V(name) \
     printf("  create(\"" #name "-builtins\", %d);\n", BUILTIN_FORK, OP_DOCREATE); \
-    printf("  COMMA(%d);\n", VOC_ ## name);
+    printf("  comma(%d);\n", VOC_ ## name);
     VOCABULARY_LIST
 #undef V
 #define XV(flags, name, op, code) \
