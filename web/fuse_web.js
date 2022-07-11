@@ -30,8 +30,8 @@ function ReplaceAll(haystack, needle, replacement) {
   }
 }
 
-cases = ReplaceAll(cases, 'DROP', 'tos = *sp--');
-cases = ReplaceAll(cases, 'DUP', '*++sp = tos');
+cases = ReplaceAll(cases, 'DROP;', 'tos = *sp--;');
+cases = ReplaceAll(cases, 'DUP;', '*++sp = tos;');
 cases = ReplaceAll(cases, 'tos += *sp--', 'tos = (tos + *sp)|0; --sp');
 cases = ReplaceAll(cases, /tos (.)= /, 'tos = tos $1 ');
 cases = ReplaceAll(cases, '*((cell_t *) *ip) = ', 'i32[i32[ip>>2]>>2] = ');
