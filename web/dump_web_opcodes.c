@@ -17,6 +17,9 @@
 
 #include "common/opcodes.h"
 #include "common/floats.h"
+#include "common/bits.h"
+
+#define VOCABULARY_LIST V(forth) V(internals)
 
 #define PLATFORM_OPCODE_LIST \
   X("CALL", CALL, sp = Call(sp|0, tos|0) | 0; DROP) \
@@ -29,6 +32,19 @@ enum {
 #undef XV
 };
 
+enum {
+#define V(name) VOC_ ## name,
+  VOCABULARY_LIST
+#undef V
+};
+
+enum {
+#define V(name) VOC_ ## name ## _immediate = VOC_ ## name + (IMMEDIATE << 8),
+  VOCABULARY_LIST
+#undef V
+};
+
+
 int main(int argc, char *argv[]) {
   if (argc == 2 && strcmp(argv[1], "cases") == 0) {
 #define XV(flags, name, op, code) \
@@ -37,7 +53,15 @@ int main(int argc, char *argv[]) {
     OPCODE_LIST
 #undef XV
   } else if (argc == 2 && strcmp(argv[1], "dict") == 0) {
-#define XV(flags, name, op, code) printf("  create(" #name ", %d);\n", OP_ ## op);
+#define V(name) \
+    printf("  create(\"" #name "-builtins\", %d);\n", BUILTIN_FORK, OP_DOCREATE); \
+    printf("  COMMA(%d);\n", VOC_ ## name);
+    VOCABULARY_LIST
+#undef V
+#define XV(flags, name, op, code) \
+    printf("  builtin(" #name ", %d, %d, %d);\n", \
+          ((VOC_ ## flags >> 8) & 0xff) | BUILTIN_MARK, \
+          (VOC_ ## flags & 0xff), OP_ ## op);
     PLATFORM_OPCODE_LIST
     OPCODE_LIST
 #undef XV

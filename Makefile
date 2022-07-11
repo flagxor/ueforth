@@ -232,6 +232,7 @@ $(GEN)/esp32_boot.h: tools/source_to_string.js $(ESP32_BOOT) | $(GEN)
 $(GEN)/dump_web_opcodes: \
     web/dump_web_opcodes.c \
     common/opcodes.h \
+    common/bits.h \
     common/floats.h | $(GEN)
 	$(CXX) $(CFLAGS) $< -o $@
 
@@ -315,6 +316,7 @@ $(POSIX)/ueforth: \
     common/calling.h \
     common/floats.h \
     common/interp.h \
+    common/bits.h \
     common/core.h \
     $(GEN)/posix_boot.h | $(POSIX)
 	$(CXX) $(CFLAGS) $< -o $@ $(LIBS)
@@ -337,6 +339,7 @@ $(WINDOWS)/uEf32.obj: \
     common/calls.h \
     common/calling.h \
     common/floats.h \
+    common/bits.h \
     common/core.h \
     windows/interp.h \
     $(GEN)/windows_boot.h | $(WINDOWS)
@@ -354,6 +357,7 @@ $(WINDOWS)/uEf64.obj: \
     common/calls.h \
     common/calling.h \
     common/floats.h \
+    common/bits.h \
     common/core.h \
     windows/interp.h \
     $(GEN)/windows_boot.h | $(WINDOWS)
@@ -387,6 +391,7 @@ $(ESP32_SIM)/Esp32forth-sim: \
     common/floats.h \
     common/calling.h \
     common/floats.h \
+    common/bits.h \
     common/core.h \
     common/interp.h \
     $(GEN)/esp32_boot.h \
@@ -408,6 +413,7 @@ ESP32_PARTS = tools/replace.js \
               common/extra_opcodes.h \
               common/floats.h \
               common/calling.h \
+              common/bits.h \
               common/core.h \
               common/interp.h \
               esp32/options.h \
@@ -424,6 +430,7 @@ $(ESP32)/ESP32forth/ESP32forth.ino: $(ESP32_PARTS) | $(ESP32)/ESP32forth
      extra_opcodes=@common/extra_opcodes.h \
      calling=@common/calling.h \
      floats=@common/floats.h \
+     bits=@common/bits.h \
      core=@common/core.h \
      interp=@common/interp.h \
      options=@esp32/options.h \
