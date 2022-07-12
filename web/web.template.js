@@ -271,12 +271,13 @@ var ffi = {
 
 heap[128 + 6] = 256 * 4;  // set g_sys.heap = 256 * 4;
 
-var globalObj;
-if (typeof window === 'undefined') {
-  globalObj = global;
-} else {
-  globalObj = window;
+function getGlobalObj() {
+  return (function(g) {
+    return g;
+  })(new Function('return this')());
 }
+var globalObj = getGlobalObj();
+
 var module = VM(globalObj, ffi, heap);
 Init();
 setTimeout(function() {
