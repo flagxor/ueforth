@@ -74,7 +74,7 @@ function UPPER(ch) {
 }
 
 function TOFLAGS(xt) { return xt - 1 * 4; }
-function TONAMELEN(xt) { return xt + 1; }
+function TONAMELEN(xt) { return TOFLAGS(xt) + 1; }
 function TOPARAMS(xt) { return TOFLAGS(xt) + 2; }
 function TOSIZE(xt) { return CELL_ALIGNED(u8[TONAMELEN(xt)>>2]) + 4 * i32[TOPARAMS(xt)>>2]; }
 function TOLINK(xt) { return xt - 2 * 4; }
@@ -115,6 +115,7 @@ function Find(name) {
           if (BUILTIN_VOCAB(i) === vocab &&
               name.length === BUILTIN_NAMELEN(i) &&
               name.toUpperCase() === GetString(BUILTIN_NAME(i), name.length).toUpperCase()) {
+console.log('FOUND: ' + name);
             return BUILTIN_CODE(i);
           }
         }
@@ -122,11 +123,13 @@ function Find(name) {
       if (!(u8[TOFLAGS(xt)] & SMUDGE) &&
           name.length === u8[TONAMELEN(xt)] &&
           name.toUpperCase() === GetString(TONAME(xt), name.length).toUpperCase()) {
+console.log('FOUND REGULAR: ' + name);
         return xt;
       }
       xt = i32[TOLINK(xt)>>2];
     }
   }
+console.log('NOT FOUND! ' + name);
   return 0;
 }
 
@@ -158,6 +161,7 @@ function DOIMMEDIATE() {
 }
 
 function Create(name, flags, op) {
+console.log('CREATE: ' + name);
   Finish();
   i32[g_sys_heap>>2] = CELL_ALIGNED(i32[g_sys_heap>>2]);
   i32[g_sys_heap>>2] = Load(i32[g_sys_heap>>2], name);  // name
@@ -201,11 +205,13 @@ function Parse(sep, ret) {
     while (i32[g_sys_tin>>2] < i32[g_sys_ntib>>2] &&
            Match(sep, u8[i32[g_sys_tib>>2] + i32[g_sys_tin>>2]])) { ++i32[g_sys_tin>>2]; }
   }
-  i32[ret>>2] = i32[g_sys_tib>>2] + i32[g_sys_tin>>2];
+  var start = i32[g_sys_tin>>2];
   while (i32[g_sys_tin>>2] < i32[g_sys_ntib>>2] &&
          !Match(sep, u8[i32[g_sys_tib>>2] + i32[g_sys_tin>>2]])) { ++i32[g_sys_tin>>2]; }
-  var len = i32[g_sys_tin>>2] - (i32[ret>>2] - i32[g_sys_tib>>2]);
-  console.log('PARSE: ' + GetString(i32[ret>>2], len));
+  var len = i32[g_sys_tin>>2] - start;
+  if (i32[g_sys_tin>>2] < i32[g_sys_ntib>>2]) { ++i32[g_sys_tin>>2]; }
+  i32[ret>>2] = i32[g_sys_tib>>2] + start;
+  console.log('PARSE: [' + GetString(i32[ret>>2], len) + ']');
   return len;
 }
 
@@ -247,7 +253,7 @@ function FConvert(pos, n, ret) {
       }
     } else if (u8[pos] == 'e'.charCodeAt(0) || u8[pos] == 'E'.charCodeAt(0)) {
       break;
-    } else if (u8[os] == '.'.charCodeAt(0)) {
+    } else if (u8[pos] == '.'.charCodeAt(0)) {
       if (has_dot) { return 0; }
       has_dot = -1;
     } else {
@@ -274,26 +280,30 @@ function Evaluate1(rp) {
   var call = 0;
   var tos, sp, ip, fp;
   // UNPARK
-  ip = i32[rp>>2]; rp -= 4; fp = i32[rp>>2]; rp -= 4; sp = i32[rp>>2]; rp -= 4; tos = i32[sp>>2]; sp -= 4;
+  ip = i32[rp>>2]; rp -= 4; sp = i32[rp>>2]; rp -= 4; fp = i32[rp>>2]; rp -= 4; tos = i32[sp>>2]; sp -= 4;
 
   var name = sp + 8;
   var len = Parse(32, name);
   if (len == 0) {  // ignore empty
     sp += 4; i32[sp>>2] = tos; tos = 0;
     // PARK
-    sp += 4; i32[sp>>2] = tos; rp += 4; i32[rp>>2] = sp; rp += 4; i32[rp>>2] = fp; rp += 4; i32[rp>>2] = ip;
+    sp += 4; i32[sp>>2] = tos; rp += 4; i32[rp>>2] = fp; rp += 4; i32[rp>>2] = sp; rp += 4; i32[rp>>2] = ip;
     return rp;
   }
-  var xt = Find(GetString(i32[name>>2], len));
+  name = i32[name>>2];
+  var xt = Find(GetString(name, len));
   if (xt) {
     if (i32[g_sys_state>>2] && !(u8[TOFLAGS(xt)] & IMMEDIATE)) {
+console.log('compile');
       COMMA(xt);
     } else {
+console.log('execute');
       call = xt;
     }
   } else {
+console.log('CONVERTING: ' + GetString(name, len));
     var n = sp + 16;
-    if (Convert(i32[name>>2], len, i32[g_sys_base>>2], n)) {
+    if (Convert(name, len, i32[g_sys_base>>2], n)) {
       if (i32[g_sys_state>>2]) {
         COMMA(i32[g_sys_DOLIT_XT>>2]);
         COMMA(i32[n>>2]);
@@ -301,7 +311,7 @@ function Evaluate1(rp) {
         sp += 4; i32[sp>>2] = tos; tos = i32[n>>2];
       }
     } else {
-      if (FConvert(i32[name>>2], len, n)) {
+      if (FConvert(name, len, n)) {
         if (i32[g_sys_state>>2]) {
           COMMA(i32[g_sys_DOFLIT_XT>>2]);
           f32[i32[g_sys_heap>>2]>>2] = f32[n>>2]; i32[g_sys_heap>>2] += 4;
@@ -309,17 +319,17 @@ function Evaluate1(rp) {
           fp += 4; f32[fp>>2] = f32[n>>2];
         }
       } else {
-        console.log('CANT FIND: ' + GetString(i32[name>>2], len));
-        sp += 4; i32[sp>>2] = i32[name>>2];
+        console.log('CANT FIND: ' + GetString(name, len));
+        sp += 4; i32[sp>>2] = name;
         sp += 4; i32[sp>>2] = len;
         sp += 4; i32[sp>>2] = -1;
         call = i32[g_sys_notfound>>2];
       }
     }
   }
-  sp += 4; i32[sp>>2] = call;
+  sp += 4; i32[sp>>2] = tos; tos = call;
   // PARK
-  sp += 4; i32[sp>>2] = tos; rp += 4; i32[rp>>2] = sp; rp += 4; i32[rp>>2] = fp; rp += 4; i32[rp>>2] = ip;
+  sp += 4; i32[sp>>2] = tos; rp += 4; i32[rp>>2] = fp; rp += 4; i32[rp>>2] = sp; rp += 4; i32[rp>>2] = ip;
 
   return rp;
 }
@@ -367,6 +377,7 @@ function Init() {
   i32[g_sys_DOFLIT_XT>>2] = Find("DOFLIT");
   i32[g_sys_DOEXIT_XT>>2] = Find("EXIT");
   i32[g_sys_YIELD_XT>>2] = Find("YIELD");
+  i32[g_sys_notfound>>2] = Find("DROP");
 
   // Init code.
   var start = i32[g_sys_heap>>2];

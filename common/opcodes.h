@@ -33,7 +33,7 @@ typedef uintptr_t ucell_t;
 #define PUSH DUP; tos = (cell_t)
 
 #define PARK   DUP; *++rp = (cell_t) fp; *++rp = (cell_t) sp; *++rp = (cell_t) ip
-#define UNPARK ip = (cell_t *) *rp--;  sp = (cell_t *) *rp--; fp = (float *) *rp--; DROP
+#define UNPARK ip = (cell_t *) *rp--; sp = (cell_t *) *rp--; fp = (float *) *rp--; DROP
 
 #define TOFLAGS(xt) ((uint8_t *) (((cell_t *) (xt)) - 1))
 #define TONAMELEN(xt) (TOFLAGS(xt) + 1)

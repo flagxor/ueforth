@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define JMPW break decode
+#define JMPW continue decode
 #define SSMOD_FUNC SSMOD_FUNC
 #define COMMA COMMA
 
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
     #define G_SYS 256
     printf("  const g_sys = %d;\n", G_SYS);
     #define EMITSYS(name) \
-    printf("  const g_sys_%s = %d;\n", #name, 256 + 4 * (((cell_t*) g_sys) - ((cell_t *) &g_sys->name)));
+    printf("  const g_sys_%s = %d;\n", #name, 256 + 4 * (((cell_t *) &g_sys->name) - (cell_t*) g_sys));
     EMITSYS(heap);
     EMITSYS(current);
     EMITSYS(context);
@@ -100,6 +100,10 @@ int main(int argc, char *argv[]) {
     EMITSYS(YIELD_XT);
     EMITSYS(DOCREATE_OP);
     EMITSYS(builtins);
+    printf("  const OP_DOCREATE = %d;\n", OP_DOCREATE);
+    printf("  const OP_DOCOL = %d;\n", OP_DOCOL);
+    printf("  const OP_DOVAR = %d;\n", OP_DOVAR);
+    printf("  const OP_DOCON = %d;\n", OP_DOCON);
   } else {
     fprintf(stderr, "USAGE: %s cases/dict/sys\n", argv[1]);
     return 1;

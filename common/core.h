@@ -122,8 +122,9 @@ static cell_t find(const char *name, cell_t len) {
           }
         }
       }
-      if (!(*TOFLAGS(xt) & SMUDGE) && len == *TONAMELEN(xt) &&
-                 same(name, TONAME(xt), len)) {
+      if (!(*TOFLAGS(xt) & SMUDGE) &&
+          len == *TONAMELEN(xt) &&
+          same(name, TONAME(xt), len)) {
         return xt;
       }
       xt = *TOLINK(xt);
@@ -161,11 +162,12 @@ static cell_t parse(cell_t sep, cell_t *ret) {
     while (g_sys->tin < g_sys->ntib &&
            match(sep, g_sys->tib[g_sys->tin])) { ++g_sys->tin; }
   }
-  *ret = (cell_t) (g_sys->tib + g_sys->tin);
+  cell_t start = g_sys->tin;
   while (g_sys->tin < g_sys->ntib &&
          !match(sep, g_sys->tib[g_sys->tin])) { ++g_sys->tin; }
-  cell_t len = g_sys->tin - (*ret - (cell_t) g_sys->tib);
+  cell_t len = g_sys->tin - start;
   if (g_sys->tin < g_sys->ntib) { ++g_sys->tin; }
+  *ret = (cell_t) (g_sys->tib + start);
   return len;
 }
 

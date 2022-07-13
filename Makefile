@@ -181,8 +181,24 @@ sizes: $(ESP32_SIM)/Esp32forth-sim
 $(GEN):
 	mkdir -p $@
 
-COMMON_PHASE1 = common/boot.fs common/conditionals.fs common/vocabulary.fs \
-                common/floats.fs common/structures.fs
+COMMON_PHASE1 = common/comments.fs \
+                common/boot.fs \
+                common/io.fs \
+                common/conditionals.fs \
+                common/vocabulary.fs \
+                common/floats.fs \
+                common/structures.fs
+
+COMMON_PHASE1e = common/comments.fs \
+                                    common/extra1.fs \
+                 common/boot.fs \
+                                    common/extra2.fs \
+                 common/io.fs \
+                 common/conditionals.fs \
+                 common/vocabulary.fs \
+                 common/floats.fs \
+                                    common/extra3.fs \
+                 common/structures.fs
 
 COMMON_PHASE2 = common/tasks.fs common/utils.fs common/locals.fs \
                 common/filetools.fs common/including.fs \
@@ -245,7 +261,7 @@ $(GEN)/web_dict.js: $(GEN)/dump_web_opcodes | $(GEN)
 $(GEN)/web_sys.js: $(GEN)/dump_web_opcodes | $(GEN)
 	$< sys >$@
 
-WEB_BOOT =  $(COMMON_PHASE1) common/extra.fs \
+WEB_BOOT =  $(COMMON_PHASE1e) \
             posix/posix.fs posix/allocation.fs posix/termios.fs \
             $(COMMON_PHASE2) \
             posix/autoboot.fs \

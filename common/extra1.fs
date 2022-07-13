@@ -12,6 +12,8 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
+( Words in this file are typically implemented as opcodes in extra_opcodes.h )
+
 ( Useful Basic Compound Words )
 : nip ( a b -- b ) swap drop ;
 : rdrop ( r: n n -- ) r> r> drop >r ;
@@ -49,17 +51,6 @@
 : 2@ ( a -- lo hi ) dup @ swap cell+ @ ;
 : 2! ( lo hi a -- ) dup >r cell+ ! r> ! ;
 
-( Fill, Move )
-: cmove ( a a n -- ) for aft >r dup c@ r@ c! 1+ r> 1+ then next 2drop ;
-: cmove> ( a a n -- ) for aft 2dup swap r@ + c@ swap r@ + c! then next 2drop ;
-: fill ( a n ch -- ) swap for swap aft 2dup c! 1 + then next 2drop ;
-: erase ( a n -- ) 0 fill ;   : blank ( a n -- ) bl fill ;
-
-( Compound words requiring conditionals )
-: min 2dup < if drop else nip then ;
-: max 2dup < if nip else drop then ;
-: abs ( n -- +n ) dup 0< if negate then ;
-
 ( Dictionary )
 : here ( -- a ) 'sys @ ;
 : allot ( n -- ) 'sys +! ;
@@ -67,15 +58,6 @@
 : align   here aligned here - allot ;
 : , ( n --  ) here ! cell allot ;
 : c, ( ch -- ) here c! 1 allot ;
-
-( Dictionary Format )
-: >flags& ( xt -- a ) cell - ; : >flags ( xt -- flags ) >flags& c@ ;
-: >name-length ( xt -- n ) >flags& 1+ c@ ;
-: >params ( xt -- n ) >flags& 2 + sw@ $ffff and ;
-: >size ( xt -- n ) dup >params cells swap >name-length aligned + 3 cells + ;
-: >link& ( xt -- a ) 2 cells - ;   : >link ( xt -- a ) >link& @ ;
-: >name ( xt -- a n ) dup >name-length swap >link& over aligned - swap ;
-: >body ( xt -- a ) dup @ [ ' >flags @ ] literal = 2 + cells + ;
 
 ( System Variables )
 : sys: ( a -- a' "name" ) dup constant cell+ ;
@@ -89,6 +71,21 @@
 : context ( -- a ) 'context @ cell+ ;
 : latestxt ( -- xt ) 'latestxt @ ;
 
+( Compilation State )
+: [ 0 state ! ; immediate
+: ] -1 state ! ; immediate
+: ' bl parse 2dup find dup >r -rot r> 0= 'notfound @ execute 2drop ;
+: literal aliteral ; immediate
+
+( Dictionary Format )
+: >flags& ( xt -- a ) cell - ; : >flags ( xt -- flags ) >flags& c@ ;
+: >name-length ( xt -- n ) >flags& 1+ c@ ;
+: >params ( xt -- n ) >flags& 2 + sw@ $ffff and ;
+: >size ( xt -- n ) dup >params cells swap >name-length aligned + 3 cells + ;
+: >link& ( xt -- a ) 2 cells - ;   : >link ( xt -- a ) >link& @ ;
+: >name ( xt -- a n ) dup >name-length swap >link& over aligned - swap ;
+: >body ( xt -- a ) dup @ [ ' >flags @ ] literal = 2 + cells + ;
+
 : f= ( r r -- f ) f- f0= ;
 : f< ( r r -- f ) f- f0< ;
 : f> ( r r -- f ) fswap f< ;
@@ -99,8 +96,3 @@
 4 constant sfloat
 : sfloats ( n -- n*4 ) sfloat * ;
 : sfloat+ ( a -- a ) sfloat + ;
-
-3.14159265359e fconstant pi
-
-: fsqrt ( r -- r ) 1e 20 0 do fover fover f/ f+ 0.5e f* loop fnip ;
-

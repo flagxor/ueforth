@@ -30,6 +30,8 @@ function ReplaceAll(haystack, needle, replacement) {
   }
 }
 
+boot = boot.replace(/[\\]/g, '\\\\');
+
 cases = ReplaceAll(cases, 'DROP;', 'tos = *sp--;');
 cases = ReplaceAll(cases, 'DUP;', '*++sp = tos;');
 
@@ -99,14 +101,10 @@ cases = ReplaceAll(cases, /[&]g_sys[-][>]([A-Za-z_]+)/, 'g_sys_$1');
 cases = ReplaceAll(cases, /g_sys[-][>]([A-Za-z_]+) [=] /, 'i32[g_sys_$1>>2] = ');
 cases = ReplaceAll(cases, /g_sys[-][>]([A-Za-z_]+)/, '(i32[g_sys_$1>>2]|0)');
 
-cases = ReplaceAll(cases, 'ADDROF(DOCREATE)', '0');  // TODO: might be wrong
-cases = ReplaceAll(cases, 'ADDROF(DOVAR)', '1');
-cases = ReplaceAll(cases, 'ADDROF(DOCON)', '2');
-cases = ReplaceAll(cases, 'ADDROF(DOCOL)', '3');
+cases = ReplaceAll(cases, /ADDROF[(]([^)]+)[)]/, 'OP_$1');
 
 cases = ReplaceAll(cases, 'return rp', 'i32[g_sys_rp>>2] = rp | 0; return');
 
-cases = ReplaceAll(cases, 'goto **(void **) w', 'break decode');
 cases = ReplaceAll(cases, 'SSMOD_FUNC', '');
 // Keep Together   vvv
 cases = ReplaceAll(cases, /tos ([^=]?)= /, 'txx $1= ');
