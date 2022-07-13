@@ -207,6 +207,7 @@ function VM(stdlib, foreign, heap) {
   var memset = foreign.memset;
   var memmove = foreign.memmove;
   var convert = foreign.convert;
+  var fconvert = foreign.fconvert;
   var evaluate1 = foreign.evaluate1;
   var emitlog = foreign.log;
 
@@ -264,7 +265,10 @@ var ffi = {
   UNSMUDGE: function() { console.log('unsmudge'); },
   parse: function() { console.log('parse'); },
   find: function() { console.log('find'); },
+  memmove: function() { console.log('memmove'); },
+  memset: function() { console.log('memset'); },
   convert: function() { console.log('convert'); },
+  fconvert: function() { console.log('fconvert'); },
   evaluate1: function() { console.log('evaluate1'); },
   log: function(n) { console.log(n); }
 };

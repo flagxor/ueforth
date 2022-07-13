@@ -74,6 +74,7 @@ cases = ReplaceAll(cases, /[*](.)p/, '(i32[$1p>>2]|0)');
 cases = ReplaceAll(cases, 'sp[-1]', '(i32[(sp - 4)>>2]|0)');
 
 cases = ReplaceAll(cases, /([+-]).(.)p/, '$2p = ($2p $1 4) | 0');
+cases = ReplaceAll(cases, 'sp -= (2-1)', 'sp = (sp - 4) | 0');
 cases = ReplaceAll(cases, 'sp -= 2', 'sp = (sp - 8) | 0');
 cases = ReplaceAll(cases, 'fp -= 2', 'fp = (fp - 8) | 0');
 cases = ReplaceAll(cases, 'sizeof(cell_t)', '4');
@@ -112,6 +113,7 @@ cases = ReplaceAll(cases, /tos ([^=]?)= /, 'txx $1= ');
 cases = ReplaceAll(cases, ' tos', ' (tos|0)');
 cases = ReplaceAll(cases, /txx ([^=]?)= /, 'tos $1= ');
 // Keep Together   ^^^
+cases = ReplaceAll(cases, 'fp)', 'fp|0)');
 cases = ReplaceAll(cases, ' (w>>>0) / (tos>>>0)', ' ((w>>>0) / (tos>>>0))|0');
 cases = ReplaceAll(cases, 'COMMA(tos)', 'COMMA(tos|0)');
 cases = ReplaceAll(cases, /find\(([^\n]+)\);/, 'find($1)|0;');

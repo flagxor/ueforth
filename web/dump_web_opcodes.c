@@ -16,6 +16,8 @@
 #include <string.h>
 
 #define JMPW break decode
+#define SSMOD_FUNC SSMOD_FUNC
+#define COMMA COMMA
 
 #include "common/opcodes.h"
 #include "common/floats.h"
@@ -28,10 +30,10 @@
   FLOATING_POINT_LIST
 
 enum {
-#define XV(flags, name, op, code) OP_ ## op,
+#define Z(flags, name, op, code) OP_ ## op,
   PLATFORM_OPCODE_LIST
   OPCODE_LIST
-#undef XV
+#undef Z
 };
 
 enum {
@@ -49,24 +51,24 @@ enum {
 
 int main(int argc, char *argv[]) {
   if (argc == 2 && strcmp(argv[1], "cases") == 0) {
-#define XV(flags, name, op, code) \
+#define Z(flags, name, op, code) \
     printf("          case %d:  // %s\n            %s; break;\n", OP_ ## op, name, #code);
     PLATFORM_OPCODE_LIST
     OPCODE_LIST
-#undef XV
+#undef Z
   } else if (argc == 2 && strcmp(argv[1], "dict") == 0) {
 #define V(name) \
     printf("  create(\"" #name "-builtins\", %d);\n", BUILTIN_FORK, OP_DOCREATE); \
     printf("  comma(%d);\n", VOC_ ## name);
     VOCABULARY_LIST
 #undef V
-#define XV(flags, name, op, code) \
+#define Z(flags, name, op, code) \
     printf("  builtin(" #name ", %d, %d, %d);\n", \
           ((VOC_ ## flags >> 8) & 0xff) | BUILTIN_MARK, \
           (VOC_ ## flags & 0xff), OP_ ## op);
     PLATFORM_OPCODE_LIST
     OPCODE_LIST
-#undef XV
+#undef Z
   } else if (argc == 2 && strcmp(argv[1], "sys") == 0) {
     G_SYS *g_sys = 0;
     #define G_SYS 256

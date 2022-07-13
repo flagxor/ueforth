@@ -17,9 +17,9 @@
   Y(rdrop, --rp) \
   XV(forth, "*/", STARSLASH, SSMOD_FUNC; NIP) \
   X("*", STAR, tos *= *sp--) \
-  XV(forth, "/mod", SLASHMOD, DUP; *sp = 1; SSMOD_FUNC) \
-  XV(forth, "/", SLASH, DUP; *sp = 1; SSMOD_FUNC; NIP) \
-  XV(forth, "mod", mod, DUP; *sp = 1; SSMOD_FUNC; DROP) \
+  X("/mod", SLASHMOD, DUP; *sp = 1; SSMOD_FUNC) \
+  X("/", SLASH, DUP; *sp = 1; SSMOD_FUNC; NIP) \
+  Y(mod, DUP; *sp = 1; SSMOD_FUNC; DROP) \
   Y(invert, tos = ~tos) \
   Y(negate, tos = -tos) \
   X("-", MINUS, tos = (*sp--) - tos) \
@@ -43,8 +43,8 @@
   X("4/", FOURSLASH, tos = tos >> 2) \
   X("+!", PLUSSTORE, *(cell_t *) tos += *sp--; DROP) \
   X("cell+", CELLPLUS, tos += sizeof(cell_t)) \
-  X("cells", CELLSTAR, tos *= sizeof(cell_t)) \
-  XV(forth, "cell/", CELLSLASH, DUP; tos = sizeof(cell_t); DUP; *sp = 1; SSMOD_FUNC; NIP) \
+  Y(cells, tos *= sizeof(cell_t)) \
+  X("cell/", CELLSLASH, DUP; tos = sizeof(cell_t); DUP; *sp = 1; SSMOD_FUNC; NIP) \
   X("2drop", TWODROP, NIP; DROP) \
   X("2dup", TWODUP, DUP; tos = sp[-1]; DUP; tos = sp[-1]) \
   X("2@", TWOAT, DUP; *sp = *(cell_t *) tos; tos = ((cell_t *) tos)[1]) \
@@ -62,8 +62,8 @@
   Y(allot, g_sys->heap = (cell_t *) (tos + (cell_t) g_sys->heap); DROP) \
   Y(aligned, tos = CELL_ALIGNED(tos)) \
   Y(align, g_sys->heap = (cell_t *) CELL_ALIGNED(g_sys->heap)) \
-  XV(forth, ",", COMMA, COMMA(tos); DROP) \
-  XV(forth, "c,", CCOMMA, CCOMMA(tos); DROP) \
+  X(",", COMMA, COMMA(tos); DROP) \
+  X("c,", CCOMMA, CCOMMA(tos); DROP) \
   X(">flags", TOFLAGS, tos = *TOFLAGS(tos)) \
   X(">params", TOPARAMS, tos = *TOPARAMS(tos)) \
   X(">size", TOSIZE, tos = TOSIZE(tos)) \

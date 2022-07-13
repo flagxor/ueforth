@@ -28,9 +28,9 @@ static cell_t *simulated(cell_t *sp, const char *op);
 
 #include "gen/esp32_sim_opcodes.h"
 
-#define XV(flags, str, name, code) static const char *STR_ ## name = str;
+#define Z(flags, str, name, code) static const char *STR_ ## name = str;
 PLATFORM_SIMULATED_OPCODE_LIST
-#undef XV
+#undef Z
 
 #define MALLOC_CAP_INTERNAL 0
 #define heap_caps_get_largest_free_block(x) SIM_HEAP_SIZE
