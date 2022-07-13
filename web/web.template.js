@@ -28,6 +28,7 @@ const BUILTIN_MARK = 8;
 {{boot}}
 
 var heap = new ArrayBuffer(HEAP_SIZE);
+var f32 = new Float32Array(heap);
 var i32 = new Int32Array(heap);
 var u16 = new Uint16Array(heap);
 var u8 = new Uint8Array(heap);
@@ -58,23 +59,6 @@ function Load(addr, content) {
   return addr;
 }
 
-function UPPER(a) {
-  // a = 97, z = 122
-  return a >= 97 && a <= 122 ? a & 95 : a;
-}
-
-function Same(a, b) {
-  if (a.length != b.length) {
-    return false;
-  }
-  for (var i = 0; i < a.length; ++i) {
-    if (UPPER(a.charCodeAt(i)) != UPPER(b.charCodeAt(i))) {
-      return false;
-    }
-  }
-  return true;
-}
-
 function GetString(a, n) {
   var ret = '';
   for (var i = 0; i < n; ++i) {
@@ -85,14 +69,17 @@ function GetString(a, n) {
 
 
 function CELL_ALIGNED(n) { return (n + 3) & ~3; }
+function UPPER(ch) {
+  return ch >= 'a'.charCodeAt(0) && ch <= 'z'.charCodeAt(0) ? (ch & 0x5F) : ch;
+}
 
-function TOFLAGS(xt) { return xt - 4; }
+function TOFLAGS(xt) { return xt - 1 * 4; }
 function TONAMELEN(xt) { return xt + 1; }
 function TOPARAMS(xt) { return TOFLAGS(xt) + 2; }
 function TOSIZE(xt) { return CELL_ALIGNED(u8[TONAMELEN(xt)>>2]) + 4 * i32[TOPARAMS(xt)>>2]; }
-function TOLINK(xt) { return xt - 2; }
+function TOLINK(xt) { return xt - 2 * 4; }
 function TONAME(xt) {
-  return (i32[TOFLAGS(xt)] & BUILTIN_MARK)
+  return (i32[TOFLAGS(xt)>>2] & BUILTIN_MARK)
     ? u8[TOLINK(xt)] : TOLINK(xt) - CELL_ALIGNED(u8[TONAMELEN(xt)]);
 }
 function TOBODY(xt) {
@@ -109,7 +96,7 @@ function BUILTIN_FLAGS(i) {
   return u8[BUILTIN_ITEM(i) + 1 * 4 + 0];
 }
 function BUILTIN_NAMELEN(i) {
-  return i32[BUILTIN_ITEM(i) + 1 * 4 + 1];
+  return u8[BUILTIN_ITEM(i) + 1 * 4 + 1];
 }
 function BUILTIN_VOCAB(i) {
   return u16[(BUILTIN_ITEM(i) + 1 * 4 + 2)>>1];
@@ -127,14 +114,14 @@ function Find(name) {
         for (var i = 0; BUILTIN_NAME(i); ++i) {
           if (BUILTIN_VOCAB(i) === vocab &&
               name.length === BUILTIN_NAMELEN(i) &&
-              name === GetString(BUILTIN_NAME(i), name.length)) {
+              name.toUpperCase() === GetString(BUILTIN_NAME(i), name.length).toUpperCase()) {
             return BUILTIN_CODE(i);
           }
         }
       }
       if (!(u8[TOFLAGS(xt)] & SMUDGE) &&
           name.length === u8[TONAMELEN(xt)] &&
-          name === GetString(TONAME(xt), name.length)) {
+          name.toUpperCase() === GetString(TONAME(xt), name.length).toUpperCase()) {
         return xt;
       }
       xt = i32[TOLINK(xt)>>2];
@@ -154,7 +141,20 @@ function CCOMMA(value) {
 }
 
 function Finish() {
-  // TODO
+  if (i32[g_sys_latestxt>>2] && !i32[TOPARAMS(i32[g_sys_latestxt>>2])>>2]) {
+    var sz = i32[g_sys_heap>>2] - (g_sys_latestxt + 4);
+    if (sz < 0 || sz > 0xffff) { sz = 0xffff; }
+    i32[TOPARAMS(i32[g_sys_latestxt>>2])>>2] = sz;
+  }
+}
+
+function UNSMUDGE() {
+  u8[TOFLAGS(i32[i32[g_sys_current>>2]>>2])] &= ~SMUDGE;
+  Finish();
+}
+
+function DOIMMEDIATE() {
+  u8[TOFLAGS(i32[i32[g_sys_current>>2]>>2])] |= IMMEDIATE;
 }
 
 function Create(name, flags, op) {
@@ -192,6 +192,138 @@ function SetupBuiltins() {
   COMMA(0);
 }
 
+function Match(sep, ch) {
+  return sep == ch || (sep == 32 && (ch == 9 || ch == 10 || ch == 13));
+}
+
+function Parse(sep, ret) {
+  if (sep == 32) {
+    while (i32[g_sys_tin>>2] < i32[g_sys_ntib>>2] &&
+           Match(sep, u8[i32[g_sys_tib>>2] + i32[g_sys_tin>>2]])) { ++i32[g_sys_tin>>2]; }
+  }
+  i32[ret>>2] = i32[g_sys_tib>>2] + i32[g_sys_tin>>2];
+  while (i32[g_sys_tin>>2] < i32[g_sys_ntib>>2] &&
+         !Match(sep, u8[i32[g_sys_tib>>2] + i32[g_sys_tin>>2]])) { ++i32[g_sys_tin>>2]; }
+  var len = i32[g_sys_tin>>2] - (i32[ret>>2] - i32[g_sys_tib>>2]);
+  console.log('PARSE: ' + GetString(i32[ret>>2], len));
+  return len;
+}
+
+function Convert(pos, n, base, ret) {
+  i32[ret>>2] = 0;
+  var negate = 0;
+  if (!n) { return 0; }
+  if (u8[pos] == '-'.charCodeAt(0)) { negate = -1; ++pos; --n; }
+  if (u8[pos] == '$'.charCodeAt(0)) { base = 16; ++pos; --n; }
+  for (; n; --n) {
+    var d = UPPER(u8[pos]) - 48;
+    if (d > 9) {
+      d -= 7;
+      if (d < 10) { return 0; }
+    }
+    if (d >= base) { return 0; }
+    i32[ret>>2] = i32[ret>>2] * base + d;
+    ++pos;
+  }
+  if (negate) { i32[ret>>2] = -i32[ret>>2]; }
+  return -1;
+}
+
+function FConvert(pos, n, ret) {
+  f32[ret>>2] = 0;
+  var negate = 0;
+  var has_dot = 0;
+  var exp = 0;
+  var shift = 1;
+  if (!n) { return 0; }
+  if (u8[pos] == '-'.charCodeAt(0)) { negate = -1; ++pos; --n; }
+  for (; n; --n) {
+    if (u8[pos] >= 48 && u8[pos] <= 48 + 9) {
+      if (has_dot) {
+        shift = shift * 0.1;
+        f32[ret>>2] = f32[ret>>2] + (u8[pos] - 48) * shift;
+      } else {
+        f32[ret>>2] = f32[ret>>2] * 10 + (u8[pos] - 48);
+      }
+    } else if (u8[pos] == 'e'.charCodeAt(0) || u8[pos] == 'E'.charCodeAt(0)) {
+      break;
+    } else if (u8[os] == '.'.charCodeAt(0)) {
+      if (has_dot) { return 0; }
+      has_dot = -1;
+    } else {
+      return 0;
+    }
+    ++pos;
+  }
+  if (!n) { return 0; }  // must have E
+  ++pos; --n;
+  if (n) {
+    var tmp = f32[ret>>2];
+    if (!Convert(pos, n, 10, ret)) { return 0; }
+    exp = i32[ret>>2];
+    f32[ret>>2] = tmp;
+  }
+  if (exp < -128 || exp > 128) { return 0; }
+  for (; exp < 0; ++exp) { f32[ret>>2] *= 0.1; }
+  for (; exp > 0; --exp) { f32[ret>>2] *= 10.0; }
+  if (negate) { f32[ret>>2] = -f32[ret>>2]; }
+  return -1;
+}
+
+function Evaluate1(rp) {
+  var call = 0;
+  var tos, sp, ip, fp;
+  // UNPARK
+  ip = i32[rp>>2]; rp -= 4; fp = i32[rp>>2]; rp -= 4; sp = i32[rp>>2]; rp -= 4; tos = i32[sp>>2]; sp -= 4;
+
+  var name = sp + 8;
+  var len = Parse(32, name);
+  if (len == 0) {  // ignore empty
+    sp += 4; i32[sp>>2] = tos; tos = 0;
+    // PARK
+    sp += 4; i32[sp>>2] = tos; rp += 4; i32[rp>>2] = sp; rp += 4; i32[rp>>2] = fp; rp += 4; i32[rp>>2] = ip;
+    return rp;
+  }
+  var xt = Find(GetString(i32[name>>2], len));
+  if (xt) {
+    if (i32[g_sys_state>>2] && !(u8[TOFLAGS(xt)] & IMMEDIATE)) {
+      COMMA(xt);
+    } else {
+      call = xt;
+    }
+  } else {
+    var n = sp + 16;
+    if (Convert(i32[name>>2], len, i32[g_sys_base>>2], n)) {
+      if (i32[g_sys_state>>2]) {
+        COMMA(i32[g_sys_DOLIT_XT>>2]);
+        COMMA(i32[n>>2]);
+      } else {
+        sp += 4; i32[sp>>2] = tos; tos = i32[n>>2];
+      }
+    } else {
+      if (FConvert(i32[name>>2], len, n)) {
+        if (i32[g_sys_state>>2]) {
+          COMMA(i32[g_sys_DOFLIT_XT>>2]);
+          f32[i32[g_sys_heap>>2]>>2] = f32[n>>2]; i32[g_sys_heap>>2] += 4;
+        } else {
+          fp += 4; f32[fp>>2] = f32[n>>2];
+        }
+      } else {
+        console.log('CANT FIND: ' + GetString(i32[name>>2], len));
+        sp += 4; i32[sp>>2] = i32[name>>2];
+        sp += 4; i32[sp>>2] = len;
+        sp += 4; i32[sp>>2] = -1;
+        call = i32[g_sys_notfound>>2];
+      }
+    }
+  }
+  sp += 4; i32[sp>>2] = call;
+  // PARK
+  sp += 4; i32[sp>>2] = tos; rp += 4; i32[rp>>2] = sp; rp += 4; i32[rp>>2] = fp; rp += 4; i32[rp>>2] = ip;
+
+  return rp;
+}
+
 function InitDictionary() {
 {{dict}}
   SetupBuiltins();
@@ -222,9 +354,9 @@ function Init() {
   for (var i = 0; i < VOCABULARY_DEPTH; ++i) { COMMA(0); }
 
   // setup boot text.
-  var source = g_sys_heap;
+  var source = i32[g_sys_heap>>2];
   i32[g_sys_heap>>2] = Load(i32[g_sys_heap>>2], boot);
-  var source_len = g_sys_heap - source;
+  var source_len = i32[g_sys_heap>>2] - source;
   i32[g_sys_boot>>2] = source;
   i32[g_sys_boot_size>>2] = source_len;
 
@@ -246,6 +378,7 @@ function Init() {
   i32[g_sys_argv>>2] = 0;
   i32[g_sys_base>>2] = 10;
   i32[g_sys_tib>>2] = source;
+  i32[g_sys_ntib>>2] = source_len;
   i32[g_sys_ntib>>2] = source_len;
 
   rp += 4; i32[rp>>2] = fp;
@@ -282,8 +415,6 @@ function VM(stdlib, foreign, heap) {
   var create = foreign.create;
   var find = foreign.find;
   var parse = foreign.parse;
-  var memset = foreign.memset;
-  var memmove = foreign.memmove;
   var convert = foreign.convert;
   var fconvert = foreign.fconvert;
   var evaluate1 = foreign.evaluate1;
@@ -295,6 +426,40 @@ function VM(stdlib, foreign, heap) {
   var f32 = new stdlib.Float32Array(heap);
 
 {{sys}}
+
+  function memset(dst, ch, n) {
+    dst = dst | 0;
+    ch = ch | 0;
+    n = n | 0;
+    while (n | 0) {
+      u8[dst] = ch;
+      dst = (dst + 1) | 0;
+      n = (n - 1) | 0;
+    }
+  }
+
+  function memmove(src, dst, n) {
+    src = src | 0;
+    dst = dst | 0;
+    n = n | 0;
+    if ((src | 0) < (dst | 0)) {
+      src = (src + n - 1) | 0;
+      dst = (dst + n - 1) | 0;
+      while (n | 0) {
+        u8[dst] = u8[src];
+        src = (src - 1) | 0;
+        dst = (dst - 1) | 0;
+        n = (n - 1) | 0;
+      }
+    } else {
+      while (n | 0) {
+        u8[dst] = u8[src];
+        src = (src + 1) | 0;
+        dst = (dst + 1) | 0;
+        n = (n - 1) | 0;
+      }
+    }
+  }
 
   function run() {
     var tos = 0;
@@ -314,11 +479,11 @@ function VM(stdlib, foreign, heap) {
     tos = i32[sp>>2]|0; sp = (sp - 4)|0;
     for (;;) {
       w = i32[ip>>2]|0;
-      emitlog(ip|0);
+      //emitlog(ip|0);
       ip = (ip + 4)|0;
       decode: for (;;) {
         ir = u8[w]|0;
-        emitlog(ir|0);
+        //emitlog(ir|0);
         switch (ir&0xff) {
 {{cases}}
           default:
@@ -332,26 +497,21 @@ function VM(stdlib, foreign, heap) {
 }
 
 var ffi = {
-  Call: Call,
-  create: function() { console.log('create'); },
-  parse: function() { console.log('parse'); },
-  COMMA: function(n) { COMMA(n); },
-  CCOMMA: function(n) { COMMA(n); },
-  SSMOD: function() { console.log('ssmod'); },
-  DOES: function() { console.log('does'); },
-  DOIMMEDIATE: function() { console.log('immediate'); },
-  UNSMUDGE: function() { console.log('unsmudge'); },
-  parse: function() { console.log('parse'); },
-  find: function() { console.log('find'); },
-  memmove: function() { console.log('memmove'); },
-  memset: function() { console.log('memset'); },
-  convert: function() { console.log('convert'); },
-  fconvert: function() { console.log('fconvert'); },
-  evaluate1: function() { console.log('evaluate1'); },
-  log: function(n) { console.log(n); }
+  'Call': Call,
+  'create': function(name, len, flags, op) { Create(GetString(name, len), flags, op); },
+  'parse': function(sep, ret) { return Parse(sep, ret); },
+  'find': function(a, n) { return Find(GetString(a, n)); },
+  'convert': function(pos, n, base, ret) { return Convert(pos, n, base, ret); },
+  'fconvert': function(pos, n, ret) { return FConvert(pos, n, ret); },
+  'evaluate1': function(rp) { return Evaluate1(rp); },
+  'log': function(n) { console.log(n); },
+  'COMMA': function(n) { COMMA(n); },
+  'CCOMMA': function(n) { COMMA(n); },
+  'SSMOD': function() { console.log('ssmod'); },
+  'DOES': function() { console.log('does'); },
+  'DOIMMEDIATE': function() { DOIMMEDIATE(); },
+  'UNSMUDGE': function() { UNSMUDGE(); },
 };
-
-heap[128 + 6] = 256 * 4;  // set g_sys.heap = 256 * 4;
 
 function getGlobalObj() {
   return (function(g) {

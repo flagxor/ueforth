@@ -97,8 +97,8 @@ static cell_t fconvert(const char *pos, cell_t n, float *ret) {
     if (!convert(pos, n, 10, &exp)) { return 0; }
   }
   if (exp < -128 || exp > 128) { return 0; }
-  for (;exp < 0; ++exp) { *ret *= 0.1f; }
-  for (;exp > 0; --exp) { *ret *= 10.0f; }
+  for (; exp < 0; ++exp) { *ret *= 0.1f; }
+  for (; exp > 0; --exp) { *ret *= 10.0f; }
   if (negate) { *ret = -*ret; }
   return -1;
 }
@@ -179,7 +179,7 @@ static cell_t *evaluate1(cell_t *rp) {
   if (len == 0) { DUP; tos = 0; PARK; return rp; }  // ignore empty
   cell_t xt = find((const char *) name, len);
   if (xt) {
-    if (g_sys->state && !(((cell_t *) xt)[-1] & IMMEDIATE)) {
+    if (g_sys->state && !(*TOFLAGS(xt) & IMMEDIATE)) {
       COMMA(xt);
     } else {
       call = xt;
@@ -210,7 +210,7 @@ static cell_t *evaluate1(cell_t *rp) {
 #endif
         PUSH name;
         PUSH len;
-        *++sp = -1;
+        PUSH -1;
         call = g_sys->notfound;
       }
     }
