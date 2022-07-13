@@ -12,6 +12,20 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
+( Add more words that are usually in extra_opcodes.h )
+
 : fsqrt ( r -- r ) 1e 20 0 do fover fover f/ f+ 0.5e f* loop fnip ;
 
 3.14159265359e fconstant pi
+
+: fill32 ( a n v ) swap >r swap r> 0 ?do 2dup ! cell+ loop 2drop ;
+
+( Transfer internals that are extra opcodes )
+internals definitions
+transfer{
+  'heap 'context 'latestxt 'notfound
+  'heap-start 'heap-size 'stack-cells
+  'boot 'boot-size 'tib
+  'argc 'argv 'runner fill32
+}transfer
+forth definitions
