@@ -58,12 +58,12 @@ int main(int argc, char *argv[]) {
 #undef Z
   } else if (argc == 2 && strcmp(argv[1], "dict") == 0) {
 #define V(name) \
-    printf("  create(\"" #name "-builtins\", %d);\n", BUILTIN_FORK, OP_DOCREATE); \
-    printf("  comma(%d);\n", VOC_ ## name);
+    printf("  Create(\"" #name "-builtins\", %d);\n", BUILTIN_FORK, OP_DOCREATE); \
+    printf("  COMMA(%d);\n", VOC_ ## name);
     VOCABULARY_LIST
 #undef V
 #define Z(flags, name, op, code) \
-    printf("  builtin(" #name ", %d, %d, %d);\n", \
+    printf("  Builtin(" #name ", %d, %d, %d);\n", \
           ((VOC_ ## flags >> 8) & 0xff) | BUILTIN_MARK, \
           (VOC_ ## flags & 0xff), OP_ ## op);
     PLATFORM_OPCODE_LIST

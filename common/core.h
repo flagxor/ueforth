@@ -143,14 +143,13 @@ static void finish(void) {
 static void create(const char *name, cell_t nlength, cell_t flags, void *op) {
   finish();
   g_sys->heap = (cell_t *) CELL_ALIGNED(g_sys->heap);
-  char *pos = (char *) g_sys->heap;
-  for (cell_t n = nlength; n; --n) { *pos++ = *name++; }  // name
-  g_sys->heap += CELL_LEN(nlength);
-  *g_sys->heap++ = (cell_t) *g_sys->current;  // link
-  *g_sys->heap++ = (nlength << 8) | flags;  // flags & length
+  for (cell_t n = nlength; n; --n) { CCOMMA(*name++); }  // name
+  g_sys->heap = (cell_t *) CELL_ALIGNED(g_sys->heap);
+  COMMA(*g_sys->current);  // link
+  COMMA((nlength << 8) | flags);  // flags & length
   *g_sys->current = g_sys->heap;
   g_sys->latestxt = g_sys->heap;
-  *g_sys->heap++ = (cell_t) op;  // code
+  COMMA(op);  // code
 }
 
 static int match(char sep, char ch) {
@@ -181,7 +180,7 @@ static cell_t *evaluate1(cell_t *rp) {
   cell_t xt = find((const char *) name, len);
   if (xt) {
     if (g_sys->state && !(((cell_t *) xt)[-1] & IMMEDIATE)) {
-      *g_sys->heap++ = xt;
+      COMMA(xt);
     } else {
       call = xt;
     }
@@ -189,8 +188,8 @@ static cell_t *evaluate1(cell_t *rp) {
     cell_t n;
     if (convert((const char *) name, len, g_sys->base, &n)) {
       if (g_sys->state) {
-        *g_sys->heap++ = g_sys->DOLIT_XT;
-        *g_sys->heap++ = n;
+        COMMA(g_sys->DOLIT_XT);
+        COMMA(n);
       } else {
         PUSH n;
       }
@@ -198,7 +197,7 @@ static cell_t *evaluate1(cell_t *rp) {
       float f;
       if (fconvert((const char *) name, len, &f)) {
         if (g_sys->state) {
-          *g_sys->heap++ = g_sys->DOFLIT_XT;
+          COMMA(g_sys->DOFLIT_XT);
           *(float *) g_sys->heap++ = f;
         } else {
           *++fp = f;
@@ -243,13 +242,13 @@ static void forth_init(int argc, char *argv[],
 
   // FORTH worldlist (relocated when vocabularies added).
   cell_t *forth_wordlist = g_sys->heap;
-  *g_sys->heap++ = 0;
+  COMMA(0);
   // Vocabulary stack.
   g_sys->current = (cell_t **) forth_wordlist;
   g_sys->context = (cell_t ***) g_sys->heap;
   g_sys->latestxt = 0;
-  *g_sys->heap++ = (cell_t) forth_wordlist;
-  for (int i = 0; i < VOCABULARY_DEPTH; ++i) { *g_sys->heap++ = 0; }
+  COMMA(forth_wordlist);
+  for (int i = 0; i < VOCABULARY_DEPTH; ++i) { COMMA(0); }
 
   // Setup boot text.
   g_sys->boot = src;
@@ -259,7 +258,7 @@ static void forth_init(int argc, char *argv[],
 #define V(name) \
   create(#name "-builtins", sizeof(#name "-builtins") - 1, \
       BUILTIN_FORK, g_sys->DOCREATE_OP); \
-  *g_sys->heap++ = VOC_ ## name;
+  COMMA(VOC_ ## name);
   VOCABULARY_LIST
 #undef V
   g_sys->latestxt = 0;  // So last builtin doesn't get wrong size.
@@ -271,9 +270,9 @@ static void forth_init(int argc, char *argv[],
 
   // Init code.
   cell_t *start = g_sys->heap;
-  *g_sys->heap++ = FIND("EVALUATE1");
-  *g_sys->heap++ = FIND("BRANCH");
-  *g_sys->heap++ = (cell_t) start;
+  COMMA(FIND("EVALUATE1"));
+  COMMA(FIND("BRANCH"));
+  COMMA(start);
 
   g_sys->argc = argc;
   g_sys->argv = argv;

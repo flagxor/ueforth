@@ -20,11 +20,18 @@ const HEAP_SIZE = (1024 * 1024);
 const STACK_CELLS = 4096;
 const VOCABULARY_DEPTH = 16;
 
+const IMMEDIATE = 1;
+const SMUDGE = 2;
+const BUILTIN_FORK = 4;
+const BUILTIN_MARK = 8;
+
 {{boot}}
 
 var heap = new ArrayBuffer(HEAP_SIZE);
 var i32 = new Int32Array(heap);
+var u16 = new Uint16Array(heap);
 var u8 = new Uint8Array(heap);
+var builtins = [];
 var objects = [SetEval];
 
 {{sys}}
@@ -68,55 +75,126 @@ function Same(a, b) {
   return true;
 }
 
-function GetName(xt) {
-  var clen = i32[(xt - 3*4)>>2];
+function GetString(a, n) {
   var ret = '';
-  for (var i = 0; i < clen; ++i) {
-    ret += String.fromCharCode(u8[xt - 3 * 4 - clen + i]);
+  for (var i = 0; i < n; ++i) {
+    ret += String.fromCharCode(u8[a + i]);
   }
   return ret;
 }
 
+
+function CELL_ALIGNED(n) { return (n + 3) & ~3; }
+
+function TOFLAGS(xt) { return xt - 4; }
+function TONAMELEN(xt) { return xt + 1; }
+function TOPARAMS(xt) { return TOFLAGS(xt) + 2; }
+function TOSIZE(xt) { return CELL_ALIGNED(u8[TONAMELEN(xt)>>2]) + 4 * i32[TOPARAMS(xt)>>2]; }
+function TOLINK(xt) { return xt - 2; }
+function TONAME(xt) {
+  return (i32[TOFLAGS(xt)] & BUILTIN_MARK)
+    ? u8[TOLINK(xt)] : TOLINK(xt) - CELL_ALIGNED(u8[TONAMELEN(xt)]);
+}
+function TOBODY(xt) {
+  return xt + (i32[xt>>2] === OP_DOCREATE || i32[xt>>2] === OP_DODOES ? 2 : 1);
+}
+
+function BUILTIN_ITEM(i) {
+  return i32[g_sys_builtins>>2] + 4 * 3 * i;
+}
+function BUILTIN_NAME(i) {
+  return i32[(BUILTIN_ITEM(i) + 0 * 4)>>2];
+}
+function BUILTIN_FLAGS(i) {
+  return u8[BUILTIN_ITEM(i) + 1 * 4 + 0];
+}
+function BUILTIN_NAMELEN(i) {
+  return i32[BUILTIN_ITEM(i) + 1 * 4 + 1];
+}
+function BUILTIN_VOCAB(i) {
+  return u16[(BUILTIN_ITEM(i) + 1 * 4 + 2)>>1];
+}
+function BUILTIN_CODE(i) {
+  return BUILTIN_ITEM(i) + 2 * 4;
+}
+
 function Find(name) {
-  var pos = i32[i32[g_sys_context>>2]>>2];
-  while (pos) {
-    if (Same(GetName(pos), name)) {
-      return pos;
+  for (var voc = i32[g_sys_context>>2]; i32[voc>>2]; voc += 4) {
+    var xt = i32[i32[voc>>2]>>2];
+    while (xt) {
+      if (u8[TOFLAGS(xt)] & BUILTIN_FORK) {
+        var vocab = i32[(TOLINK(xt) + 4 * 3)>>2];
+        for (var i = 0; BUILTIN_NAME(i); ++i) {
+          if (BUILTIN_VOCAB(i) === vocab &&
+              name.length === BUILTIN_NAMELEN(i) &&
+              name === GetString(BUILTIN_NAME(i), name.length)) {
+            return BUILTIN_CODE(i);
+          }
+        }
+      }
+      if (!(u8[TOFLAGS(xt)] & SMUDGE) &&
+          name.length === u8[TONAMELEN(xt)] &&
+          name === GetString(TONAME(xt), name.length)) {
+        return xt;
+      }
+      xt = i32[TOLINK(xt)>>2];
     }
-    pos = i32[(pos - 2*4)>>2];
   }
   return 0;
 }
 
-function comma(value) {
+function COMMA(value) {
   i32[i32[g_sys_heap>>2]>>2] = value;
-  i32[g_sys_heap>>2] = (i32[g_sys_heap>>2] + 4) | 0;
+  i32[g_sys_heap>>2] += 4;
 }
 
-function create(name, flags, opcode) {
+function CCOMMA(value) {
+  u8[i32[g_sys_heap>>2]>>2] = value;
+  i32[g_sys_heap>>2]++;
+}
+
+function Finish() {
+  // TODO
+}
+
+function Create(name, flags, op) {
+  Finish();
+  i32[g_sys_heap>>2] = CELL_ALIGNED(i32[g_sys_heap>>2]);
   i32[g_sys_heap>>2] = Load(i32[g_sys_heap>>2], name);  // name
-  i32[g_sys_heap>>2] = (i32[g_sys_heap>>2] + 3) & ~3;
-
-  i32[i32[g_sys_heap>>2]>>2] = name.length;  // length
-  i32[g_sys_heap>>2] += 4;
-
-  i32[i32[g_sys_heap>>2]>>2] = i32[i32[i32[g_sys_current]>>2]>>2];  // link
-  i32[g_sys_heap>>2] += 4;
-
-  i32[i32[g_sys_heap>>2]>>2] = 0;  // flags
-  i32[g_sys_heap>>2] += 4;
-
+  i32[g_sys_heap>>2] = CELL_ALIGNED(i32[g_sys_heap>>2]);
+  COMMA(i32[i32[g_sys_current>>2]>>2]);  // link
+  COMMA((name.length << 8) | flags);  // flags & length
   i32[i32[g_sys_current>>2]>>2] = i32[g_sys_heap>>2];
-
-  i32[i32[i32[g_sys_current>>2]>>2]>>2] = opcode;  // code
-  i32[g_sys_heap>>2] += 4;
+  i32[g_sys_latestxt>>2] = i32[g_sys_heap>>2];
+  COMMA(op);
 }
 
-function builtin(name, flags, vocab, opcode) {
+function Builtin(name, flags, vocab, opcode) {
+  builtins.push([name, flags | BUILTIN_MARK, vocab, opcode]);
+}
+
+function SetupBuiltins() {
+  for (var i = 0; i < builtins.length; ++i) {
+    var name = builtins[i][0];
+    builtins[i][0] = i32[g_sys_heap>>2];
+    i32[g_sys_heap>>2] = Load(i32[g_sys_heap>>2], name);  // name
+    i32[g_sys_heap>>2] = CELL_ALIGNED(i32[g_sys_heap>>2]);
+    builtins[i][1] |= (name.length << 8);
+  }
+  i32[g_sys_builtins>>2] = i32[g_sys_heap>>2];
+  for (var i = 0; i < builtins.length; ++i) {
+    COMMA(builtins[i][0]);
+    COMMA(builtins[i][1] | (builtins[i][2] << 16));
+    COMMA(builtins[i][3]);
+  }
+  COMMA(0);
+  COMMA(0);
+  COMMA(0);
 }
 
 function InitDictionary() {
 {{dict}}
+  SetupBuiltins();
 }
 
 function Init() {
@@ -135,13 +213,13 @@ function Init() {
 
   // FORTH worldlist (relocated when vocabularies added).
   var forth_wordlist = i32[g_sys_heap>>2];
-  comma(0);
+  COMMA(0);
   // Vocabulary stack.
   i32[g_sys_current>>2] = forth_wordlist;
   i32[g_sys_context>>2] = i32[g_sys_heap>>2];
   i32[g_sys_latestxt>>2] = 0;
-  comma(forth_wordlist);
-  for (var i = 0; i < VOCABULARY_DEPTH; ++i) { comma(0); }
+  COMMA(forth_wordlist);
+  for (var i = 0; i < VOCABULARY_DEPTH; ++i) { COMMA(0); }
 
   // setup boot text.
   var source = g_sys_heap;
@@ -160,9 +238,9 @@ function Init() {
 
   // Init code.
   var start = i32[g_sys_heap>>2];
-  comma(Find("EVALUATE1"));
-  comma(Find("BRANCH"));
-  comma(start);
+  COMMA(Find("EVALUATE1"));
+  COMMA(Find("BRANCH"));
+  COMMA(start);
 
   i32[g_sys_argc>>2] = 0;
   i32[g_sys_argv>>2] = 0;
@@ -170,10 +248,10 @@ function Init() {
   i32[g_sys_tib>>2] = source;
   i32[g_sys_ntib>>2] = source_len;
 
-  i32[rp>>2] = fp; rp += 4;
-  i32[rp>>2] = sp; rp += 4;
-  i32[rp>>2] = start; rp += 4;
-  i32[g_sys_rp] = rp;
+  rp += 4; i32[rp>>2] = fp;
+  rp += 4; i32[rp>>2] = sp;
+  rp += 4; i32[rp>>2] = start;
+  i32[g_sys_rp>>2] = rp;
 }
 
 function VM(stdlib, foreign, heap) {
@@ -257,8 +335,8 @@ var ffi = {
   Call: Call,
   create: function() { console.log('create'); },
   parse: function() { console.log('parse'); },
-  COMMA: function(n) { i32[i32[g_sys_heap>>2]] = n; i32[g_sys_heap>>2] += 4; console.log('comma'); },
-  CCOMMA: function(n) { u8[i32[g_sys_heap>>2]] = n; i32[g_sys_heap>>2] += 1; console.log('ccomma'); },
+  COMMA: function(n) { COMMA(n); },
+  CCOMMA: function(n) { COMMA(n); },
   SSMOD: function() { console.log('ssmod'); },
   DOES: function() { console.log('does'); },
   DOIMMEDIATE: function() { console.log('immediate'); },

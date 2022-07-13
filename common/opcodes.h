@@ -46,7 +46,7 @@ typedef uintptr_t ucell_t;
                                        (void *) *((cell_t *) xt) == ADDROF(DODOES) ? 2 : 1))
 
 #ifndef COMMA
-# define COMMA(n) *g_sys->heap++ = (n)
+# define COMMA(n) *g_sys->heap++ = (cell_t) (n)
 # define CCOMMA(n) *(uint8_t *) g_sys->heap = (n); \
                    g_sys->heap = (cell_t *) (1 + ((cell_t) g_sys->heap));
 # define DOES(ip) **g_sys->current = (cell_t) ADDROF(DODOES); (*g_sys->current)[1] = (cell_t) ip
