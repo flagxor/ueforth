@@ -136,3 +136,9 @@ e: test-see-to
   see bar
   out: : bar  123 TO foo ; 
 ;e
+
+e: test-see-immediate
+  : foo 123 ; immediate
+  see foo
+  out: : foo  123 ; IMMEDIATE 
+;e

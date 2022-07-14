@@ -27,6 +27,7 @@
 internals definitions
 2 constant SMUDGE
 4 constant BUILTIN_FORK
+1 constant IMMEDIATE_MARK
 16 constant NONAMED
 : mem= ( a a n -- f)
    for aft 2dup c@ swap c@ <> if 2drop rdrop 0 exit then 1+ swap 1+ then next 2drop -1 ;
@@ -56,9 +57,10 @@ internals definitions
    see. ;
 : see-loop   dup >body swap >params 1- cells over +
              begin 2dup < while swap see-one swap repeat 2drop ;
+: ?see-flags   >flags IMMEDIATE_MARK and if ." IMMEDIATE " then ;
 : see-xt ( xt -- )
   dup @ ['] see-loop @ = if
-    ['] : see.  dup see.  space see-loop   ['] ; see. cr  exit
+    ['] : see.  dup see.  space dup see-loop   ['] ; see. ?see-flags cr  exit
   then
   dup >flags BUILTIN_FORK and if ." Built-in fork: " see. exit then
   dup @ ['] input-buffer @ = if ." CREATE/VARIABLE: " see. cr exit then
