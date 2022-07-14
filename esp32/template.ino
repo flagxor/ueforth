@@ -20,8 +20,9 @@
  */
 
 {{options}}
-{{opcodes}}
-{{extra_opcodes}}
+{{tier0_opcodes}}
+{{tier1_opcodes}}
+{{tier2_opcodes}}
 {{floats}}
 {{calling}}
 {{builtins.h}}

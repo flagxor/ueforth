@@ -37,19 +37,29 @@ cases = ReplaceAll(cases, 'DUP;', '*++sp = tos;');
 
 cases = ReplaceAll(cases, 'tos += sizeof(float)', 'tos = (tos + 4)|0');
 cases = ReplaceAll(cases, 'tos *= sizeof(float)', 'tos = (tos * 4)|0');
+cases = ReplaceAll(cases, 'tos += sizeof(cell_t)', 'tos = (tos + 4)|0');
+cases = ReplaceAll(cases, 'tos *= sizeof(cell_t)', 'tos = (tos * 4)|0');
 
 cases = ReplaceAll(cases, 'tos += *sp--', 'tos = (tos + *sp)|0; --sp');
+cases = ReplaceAll(cases, 'tos = (*sp--) - tos', 'tos = (*sp - tos)|0; --sp');
+cases = ReplaceAll(cases, 'tos *= *sp--', 'tos = imul(tos, *sp); --sp');
+cases = ReplaceAll(cases, ' -tos', ' (-tos)|0');
+cases = ReplaceAll(cases, '++tos', 'tos = (tos + 1)|0');
+cases = ReplaceAll(cases, '--tos', 'tos = (tos - 1)|0');
+
 cases = ReplaceAll(cases, /tos (.)= /, 'tos = tos $1 ');
 cases = ReplaceAll(cases, '*((cell_t *) *ip) = ', 'i32[i32[ip>>2]>>2] = ');
 cases = ReplaceAll(cases, /[*](.)p[+][+]/, '*$1p, ++$1p');
 cases = ReplaceAll(cases, /[*](.)p[-][-]/, '*$1p, --$1p');
 cases = ReplaceAll(cases, /[*][+][+](.)p/, '++$1p, *$1p');
 cases = ReplaceAll(cases, '*(cell_t *) tos = ', 'i32[tos>>2] = ');
+cases = ReplaceAll(cases, '((cell_t *) tos)[1] = ', 'i32[(tos + 4)>>2] = ');
 cases = ReplaceAll(cases, '*(int32_t *) tos = ', 'i32[tos>>2] = ');
 cases = ReplaceAll(cases, '*(int16_t *) tos = ', 'i16[tos>>1] = ');
 cases = ReplaceAll(cases, '*(uint8_t *) tos = ', 'u8[tos] = ');
 cases = ReplaceAll(cases, '*(float *) tos = ', 'f32[tos>>2] = ');
 cases = ReplaceAll(cases, '*(cell_t *) tos', '(i32[tos>>2]|0)');
+cases = ReplaceAll(cases, '((cell_t *) tos)[1]', '(i32[(tos + 4)>>2]|0)');
 cases = ReplaceAll(cases, '*(int32_t *) tos', '(i32[tos>>2]|0)');
 cases = ReplaceAll(cases, '*(uint32_t *) tos', '(i32[tos>>2]>>>0)');
 cases = ReplaceAll(cases, '*(int16_t *) tos', '(i16[tos>>1]|0)');
@@ -90,12 +100,15 @@ cases = ReplaceAll(cases, '(float *) ', '');
 cases = ReplaceAll(cases, '(float) ', '');
 cases = ReplaceAll(cases, '0.0f', 'fround(0.0)');
 cases = ReplaceAll(cases, '1.0f', 'fround(1.0)');
+cases = ReplaceAll(cases, "' '", '32');
+cases = ReplaceAll(cases, "'\\n'", '10');
 cases = ReplaceAll(cases, /[(]ucell_t[)] ([^ ;)]+)/, '($1>>>0)');
 
 cases = ReplaceAll(cases, '*(w + 4)', '(i32[(w + 4)>>2]|0)');
 cases = ReplaceAll(cases, 'w + 4 * 2', '(w+8)|0');
 cases = ReplaceAll(cases, 'w + 4', '(w+4)|0');
 
+cases = ReplaceAll(cases, '(g_sys->context + 1)', '(i32[g_sys_context>>2]|0 + 4)|0');
 cases = ReplaceAll(cases, '&g_sys->builtins->code', '((i32[g_sys_builtins>>2] + 8)|0)');
 cases = ReplaceAll(cases, /[&]g_sys[-][>]([A-Za-z_]+)/, 'g_sys_$1');
 cases = ReplaceAll(cases, /g_sys[-][>]([A-Za-z_]+) [=] /, 'i32[g_sys_$1>>2] = ');

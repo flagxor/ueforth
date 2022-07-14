@@ -190,14 +190,12 @@ COMMON_PHASE1 = common/comments.fs \
                 common/structures.fs
 
 COMMON_PHASE1e = common/comments.fs \
-                                    common/extra1.fs \
+                                    common/tier2_forth.fs \
                  common/boot.fs \
-                                    common/extra2.fs \
                  common/io.fs \
                  common/conditionals.fs \
                  common/vocabulary.fs \
                  common/floats.fs \
-                                    common/extra3.fs \
                  common/structures.fs
 
 COMMON_PHASE2 = common/tasks.fs common/utils.fs common/locals.fs \
@@ -247,7 +245,8 @@ $(GEN)/esp32_boot.h: tools/source_to_string.js $(ESP32_BOOT) | $(GEN)
 
 $(GEN)/dump_web_opcodes: \
     web/dump_web_opcodes.c \
-    common/opcodes.h \
+    common/tier0_opcodes.h \
+    common/tier1_opcodes.h \
     common/bits.h \
     common/floats.h | $(GEN)
 	$(CXX) $(CFLAGS) $< -o $@
@@ -330,8 +329,9 @@ $(POSIX):
 
 $(POSIX)/ueforth: \
     posix/main.c \
-    common/opcodes.h \
-    common/extra_opcodes.h \
+    common/tier0_opcodes.h \
+    common/tier1_opcodes.h \
+    common/tier2_opcodes.h \
     common/calls.h \
     common/calling.h \
     common/floats.h \
@@ -354,8 +354,9 @@ $(WINDOWS):
 
 $(WINDOWS)/uEf32.obj: \
     windows/main.c \
-    common/opcodes.h \
-    common/extra_opcodes.h \
+    common/tier0_opcodes.h \
+    common/tier1_opcodes.h \
+    common/tier2_opcodes.h \
     common/calls.h \
     common/calling.h \
     common/floats.h \
@@ -372,8 +373,9 @@ $(WINDOWS)/uEf32.exe: \
 
 $(WINDOWS)/uEf64.obj: \
     windows/main.c \
-    common/opcodes.h \
-    common/extra_opcodes.h \
+    common/tier0_opcodes.h \
+    common/tier1_opcodes.h \
+    common/tier2_opcodes.h \
     common/calls.h \
     common/calling.h \
     common/floats.h \
@@ -406,8 +408,9 @@ $(GEN)/esp32_sim_opcodes.h: $(GEN)/print-esp32-builtins | $(GEN)
 $(ESP32_SIM)/Esp32forth-sim: \
     esp32/sim_main.cpp \
     esp32/main.cpp \
-    common/opcodes.h \
-    common/extra_opcodes.h \
+    common/tier0_opcodes.h \
+    common/tier1_opcodes.h \
+    common/tier2_opcodes.h \
     common/floats.h \
     common/calling.h \
     common/floats.h \
@@ -429,8 +432,9 @@ $(ESP32)/ESP32forth:
 
 ESP32_PARTS = tools/replace.js \
               esp32/template.ino \
-              common/opcodes.h \
-              common/extra_opcodes.h \
+              common/tier0_opcodes.h \
+              common/tier1_opcodes.h \
+              common/tier2_opcodes.h \
               common/floats.h \
               common/calling.h \
               common/bits.h \
@@ -446,8 +450,9 @@ $(ESP32)/ESP32forth/ESP32forth.ino: $(ESP32_PARTS) | $(ESP32)/ESP32forth
 	cat esp32/template.ino | tools/replace.js \
      VERSION=$(VERSION) \
      REVISION=$(REVISION) \
-     opcodes=@common/opcodes.h \
-     extra_opcodes=@common/extra_opcodes.h \
+     tier0_opcodes=@common/tier0_opcodes.h \
+     tier1_opcodes=@common/tier1_opcodes.h \
+     tier2_opcodes=@common/tier2_opcodes.h \
      calling=@common/calling.h \
      floats=@common/floats.h \
      bits=@common/bits.h \

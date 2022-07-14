@@ -19,7 +19,8 @@
 #define SSMOD_FUNC SSMOD_FUNC
 #define COMMA COMMA
 
-#include "common/opcodes.h"
+#include "common/tier0_opcodes.h"
+#include "common/tier1_opcodes.h"
 #include "common/floats.h"
 #include "common/bits.h"
 
@@ -32,7 +33,8 @@
 enum {
 #define Z(flags, name, op, code) OP_ ## op,
   PLATFORM_OPCODE_LIST
-  OPCODE_LIST
+  TIER1_OPCODE_LIST
+  TIER0_OPCODE_LIST
 #undef Z
 };
 
@@ -54,7 +56,8 @@ int main(int argc, char *argv[]) {
 #define Z(flags, name, op, code) \
     printf("          case %d:  // %s\n            %s; break;\n", OP_ ## op, name, #code);
     PLATFORM_OPCODE_LIST
-    OPCODE_LIST
+    TIER1_OPCODE_LIST
+    TIER0_OPCODE_LIST
 #undef Z
   } else if (argc == 2 && strcmp(argv[1], "dict") == 0) {
 #define V(name) \
@@ -67,7 +70,8 @@ int main(int argc, char *argv[]) {
           ((VOC_ ## flags >> 8) & 0xff) | BUILTIN_MARK, \
           (VOC_ ## flags & 0xff), OP_ ## op);
     PLATFORM_OPCODE_LIST
-    OPCODE_LIST
+    TIER1_OPCODE_LIST
+    TIER0_OPCODE_LIST
 #undef Z
   } else if (argc == 2 && strcmp(argv[1], "sys") == 0) {
     G_SYS *g_sys = 0;

@@ -140,7 +140,19 @@ e: check-boot
   out: ( 
 ;e
 
-e: check-extra-opcodes
+e: check-tier2-opcodes
+  out: >flags 
+  out: >params 
+  out: >size 
+  out: >link& 
+  out: >link 
+  out: >name 
+  out: >body 
+  out: aligned 
+  out: align 
+;e
+
+e: check-tier1-opcodes
   out: nip 
   out: rdrop 
   out: */ 
@@ -190,18 +202,8 @@ e: check-extra-opcodes
 
   out: here 
   out: allot 
-  out: aligned 
-  out: align 
   out: , 
   out: c, 
-
-  out: >flags 
-  out: >params 
-  out: >size 
-  out: >link& 
-  out: >link 
-  out: >name 
-  out: >body 
 
   out: current 
   out: #tib 
@@ -212,7 +214,7 @@ e: check-extra-opcodes
   out: latestxt 
 ;e
 
-e: check-core-opcodes
+e: check-tier0-opcodes
   out: 0= 
   out: 0< 
   out: + 
@@ -454,8 +456,9 @@ e: check-phase1
 
 e: check-opcodes
   check-float-opcodes
-  check-extra-opcodes
-  check-core-opcodes
+  check-tier2-opcodes
+  check-tier1-opcodes
+  check-tier0-opcodes
 ;e
 
 e: check-desktop

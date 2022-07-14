@@ -79,7 +79,7 @@ typedef struct {
   const void *code;
 } BUILTIN_WORD;
 
-#define OPCODE_LIST \
+#define TIER0_OPCODE_LIST \
   X("0=", ZEQUAL, tos = !tos ? -1 : 0) \
   X("0<", ZLESS, tos = (tos|0) < 0 ? -1 : 0) \
   X("+", PLUS, tos += *sp--) \

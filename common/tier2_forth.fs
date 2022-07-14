@@ -12,20 +12,16 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-( Add more words that are usually in extra_opcodes.h )
+( Dictionary Format )
+: >flags& ( xt -- a ) cell - ; : >flags ( xt -- flags ) >flags& c@ ;
+: >name-length ( xt -- n ) >flags& 1+ c@ ;
+: >params ( xt -- n ) >flags& 2 + sw@ $ffff and ;
+: >size ( xt -- n ) dup >params cells swap >name-length aligned + 3 cells + ;
+: >link& ( xt -- a ) 2 cells - ;   : >link ( xt -- a ) >link& @ ;
+: >name ( xt -- a n ) dup >name-length swap >link& over aligned - swap ;
+: >body ( xt -- a ) dup @ [ ' >flags @ ] literal = 2 + cells + ;
 
-: fsqrt ( r -- r ) 1e 20 0 do fover fover f/ f+ 0.5e f* loop fnip ;
-
-3.14159265359e fconstant pi
+: aligned ( a -- a ) cell 1 - dup >r + r> invert and ;
+: align   here aligned here - allot ;
 
 : fill32 ( a n v ) swap >r swap r> 0 ?do 2dup ! cell+ loop 2drop ;
-
-( Transfer internals that are extra opcodes )
-internals definitions
-transfer{
-  'heap 'context 'latestxt 'notfound
-  'heap-start 'heap-size 'stack-cells
-  'boot 'boot-size 'tib
-  'argc 'argv 'runner fill32
-}transfer
-forth definitions

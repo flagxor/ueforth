@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#define EXTRA_OPCODE_LIST \
+#define TIER1_OPCODE_LIST \
   Y(nip, NIP) \
   Y(rdrop, --rp) \
   XV(forth, "*/", STARSLASH, SSMOD_FUNC; NIP) \
@@ -26,12 +26,12 @@
   Y(rot, w = sp[-1]; sp[-1] = *sp; *sp = tos; tos = w) \
   X("-rot", MROT, w = tos; tos = *sp; *sp = sp[-1]; sp[-1] = w) \
   X("?dup", QDUP, if (tos) DUP) \
-  X("<", LESS, tos = (*sp--) < tos ? -1 : 0) \
-  X(">", GREATER, tos = (*sp--) > tos ? -1 : 0) \
-  X("<=", LESSEQ, tos = (*sp--) <= tos ? -1 : 0) \
-  X(">=", GREATEREQ, tos = (*sp--) >= tos ? -1 : 0) \
-  X("=", EQUAL, tos = (*sp--) == tos ? -1 : 0) \
-  X("<>", NOTEQUAL, tos = (*sp--) != tos ? -1 : 0) \
+  X("<", LESS, tos = *sp < tos ? -1 : 0; --sp) \
+  X(">", GREATER, tos = *sp > tos ? -1 : 0; --sp) \
+  X("<=", LESSEQ, tos = *sp <= tos ? -1 : 0; --sp) \
+  X(">=", GREATEREQ, tos = *sp >= tos ? -1 : 0; --sp) \
+  X("=", EQUAL, tos = *sp == tos ? -1 : 0; --sp) \
+  X("<>", NOTEQUAL, tos = *sp != tos ? -1 : 0; --sp) \
   X("0<>", ZNOTEQUAL, tos = tos ? -1 : 0) \
   Y(bl, DUP; tos = ' ') \
   Y(nl, DUP; tos = '\n') \
@@ -48,7 +48,7 @@
   X("2drop", TWODROP, NIP; DROP) \
   X("2dup", TWODUP, DUP; tos = sp[-1]; DUP; tos = sp[-1]) \
   X("2@", TWOAT, DUP; *sp = *(cell_t *) tos; tos = ((cell_t *) tos)[1]) \
-  X("2!", TWOSTORE, ((cell_t *) tos)[0] = sp[-1]; \
+  X("2!", TWOSTORE, *(cell_t *) tos = sp[-1]; \
       ((cell_t *) tos)[1] = *sp; sp -= 2; DROP) \
   Y(cmove, memmove((void *) *sp, (void *) sp[-1], tos); sp -= 2; DROP) \
   X("cmove>", cmove2, memmove((void *) *sp, (void *) sp[-1], tos); sp -= 2; DROP) \
@@ -60,17 +60,8 @@
   Y(abs, tos = tos < 0 ? -tos : tos) \
   Y(here, DUP; tos = (cell_t) g_sys->heap) \
   Y(allot, g_sys->heap = (cell_t *) (tos + (cell_t) g_sys->heap); DROP) \
-  Y(aligned, tos = CELL_ALIGNED(tos)) \
-  Y(align, g_sys->heap = (cell_t *) CELL_ALIGNED(g_sys->heap)) \
   X(",", COMMA, COMMA(tos); DROP) \
   X("c,", CCOMMA, CCOMMA(tos); DROP) \
-  X(">flags", TOFLAGS, tos = *TOFLAGS(tos)) \
-  X(">params", TOPARAMS, tos = *TOPARAMS(tos)) \
-  X(">size", TOSIZE, tos = TOSIZE(tos)) \
-  X(">link&", TOLINKAT, tos = (cell_t) TOLINK(tos)) \
-  X(">link", TOLINK, tos = *TOLINK(tos)) \
-  X(">name", TONAME, DUP; *sp = (cell_t) TONAME(tos); tos = *TONAMELEN(tos)) \
-  X(">body", TOBODY, tos = (cell_t) TOBODY(tos)) \
   XV(internals, "'heap", THEAP, DUP; tos = (cell_t) &g_sys->heap) \
   Y(current, DUP; tos = (cell_t) &g_sys->current) \
   XV(internals, "'context", TCONTEXT, DUP; tos = (cell_t) &g_sys->context) \
@@ -89,8 +80,5 @@
   XV(internals, "'argc", ARGC, DUP; tos = (cell_t) &g_sys->argc) \
   XV(internals, "'argv", ARGV, DUP; tos = (cell_t) &g_sys->argv) \
   XV(internals, "'runner", RUNNER, DUP; tos = (cell_t) &g_sys->runner) \
-  YV(internals, fill32, cell_t c = tos; DROP; cell_t n = tos; DROP; \
-                        uint32_t *a = (uint32_t *) tos; DROP; \
-                        for (;n;--n) *a++ = c) \
   Y(context, DUP; tos = (cell_t) (g_sys->context + 1)) \
   Y(latestxt, DUP; tos = (cell_t) g_sys->latestxt)

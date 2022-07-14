@@ -19,8 +19,9 @@
 enum {
 #define Z(flags, name, op, code) OP_ ## op,
   PLATFORM_OPCODE_LIST
-  EXTRA_OPCODE_LIST
-  OPCODE_LIST
+  TIER2_OPCODE_LIST
+  TIER1_OPCODE_LIST
+  TIER0_OPCODE_LIST
 #undef Z
 };
 
@@ -30,8 +31,9 @@ static cell_t *forth_run(cell_t *init_rp) {
     name, ((VOC_ ## flags >> 8) & 0xff) | BUILTIN_MARK, sizeof(name) - 1, \
     (VOC_ ## flags & 0xff), (void *) OP_ ## op,
     PLATFORM_OPCODE_LIST
-    EXTRA_OPCODE_LIST
-    OPCODE_LIST
+    TIER2_OPCODE_LIST
+    TIER1_OPCODE_LIST
+    TIER0_OPCODE_LIST
 #undef Z
     0, 0, 0,
   };
@@ -51,8 +53,9 @@ work:
     switch (*(cell_t *) w & 0xff) {
 #define Z(flags, name, op, code) case OP_ ## op: { code; } NEXT;
   PLATFORM_OPCODE_LIST
-  EXTRA_OPCODE_LIST
-  OPCODE_LIST
+  TIER2_OPCODE_LIST
+  TIER1_OPCODE_LIST
+  TIER0_OPCODE_LIST
 #undef Z
     }
   }

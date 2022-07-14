@@ -13,8 +13,9 @@
 // limitations under the License.
 
 #include "esp32/options.h"
-#include "common/opcodes.h"
-#include "common/extra_opcodes.h"
+#include "common/tier0_opcodes.h"
+#include "common/tier1_opcodes.h"
+#include "common/tier2_opcodes.h"
 #include "common/floats.h"
 #include "common/calling.h"
 
