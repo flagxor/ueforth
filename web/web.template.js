@@ -36,20 +36,15 @@ var u16 = new Uint16Array(heap);
 var u8 = new Uint8Array(heap);
 var builtins = [];
 var opcodes = {};
-var objects = [Type, Eval];
+var objects = [SetEval];
 
 {{sys}}
 
-function Type(sp) {
+function SetEval(sp) {
+  var index = i32[sp>>2]; sp -= 4;
   var n = i32[sp>>2]; sp -= 4;
   var a = i32[sp>>2]; sp -= 4;
-  console.log(GetString(a, n));
-}
-
-function Eval(sp) {
-  var n = i32[sp>>2]; sp -= 4;
-  var a = i32[sp>>2]; sp -= 4;
-  eval(GetString(a, n));
+  objects[index] = eval(GetString(a, n));
 }
 
 function Call(sp) {
