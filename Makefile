@@ -199,15 +199,17 @@ COMMON_PHASE1e = common/comments.fs \
                  common/structures.fs
 
 COMMON_PHASE2 = common/tasks.fs common/utils.fs common/locals.fs \
-                common/filetools.fs common/including.fs \
-                common/streams.fs common/blocks.fs
+                common/streams.fs
+
+COMMON_FILETOOLS = common/filetools.fs common/including.fs \
+                   common/blocks.fs
 
 COMMON_DESKTOP = common/ansi.fs common/desktop.fs \
                  common/graphics.fs common/graphics_utils.fs common/heart.fs
 
 POSIX_BOOT =  $(COMMON_PHASE1) \
               posix/posix.fs posix/allocation.fs posix/termios.fs \
-              $(COMMON_PHASE2) $(COMMON_DESKTOP) \
+              $(COMMON_PHASE2) $(COMMON_FILETOOLS) $(COMMON_DESKTOP) \
               posix/x11.fs \
               posix/graphics.fs \
               posix/sockets.fs posix/telnetd.fs posix/httpd.fs posix/web_interface.fs \
@@ -224,7 +226,7 @@ WINDOWS_BOOT = $(COMMON_PHASE1) \
                windows/windows_gdi.fs \
                windows/windows_messages.fs \
                windows/allocation.fs \
-               $(COMMON_PHASE2) $(COMMON_DESKTOP) \
+               $(COMMON_PHASE2) $(COMMON_FILETOOLS) $(COMMON_DESKTOP) \
                windows/graphics.fs \
                posix/autoboot.fs \
                common/fini.fs
@@ -233,7 +235,7 @@ $(GEN)/windows_boot.h: tools/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 
 ESP32_BOOT = $(COMMON_PHASE1) \
              esp32/allocation.fs \
-             $(COMMON_PHASE2) \
+             $(COMMON_PHASE2) $(COMMON_FILETOOLS) \
              esp32/bindings.fs esp32/platform.fs \
              posix/httpd.fs posix/web_interface.fs esp32/web_interface.fs \
              esp32/registers.fs esp32/timers.fs \
@@ -262,7 +264,7 @@ $(GEN)/web_sys.js: $(GEN)/dump_web_opcodes | $(GEN)
 
 WEB_BOOT =  $(COMMON_PHASE1e) \
             $(COMMON_PHASE2) \
-            common/fini.fs
+            web/fini.fs
 $(GEN)/web_boot.js: tools/source_to_string.js $(WEB_BOOT) | $(GEN)
 	$< -web boot $(VERSION) $(REVISION) $(WEB_BOOT) >$@
 

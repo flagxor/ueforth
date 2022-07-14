@@ -463,9 +463,9 @@ function VM(stdlib, foreign, heap) {
     }
   }
 
-  function memmove(src, dst, n) {
-    src = src | 0;
+  function memmove(dst, src, n) {
     dst = dst | 0;
+    src = src | 0;
     n = n | 0;
     if ((src | 0) < (dst | 0)) {
       src = (src + n - 1) | 0;

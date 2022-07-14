@@ -432,7 +432,7 @@ e: check-args
   out: argc 
 ;e
 
-e: check-highlevel
+e: check-imports
   out: needs 
   out: required 
   out: included? 
@@ -467,11 +467,14 @@ e: check-desktop
   check-ansi
 ;e
 
-e: check-phase2
+e: check-filetools
   check-blocks
-  out: streams 
-  check-highlevel
+  check-imports
   check-snapshots
+;e
+
+e: check-phase2
+  out: streams 
   check-locals
   check-utils
   out: ms 
@@ -497,6 +500,7 @@ e: test-windows-forth-namespace
   ' forth list-from
   out: FORTH 
   check-desktop
+  check-filetools
   check-phase2
   check-allocation
   out: default-key? 
@@ -543,6 +547,7 @@ e: test-posix-forth-namespace
   out: sockets 
   out: x11 
   check-desktop
+  check-filetools
   check-phase2
   out: form 
   out: termios 
@@ -651,6 +656,7 @@ e: test-esp32-forth-namespace
   out: WiFi 
   out: Wire 
   out: ESP 
+  check-filetools
   check-phase2
   check-allocation
   check-phase1
