@@ -19,9 +19,9 @@ forth definitions internals
 ( Bring a forth to the top of the vocabulary. )
 : ok   ." uEforth" raw-ok ;
 
-: dummy-type   2drop yield ;  ' dummy-type is type
-: dummy-key   yield 0 ;  ' dummy-key is key
-: dummy-key?   yield 0 ;  ' dummy-key? is key?
+: web-type   0 call ;  ' web-type is type
+: web-key   yield 0 ;  ' web-key is key
+: web-key?   yield 0 ;  ' web-key? is key?
 
 transfer forth
 forth

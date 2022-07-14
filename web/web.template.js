@@ -25,7 +25,7 @@ const SMUDGE = 2;
 const BUILTIN_FORK = 4;
 const BUILTIN_MARK = 8;
 
-const DEBUGGING = true;
+const DEBUGGING = false;
 
 {{boot}}
 
@@ -36,23 +36,25 @@ var u16 = new Uint16Array(heap);
 var u8 = new Uint8Array(heap);
 var builtins = [];
 var opcodes = {};
-var objects = [SetEval];
+var objects = [Type, Eval];
 
 {{sys}}
 
-function SetEval(sp) {
-  var index = i32[sp--];
-  var len = i32[sp--];
-  var code_addr = i32[sp--];
-  var code = '';
-  for (var i = 0; i < len; ++i) {
-    code += String.fromCharCode(u8[name_addr + i]);
-  }
-  objects[index] = eval(code);
+function Type(sp) {
+  var n = i32[sp>>2]; sp -= 4;
+  var a = i32[sp>>2]; sp -= 4;
+  console.log(GetString(a, n));
 }
 
-function Call(sp, tos) {
-  return objects[tos](sp);
+function Eval(sp) {
+  var n = i32[sp>>2]; sp -= 4;
+  var a = i32[sp>>2]; sp -= 4;
+  eval(GetString(a, n));
+}
+
+function Call(sp) {
+  var op = i32[sp>>2]; sp -= 4;
+  return objects[op](sp);
 }
 
 function Load(addr, content) {
@@ -533,7 +535,7 @@ function VM(stdlib, foreign, heap) {
     fp = i32[rp>>2]|0; rp = (rp - 4)|0;
     tos = i32[sp>>2]|0; sp = (sp - 4)|0;
     for (;;) {
-      trace(ip|0, sp|0, tos|0);
+      //trace(ip|0, sp|0, tos|0);
       w = i32[ip>>2]|0;
       ip = (ip + 4)|0;
       decode: for (;;) {
