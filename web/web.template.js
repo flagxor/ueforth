@@ -83,7 +83,7 @@ function TONAME(xt) {
     ? u8[TOLINK(xt)] : TOLINK(xt) - CELL_ALIGNED(u8[TONAMELEN(xt)]);
 }
 function TOBODY(xt) {
-  return xt + (i32[xt>>2] === OP_DOCREATE || i32[xt>>2] === OP_DODOES ? 2 : 1);
+  return xt + (i32[xt>>2] === OP_DOCREATE || i32[xt>>2] === OP_DODOES ? 2 : 1) * 4;
 }
 
 function DOES(ip) {
@@ -437,6 +437,7 @@ function VM(stdlib, foreign, heap) {
   var DOES = foreign.DOES;
   var DOIMMEDIATE = foreign.DOIMMEDIATE;
   var UNSMUDGE = foreign.UNSMUDGE;
+  var TOBODY = foreign.TOBODY;
   var create = foreign.create;
   var find = foreign.find;
   var parse = foreign.parse;
@@ -533,6 +534,7 @@ var ffi = {
   'COMMA': function(n) { COMMA(n); },
   'CCOMMA': function(n) { COMMA(n); },
   'SSMOD': function(sp) { SSMOD(sp); },
+  'TOBODY': function(tos) { return TOBODY(tos); },
   'DOES': function(ip) { DOES(ip); },
   'DOIMMEDIATE': function() { DOIMMEDIATE(); },
   'UNSMUDGE': function() { UNSMUDGE(); },
@@ -549,6 +551,7 @@ var module = VM(globalObj, ffi, heap);
 Init();
 setTimeout(function() {
   module.run();
+  console.log('yield');
 }, 10);
 
 })();

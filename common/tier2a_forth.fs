@@ -12,17 +12,13 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-internals definitions
-( TODO: Figure out why this has to happen so late. )
-transfer internals-builtins
-forth definitions internals
-( Bring a forth to the top of the vocabulary. )
-: ok   ." uEforth" raw-ok ;
+: aligned ( a -- a ) cell 1 - dup >r + r> invert and ;
+: align   here aligned here - allot ;
 
-: dummy-type   2drop yield ;  ' dummy-type is type
-: dummy-key   yield 0 ;  ' dummy-key is key
-: dummy-key?   yield 0 ;  ' dummy-key is key?
-
-transfer forth
-forth
-ok
+( Dictionary Format )
+: >flags& ( xt -- a ) cell - ;   : >flags ( xt -- flags ) >flags& c@ ;
+: >name-length ( xt -- n ) >flags& 1+ c@ ;
+: >params ( xt -- n ) >flags& 2 + sw@ $ffff and ;
+: >size ( xt -- n ) dup >params cells swap >name-length aligned + 3 cells + ;
+: >link& ( xt -- a ) 2 cells - ;   : >link ( xt -- a ) >link& @ ;
+: >name ( xt -- a n ) dup >name-length swap >link& over aligned - swap ;

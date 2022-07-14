@@ -14,9 +14,11 @@
 
 ( Cooperative Tasks )
 
-vocabulary tasks   tasks definitions
+vocabulary tasks   tasks definitions also internals
 
 variable task-list
+
+: .tasks   task-list @ begin dup 2 cells - see. @ dup task-list @ = until drop ;
 
 forth definitions tasks also internals
 
@@ -51,4 +53,4 @@ DEFINED? ms-ticks [IF]
 
 tasks definitions
 0 0 0 task main-task   main-task start-task
-forth definitions
+only forth definitions

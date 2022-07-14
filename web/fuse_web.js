@@ -139,6 +139,9 @@ cases = ReplaceAll(cases, 'DOES(ip)', 'DOES(ip|0)');
 cases = ReplaceAll(cases, 'PARK;', '');  // TODO
 cases = ReplaceAll(cases, '; ', ';\n            ');
 
+cases = ReplaceAll(cases, 'tos = ((tos) + (*(tos) == OP_DOCREATE || *(tos) == OP_DODOES ? 2 : 1))',
+                          'tos = TOBODY(tos|0)|0');
+
 code = code.replace('{{boot}}', function() { return boot; });
 code = code.replace('{{dict}}', function() { return dict; });
 code = code.replace('{{cases}}', function() { return cases; });

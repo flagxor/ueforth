@@ -73,16 +73,5 @@ drop
 ( Compilation State )
 : [ 0 state ! ; immediate
 : ] -1 state ! ; immediate
-: ' bl parse 2dup find dup >r -rot r> 0= 'notfound @ execute 2drop ;
+
 : literal aliteral ; immediate
-
-: f= ( r r -- f ) f- f0= ;
-: f< ( r r -- f ) f- f0< ;
-: f> ( r r -- f ) fswap f< ;
-: f<> ( r r -- f ) f= 0= ;
-: f<= ( r r -- f ) f> 0= ;
-: f>= ( r r -- f ) f< 0= ;
-
-4 constant sfloat
-: sfloats ( n -- n*4 ) sfloat * ;
-: sfloat+ ( a -- a ) sfloat + ;

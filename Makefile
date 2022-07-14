@@ -190,18 +190,19 @@ COMMON_PHASE1 = common/comments.fs \
                 common/structures.fs
 
 COMMON_PHASE1e = common/comments.fs \
-                                    common/tier2_forth.fs \
+                                    common/tier2a_forth.fs \
                  common/boot.fs \
+                                    common/tier2b_forth.fs \
                  common/io.fs \
                  common/conditionals.fs \
                  common/vocabulary.fs \
                  common/floats.fs \
                  common/structures.fs
 
-COMMON_PHASE2 = common/tasks.fs common/utils.fs common/locals.fs \
-                common/streams.fs
+COMMON_PHASE2 = common/utils.fs common/locals.fs
 
-COMMON_FILETOOLS = common/filetools.fs common/including.fs \
+COMMON_FILETOOLS = common/tasks.fs common/streams.fs \
+                   common/filetools.fs common/including.fs \
                    common/blocks.fs
 
 COMMON_DESKTOP = common/ansi.fs common/desktop.fs \

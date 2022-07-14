@@ -23,16 +23,11 @@ fp@ constant fp0
 : remaining ( -- n ) 'heap-start @ 'heap-size @ + 'heap @ - ;
 : used ( -- n ) 'heap @ sp@ 'stack-cells @ cells + - 28 + ;
 
-( Compilation State )
-: [ 0 state ! ; immediate
-: ] -1 state ! ; immediate
-
 ( Quoting Words )
 : ' bl parse 2dup find dup >r -rot r> 0= 'notfound @ execute 2drop ;
 : ['] ' aliteral ; immediate
 : char bl parse drop c@ ;
 : [char] char aliteral ; immediate
-: literal aliteral ; immediate
 
 ( Core Control Flow )
 : begin   here ; immediate

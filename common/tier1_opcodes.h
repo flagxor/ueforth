@@ -81,4 +81,7 @@
   XV(internals, "'argv", ARGV, DUP; tos = (cell_t) &g_sys->argv) \
   XV(internals, "'runner", RUNNER, DUP; tos = (cell_t) &g_sys->runner) \
   Y(context, DUP; tos = (cell_t) (g_sys->context + 1)) \
-  Y(latestxt, DUP; tos = (cell_t) g_sys->latestxt)
+  Y(latestxt, DUP; tos = (cell_t) g_sys->latestxt) \
+  XV(forth_immediate, "[", LBRACKET, g_sys->state = 0) \
+  XV(forth_immediate, "]", RBRACKET, g_sys->state = -1) \
+  YV(forth_immediate, literal, COMMA(g_sys->DOLIT_XT); COMMA(tos); DROP)

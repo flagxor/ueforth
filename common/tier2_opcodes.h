@@ -19,7 +19,6 @@
   X(">link&", TOLINKAT, tos = (cell_t) TOLINK(tos)) \
   X(">link", TOLINK, tos = *TOLINK(tos)) \
   X(">name", TONAME, DUP; *sp = (cell_t) TONAME(tos); tos = *TONAMELEN(tos)) \
-  X(">body", TOBODY, tos = (cell_t) TOBODY(tos)) \
   Y(aligned, tos = CELL_ALIGNED(tos)) \
   Y(align, g_sys->heap = (cell_t *) CELL_ALIGNED(g_sys->heap)) \
   YV(internals, fill32, cell_t c = tos; DROP; cell_t n = tos; DROP; \

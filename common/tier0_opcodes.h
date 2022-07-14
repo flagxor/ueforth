@@ -145,6 +145,7 @@ typedef struct {
               DROPn(2); COMMA(tos); DROP) \
   X("DOES>", DOES, DOES(ip); ip = (cell_t *) *rp; --rp) \
   Y(IMMEDIATE, DOIMMEDIATE()) \
+  X(">BODY", TOBODY, tos = (cell_t) TOBODY(tos)) \
   XV(internals, "'SYS", SYS, DUP; tos = (cell_t) g_sys) \
   YV(internals, YIELD, PARK; return rp) \
   X(":", COLON, DUP; DUP; tos = parse(32, sp); \

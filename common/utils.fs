@@ -122,8 +122,3 @@ forth definitions also internals
 : words   0 to line-pos context @ @
           begin dup while ?ins. dup onlines see. >link repeat drop cr ;
 only forth definitions
-
-( Extra Task Utils )
-tasks definitions also internals
-: .tasks   task-list @ begin dup 2 cells - see. @ dup task-list @ = until drop ;
-only forth definitions

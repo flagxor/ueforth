@@ -121,13 +121,10 @@ e: check-boot
   out: until 
   out: again 
   out: begin 
-  out: literal 
   out: [char] 
   out: char 
   out: ['] 
   out: ' 
-  out: ] 
-  out: [ 
   out: used 
   out: remaining 
   out: fdepth 
@@ -147,7 +144,6 @@ e: check-tier2-opcodes
   out: >link& 
   out: >link 
   out: >name 
-  out: >body 
   out: aligned 
   out: align 
 ;e
@@ -215,6 +211,9 @@ e: check-tier1-opcodes
 ;e
 
 e: check-tier0-opcodes
+  out: [ 
+  out: ] 
+  out: literal 
   out: 0= 
   out: 0< 
   out: + 
@@ -256,6 +255,7 @@ e: check-tier0-opcodes
   out: CONSTANT 
   out: DOES> 
   out: IMMEDIATE 
+  out: >BODY 
   out: : 
   out: EXIT 
   out: ; 
@@ -471,14 +471,14 @@ e: check-filetools
   check-blocks
   check-imports
   check-snapshots
+  out: streams 
+  out: ms 
+  check-tasks
 ;e
 
 e: check-phase2
-  out: streams 
   check-locals
   check-utils
-  out: ms 
-  check-tasks
 ;e
 
 DEFINED? windows [IF]
