@@ -67,7 +67,6 @@ function GetString(a, n) {
   return ret;
 }
 
-
 function CELL_ALIGNED(n) { return (n + 3) & ~3; }
 function UPPER(ch) {
   return ch >= 'a'.charCodeAt(0) && ch <= 'z'.charCodeAt(0) ? (ch & 0x5F) : ch;
@@ -79,8 +78,8 @@ function TOPARAMS(xt) { return TOFLAGS(xt) + 2; }
 function TOSIZE(xt) { return CELL_ALIGNED(u8[TONAMELEN(xt)>>2]) + 4 * i32[TOPARAMS(xt)>>2]; }
 function TOLINK(xt) { return xt - 2 * 4; }
 function TONAME(xt) {
-  return (i32[TOFLAGS(xt)>>2] & BUILTIN_MARK)
-    ? u8[TOLINK(xt)] : TOLINK(xt) - CELL_ALIGNED(u8[TONAMELEN(xt)]);
+  return (u8[TOFLAGS(xt)>>2] & BUILTIN_MARK)
+    ? i32[TOLINK(xt)] : TOLINK(xt) - CELL_ALIGNED(u8[TONAMELEN(xt)]);
 }
 function TOBODY(xt) {
   return xt + (i32[xt>>2] === OP_DOCREATE || i32[xt>>2] === OP_DODOES ? 2 : 1) * 4;
@@ -184,10 +183,11 @@ function SSMOD(sp) {
 }
 
 function Finish() {
-  if (i32[g_sys_latestxt>>2] && !i32[TOPARAMS(i32[g_sys_latestxt>>2])>>2]) {
-    var sz = i32[g_sys_heap>>2] - (g_sys_latestxt + 4);
+  if (i32[g_sys_latestxt>>2] && !u16[TOPARAMS(i32[g_sys_latestxt>>2])>>1]) {
+    var sz = i32[g_sys_heap>>2] - (i32[g_sys_latestxt>>2] + 4);
+    sz /= 4;
     if (sz < 0 || sz > 0xffff) { sz = 0xffff; }
-    i32[TOPARAMS(i32[g_sys_latestxt>>2])>>2] = sz;
+    u16[TOPARAMS(i32[g_sys_latestxt>>2])>>1] = sz;
   }
 }
 
@@ -577,8 +577,8 @@ var module = VM(globalObj, ffi, heap);
 Init();
 function run() {
   module.run();
-  setTimeout(run, 1);
+  setTimeout(run, 0);
 }
-setTimeout(run, 1);
+setTimeout(run, 0);
 
 })();

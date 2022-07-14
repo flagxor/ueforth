@@ -21,4 +21,3 @@
 : >params ( xt -- n ) >flags& 2 + sw@ $ffff and ;
 : >size ( xt -- n ) dup >params cells swap >name-length aligned + 3 cells + ;
 : >link& ( xt -- a ) 2 cells - ;   : >link ( xt -- a ) >link& @ ;
-: >name ( xt -- a n ) dup >name-length swap >link& over aligned - swap ;

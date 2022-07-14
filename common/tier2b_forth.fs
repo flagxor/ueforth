@@ -12,4 +12,12 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
+: >name ( xt -- a n )
+  dup >flags 8 and if
+    dup >link swap >name-length
+  else
+    dup >name-length swap >link& over aligned - swap
+  then
+;
+
 : fill32 ( a n v ) swap >r swap r> 0 ?do 2dup ! cell+ loop 2drop ;

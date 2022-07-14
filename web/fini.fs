@@ -76,7 +76,7 @@ r|
   return sp;
 })
 | 2 jseval!
-: web-type ( a n -- ) 2 call ;
+: web-type ( a n -- ) 2 call yield ;
 ' web-type is type
 
 r|

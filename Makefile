@@ -556,6 +556,9 @@ deploy: all
 	cd out/deploy && gcloud app deploy -q --project esp32forth *.yaml
 	cd out/deploy && gcloud app deploy -q --project eforth *.yaml
 
+d8:
+	${HOME}/src/v8/v8/out/x64.release/d8 out/web/ueforth.js
+
 # ---- INSTALL ----
 
 install: $(POSIX)/ueforth
