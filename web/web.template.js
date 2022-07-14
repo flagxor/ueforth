@@ -358,7 +358,7 @@ function Evaluate1(rp) {
           fp += 4; f32[fp>>2] = f32[n>>2];
         }
       } else {
-        console.log('CANT FIND: ' + GetString(name, len));
+        if (DEBUGGING) { console.log('CANT FIND: ' + GetString(name, len)); }
         sp += 4; i32[sp>>2] = name;
         sp += 4; i32[sp>>2] = len;
         sp += 4; i32[sp>>2] = -1;
@@ -575,9 +575,10 @@ var globalObj = getGlobalObj();
 
 var module = VM(globalObj, ffi, heap);
 Init();
-setTimeout(function() {
+function run() {
   module.run();
-  console.log('yield');
-}, 10);
+  setTimeout(run, 1);
+}
+setTimeout(run, 1);
 
 })();
