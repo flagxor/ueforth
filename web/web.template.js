@@ -86,6 +86,11 @@ function TOBODY(xt) {
   return xt + (i32[xt>>2] === OP_DOCREATE || i32[xt>>2] === OP_DODOES ? 2 : 1);
 }
 
+function DOES(ip) {
+  i32[i32[i32[g_sys_current>>2]>>2]>>2] = OP_DODOES;
+  i32[(i32[i32[g_sys_current>>2]>>2] + 4)>>2] = ip;
+}
+
 function BUILTIN_ITEM(i) {
   return i32[g_sys_builtins>>2] + 4 * 3 * i;
 }
@@ -141,6 +146,15 @@ function COMMA(value) {
 function CCOMMA(value) {
   u8[i32[g_sys_heap>>2]>>2] = value;
   i32[g_sys_heap>>2]++;
+}
+
+function SSMOD(sp) {
+  var a = i32[(sp - 8)>>2];
+  var b = i32[(sp - 4)>>2];
+  var c = i32[sp>>2];
+  a *= b;
+  i32[(sp - 8)>>2] = a / c;
+  i32[sp>>2] = a % c;
 }
 
 function Finish() {
@@ -518,8 +532,8 @@ var ffi = {
   'log': function(n) { console.log(n); },
   'COMMA': function(n) { COMMA(n); },
   'CCOMMA': function(n) { COMMA(n); },
-  'SSMOD': function() { console.log('ssmod'); },
-  'DOES': function() { console.log('does'); },
+  'SSMOD': function(sp) { SSMOD(sp); },
+  'DOES': function(ip) { DOES(ip); },
   'DOIMMEDIATE': function() { DOIMMEDIATE(); },
   'UNSMUDGE': function() { UNSMUDGE(); },
 };

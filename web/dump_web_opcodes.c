@@ -105,6 +105,7 @@ int main(int argc, char *argv[]) {
     EMITSYS(DOCREATE_OP);
     EMITSYS(builtins);
     printf("  const OP_DOCREATE = %d;\n", OP_DOCREATE);
+    printf("  const OP_DODOES = %d;\n", OP_DODOES);
     printf("  const OP_DOCOL = %d;\n", OP_DOCOL);
     printf("  const OP_DOVAR = %d;\n", OP_DOVAR);
     printf("  const OP_DOCON = %d;\n", OP_DOCON);

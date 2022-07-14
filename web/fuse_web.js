@@ -118,7 +118,10 @@ cases = ReplaceAll(cases, /ADDROF[(]([^)]+)[)]/, 'OP_$1');
 
 cases = ReplaceAll(cases, 'return rp', 'i32[g_sys_rp>>2] = rp | 0; return');
 
-cases = ReplaceAll(cases, 'SSMOD_FUNC', '');
+cases = ReplaceAll(cases, 'SSMOD_FUNC',
+                   'sp = (sp + 4)|0; i32[sp>>2] = tos|0; ' +
+                   'SSMOD(sp|0); tos = i32[sp>>2]|0; sp = (sp - 8)|0');
+
 // Keep Together   vvv
 cases = ReplaceAll(cases, /tos ([^=]?)= /, 'txx $1= ');
 cases = ReplaceAll(cases, ' tos', ' (tos|0)');

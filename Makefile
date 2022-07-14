@@ -261,9 +261,7 @@ $(GEN)/web_sys.js: $(GEN)/dump_web_opcodes | $(GEN)
 	$< sys >$@
 
 WEB_BOOT =  $(COMMON_PHASE1e) \
-            posix/posix.fs posix/allocation.fs posix/termios.fs \
             $(COMMON_PHASE2) \
-            posix/autoboot.fs \
             common/fini.fs
 $(GEN)/web_boot.js: tools/source_to_string.js $(WEB_BOOT) | $(GEN)
 	$< -web boot $(VERSION) $(REVISION) $(WEB_BOOT) >$@
