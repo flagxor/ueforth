@@ -21,7 +21,7 @@ forth definitions internals
 
 : dummy-type   2drop yield ;  ' dummy-type is type
 : dummy-key   yield 0 ;  ' dummy-key is key
-: dummy-key?   yield 0 ;  ' dummy-key is key?
+: dummy-key?   yield 0 ;  ' dummy-key? is key?
 
 transfer forth
 forth

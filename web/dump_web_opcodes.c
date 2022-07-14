@@ -27,7 +27,7 @@
 #define VOCABULARY_LIST V(forth) V(internals)
 
 #define PLATFORM_OPCODE_LIST \
-  X("CALL", CALL, sp = Call(sp|0, tos|0) | 0; DROP) \
+  X("CALL", CALL, DUP; sp = Call(sp|0)|0; DROP) \
   FLOATING_POINT_LIST
 
 enum {

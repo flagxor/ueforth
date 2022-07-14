@@ -25,6 +25,8 @@ const SMUDGE = 2;
 const BUILTIN_FORK = 4;
 const BUILTIN_MARK = 8;
 
+const DEBUGGING = true;
+
 {{boot}}
 
 var heap = new ArrayBuffer(HEAP_SIZE);
@@ -33,6 +35,7 @@ var i32 = new Int32Array(heap);
 var u16 = new Uint16Array(heap);
 var u8 = new Uint8Array(heap);
 var builtins = [];
+var opcodes = {};
 var objects = [SetEval];
 
 {{sys}}
@@ -120,7 +123,7 @@ function Find(name) {
           if (BUILTIN_VOCAB(i) === vocab &&
               name.length === BUILTIN_NAMELEN(i) &&
               name.toUpperCase() === GetString(BUILTIN_NAME(i), name.length).toUpperCase()) {
-console.log('FOUND: ' + name);
+            if (DEBUGGING) { console.log('FOUND: ' + name); }
             return BUILTIN_CODE(i);
           }
         }
@@ -128,14 +131,40 @@ console.log('FOUND: ' + name);
       if (!(u8[TOFLAGS(xt)] & SMUDGE) &&
           name.length === u8[TONAMELEN(xt)] &&
           name.toUpperCase() === GetString(TONAME(xt), name.length).toUpperCase()) {
-console.log('FOUND REGULAR: ' + name);
+          if (DEBUGGING) { console.log('FOUND REGULAR: ' + name); }
         return xt;
       }
       xt = i32[TOLINK(xt)>>2];
     }
   }
-console.log('NOT FOUND! ' + name);
+  if (DEBUGGING) { console.log('NOT FOUND: ' + name); }
   return 0;
+}
+
+function trace(ip, sp, tos) {
+  var line = '[';
+  for (var i = 0; i < 3; i++) {
+    line += i32[(sp + (i - 2) * 4)>>2] + ' ';
+  }
+  line += tos + '] ';
+  while (line.length < 25) {
+    line += ' ';
+  }
+  line += ip + ': ';
+  for (var i = 0; i < 10; ++i) {
+    var val = i32[(ip + i * 4)>>2];
+    if (i32[val>>2] && opcodes[i32[val>>2]] !== undefined) {
+      var op = opcodes[i32[val>>2]];
+      if (op === 'DOCOL') {
+        line += op + '(' + val + ') ';
+      } else {
+        line += op + ' ';
+      }
+    } else {
+      line += val + ' ';
+    }
+  }
+  console.log(line);
 }
 
 function COMMA(value) {
@@ -144,7 +173,7 @@ function COMMA(value) {
 }
 
 function CCOMMA(value) {
-  u8[i32[g_sys_heap>>2]>>2] = value;
+  u8[i32[g_sys_heap>>2]] = value;
   i32[g_sys_heap>>2]++;
 }
 
@@ -175,7 +204,7 @@ function DOIMMEDIATE() {
 }
 
 function Create(name, flags, op) {
-console.log('CREATE: ' + name);
+  if (DEBUGGING) { console.log('CREATE: ' + name); }
   Finish();
   i32[g_sys_heap>>2] = CELL_ALIGNED(i32[g_sys_heap>>2]);
   i32[g_sys_heap>>2] = Load(i32[g_sys_heap>>2], name);  // name
@@ -188,6 +217,7 @@ console.log('CREATE: ' + name);
 }
 
 function Builtin(name, flags, vocab, opcode) {
+  opcodes[opcode] = name;
   builtins.push([name, flags | BUILTIN_MARK, vocab, opcode]);
 }
 
@@ -225,7 +255,7 @@ function Parse(sep, ret) {
   var len = i32[g_sys_tin>>2] - start;
   if (i32[g_sys_tin>>2] < i32[g_sys_ntib>>2]) { ++i32[g_sys_tin>>2]; }
   i32[ret>>2] = i32[g_sys_tib>>2] + start;
-  console.log('PARSE: [' + GetString(i32[ret>>2], len) + ']');
+  if (DEBUGGING) { console.log('PARSE: [' + GetString(i32[ret>>2], len) + ']'); }
   return len;
 }
 
@@ -308,14 +338,12 @@ function Evaluate1(rp) {
   var xt = Find(GetString(name, len));
   if (xt) {
     if (i32[g_sys_state>>2] && !(u8[TOFLAGS(xt)] & IMMEDIATE)) {
-console.log('compile');
       COMMA(xt);
     } else {
-console.log('execute');
       call = xt;
     }
   } else {
-console.log('CONVERTING: ' + GetString(name, len));
+    if (DEBUGGING) { console.log('CONVERTING: ' + GetString(name, len)); }
     var n = sp + 16;
     if (Convert(name, len, i32[g_sys_base>>2], n)) {
       if (i32[g_sys_state>>2]) {
@@ -445,6 +473,7 @@ function VM(stdlib, foreign, heap) {
   var fconvert = foreign.fconvert;
   var evaluate1 = foreign.evaluate1;
   var emitlog = foreign.log;
+  var trace = foreign.trace;
 
   var u8 = new stdlib.Uint8Array(heap);
   var i16 = new stdlib.Int16Array(heap);
@@ -504,12 +533,11 @@ function VM(stdlib, foreign, heap) {
     fp = i32[rp>>2]|0; rp = (rp - 4)|0;
     tos = i32[sp>>2]|0; sp = (sp - 4)|0;
     for (;;) {
+      trace(ip|0, sp|0, tos|0);
       w = i32[ip>>2]|0;
-      //emitlog(ip|0);
       ip = (ip + 4)|0;
       decode: for (;;) {
         ir = u8[w]|0;
-        //emitlog(ir|0);
         switch (ir&0xff) {
 {{cases}}
           default:
@@ -531,8 +559,9 @@ var ffi = {
   'fconvert': function(pos, n, ret) { return FConvert(pos, n, ret); },
   'evaluate1': function(rp) { return Evaluate1(rp); },
   'log': function(n) { console.log(n); },
+  'trace': function(ip, sp, tos) { trace(ip, sp, tos); },
   'COMMA': function(n) { COMMA(n); },
-  'CCOMMA': function(n) { COMMA(n); },
+  'CCOMMA': function(n) { CCOMMA(n); },
   'SSMOD': function(sp) { SSMOD(sp); },
   'TOBODY': function(tos) { return TOBODY(tos); },
   'DOES': function(ip) { DOES(ip); },
