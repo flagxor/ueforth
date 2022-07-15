@@ -45,6 +45,7 @@ function SetEval(sp) {
   var n = i32[sp>>2]; sp -= 4;
   var a = i32[sp>>2]; sp -= 4;
   objects[index] = eval(GetString(a, n));
+  return sp;
 }
 
 function Call(sp) {
