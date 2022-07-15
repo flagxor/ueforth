@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VERSION=7.0.6.20
-STABLE_VERSION=7.0.5.4
+VERSION=7.0.7.0
+STABLE_VERSION=7.0.6.19
+OLD_STABLE_VERSION=7.0.5.4
 REVISION=$(shell git rev-parse HEAD | head -c 20)
 REVSHORT=$(shell echo $(REVISION) | head -c 7)
 
@@ -495,6 +496,14 @@ publish-linux: $(POSIX)/ueforth
     $(POSIX)/ueforth \
     $(ARCHIVE)/ueforth-$(VERSION).linux
 
+publish-web: $(WEB)/ueforth.js
+	$(GSUTIL_CP) \
+    $(WEB)/ueforth.js \
+    $(ARCHIVE)/ueforth-$(VERSION)-$(REVSHORT).js
+	$(GSUTIL_CP) \
+    $(WEB)/ueforth.js \
+    $(ARCHIVE)/ueforth-$(VERSION).js
+
 publish-windows: $(WINDOWS)/uEf32.exe $(WINDOWS)/uEf64.exe
 	$(GSUTIL_CP) \
     $(WINDOWS)/uEf32.exe \
@@ -515,7 +524,7 @@ publish-index: | $(GEN)
     $(GEN)/archive.html \
     gs://eforth/releases/archive.html
 
-publish: publish-esp32 publish-linux publish-windows publish-index
+publish: publish-esp32 publish-linux publish-web publish-windows publish-index
 
 # ---- DEPLOY ----
 
@@ -528,7 +537,8 @@ REPLACE = tools/replace.js \
           DESKTOP_COMMON=@site/desktop_common.html \
           MENU=@site/menu.html \
           VERSION=${VERSION} \
-          STABLE_VERSION=${STABLE_VERSION}
+          STABLE_VERSION=${STABLE_VERSION} \
+          OLD_STABLE_VERSION=${STABLE_VERSION}
 UE_REPLACE = $(REPLACE) FORTH=uEForth
 ESP_REPLACE = $(REPLACE) FORTH=ESP32forth
 
@@ -545,6 +555,8 @@ $(DEPLOY)/app.yaml: $(RES)/eforth.ico \
 	cp site/*.go $(DEPLOY)/
 	cp site/*.yaml $(DEPLOY)/
 	cp site/.gcloudignore $(DEPLOY)
+	cp out/web/ueforth.js $(DEPLOY)/
+	cat site/web.html | $(ESP_REPLACE) >$(DEPLOY)/web.html
 	cat site/ESP32forth.html | $(ESP_REPLACE) >$(DEPLOY)/ESP32forth.html
 	cat site/index.html | $(UE_REPLACE) >$(DEPLOY)/index.html
 	cat site/linux.html | $(UE_REPLACE) >$(DEPLOY)/linux.html

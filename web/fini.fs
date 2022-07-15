@@ -34,9 +34,12 @@ r|
 
 r"
   if (!globalObj['write']) {
-    var con = document.createElement('pre');
-    con.id = 'console';
-    document.body.appendChild(con);
+    var con = document.getElementById('console');
+    if (con === null) {
+      con = document.createElement('pre');
+      con.id = 'console';
+      document.body.appendChild(con);
+    }
     window.inbuffer = [];
     window.outbuffer = '';
     window.onkeypress = function(e) {
