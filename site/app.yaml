@@ -37,6 +37,11 @@ handlers:
   upload: (.*).html
   secure: always
 
+- url: /(.*).js
+  static_files: \1.js
+  upload: (.*).js
+  secure: always
+
 - url: /static
   static_dir: static
   secure: always
