@@ -92,6 +92,8 @@ LINK64 = "$(shell $(LSQ) ${MSVS}/*/*/VC/Tools/MSVC/*/bin/Hostx86/x64/link.exe | 
 RC32 = "$(shell $(LSQ) ${MSKITS}/*/bin/*/x86/rc.exe | head -n 1)"
 RC64 = "$(shell $(LSQ) ${MSKITS}/*/bin/*/x64/rc.exe | head -n 1)"
 
+D8 = "$(shell $(LSQ) ${HOME}/src/v8/v8/out/x64.release/d8)"
+
 # Selectively enable windows if tools available
 DEPLOYABLE := 1
 ifneq ("", $(CL32))
@@ -127,6 +129,11 @@ else
   $(warning "Missing some platforms skipping deployment build.")
 endif
 
+# Decide if we have d8.
+ifneq ("", $(D8))
+  TESTS += web_tests
+endif
+
 all: targets tests $(DEPLOY_TARGETS)
 fast: posix esp32_sim esp32
 
@@ -141,7 +148,7 @@ clean:
 posix_tests: unit_tests_posix see_all_test_posix save_restore_test
 win32_tests: unit_tests_win32
 win64_tests: unit_tests_win64
-web_tests:
+web_tests: sanity_test_web
 esp32_tests:
 esp32_sim_tests: unit_tests_esp32_sim see_all_test_esp32_sim sizes
 
@@ -176,6 +183,9 @@ save_restore_test: $(POSIX)/ueforth
 
 sizes: $(ESP32_SIM)/Esp32forth-sim
 	echo internals size-all bye | $< | tools/memuse.py >$(ESP32_SIM)/sizes.txt
+
+sanity_test_web: $(WEB)/ueforth.js
+	echo '120 3 + . cr bye' | $(D8) $< | tools/check_web_sanity.js
 
 # ---- GENERATED ----
 
@@ -568,7 +578,7 @@ deploy: all
 	cd out/deploy && gcloud app deploy -q --project esp32forth *.yaml
 	cd out/deploy && gcloud app deploy -q --project eforth *.yaml
 
-d8:
+d8: web
 	${HOME}/src/v8/v8/out/x64.release/d8 out/web/ueforth.js
 
 # ---- INSTALL ----

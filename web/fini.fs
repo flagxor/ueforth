@@ -33,6 +33,7 @@ r|
 : jseval ( a n -- ) 1 call ;
 
 r"
+  globalObj.inbuffer = [];
   if (!globalObj['write']) {
     var con = document.getElementById('console');
     if (con === null) {
@@ -40,14 +41,13 @@ r"
       con.id = 'console';
       document.body.appendChild(con);
     }
-    window.inbuffer = [];
     window.outbuffer = '';
     window.onkeypress = function(e) {
-      window.inbuffer.push(e.keyCode);
+      globalObj.inbuffer.push(e.keyCode);
     };
     window.onkeydown = function(e) {
       if (e.keyCode == 8) {
-        window.inbuffer.push(e.keyCode);
+        globalObj.inbuffer.push(e.keyCode);
       }
     };
   }
@@ -84,8 +84,15 @@ r|
 
 r|
 (function(sp) {
-  if (window.inbuffer.length) {
-    sp += 4; i32[sp>>2] = window.inbuffer.shift();
+  if (globalObj['readline'] && !globalObj.inbuffer.length) {
+    var line = readline();
+    for (var i = 0; i < line.length; ++i) {
+      globalObj.inbuffer.push(line.charCodeAt(i));
+    }
+    globalObj.inbuffer.push(13);
+  }
+  if (globalObj.inbuffer.length) {
+    sp += 4; i32[sp>>2] = globalObj.inbuffer.shift();
   } else {
     sp += 4; i32[sp>>2] = 0;
   }
@@ -97,12 +104,40 @@ r|
 
 r|
 (function(sp) {
-  sp += 4; i32[sp>>2] = window.inbuffer.length ? -1 : 0;
+  if (globalObj['readline']) {
+    return -1;
+  }
+  sp += 4; i32[sp>>2] = globalObj.inbuffer.length ? -1 : 0;
   return sp;
 })
 | 4 jseval!
 : web-key? ( -- f ) yield 4 call ;
 ' web-key? is key?
+
+r|
+(function(sp) {
+  var val = i32[sp>>2];  sp -= 4;
+  if (globalObj['quit']) {
+    quit(val);
+  } else {
+    Init();
+  }
+  return sp;
+})
+| 5 jseval!
+: terminate ( n -- ) 5 call ;
+: bye   0 terminate ;
+
+r|
+(function(sp) {
+  if (globalObj['write']) {
+    sp += 4; i32[sp>>2] = 0;  // Disable echo.
+  } else {
+    sp += 4; i32[sp>>2] = -1;  // Enable echo.
+  }
+  return sp;
+})
+| 6 jseval! 6 call echo !
 
 : page   12 emit ;
 
