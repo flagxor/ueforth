@@ -178,8 +178,14 @@ function SSMOD(sp) {
   var b = i32[(sp - 4)>>2];
   var c = i32[sp>>2];
   a *= b;
-  i32[(sp - 8)>>2] = a / c;
-  i32[sp>>2] = a % c;
+  var x = Math.floor(a / c);
+  var m = a - x * c;
+  if (m < 0) {
+    x--;
+    m += c;
+  }
+  i32[(sp - 8)>>2] = m;
+  i32[sp>>2] = x;
 }
 
 function Finish() {
