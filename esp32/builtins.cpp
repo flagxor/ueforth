@@ -60,7 +60,7 @@ static void IRAM_ATTR HandleInterrupt(void *arg) {
   struct handle_interrupt_args *args = (struct handle_interrupt_args *) arg;
   cell_t code[2];
   code[0] = args->xt;
-  code[1] = g_sys.YIELD_XT;
+  code[1] = g_sys->YIELD_XT;
   cell_t fstack[INTERRUPT_STACK_CELLS];
   cell_t rstack[INTERRUPT_STACK_CELLS];
   cell_t stack[INTERRUPT_STACK_CELLS];
