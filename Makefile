@@ -538,7 +538,7 @@ REPLACE = tools/replace.js \
           MENU=@site/menu.html \
           VERSION=${VERSION} \
           STABLE_VERSION=${STABLE_VERSION} \
-          OLD_STABLE_VERSION=${STABLE_VERSION}
+          OLD_STABLE_VERSION=${OLD_STABLE_VERSION}
 UE_REPLACE = $(REPLACE) FORTH=uEForth
 ESP_REPLACE = $(REPLACE) FORTH=ESP32forth
 
