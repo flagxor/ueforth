@@ -366,9 +366,9 @@ function Evaluate1(rp) {
         }
       } else {
         if (DEBUGGING) { console.log('CANT FIND: ' + GetString(name, len)); }
-        sp += 4; i32[sp>>2] = name;
-        sp += 4; i32[sp>>2] = len;
-        sp += 4; i32[sp>>2] = -1;
+        sp += 4; i32[sp>>2] = tos; tos = name;
+        sp += 4; i32[sp>>2] = tos; tos = len;
+        sp += 4; i32[sp>>2] = tos; tos = -1;
         call = i32[g_sys_notfound>>2];
       }
     }
