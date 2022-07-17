@@ -41,7 +41,7 @@
   X("2/", TWOSLASH, tos = tos >> 1) \
   X("4*", FOURSTAR, tos = tos << 2) \
   X("4/", FOURSLASH, tos = tos >> 2) \
-  X("+!", PLUSSTORE, *(cell_t *) tos += *sp--; DROP) \
+  X("+!", PLUSSTORE, *((cell_t *) tos) += *sp--; DROP) \
   X("cell+", CELLPLUS, tos += sizeof(cell_t)) \
   Y(cells, tos *= sizeof(cell_t)) \
   X("cell/", CELLSLASH, DUP; tos = sizeof(cell_t); DUP; *sp = 1; SSMOD_FUNC; NIP) \
