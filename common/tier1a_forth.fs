@@ -51,7 +51,7 @@
 : 2@ ( a -- lo hi ) dup @ swap cell+ @ ;
 : 2! ( lo hi a -- ) dup >r cell+ ! r> ! ;
 
-( Dictionary )
+( Heap Words )
 : here ( -- a ) 'sys @ ;
 : allot ( n -- ) 'sys +! ;
 : , ( n --  ) here ! cell allot ;
