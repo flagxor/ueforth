@@ -129,9 +129,10 @@ else
   $(warning "Missing some platforms skipping deployment build.")
 endif
 
+WEB_D8_TESTS =
 # Decide if we have d8.
 ifneq ("", $(D8))
-  TESTS += web_tests
+  WEB_D8_TESTS += sanity_test_web
 endif
 
 all: targets tests $(DEPLOY_TARGETS)
@@ -148,7 +149,7 @@ clean:
 posix_tests: unit_tests_posix see_all_test_posix save_restore_test
 win32_tests: unit_tests_win32
 win64_tests: unit_tests_win64
-web_tests: sanity_test_web
+web_tests: $(WEB_D8_TESTS)
 esp32_tests:
 esp32_sim_tests: unit_tests_esp32_sim see_all_test_esp32_sim sizes
 
