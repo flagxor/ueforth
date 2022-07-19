@@ -27,27 +27,75 @@ r|
 | 1 jseval!
 : jseval ( a n -- ) 1 call ;
 
-r"
-  context.inbuffer = [];
-  if (!globalObj.write) {
-    context.screen = document.getElementById('ueforth');
-    if (context.screen === null) {
-      context.screen = document.createElement('div');
-      document.body.appendChild(context.screen);
-    }
-    context.terminal = document.createElement('pre');
-    context.screen.appendChild(context.terminal);
-    context.outbuffer = '';
-    window.onkeypress = function(e) {
-      context.inbuffer.push(e.keyCode);
-    };
-    window.onkeydown = function(e) {
-      if (e.keyCode == 8) {
-        context.inbuffer.push(e.keyCode);
-      }
-    };
+r|
+context.inbuffer = [];
+context.outbuffer = '';
+if (!globalObj.write) {
+  context.screen = document.getElementById('ueforth');
+  if (context.screen === null) {
+    context.screen = document.createElement('div');
+    document.body.appendChild(context.screen);
   }
-" jseval
+  context.filler = document.createElement('div');
+  document.body.insertBefore(context.filler, document.body.firstChild);
+  context.canvas = document.createElement('canvas');
+  context.canvas.style.top = 0;
+  context.canvas.style.left = 0;
+  context.canvas.style.position = 'fixed';
+  context.canvas.style.backgroundColor = '#000';
+  context.screen.appendChild(context.canvas);
+  context.ctx = context.canvas.getContext('2d');
+  context.terminal = document.createElement('pre');
+  context.screen.appendChild(context.terminal);
+  context.mode = 1;
+  function setMode(mode) {
+    if (context.mode === mode) {
+      return ;
+    }
+    if (mode) {
+      context.filler.style.display = '';
+      context.canvas.style.display = '';
+    } else {
+      context.filler.style.display = 'none';
+      context.canvas.style.display = 'none';
+    }
+    context.mode = mode;
+  }
+  context.setMode = setMode;
+  function Resize() {
+    var width = window.innerWidth;
+    var theight = Math.max(120, Math.floor(window.innerHeight / 6));
+    var height = window.innerHeight - theight;
+    if (width == context.width && height == context.height) {
+      return;
+    }
+    context.canvas.width = width;
+    context.canvas.height = height;
+    context.filler.style.width = '1px';
+    context.filler.style.height = height + 'px';
+    context.width = width;
+    context.height = height;
+  }
+  function Draw() {
+    Resize();
+    context.ctx.fillStyle = '#000';
+    context.ctx.fillRect(0, 0, context.canvas.width, context.canvas.height);
+  }
+  window.onresize = function(e) {
+    Draw();
+  };
+  window.onkeypress = function(e) {
+    context.inbuffer.push(e.keyCode);
+  };
+  window.onkeydown = function(e) {
+    if (e.keyCode == 8) {
+      context.inbuffer.push(e.keyCode);
+    }
+  };
+  setMode(0);
+  Draw();
+}
+| jseval
 
 r|
 (function(sp) {
@@ -112,7 +160,7 @@ r|
 
 r|
 (function(sp) {
-  var val = i32[sp>>2];  sp -= 4;
+  var val = i32[sp>>2]; sp -= 4;
   if (globalObj.quit) {
     quit(val);
   } else {
@@ -134,9 +182,22 @@ r|
 })
 | 6 jseval! 6 call echo !
 
+r|
+(function(sp) {
+  var mode = i32[sp>>2]; sp -= 4;
+  if (globalObj.write) {
+    return sp;
+  }
+  context.setMode(mode);
+  return sp;
+})
+| 7 jseval!
+
 forth definitions web
 
 : bye   0 terminate ;
 : page   12 emit ;
+: gr   1 7 call ;
+: text   0 7 call ;
 
 forth definitions
