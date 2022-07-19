@@ -70,11 +70,9 @@ if (!globalObj.write) {
     var width = window.innerWidth;
     var theight = Math.max(120, Math.floor(window.innerHeight / 6));
     var height = window.innerHeight - theight;
-/*
-    if (width != context.width && height != context.height) {
+    if (width === context.width && height === context.height) {
       return;
     }
-*/
     context.canvas.style.width = width + 'px';
     context.canvas.style.height = height + 'px';
     context.filler.style.width = '1px';
@@ -220,6 +218,32 @@ r|
 })
 | 8 jseval!
 
+r|
+(function(sp) {
+  var h = i32[sp>>2]; sp -= 4;
+  var w = i32[sp>>2]; sp -= 4;
+  if (globalObj.write) {
+    return sp;
+  }
+  context.canvas.width = w;
+  context.canvas.height = h;
+  return sp;
+})
+| 9 jseval!
+
+r|
+(function(sp) {
+  if (globalObj.write) {
+    sp += 4; i32[sp>>2] = 1;
+    sp += 4; i32[sp>>2] = 1;
+    return sp;
+  }
+  sp += 4; i32[sp>>2] = context.width;
+  sp += 4; i32[sp>>2] = context.height;
+  return sp;
+})
+| 10 jseval!
+
 forth definitions web
 
 : bye   0 terminate ;
@@ -228,5 +252,7 @@ forth definitions web
 : text   0 7 call ;
 $ffffff value color
 : box ( x y w h -- ) color 8 call ;
+: window ( w h -- ) 9 call ;
+: viewport@ ( -- w h ) 10 call ;
 
 forth definitions
