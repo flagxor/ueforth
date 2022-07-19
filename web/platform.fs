@@ -39,6 +39,10 @@ if (!globalObj.write) {
   context.filler = document.createElement('div');
   document.body.insertBefore(context.filler, document.body.firstChild);
   context.canvas = document.createElement('canvas');
+  context.canvas.width = 1000;
+  context.canvas.height = 1000;
+  context.canvas.style.width = '1px';
+  context.canvas.style.height = '1px';
   context.canvas.style.top = 0;
   context.canvas.style.left = 0;
   context.canvas.style.position = 'fixed';
@@ -66,11 +70,13 @@ if (!globalObj.write) {
     var width = window.innerWidth;
     var theight = Math.max(120, Math.floor(window.innerHeight / 6));
     var height = window.innerHeight - theight;
-    if (width == context.width && height == context.height) {
+/*
+    if (width != context.width && height != context.height) {
       return;
     }
-    context.canvas.width = width;
-    context.canvas.height = height;
+*/
+    context.canvas.style.width = width + 'px';
+    context.canvas.style.height = height + 'px';
     context.filler.style.width = '1px';
     context.filler.style.height = height + 'px';
     context.width = width;
@@ -82,7 +88,7 @@ if (!globalObj.write) {
     context.ctx.fillRect(0, 0, context.canvas.width, context.canvas.height);
   }
   window.onresize = function(e) {
-    Draw();
+    Resize();
   };
   window.onkeypress = function(e) {
     context.inbuffer.push(e.keyCode);
@@ -193,11 +199,34 @@ r|
 })
 | 7 jseval!
 
+r|
+(function(sp) {
+  var c = i32[sp>>2]; sp -= 4;
+  var h = i32[sp>>2]; sp -= 4;
+  var w = i32[sp>>2]; sp -= 4;
+  var y = i32[sp>>2]; sp -= 4;
+  var x = i32[sp>>2]; sp -= 4;
+  if (globalObj.write) {
+    return sp;
+  }
+  function HexDig(n) {
+    return ('0' + n.toString(16)).slice(-2);
+  }
+  context.ctx.fillStyle = '#' + HexDig((c >> 16) & 0xff) +
+                                HexDig((c >> 8) & 0xff) +
+                                HexDig(c & 0xff);
+  context.ctx.fillRect(x, y, w, h);
+  return sp;
+})
+| 8 jseval!
+
 forth definitions web
 
 : bye   0 terminate ;
 : page   12 emit ;
 : gr   1 7 call ;
 : text   0 7 call ;
+$ffffff value color
+: box ( x y w h -- ) color 8 call ;
 
 forth definitions
