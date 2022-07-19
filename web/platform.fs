@@ -28,21 +28,22 @@ r|
 : jseval ( a n -- ) 1 call ;
 
 r"
-  globalObj.inbuffer = [];
-  if (!globalObj['write']) {
-    var con = document.getElementById('console');
-    if (con === null) {
-      con = document.createElement('pre');
-      con.id = 'console';
-      document.body.appendChild(con);
+  context.inbuffer = [];
+  if (!globalObj.write) {
+    context.screen = document.getElementById('ueforth');
+    if (context.screen === null) {
+      context.screen = document.createElement('div');
+      document.body.appendChild(context.screen);
     }
-    window.outbuffer = '';
+    context.terminal = document.createElement('pre');
+    context.screen.appendChild(context.terminal);
+    context.outbuffer = '';
     window.onkeypress = function(e) {
-      globalObj.inbuffer.push(e.keyCode);
+      context.inbuffer.push(e.keyCode);
     };
     window.onkeydown = function(e) {
       if (e.keyCode == 8) {
-        globalObj.inbuffer.push(e.keyCode);
+        context.inbuffer.push(e.keyCode);
       }
     };
   }
@@ -52,23 +53,22 @@ r|
 (function(sp) {
   var n = i32[sp>>2]; sp -= 4;
   var a = i32[sp>>2]; sp -= 4;
-  if (globalObj['write']) {
+  if (globalObj.write) {
     var text = GetString(a, n);
     write(text);
   } else {
-    var con = document.getElementById('console');
     for (var i = 0; i < n; ++i) {
       var ch = u8[a + i];
       if (ch == 12) {
-        window.outbuffer = '';
+        context.outbuffer = '';
       } else if (ch == 8) {
-        window.outbuffer = window.outbuffer.slice(0, -1);
+        context.outbuffer = context.outbuffer.slice(0, -1);
       } else if (ch == 13) {
       } else {
-        window.outbuffer += String.fromCharCode(ch);
+        context.outbuffer += String.fromCharCode(ch);
       }
     }
-    con.innerText = window.outbuffer + String.fromCharCode(0x2592);
+    context.terminal.innerText = context.outbuffer + String.fromCharCode(0x2592);
     window.scrollTo(0, document.body.scrollHeight);
   }
   return sp;
@@ -79,15 +79,15 @@ r|
 
 r|
 (function(sp) {
-  if (globalObj['readline'] && !globalObj.inbuffer.length) {
+  if (globalObj.readline && !context.inbuffer.length) {
     var line = readline();
     for (var i = 0; i < line.length; ++i) {
-      globalObj.inbuffer.push(line.charCodeAt(i));
+      context.inbuffer.push(line.charCodeAt(i));
     }
-    globalObj.inbuffer.push(13);
+    context.inbuffer.push(13);
   }
-  if (globalObj.inbuffer.length) {
-    sp += 4; i32[sp>>2] = globalObj.inbuffer.shift();
+  if (context.inbuffer.length) {
+    sp += 4; i32[sp>>2] = context.inbuffer.shift();
   } else {
     sp += 4; i32[sp>>2] = 0;
   }
@@ -99,10 +99,11 @@ r|
 
 r|
 (function(sp) {
-  if (globalObj['readline']) {
-    return -1;
+  if (globalObj.readline) {
+    sp += 4; i32[sp>>2] = -1;
+    return sp;
   }
-  sp += 4; i32[sp>>2] = globalObj.inbuffer.length ? -1 : 0;
+  sp += 4; i32[sp>>2] = context.inbuffer.length ? -1 : 0;
   return sp;
 })
 | 4 jseval!
@@ -112,7 +113,7 @@ r|
 r|
 (function(sp) {
   var val = i32[sp>>2];  sp -= 4;
-  if (globalObj['quit']) {
+  if (globalObj.quit) {
     quit(val);
   } else {
     Init();
@@ -124,7 +125,7 @@ r|
 
 r|
 (function(sp) {
-  if (globalObj['write']) {
+  if (globalObj.write) {
     sp += 4; i32[sp>>2] = 0;  // Disable echo.
   } else {
     sp += 4; i32[sp>>2] = -1;  // Enable echo.

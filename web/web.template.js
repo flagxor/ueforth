@@ -37,6 +37,7 @@ var u8 = new Uint8Array(heap);
 var builtins = [];
 var opcodes = {};
 var objects = [SetEval];
+var context = {};  // For later use by platform.
 
 {{sys}}
 
