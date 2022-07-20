@@ -51,6 +51,8 @@ if (!globalObj.write) {
   context.ctx = context.canvas.getContext('2d');
   context.terminal = document.createElement('pre');
   context.screen.appendChild(context.terminal);
+  context.text_fraction = 1667;
+  context.min_text_portion = 120;
   context.mode = 1;
   function setMode(mode) {
     if (context.mode === mode) {
@@ -68,23 +70,33 @@ if (!globalObj.write) {
   context.setMode = setMode;
   function Resize() {
     var width = window.innerWidth;
-    var theight = Math.max(120, Math.floor(window.innerHeight / 6));
+    var theight = Math.max(context.min_text_portion,
+                           Math.floor(window.innerHeight *
+                                      context.min_text_portion / 10000));
     var height = window.innerHeight - theight;
     if (width === context.width && height === context.height) {
       return;
     }
     context.canvas.style.width = width + 'px';
     context.canvas.style.height = height + 'px';
-    context.filler.style.width = '1px';
-    context.filler.style.height = height + 'px';
+    if (context.text_fraction == 0 &&
+        context.min_text_portion == 0) {
+      context.filler.style.width = '1px';
+      context.filler.style.height = '0px';
+    } else {
+      context.filler.style.width = '1px';
+      context.filler.style.height = height + 'px';
+    }
     context.width = width;
     context.height = height;
   }
-  function Draw() {
+  context.Resize = Resize;
+  function Clear() {
     Resize();
     context.ctx.fillStyle = '#000';
     context.ctx.fillRect(0, 0, context.canvas.width, context.canvas.height);
   }
+  context.Clear = Clear;
   window.onresize = function(e) {
     Resize();
   };
@@ -97,7 +109,7 @@ if (!globalObj.write) {
     }
   };
   setMode(0);
-  Draw();
+  context.Clear();
 }
 | jseval
 
@@ -244,6 +256,20 @@ r|
 })
 | 10 jseval!
 
+r|
+(function(sp) {
+  var mp = i32[sp>>2]; sp -= 4;
+  var tf = i32[sp>>2]; sp -= 4;
+  if (globalObj.write) {
+    return sp;
+  }
+  context.text_fraction = tf;
+  context.min_text_portion = mp;
+  context.Resize();
+  return sp;
+})
+| 11 jseval!
+
 forth definitions web
 
 : bye   0 terminate ;
@@ -254,5 +280,6 @@ $ffffff value color
 : box ( x y w h -- ) color 8 call ;
 : window ( w h -- ) 9 call ;
 : viewport@ ( -- w h ) 10 call ;
+: show-text ( f -- ) if 1667 120 else 0 0 then 11 call ;
 
 forth definitions
