@@ -31,9 +31,22 @@ r|
 context.inbuffer = [];
 context.outbuffer = '';
 if (!globalObj.write) {
+  function AddMeta(name, content) {
+    var meta = document.createElement('meta');
+    meta.name = name;
+    meta.content = content;
+    document.head.appendChild(meta);
+  }
+
+  AddMeta('apple-mobile-web-app-capable', 'yes');
+  AddMeta('apple-mobile-web-app-status-bar-style', 'black-translucent');
+  AddMeta('viewport', 'width=device-width, initial-scale=1.0, ' +
+                      'maximum-scale=1.0, user-scalable=no, minimal-ui');
+
   context.screen = document.getElementById('ueforth');
   if (context.screen === null) {
     context.screen = document.createElement('div');
+    context.screen.style.width = '100%';
     document.body.appendChild(context.screen);
   }
   context.filler = document.createElement('div');
@@ -50,6 +63,8 @@ if (!globalObj.write) {
   context.screen.appendChild(context.canvas);
   context.ctx = context.canvas.getContext('2d');
   context.terminal = document.createElement('pre');
+  context.terminal.style.width = '100%';
+  context.terminal.style.whiteSpace = 'pre-wrap';
   context.screen.appendChild(context.terminal);
   context.text_fraction = 1667;
   context.min_text_portion = 120;
@@ -100,13 +115,23 @@ if (!globalObj.write) {
   window.onresize = function(e) {
     Resize();
   };
-  window.onkeypress = function(e) {
+  function KeyPress(e) {
     context.inbuffer.push(e.keyCode);
-  };
-  window.onkeydown = function(e) {
+    e.preventDefault();
+    return false;
+  }
+  window.onkeypress = KeyPress;
+  function KeyDown(e) {
     if (e.keyCode == 8) {
       context.inbuffer.push(e.keyCode);
+      e.preventDefault();
+      return false;
     }
+  }
+  window.onkeydown = KeyDown;
+  context.Update = function(active) {
+    var cursor = String.fromCharCode(0x2592);
+    context.terminal.innerText = context.outbuffer + cursor;
   };
   setMode(0);
   context.Clear();
@@ -132,7 +157,7 @@ r|
         context.outbuffer += String.fromCharCode(ch);
       }
     }
-    context.terminal.innerText = context.outbuffer + String.fromCharCode(0x2592);
+    context.Update();
     window.scrollTo(0, document.body.scrollHeight);
   }
   return sp;

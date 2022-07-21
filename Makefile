@@ -544,6 +544,7 @@ $(DEPLOY):
 	mkdir -p $@
 
 REPLACE = tools/replace.js \
+          HEAD=@site/head.html \
           COMMON=@site/common.html \
           POSIX_COMMON=@site/posix_common.html \
           DESKTOP_COMMON=@site/desktop_common.html \

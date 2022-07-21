@@ -23,7 +23,7 @@ function DropCopyright(source) {
       while (lines[i] != '-->') {
         ++i;
       }
-      i += 2;
+      ++i;
     }
     if (lines[i].search('Copyright') >= 0) {
       while (lines[i] != '') {
@@ -33,7 +33,7 @@ function DropCopyright(source) {
       cleaned.push(lines[i]);
     }
   }
-  return cleaned.join('\n');
+  return cleaned.join('\n').trim();
 }
 
 var source = fs.readFileSync(process.stdin.fd).toString();
