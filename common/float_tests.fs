@@ -102,7 +102,7 @@ e: test-afliteral
 
 e: test-float-broken-parse
   internals
-  s" teste" f>number? 0= assert
+  s" teste" s>float? 0= assert
 ;e
 
 e: test-sfloats
