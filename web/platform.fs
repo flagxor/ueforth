@@ -68,6 +68,8 @@ if (!globalObj.write) {
   context.screen.appendChild(context.terminal);
 
   context.keyboard = document.createElement('div');
+  context.KEY_HEIGHT = 60;
+  context.KEYBOARD_HEIGHT = context.KEY_HEIGHT * 4;
   const TAB = ['&#11134;', 9, 45];
   const PIPE = [String.fromCharCode(124), 124, 45];
   const BACKSLASH = ['\\', 92, 45];
@@ -119,7 +121,7 @@ if (!globalObj.write) {
     k.style.padding = '0';
     k.style.backgroundImage = KEY_COLOR;
     k.style.width = (100 / 10) + '%';
-    k.style.height = '30px';
+    k.style.height = context.KEY_HEIGHT + 'px';
     if (item.length > 2) {
       k.style.width = (100 / 10 * item[2] / 30) + '%';
     }
@@ -160,7 +162,7 @@ if (!globalObj.write) {
     context.mobile = -1;
     context.tailer = document.createElement('div');
     context.tailer.style.width = '1px';
-    context.tailer.style.height = '120px';
+    context.tailer.style.height = context.KEYBOARD_HEIGHT + 'px';
     context.screen.appendChild(context.tailer);
     document.body.appendChild(context.keyboard);
   } else {
@@ -168,7 +170,7 @@ if (!globalObj.write) {
   }
 
   context.text_fraction = context.mobile ? 3000 : 1667;
-  context.min_text_portion = context.mobile ? 240 : 120;
+  context.min_text_portion = 120 + (context.mobile ? context.KEYBOARD_HEIGHT : 0);
   context.mode = 1;
   function setMode(mode) {
     if (context.mode === mode) {
@@ -403,22 +405,30 @@ r|
 })
 | 12 jseval!
 
+r|
+(function(sp) {
+  sp += 4; i32[sp>>2] = context.KEYBOARD_HEIGHT;
+  return sp;
+})
+| 13 jseval!
+
 forth definitions web
 
 : bye   0 terminate ;
 : page   12 emit ;
 : gr   1 7 call ;
 : text   0 7 call ;
-: mobile   12 call ;
+: mobile ( -- f ) 12 call ;
+: keys-height ( -- n ) 13 call ;
 $ffffff value color
 : box ( x y w h -- ) color 8 call ;
 : window ( w h -- ) 9 call ;
 : viewport@ ( -- w h ) 10 call ;
 : show-text ( f -- )
   if
-    mobile if 3000 240 else 1667 120 then
+    mobile if 3000 120 keys-height + else 1667 120 then
   else
-    mobile if 0 120 else 0 0 then
+    mobile if 0 keys-height else 0 0 then
   then 11 call ;
 
 forth definitions
