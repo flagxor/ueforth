@@ -27,7 +27,7 @@ r|
 | 1 jseval!
 : jseval ( a n -- ) 1 call ;
 
-r|
+r~
 context.inbuffer = [];
 context.outbuffer = '';
 if (!globalObj.write) {
@@ -66,6 +66,89 @@ if (!globalObj.write) {
   context.terminal.style.width = '100%';
   context.terminal.style.whiteSpace = 'pre-wrap';
   context.screen.appendChild(context.terminal);
+
+  const TAB = ['&#11134;', '&#11134;', 9, 9, 45];
+  const PIPE = ['\\', String.fromCharCode(124), 92, 124, 45];
+  const ENTER = ['&#9166;', '&#9166;', 13, 13, 70];
+  const CTRL = ['ctrl', 'ctrl', 0, 0, 60];
+  const SHIFT = ['&#x21E7;', '&#x21E7', 0, 0, 75];
+  const BACKSPACE = ['&#x232B;', '&#x232B;', 8, 8, 60];
+  const BACKTICK = [String.fromCharCode(96), String.fromCharCode(126), 96, 126];
+  const G15 = ['Gap', 15];
+  const G20 = ['Gap', 20];
+  const G35 = ['Gap', 35];
+  const KEYMAP = [
+    '1!', '2@', '3#', '4$', '5%', '6^', '7&', '8*', '9(', '0)', '-_', '=+', BACKSPACE, 'Newline',
+    G15, 'qQ', 'wW', 'eE', 'rR', 'tT', 'yY', 'uU', 'iI', 'oO', 'pP', '[{', ']}', PIPE, 'Newline',
+    G20, 'aA', 'sS', 'dD', 'fF', 'gG', 'hH', 'jJ', 'kK', 'lL', ';:', '\'"', ENTER, 'Newline',
+    G35, 'zZ', 'xX', 'cC', 'vV', 'bB', 'nN', 'mM', ',<', '.>', '/?', BACKTICK, 'Newline',
+    SHIFT, [' ', ' ', 32, 32, 9 * 30], SHIFT,
+  ];
+  const KEY_COLOR = 'linear-gradient(to bottom right, #ccc, #999)';
+  const KEY_GOLD = 'linear-gradient(to bottom right, #fc4, #c91)';
+  context.keyboard = document.createElement('div');
+  var keys = [];
+  var shift = 0;
+  function UpdateKeys() {
+    for (var i = 0; i < keys.length; ++i) {
+      keys[i].update();
+    }
+  }
+  function AddKey(item) {
+    if (item === 'Newline') {
+      var k = document.createElement('br');
+      context.keyboard.appendChild(k);
+      return;
+    }
+    var k = document.createElement('button');
+    k.style.verticalAlign = 'middle';
+    k.style.border = 'none';
+    k.style.margin = '0';
+    k.style.padding = '0';
+    k.style.backgroundImage = 'linear-gradient(to bottom right, #ccc, #999)';
+    k.style.width = (100 / 15) + '%';
+    k.style.height = '30px';
+    if (item[0] === 'Gap') {
+      k.style.opacity = 0;
+      k.style.width = (100 / 15 * item[1] / 30) + '%';
+      context.keyboard.appendChild(k);
+      return;
+    }
+    if (item.length > 4) {
+      k.style.width = (100 / 15 * item[4] / 30) + '%';
+    }
+    if (item.length > 2) {
+      var keycodes = [item[2], item[3]];
+    } else {
+      var keycodes = [item[0].charCodeAt(0), item[1].charCodeAt(0)];
+    }
+    var labels = [item[0], item[1]];
+    k.onclick = function() {
+      if (item[0] === SHIFT[0]) {
+        shift = 1 - shift;
+        UpdateKeys();
+      } else {
+        context.inbuffer.push(keycodes[shift]);
+      }
+    };
+    k.update = function() {
+      if (item[0] === SHIFT[0]) {
+        k.style.backgroundImage = shift ? KEY_GOLD : KEY_COLOR;
+      }
+      k.innerHTML = labels[shift];
+    };
+    context.keyboard.appendChild(k);
+    keys.push(k);
+  }
+  for (var i = 0; i < KEYMAP.length; ++i) {
+    var item = KEYMAP[i];
+    AddKey(item);
+  }
+  UpdateKeys();
+  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    context.screen.appendChild(context.keyboard);
+  }
+
   context.text_fraction = 1667;
   context.min_text_portion = 120;
   context.mode = 1;
@@ -136,7 +219,7 @@ if (!globalObj.write) {
   setMode(0);
   context.Clear();
 }
-| jseval
+~ jseval
 
 r|
 (function(sp) {
