@@ -67,37 +67,49 @@ if (!globalObj.write) {
   context.terminal.style.whiteSpace = 'pre-wrap';
   context.screen.appendChild(context.terminal);
 
-  const TAB = ['&#11134;', '&#11134;', 9, 9, 45];
-  const PIPE = ['\\', String.fromCharCode(124), 92, 124, 45];
-  const ENTER = ['&#9166;', '&#9166;', 13, 13, 70];
-  const CTRL = ['ctrl', 'ctrl', 0, 0, 60];
-  const SHIFT = ['&#x21E7;', '&#x21E7', 0, 0, 75];
-  const BACKSPACE = ['&#x232B;', '&#x232B;', 8, 8, 60];
-  const BACKTICK = [String.fromCharCode(96), String.fromCharCode(126), 96, 126];
-  const G15 = ['Gap', 15];
-  const G20 = ['Gap', 20];
-  const G35 = ['Gap', 35];
-  const KEYMAP = [
-    '1!', '2@', '3#', '4$', '5%', '6^', '7&', '8*', '9(', '0)', '-_', '=+', BACKSPACE, 'Newline',
-    G15, 'qQ', 'wW', 'eE', 'rR', 'tT', 'yY', 'uU', 'iI', 'oO', 'pP', '[{', ']}', PIPE, 'Newline',
-    G20, 'aA', 'sS', 'dD', 'fF', 'gG', 'hH', 'jJ', 'kK', 'lL', ';:', '\'"', ENTER, 'Newline',
-    G35, 'zZ', 'xX', 'cC', 'vV', 'bB', 'nN', 'mM', ',<', '.>', '/?', BACKTICK, 'Newline',
-    SHIFT, [' ', ' ', 32, 32, 9 * 30], SHIFT,
-  ];
-  const KEY_COLOR = 'linear-gradient(to bottom right, #ccc, #999)';
-  const KEY_GOLD = 'linear-gradient(to bottom right, #fc4, #c91)';
   context.keyboard = document.createElement('div');
-  var keys = [];
-  var shift = 0;
-  function UpdateKeys() {
-    for (var i = 0; i < keys.length; ++i) {
-      keys[i].update();
+  const TAB = ['&#11134;', 9, 45];
+  const PIPE = [String.fromCharCode(124), 124, 45];
+  const BACKSLASH = ['\\', 92, 45];
+  const ENTER = ['&#9166;', 13, 45];
+  const SHIFT = ['&#x21E7;', 1, 45, 0];
+  const SHIFT2 = ['&#x2B06;', 0, 45, 0];
+  const NUMS = ['?123', 2, 45, 0];
+  const ABC = ['ABC', 0, 45, 0];
+  const BACKSPACE = ['&#x232B;', 8, 45];
+  const BACKTICK = String.fromCharCode(96);
+  const TILDE = String.fromCharCode(126);
+  const G1 = ['Gap', 0, 15];
+  const KEY_COLOR = 'linear-gradient(to bottom right, #ccc, #999)';
+  var keymaps = [
+    AddKeymap([
+      'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'Newline',
+      G1, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'Newline',
+      SHIFT, 'z', 'x', 'c', 'v', 'b', 'n', 'm', BACKSPACE, 'Newline',
+      NUMS, '/', [' ', 32, 5 * 30], '.', ENTER,
+    ]),
+    AddKeymap([
+      'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'Newline',
+      G1, 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Newline',
+      SHIFT2, 'Z', 'X', 'C', 'V', 'B', 'N', 'M', BACKSPACE, 'Newline',
+      NUMS, '/', [' ', 32, 5 * 30], '.', ENTER,
+    ]),
+    AddKeymap([
+      '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'Newline',
+      '@', '#', '$', '_', '&', '-', '+', '(', ')', '/', 'Newline',
+      SHIFT, '*', '"', '\'', ':', ';', '!', '?', BACKSPACE, 'Newline',
+      ABC, ',', [' ', 32, 5 * 30], '.', ENTER,
+    ]),
+  ];
+  function SwitchKeymap(n) {
+    for (var i = 0; i < keymaps.length; ++i) {
+      keymaps[i].style.display = i == n ? '' : 'none';
     }
   }
-  function AddKey(item) {
+  function AddKey(keymap, item) {
     if (item === 'Newline') {
       var k = document.createElement('br');
-      context.keyboard.appendChild(k);
+      keymap.appendChild(k);
       return;
     }
     var k = document.createElement('button');
@@ -105,52 +117,58 @@ if (!globalObj.write) {
     k.style.border = 'none';
     k.style.margin = '0';
     k.style.padding = '0';
-    k.style.backgroundImage = 'linear-gradient(to bottom right, #ccc, #999)';
-    k.style.width = (100 / 15) + '%';
+    k.style.backgroundImage = KEY_COLOR;
+    k.style.width = (100 / 10) + '%';
     k.style.height = '30px';
+    if (item.length > 2) {
+      k.style.width = (100 / 10 * item[2] / 30) + '%';
+    }
     if (item[0] === 'Gap') {
       k.style.opacity = 0;
-      k.style.width = (100 / 15 * item[1] / 30) + '%';
-      context.keyboard.appendChild(k);
+      keymap.appendChild(k);
       return;
     }
-    if (item.length > 4) {
-      k.style.width = (100 / 15 * item[4] / 30) + '%';
-    }
-    if (item.length > 2) {
-      var keycodes = [item[2], item[3]];
+    if (item.length > 1) {
+      var keycode = item[1];
     } else {
-      var keycodes = [item[0].charCodeAt(0), item[1].charCodeAt(0)];
+      var keycode = item[0].charCodeAt(0);
     }
-    var labels = [item[0], item[1]];
+    k.innerHTML = item instanceof Array ? item[0] : item;
     k.onclick = function() {
-      if (item[0] === SHIFT[0]) {
-        shift = 1 - shift;
-        UpdateKeys();
+      if (item.length > 3) {  // SHIFT
+        SwitchKeymap(item[1]);
       } else {
-        context.inbuffer.push(keycodes[shift]);
+        context.inbuffer.push(keycode);
       }
     };
-    k.update = function() {
-      if (item[0] === SHIFT[0]) {
-        k.style.backgroundImage = shift ? KEY_GOLD : KEY_COLOR;
-      }
-      k.innerHTML = labels[shift];
-    };
-    context.keyboard.appendChild(k);
-    keys.push(k);
+    keymap.appendChild(k);
   }
-  for (var i = 0; i < KEYMAP.length; ++i) {
-    var item = KEYMAP[i];
-    AddKey(item);
+  function AddKeymap(keymap) {
+    var div = document.createElement('div');
+    for (var i = 0; i < keymap.length; ++i) {
+      var item = keymap[i];
+      AddKey(div, item);
+    }
+    context.keyboard.appendChild(div);
+    return div;
   }
-  UpdateKeys();
+  SwitchKeymap(0);
+  context.keyboard.style.position = 'fixed';
+  context.keyboard.style.width = '100%';
+  context.keyboard.style.bottom = '0px';
   if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-    context.screen.appendChild(context.keyboard);
+    context.mobile = -1;
+    context.tailer = document.createElement('div');
+    context.tailer.style.width = '1px';
+    context.tailer.style.height = '120px';
+    context.screen.appendChild(context.tailer);
+    document.body.appendChild(context.keyboard);
+  } else {
+    context.mobile = 0;
   }
 
-  context.text_fraction = 1667;
-  context.min_text_portion = 120;
+  context.text_fraction = context.mobile ? 3000 : 1667;
+  context.min_text_portion = context.mobile ? 240 : 120;
   context.mode = 1;
   function setMode(mode) {
     if (context.mode === mode) {
@@ -378,16 +396,29 @@ r|
 })
 | 11 jseval!
 
+r|
+(function(sp) {
+  sp += 4; i32[sp>>2] = context.mobile;
+  return sp;
+})
+| 12 jseval!
+
 forth definitions web
 
 : bye   0 terminate ;
 : page   12 emit ;
 : gr   1 7 call ;
 : text   0 7 call ;
+: mobile   12 call ;
 $ffffff value color
 : box ( x y w h -- ) color 8 call ;
 : window ( w h -- ) 9 call ;
 : viewport@ ( -- w h ) 10 call ;
-: show-text ( f -- ) if 1667 120 else 0 0 then 11 call ;
+: show-text ( f -- )
+  if
+    mobile if 3000 240 else 1667 120 then
+  else
+    mobile if 0 120 else 0 0 then
+  then 11 call ;
 
 forth definitions
