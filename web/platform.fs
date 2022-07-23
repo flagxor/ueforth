@@ -68,7 +68,7 @@ if (!globalObj.write) {
   context.screen.appendChild(context.terminal);
 
   context.keyboard = document.createElement('div');
-  context.KEY_HEIGHT = 60;
+  context.KEY_HEIGHT = 45;
   context.KEYBOARD_HEIGHT = context.KEY_HEIGHT * 4;
   const TAB = ['&#11134;', 9, 45];
   const PIPE = [String.fromCharCode(124), 124, 45];
@@ -76,6 +76,7 @@ if (!globalObj.write) {
   const ENTER = ['&#9166;', 13, 45];
   const SHIFT = ['&#x21E7;', 1, 45, 0];
   const SHIFT2 = ['&#x2B06;', 0, 45, 0];
+  const SHIFT3 = ['=\\<', 3, 45, 0];
   const NUMS = ['?123', 2, 45, 0];
   const ABC = ['ABC', 0, 45, 0];
   const BACKSPACE = ['&#x232B;', 8, 45];
@@ -99,8 +100,14 @@ if (!globalObj.write) {
     AddKeymap([
       '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'Newline',
       '@', '#', '$', '_', '&', '-', '+', '(', ')', '/', 'Newline',
-      SHIFT, '*', '"', '\'', ':', ';', '!', '?', BACKSPACE, 'Newline',
+      SHIFT3, '*', '"', '\'', ':', ';', '!', '?', BACKSPACE, 'Newline',
       ABC, ',', [' ', 32, 5 * 30], '.', ENTER,
+    ]),
+    AddKeymap([
+      TILDE, BACKTICK, '3', '4', '5', '6', '7', '8', '9', '0', 'Newline',
+      '@', '#', '$', '_', '&', '-', '=', '{', '}', '\\', 'Newline',
+      NUMS, '%', '"', '\'', ':', ';', '[', ']', BACKSPACE, 'Newline',
+      ABC, '<', [' ', 32, 5 * 30], '>', ENTER,
     ]),
   ];
   function SwitchKeymap(n) {
