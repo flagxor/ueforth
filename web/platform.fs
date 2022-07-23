@@ -87,7 +87,7 @@ if (!globalObj.write) {
   var keymaps = [
     AddKeymap([
       'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'Newline',
-      G1, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'Newline',
+      G1, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', G1, 'Newline',
       SHIFT, 'z', 'x', 'c', 'v', 'b', 'n', 'm', BACKSPACE, 'Newline',
       NUMS, '/', [' ', 32, 5 * 30], '.', ENTER,
     ]),
@@ -133,7 +133,8 @@ if (!globalObj.write) {
       k.style.width = (100 / 10 * item[2] / 30) + '%';
     }
     if (item[0] === 'Gap') {
-      k.style.opacity = 0;
+      k.style.backgroundColor = '#444';
+      k.style.backgroundImage = '';
       keymap.appendChild(k);
       return;
     }
