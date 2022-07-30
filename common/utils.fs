@@ -19,7 +19,7 @@
 
 ( Examine Memory )
 : dump ( a n -- )
-   cr 0 do i 16 mod 0= if cr then dup i + c@ . loop drop cr ;
+   cr 0 swap for dup 16 mod 0= if cr then 2dup + c@ . 1+ next 2drop cr ;
 
 ( Print spaces )
 : spaces ( n -- ) for aft space then next ;
