@@ -80,7 +80,11 @@ variable indent
    dup ['] DOES> = if icr then
    dup >flags -TAB AND if -1 indent+! then
    dup see.
-   dup >flags +TAB AND if 1 indent+! then
+   dup >flags +TAB AND if
+     1 indent+!
+   else
+     dup >flags -TAB AND if icr then
+   then
    dup ['] ! = if icr then
    dup ['] +! = if icr then
    dup  @ ['] BRANCH @ =
