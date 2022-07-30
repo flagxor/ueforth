@@ -14,6 +14,7 @@
 
 #define TIER2_OPCODE_LIST \
   X(">flags", TOFLAGS, tos = *TOFLAGS(tos)) \
+  X(">flags&", TOFLAGSAT, tos = (cell_t) TOFLAGS(tos)) \
   X(">params", TOPARAMS, tos = *TOPARAMS(tos)) \
   X(">size", TOSIZE, tos = TOSIZE(tos)) \
   X(">link&", TOLINKAT, tos = (cell_t) TOLINK(tos)) \

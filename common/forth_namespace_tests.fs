@@ -139,6 +139,7 @@ e: check-boot
 
 e: check-tier2-opcodes
   out: >flags 
+  out: >flags& 
   out: >params 
   out: >size 
   out: >link& 
@@ -396,6 +397,7 @@ e: check-utils
   out: str= 
   out: :noname 
   out: forget 
+  out: spaces 
   out: dump 
   out: assert 
 ;e

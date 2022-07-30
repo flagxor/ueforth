@@ -21,14 +21,19 @@
 : dump ( a n -- )
    cr 0 do i 16 mod 0= if cr then dup i + c@ . loop drop cr ;
 
+( Print spaces )
+: spaces ( n -- ) for aft space then next ;
+
 ( Remove from Dictionary )
 : forget ( "name" ) ' dup >link current @ !  >name drop here - allot ;
 
 internals definitions
+1 constant IMMEDIATE_MARK
 2 constant SMUDGE
 4 constant BUILTIN_FORK
-1 constant IMMEDIATE_MARK
 16 constant NONAMED
+32 constant +TAB
+64 constant -TAB
 : mem= ( a a n -- f)
    for aft 2dup c@ swap c@ <> if 2drop rdrop 0 exit then 1+ swap 1+ then next 2drop -1 ;
 forth definitions also internals
@@ -39,28 +44,60 @@ forth definitions also internals
 : .s   ." <" depth n. ." > " raw.s cr ;
 only forth definitions
 
+( Tweak indent on branches )
+internals internalized definitions
+
+: flags'or! ( n -- ) ' >flags& dup >r c@ or r> c! ;
++TAB flags'or! BEGIN
+-TAB flags'or! AGAIN
+-TAB flags'or! UNTIL
++TAB flags'or! AHEAD
+-TAB flags'or! THEN
++TAB flags'or! IF
++TAB -TAB or flags'or! ELSE
++TAB -TAB or flags'or! WHILE
+-TAB flags'or! REPEAT
++TAB flags'or! AFT
++TAB flags'or! FOR
+-TAB flags'or! NEXT
+
+forth definitions 
+
 ( Definitions building to SEE and ORDER )
 internals definitions
+variable indent
 : see. ( xt -- ) >name type space ;
+: icr   cr indent @ 0 max 4* spaces ;
+: indent+! ( n -- ) indent +! icr ;
 : see-one ( xt -- xt+1 )
    dup cell+ swap @
    dup ['] DOLIT = if drop dup @ . cell+ exit then
-   dup ['] DOSET = if drop ." TO " dup @ cell - see. cell+ exit then
+   dup ['] DOSET = if drop ." TO " dup @ cell - see. cell+ icr exit then
    dup ['] DOFLIT = if drop dup sf@ <# [char] e hold #fs #> type space cell+ exit then
    dup ['] $@ = if drop ['] s" see.
                    dup @ dup >r >r dup cell+ r> type cell+ r> 1+ aligned +
                    [char] " emit space exit then
+   dup >flags -TAB AND if -1 indent+! then
+   dup see.
+   dup >flags +TAB AND if
+     1 indent+!
+   else
+     dup >flags -TAB AND if icr then
+   then
    dup  @ ['] BRANCH @ =
    over @ ['] 0BRANCH @ = or
    over @ ['] DONEXT @ = or
-       if see. cell+ exit then
-   see. ;
+       if swap cell+ swap then
+   drop
+;
 : see-loop   dup >body swap >params 1- cells over +
              begin 2dup < while swap see-one swap repeat 2drop ;
 : ?see-flags   >flags IMMEDIATE_MARK and if ." IMMEDIATE " then ;
 : see-xt ( xt -- )
   dup @ ['] see-loop @ = if
-    ['] : see.  dup see.  space dup see-loop   ['] ; see. ?see-flags cr  exit
+    ['] : see.  dup see.  1 indent !
+    icr dup see-loop   ['] ; see. ?see-flags cr
+    exit
   then
   dup >flags BUILTIN_FORK and if ." Built-in fork: " see. exit then
   dup @ ['] input-buffer @ = if ." CREATE/VARIABLE: " see. cr exit then
