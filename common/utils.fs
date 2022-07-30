@@ -77,6 +77,7 @@ variable indent
    dup ['] $@ = if drop ['] s" see.
                    dup @ dup >r >r dup cell+ r> type cell+ r> 1+ aligned +
                    [char] " emit space exit then
+   dup ['] DOES> = if icr then
    dup >flags -TAB AND if -1 indent+! then
    dup see.
    dup >flags +TAB AND if 1 indent+! then
