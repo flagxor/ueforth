@@ -24,8 +24,8 @@
 : set-precision ( n -- ) to precision ;
 
 internals definitions
-: #f+s ( r -- ) fdup precision 0 ?do 10e f* loop
-                precision 0 ?do fdup f>s 10 mod [char] 0 + hold 0.1e f* loop
+: #f+s ( r -- ) fdup precision for aft 10e f* then next
+                precision for aft fdup f>s 10 mod [char] 0 + hold 0.1e f* then next
                 [char] . hold fdrop f>s #s ;
 forth definitions internals
 
