@@ -57,7 +57,7 @@ transfer{
   immediate? input-buffer ?echo ?arrow. arrow
   evaluate-buffer aliteral value-bind
   leaving( )leaving leaving leaving,
-  (do) (?do) (+loop) 
+  (do) (?do) (+loop) (loop) (leave)
   parse-quote digit $@ raw.s
   tib-setup input-limit
   [SKIP] [SKIP]' raw-ok boot-prompt free.

@@ -63,15 +63,18 @@ variable leaving
              begin dup while dup @ swap here swap ! repeat drop ;
 : (do) ( n n -- .. ) swap r> -rot >r >r >r ;
 : do ( lim s -- ) leaving( postpone (do) here ; immediate
-: (?do) ( n n -- n n f .. ) 2dup = if 2drop 0 else -1 then ;
-: ?do ( lim s -- ) leaving( postpone (?do) postpone 0branch leaving,
-                   postpone (do) here ; immediate
-: unloop   postpone rdrop postpone rdrop ; immediate
-: leave   postpone unloop postpone branch leaving, ; immediate
-: (+loop) ( n -- f .. ) dup 0< swap r> r> rot + dup r@ < -rot >r >r xor 0= ;
-: +loop ( n -- ) postpone (+loop) postpone until
-                 postpone unloop )leaving ; immediate
-: loop   1 aliteral postpone +loop ; immediate
+: (?do) ( n n -- n n f .. )
+   2dup = if 2drop r> @ >r else swap r> cell+ -rot >r >r >r then ;
+: ?do ( lim s -- ) leaving( postpone (?do) leaving, here ; immediate
+: unloop   r> rdrop rdrop >r ;
+: (leave)   r> rdrop rdrop @ >r ;
+: leave   postpone (leave) leaving, ; immediate
+: (+loop) ( n -- ) dup 0< swap r> r> rot + dup r@ < -rot >r >r xor 0=
+                        if r> cell+ rdrop rdrop >r else r> @ >r then ;
+: +loop ( n -- ) postpone (+loop) , )leaving ; immediate
+: (loop)   r> r> 1+ dup r@ < -rot >r >r 0=
+           if r> cell+ rdrop rdrop >r else r> @ >r then ;
+: loop   postpone (loop) , )leaving ; immediate
 create I ' r@ @ ' i !  ( i is same as r@ )
 : J ( -- n ) rp@ 3 cells - @ ;
 : K ( -- n ) rp@ 5 cells - @ ;

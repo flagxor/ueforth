@@ -90,6 +90,10 @@ variable indent
    dup  @ ['] BRANCH @ =
    over @ ['] 0BRANCH @ = or
    over @ ['] DONEXT @ = or
+   over ['] (?do) = or
+   over ['] (+loop) = or
+   over ['] (loop) = or
+   over ['] (leave) = or
        if swap cell+ swap then
    drop
 ;
