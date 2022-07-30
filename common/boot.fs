@@ -30,16 +30,16 @@ fp@ constant fp0
 : [char] char aliteral ; immediate
 
 ( Core Control Flow )
-: begin   here ; immediate
-: again   ['] branch , , ; immediate
-: until   ['] 0branch , , ; immediate
-: ahead   ['] branch , here 0 , ; immediate
-: then   here swap ! ; immediate
-: if   ['] 0branch , here 0 , ; immediate
-: else   ['] branch , here 0 , swap here swap ! ; immediate
-: while   ['] 0branch , here 0 , swap ; immediate
-: repeat   ['] branch , , here swap ! ; immediate
-: aft   drop ['] branch , here 0 , here swap ; immediate
+create begin ' nop @ ' begin !        : begin   ['] begin , here ; immediate
+create again ' branch @ ' again !     : again   ['] again , , ; immediate
+create until ' 0branch @ ' until !    : until   ['] until , , ; immediate
+create ahead ' branch @ ' ahead !     : ahead   ['] ahead , here 0 , ; immediate
+create then ' nop @ ' then !          : then   ['] then , here swap ! ; immediate
+create if ' 0branch @ ' if !          : if   ['] if , here 0 , ; immediate
+create else ' branch @ ' else !       : else   ['] else , here 0 , swap here swap ! ; immediate
+create while ' 0branch @ ' while !    : while   ['] while , here 0 , swap ; immediate
+create repeat ' branch @ ' repeat !   : repeat   ['] repeat , , here swap ! ; immediate
+create aft ' branch @ ' aft !         : aft   drop ['] aft , here 0 , here swap ; immediate
 
 ( Recursion )
 : recurse   current @ @ aliteral ['] execute , ; immediate
@@ -52,8 +52,8 @@ fp@ constant fp0
 variable nest-depth
 
 ( FOR..NEXT )
-: for   1 nest-depth +! postpone >r postpone begin ; immediate
-: next   -1 nest-depth +! postpone donext , ; immediate
+create for ' >r @ ' for !         : for   1 nest-depth +! ['] for , here ; immediate
+create next ' donext @ ' next !   : next   -1 nest-depth +! ['] next , , ; immediate
 
 ( DO..LOOP )
 variable leaving
@@ -72,7 +72,7 @@ variable leaving
 : +loop ( n -- ) postpone (+loop) postpone until
                  postpone unloop )leaving ; immediate
 : loop   1 aliteral postpone +loop ; immediate
-: i ( -- n ) postpone r@ ; immediate
+create i ' r@ @ ' i !  ( i is same as r@ )
 : j ( -- n ) rp@ 3 cells - @ ;
 : k ( -- n ) rp@ 5 cells - @ ;
 

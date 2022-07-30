@@ -80,6 +80,7 @@ typedef struct {
 } BUILTIN_WORD;
 
 #define TIER0_OPCODE_LIST \
+  YV(internals, NOP, ) \
   X("0=", ZEQUAL, tos = !tos ? -1 : 0) \
   X("0<", ZLESS, tos = (tos|0) < 0 ? -1 : 0) \
   X("+", PLUS, tos += *sp--) \

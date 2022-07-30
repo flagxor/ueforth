@@ -483,7 +483,7 @@ e: check-phase2
 
 DEFINED? windows [IF]
 
-e: test-windows-forth-namespace
+e: test-windows-forth-voclist
   internals ' graphics voclist-from
   out: graphics 
   out: ansi 
@@ -492,6 +492,7 @@ e: test-windows-forth-namespace
   out: tasks 
   out: windows 
   out: structures 
+  out: internalized 
   out: internals 
   out: FORTH 
 ;e
@@ -521,7 +522,7 @@ e: test-windows-forth-namespace
 
 [ELSE] DEFINED? posix [IF]
 
-e: test-posix-forth-namespace
+e: test-posix-forth-voclist
   internals ' sockets voclist-from
   out: sockets 
   out: internals 
@@ -533,6 +534,7 @@ e: test-posix-forth-namespace
   out: termios 
   out: posix 
   out: structures 
+  out: internalized 
   out: internals 
   out: FORTH 
 ;e
@@ -567,7 +569,7 @@ e: test-posix-forth-namespace
 
 [ELSE]
 
-e: test-esp32-forth-namespace
+e: test-esp32-forth-voclist
   internals ' ansi voclist-from
   out: ansi 
   out: registers 
@@ -590,6 +592,7 @@ e: test-esp32-forth-namespace
   out: streams 
   out: tasks 
   out: structures 
+  out: internalized 
   out: internals 
   out: FORTH 
 ;e

@@ -53,22 +53,40 @@ e: test-see-string
   out: : test  s" hello there" ; 
 ;e
 
-e: test-see-branch
+e: test-see-begin-again
   : test begin again ;
   see test
-  out: : test  BRANCH ; 
+  out: : test  begin again ; 
 ;e
 
-e: test-see-0branch
+e: test-see-begin-until
   : test begin until ;
   see test
-  out: : test  0BRANCH ; 
+  out: : test  begin until ; 
 ;e
 
-e: test-see-fornext
-  : test for next ;
+e: test-see-begin-while-repeat
+  : test begin while repeat ;
   see test
-  out: : test  >R DONEXT ; 
+  out: : test  begin while repeat ; 
+;e
+
+e: test-see-ahead-then
+  : test ahead then ;
+  see test
+  out: : test  ahead then ; 
+;e
+
+e: test-see-for-next
+  : test for i . next ;
+  see test
+  out: : test  for i . next ; 
+;e
+
+e: test-see-for-aft-next
+  : test for aft i . then next ;
+  see test
+  out: : test  for aft i . then next ; 
 ;e
 
 e: test-see-string-strides
@@ -82,23 +100,23 @@ e: test-see-string-strides
   : test7 1 if ." ------>" then ;
   : test8 1 if ." ------->" then ;
   see test0
-  out: : test0  1 0BRANCH s" " type ; 
+  out: : test0  1 if s" " type then ; 
   see test1
-  out: : test1  1 0BRANCH s" >" type ; 
+  out: : test1  1 if s" >" type then ; 
   see test2
-  out: : test2  1 0BRANCH s" ->" type ; 
+  out: : test2  1 if s" ->" type then ; 
   see test3
-  out: : test3  1 0BRANCH s" -->" type ; 
+  out: : test3  1 if s" -->" type then ; 
   see test4
-  out: : test4  1 0BRANCH s" --->" type ; 
+  out: : test4  1 if s" --->" type then ; 
   see test5
-  out: : test5  1 0BRANCH s" ---->" type ; 
+  out: : test5  1 if s" ---->" type then ; 
   see test6
-  out: : test6  1 0BRANCH s" ----->" type ; 
+  out: : test6  1 if s" ----->" type then ; 
   see test7
-  out: : test7  1 0BRANCH s" ------>" type ; 
+  out: : test7  1 if s" ------>" type then ; 
   see test8
-  out: : test8  1 0BRANCH s" ------->" type ; 
+  out: : test8  1 if s" ------->" type then ; 
 ;e
 
 e: test-noname

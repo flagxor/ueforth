@@ -63,6 +63,15 @@ transfer{
   [SKIP] [SKIP]' raw-ok boot-prompt free.
   $place zplace BUILTIN_MARK
 }transfer
+
+( Move branching opcodes to separate vocabulary )
+vocabulary internalized  internalized definitions
+: cleave   ' >link xt-transfer ;
+cleave begin   cleave again   cleave until
+cleave ahead   cleave then    cleave if
+cleave else    cleave while   cleave repeat
+cleave aft     cleave for     cleave next
+
 forth definitions
 
 ( Make DOES> switch to compile mode when interpreted )

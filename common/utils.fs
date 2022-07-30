@@ -50,9 +50,9 @@ internals definitions
    dup ['] $@ = if drop ['] s" see.
                    dup @ dup >r >r dup cell+ r> type cell+ r> 1+ aligned +
                    [char] " emit space exit then
-   dup  ['] BRANCH =
-   over ['] 0BRANCH = or
-   over ['] DONEXT = or
+   dup  @ ['] BRANCH @ =
+   over @ ['] 0BRANCH @ = or
+   over @ ['] DONEXT @ = or
        if see. cell+ exit then
    see. ;
 : see-loop   dup >body swap >params 1- cells over +
