@@ -79,11 +79,9 @@ variable indent
                    [char] " emit space exit then
    dup >flags -TAB AND if -1 indent+! then
    dup see.
-   dup >flags +TAB AND if
-     1 indent+!
-   else
-     dup >flags -TAB AND if icr then
-   then
+   dup >flags +TAB AND if 1 indent+! then
+   dup ['] ! = if icr then
+   dup ['] +! = if icr then
    dup  @ ['] BRANCH @ =
    over @ ['] 0BRANCH @ = or
    over @ ['] DONEXT @ = or
@@ -95,8 +93,11 @@ variable indent
 : ?see-flags   >flags IMMEDIATE_MARK and if ." IMMEDIATE " then ;
 : see-xt ( xt -- )
   dup @ ['] see-loop @ = if
-    ['] : see.  dup see.  1 indent !
-    icr dup see-loop   ['] ; see. ?see-flags cr
+    ['] : see.  dup see.
+    1 indent ! icr
+    dup see-loop
+    -1 indent+! ['] ; see.
+    ?see-flags cr
     exit
   then
   dup >flags BUILTIN_FORK and if ." Built-in fork: " see. exit then

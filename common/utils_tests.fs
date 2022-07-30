@@ -45,14 +45,16 @@ e: test-see-number
   : test 123 456 ;
   see test
   out: : test 
-  out:     123 456 ; 
+  out:     123 456 
+  out: ; 
 ;e
 
 e: test-see-string
   : test s" hello there" ;
   see test
   out: : test 
-  out:     s" hello there" ; 
+  out:     s" hello there" 
+  out: ; 
 ;e
 
 e: test-see-begin-again
@@ -62,7 +64,7 @@ e: test-see-begin-again
   out:     BEGIN 
   out:         . 
   out:     AGAIN 
-  out:     ; 
+  out: ; 
 ;e
 
 e: test-see-begin-until
@@ -72,7 +74,7 @@ e: test-see-begin-until
   out:     BEGIN 
   out:         . 
   out:     UNTIL 
-  out:     ;  
+  out: ;  
 ;e
 
 e: test-see-begin-while-repeat
@@ -84,7 +86,7 @@ e: test-see-begin-while-repeat
   out:     WHILE 
   out:         . 
   out:     REPEAT 
-  out:     ;  
+  out: ;  
 ;e
 
 e: test-see-ahead-then
@@ -94,7 +96,7 @@ e: test-see-ahead-then
   out:     AHEAD 
   out:         . 
   out:     THEN 
-  out:     ; 
+  out: ; 
 ;e
 
 e: test-see-for-next
@@ -104,7 +106,7 @@ e: test-see-for-next
   out:     FOR 
   out:         I . 
   out:     NEXT 
-  out:     ; 
+  out: ; 
 ;e
 
 e: test-see-for-aft-next
@@ -114,10 +116,9 @@ e: test-see-for-aft-next
   out:     FOR 
   out:         AFT 
   out:             I . 
-  out:         THEN 
-  out:         . 
+  out:         THEN . 
   out:     NEXT 
-  out:     ; 
+  out: ; 
 ;e
 
 e: test-see-string-strides
@@ -135,55 +136,55 @@ e: test-see-string-strides
   out:     1 IF 
   out:         s" " type 
   out:     THEN 
-  out:     ; 
+  out: ; 
   see test1
   out: : test1 
   out:     1 IF 
   out:         s" >" type 
   out:     THEN 
-  out:     ; 
+  out: ; 
   see test2
   out: : test2 
   out:     1 IF 
   out:         s" ->" type 
   out:     THEN 
-  out:     ; 
+  out: ; 
   see test3
   out: : test3 
   out:     1 IF 
   out:         s" -->" type 
   out:     THEN 
-  out:     ; 
+  out: ; 
   see test4
   out: : test4 
   out:     1 IF 
   out:         s" --->" type 
   out:     THEN 
-  out:     ; 
+  out: ; 
   see test5
   out: : test5 
   out:     1 IF 
   out:         s" ---->" type 
   out:     THEN 
-  out:     ; 
+  out: ; 
   see test6
   out: : test6 
   out:     1 IF 
   out:         s" ----->" type 
   out:     THEN 
-  out:     ; 
+  out: ; 
   see test7
   out: : test7 
   out:     1 IF 
   out:         s" ------>" type 
   out:     THEN 
-  out:     ; 
+  out: ; 
   see test8
   out: : test8 
   out:     1 IF 
   out:         s" ------->" type 
   out:     THEN 
-  out:     ; 
+  out: ; 
 ;e
 
 e: test-noname
@@ -199,7 +200,8 @@ e: test-see-variable
   : bar foo @ . ;
   see bar
   out: : bar 
-  out:     foo @ . ; 
+  out:     foo @ . 
+  out: ; 
 ;e
 
 e: test-see-create
@@ -207,7 +209,8 @@ e: test-see-create
   : bar foo @ . ;
   see bar
   out: : bar 
-  out:     foo @ . ; 
+  out:     foo @ . 
+  out: ; 
 ;e
 
 e: test-see-value
@@ -215,21 +218,24 @@ e: test-see-value
   : bar foo . ;
   see bar
   out: : bar 
-  out:     foo . ; 
+  out:     foo . 
+  out: ; 
 ;e
 
 e: test-see-to
   0 value foo
-  : bar 123 to foo ;
+  : bar 123 to foo . ;
   see bar
   out: : bar 
   out:     123 TO foo 
-  out:     ; 
+  out:     . 
+  out: ; 
 ;e
 
 e: test-see-immediate
   : foo 123 ; immediate
   see foo
   out: : foo 
-  out:     123 ; IMMEDIATE 
+  out:     123 
+  out: ; IMMEDIATE 
 ;e
