@@ -56,37 +56,37 @@ e: test-see-string
 e: test-see-begin-again
   : test begin again ;
   see test
-  out: : test  begin again ; 
+  out: : test  BEGIN AGAIN ; 
 ;e
 
 e: test-see-begin-until
   : test begin until ;
   see test
-  out: : test  begin until ; 
+  out: : test  BEGIN UNTIL ; 
 ;e
 
 e: test-see-begin-while-repeat
   : test begin while repeat ;
   see test
-  out: : test  begin while repeat ; 
+  out: : test  BEGIN WHILE REPEAT ; 
 ;e
 
 e: test-see-ahead-then
   : test ahead then ;
   see test
-  out: : test  ahead then ; 
+  out: : test  AHEAD THEN ; 
 ;e
 
 e: test-see-for-next
   : test for i . next ;
   see test
-  out: : test  for i . next ; 
+  out: : test  FOR I . NEXT ; 
 ;e
 
 e: test-see-for-aft-next
   : test for aft i . then next ;
   see test
-  out: : test  for aft i . then next ; 
+  out: : test  FOR AFT I . THEN NEXT ; 
 ;e
 
 e: test-see-string-strides
@@ -100,23 +100,23 @@ e: test-see-string-strides
   : test7 1 if ." ------>" then ;
   : test8 1 if ." ------->" then ;
   see test0
-  out: : test0  1 if s" " type then ; 
+  out: : test0  1 IF s" " type THEN ; 
   see test1
-  out: : test1  1 if s" >" type then ; 
+  out: : test1  1 IF s" >" type THEN ; 
   see test2
-  out: : test2  1 if s" ->" type then ; 
+  out: : test2  1 IF s" ->" type THEN ; 
   see test3
-  out: : test3  1 if s" -->" type then ; 
+  out: : test3  1 IF s" -->" type THEN ; 
   see test4
-  out: : test4  1 if s" --->" type then ; 
+  out: : test4  1 IF s" --->" type THEN ; 
   see test5
-  out: : test5  1 if s" ---->" type then ; 
+  out: : test5  1 IF s" ---->" type THEN ; 
   see test6
-  out: : test6  1 if s" ----->" type then ; 
+  out: : test6  1 IF s" ----->" type THEN ; 
   see test7
-  out: : test7  1 if s" ------>" type then ; 
+  out: : test7  1 IF s" ------>" type THEN ; 
   see test8
-  out: : test8  1 if s" ------->" type then ; 
+  out: : test8  1 IF s" ------->" type THEN ; 
 ;e
 
 e: test-noname

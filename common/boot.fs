@@ -30,16 +30,16 @@ fp@ constant fp0
 : [char] char aliteral ; immediate
 
 ( Core Control Flow )
-create begin ' nop @ ' begin !        : begin   ['] begin , here ; immediate
-create again ' branch @ ' again !     : again   ['] again , , ; immediate
-create until ' 0branch @ ' until !    : until   ['] until , , ; immediate
-create ahead ' branch @ ' ahead !     : ahead   ['] ahead , here 0 , ; immediate
-create then ' nop @ ' then !          : then   ['] then , here swap ! ; immediate
-create if ' 0branch @ ' if !          : if   ['] if , here 0 , ; immediate
-create else ' branch @ ' else !       : else   ['] else , here 0 , swap here swap ! ; immediate
-create while ' 0branch @ ' while !    : while   ['] while , here 0 , swap ; immediate
-create repeat ' branch @ ' repeat !   : repeat   ['] repeat , , here swap ! ; immediate
-create aft ' branch @ ' aft !         : aft   drop ['] aft , here 0 , here swap ; immediate
+create BEGIN ' nop @ ' begin !        : begin   ['] begin , here ; immediate
+create AGAIN ' branch @ ' again !     : again   ['] again , , ; immediate
+create UNTIL ' 0branch @ ' until !    : until   ['] until , , ; immediate
+create AHEAD ' branch @ ' ahead !     : ahead   ['] ahead , here 0 , ; immediate
+create THEN ' nop @ ' then !          : then   ['] then , here swap ! ; immediate
+create IF ' 0branch @ ' if !          : if   ['] if , here 0 , ; immediate
+create ELSE ' branch @ ' else !       : else   ['] else , here 0 , swap here swap ! ; immediate
+create WHILE ' 0branch @ ' while !    : while   ['] while , here 0 , swap ; immediate
+create REPEAT ' branch @ ' repeat !   : repeat   ['] repeat , , here swap ! ; immediate
+create AFT ' branch @ ' aft !         : aft   drop ['] aft , here 0 , here swap ; immediate
 
 ( Recursion )
 : recurse   current @ @ aliteral ['] execute , ; immediate
@@ -52,8 +52,8 @@ create aft ' branch @ ' aft !         : aft   drop ['] aft , here 0 , here swap 
 variable nest-depth
 
 ( FOR..NEXT )
-create for ' >r @ ' for !         : for   1 nest-depth +! ['] for , here ; immediate
-create next ' donext @ ' next !   : next   -1 nest-depth +! ['] next , , ; immediate
+create FOR ' >r @ ' for !         : for   1 nest-depth +! ['] for , here ; immediate
+create NEXT ' donext @ ' next !   : next   -1 nest-depth +! ['] next , , ; immediate
 
 ( DO..LOOP )
 variable leaving
@@ -72,9 +72,9 @@ variable leaving
 : +loop ( n -- ) postpone (+loop) postpone until
                  postpone unloop )leaving ; immediate
 : loop   1 aliteral postpone +loop ; immediate
-create i ' r@ @ ' i !  ( i is same as r@ )
-: j ( -- n ) rp@ 3 cells - @ ;
-: k ( -- n ) rp@ 5 cells - @ ;
+create I ' r@ @ ' i !  ( i is same as r@ )
+: J ( -- n ) rp@ 3 cells - @ ;
+: K ( -- n ) rp@ 5 cells - @ ;
 
 ( Exceptions )
 variable handler
