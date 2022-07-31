@@ -57,7 +57,6 @@ transfer{
   immediate? input-buffer ?echo ?arrow. arrow
   evaluate-buffer aliteral value-bind
   leaving( )leaving leaving leaving,
-  (do) (?do) (+loop) (loop) (leave)
   parse-quote digit $@ raw.s
   tib-setup input-limit
   [SKIP] [SKIP]' raw-ok boot-prompt free.
@@ -71,6 +70,8 @@ cleave begin   cleave again   cleave until
 cleave ahead   cleave then    cleave if
 cleave else    cleave while   cleave repeat
 cleave aft     cleave for     cleave next
+cleave do      cleave ?do     cleave +loop
+cleave loop    cleave leave
 
 forth definitions
 

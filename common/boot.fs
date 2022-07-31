@@ -61,20 +61,20 @@ variable leaving
 : leaving(   leaving @ 0 leaving !   2 nest-depth +! ;
 : )leaving   leaving @ swap leaving !  -2 nest-depth +!
              begin dup while dup @ swap here swap ! repeat drop ;
-: (do) ( n n -- .. ) swap r> -rot >r >r >r ;
-: do ( lim s -- ) leaving( postpone (do) here ; immediate
-: (?do) ( n n -- n n f .. )
+: DO ( n n -- .. ) swap r> -rot >r >r >r ;
+: do ( lim s -- ) leaving( postpone DO here ; immediate
+: ?DO ( n n -- n n f .. )
    2dup = if 2drop r> @ >r else swap r> cell+ -rot >r >r >r then ;
-: ?do ( lim s -- ) leaving( postpone (?do) leaving, here ; immediate
-: unloop   r> rdrop rdrop >r ;
-: (leave)   r> rdrop rdrop @ >r ;
-: leave   postpone (leave) leaving, ; immediate
-: (+loop) ( n -- ) dup 0< swap r> r> rot + dup r@ < -rot >r >r xor 0=
-                        if r> cell+ rdrop rdrop >r else r> @ >r then ;
-: +loop ( n -- ) postpone (+loop) , )leaving ; immediate
-: (loop)   r> r> 1+ dup r@ < -rot >r >r 0=
-           if r> cell+ rdrop rdrop >r else r> @ >r then ;
-: loop   postpone (loop) , )leaving ; immediate
+: ?do ( lim s -- ) leaving( postpone ?DO leaving, here ; immediate
+: UNLOOP   r> rdrop rdrop >r ;
+: LEAVE   r> rdrop rdrop @ >r ;
+: leave   postpone LEAVE leaving, ; immediate
+: +LOOP ( n -- ) dup 0< swap r> r> rot + dup r@ < -rot >r >r xor 0=
+                 if r> cell+ rdrop rdrop >r else r> @ >r then ;
+: +loop ( n -- ) postpone +LOOP , )leaving ; immediate
+: LOOP   r> r> 1+ dup r@ < -rot >r >r 0=
+         if r> cell+ rdrop rdrop >r else r> @ >r then ;
+: loop   postpone LOOP , )leaving ; immediate
 create I ' r@ @ ' i !  ( i is same as r@ )
 : J ( -- n ) rp@ 3 cells - @ ;
 : K ( -- n ) rp@ 5 cells - @ ;

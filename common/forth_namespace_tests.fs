@@ -103,7 +103,7 @@ e: check-boot
   out: loop 
   out: +loop 
   out: leave 
-  out: unloop 
+  out: UNLOOP 
   out: ?do 
   out: do 
   out: next 

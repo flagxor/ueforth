@@ -34,6 +34,7 @@ internals definitions
 16 constant NONAMED
 32 constant +TAB
 64 constant -TAB
+128 constant ARGS_MARK
 : mem= ( a a n -- f)
    for aft 2dup c@ swap c@ <> if 2drop rdrop 0 exit then 1+ swap 1+ then next 2drop -1 ;
 forth definitions also internals
@@ -60,6 +61,11 @@ internals internalized definitions
 +TAB flags'or! AFT
 +TAB flags'or! FOR
 -TAB flags'or! NEXT
++TAB flags'or! DO
+ARGS_MARK +TAB or flags'or! ?DO
+ARGS_MARK -TAB or flags'or! +LOOP
+ARGS_MARK -TAB or flags'or! LOOP
+ARGS_MARK flags'or! LEAVE
 
 forth definitions 
 
@@ -90,10 +96,7 @@ variable indent
    dup  @ ['] BRANCH @ =
    over @ ['] 0BRANCH @ = or
    over @ ['] DONEXT @ = or
-   over ['] (?do) = or
-   over ['] (+loop) = or
-   over ['] (loop) = or
-   over ['] (leave) = or
+   over >flags ARGS_MARK and or
        if swap cell+ swap then
    drop
 ;
