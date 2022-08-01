@@ -58,7 +58,7 @@ transfer{
   evaluate-buffer aliteral value-bind
   leaving( )leaving leaving leaving,
   parse-quote digit $@ raw.s
-  tib-setup input-limit
+  tib-setup input-limit sp-limit ?stack
   [SKIP] [SKIP]' raw-ok boot-prompt free.
   $place zplace BUILTIN_MARK
 }transfer

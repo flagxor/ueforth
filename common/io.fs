@@ -93,9 +93,14 @@ create input-buffer   input-limit allot
 : tib-setup   input-buffer 'tib ! ;
 : refill   tib-setup tib input-limit accept #tib ! 0 >in ! -1 ;
 
+( Stack Guards )
+sp0 'stack-cells @ 2 3 */ cells + constant sp-limit
+: ?stack   sp@ sp0 < if ." STACK UNDERFLOW " -1 throw then
+           sp-limit sp@ < if ." STACK OVERFLOW " -1 throw then ;
+
 ( REPL )
 : prompt   ."  ok" cr ;
-: evaluate-buffer   begin >in @ #tib @ < while evaluate1 repeat ;
+: evaluate-buffer   begin >in @ #tib @ < while evaluate1 ?stack repeat ;
 : evaluate ( a n -- ) 'tib @ >r #tib @ >r >in @ >r
                       #tib ! 'tib ! 0 >in ! evaluate-buffer
                       r> >in ! r> #tib ! r> 'tib ! ;
