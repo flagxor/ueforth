@@ -29,7 +29,7 @@ r|
 
 r~
 context.inbuffer = [];
-context.outbuffer = '';
+context.outbuffer = [];
 if (!globalObj.write) {
   function AddMeta(name, content) {
     var meta = document.createElement('meta');
@@ -242,8 +242,15 @@ if (!globalObj.write) {
   window.onkeydown = KeyDown;
   context.Update = function(active) {
     var cursor = String.fromCharCode(0x2592);
-    context.terminal.innerText = context.outbuffer + cursor;
+    context.terminal.innerText = new TextDecoder('utf-8').decode(
+        new Uint8Array(context.outbuffer)) + cursor;
   };
+  window.addEventListener('paste', function(e) {
+    var data = new TextEncoder().encode(e.clipboardData.getData('text'));
+    for (var i = 0; i < data.length; ++i) {
+      context.inbuffer.push(data[i]);
+    }
+  });
   setMode(0);
   context.Clear();
 }
@@ -260,12 +267,12 @@ r|
     for (var i = 0; i < n; ++i) {
       var ch = u8[a + i];
       if (ch == 12) {
-        context.outbuffer = '';
+        context.outbuffer = [];
       } else if (ch == 8) {
         context.outbuffer = context.outbuffer.slice(0, -1);
       } else if (ch == 13) {
       } else {
-        context.outbuffer += String.fromCharCode(ch);
+        context.outbuffer.push(ch);
       }
     }
     context.Update();
