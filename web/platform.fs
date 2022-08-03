@@ -287,7 +287,7 @@ r|
 r|
 (function(sp) {
   if (globalObj.readline && !context.inbuffer.length) {
-    var line = readline();
+    var line = unescape(encodeURIComponent(readline()));
     for (var i = 0; i < line.length; ++i) {
       context.inbuffer.push(line.charCodeAt(i));
     }

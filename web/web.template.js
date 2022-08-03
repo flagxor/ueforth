@@ -55,33 +55,19 @@ function Call(sp) {
 }
 
 function Load(addr, content) {
-  if (globalObj.write) {
-    for (var i = 0; i < content.length; ++i) {
-      u8[addr++] = content.charCodeAt(i);
-    }
-  } else {
-    var data = new TextEncoder().encode(content);
-    for (var i = 0; i < data.length; ++i) {
-      u8[addr++] = data[i];
-    }
+  var data = unescape(encodeURIComponent(content));
+  for (var i = 0; i < data.length; ++i) {
+    u8[addr++] = data.charCodeAt(i);
   }
   return addr;
 }
 
 function GetString(a, n) {
-  if (globalObj.write) {
-    var ret = '';
-    for (var i = 0; i < n; ++i) {
-      ret += String.fromCharCode(u8[a + i]);
-    }
-    return ret;
-  } else {
-    var data = new Uint8Array(n);
-    for (var i = 0; i < n; ++i) {
-      data[i] = u8[a + i];
-    }
-    return new TextDecoder('utf-8').decode(data);
+  var data = '';
+  for (var i = 0; i < n; ++i) {
+    data += String.fromCharCode(u8[a + i]);
   }
+  return decodeURIComponent(escape(data));
 }
 
 function CELL_ALIGNED(n) { return (n + 3) & ~3; }
