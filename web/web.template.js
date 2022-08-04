@@ -59,7 +59,7 @@ function Load(addr, content) {
   for (var i = 0; i < data.length; ++i) {
     u8[addr++] = data.charCodeAt(i);
   }
-  return addr;
+  return data.length;
 }
 
 function GetString(a, n) {
@@ -67,7 +67,11 @@ function GetString(a, n) {
   for (var i = 0; i < n; ++i) {
     data += String.fromCharCode(u8[a + i]);
   }
-  return decodeURIComponent(escape(data));
+  try {
+    return decodeURIComponent(escape(data));
+  } catch (e) {
+    return data;
+  }
 }
 
 function CELL_ALIGNED(n) { return (n + 3) & ~3; }
@@ -113,6 +117,8 @@ function BUILTIN_CODE(i) {
 }
 
 function Find(name) {
+  name = name.toUpperCase();
+  var raw = unescape(encodeURIComponent(name));
   for (var voc = i32[g_sys_context>>2]; i32[voc>>2]; voc += 4) {
     var xt = i32[i32[voc>>2]>>2];
     while (xt) {
@@ -120,16 +126,16 @@ function Find(name) {
         var vocab = i32[(TOLINK(xt) + 4 * 3)>>2];
         for (var i = 0; BUILTIN_NAME(i); ++i) {
           if (BUILTIN_VOCAB(i) === vocab &&
-              name.length === BUILTIN_NAMELEN(i) &&
-              name.toUpperCase() === GetString(BUILTIN_NAME(i), name.length).toUpperCase()) {
+              raw.length === BUILTIN_NAMELEN(i) &&
+              name === GetString(BUILTIN_NAME(i), BUILTIN_NAMELEN(i)).toUpperCase()) {
             if (DEBUGGING) { console.log('FOUND: ' + name); }
             return BUILTIN_CODE(i);
           }
         }
       }
       if (!(u8[TOFLAGS(xt)] & SMUDGE) &&
-          name.length === u8[TONAMELEN(xt)] &&
-          name.toUpperCase() === GetString(TONAME(xt), name.length).toUpperCase()) {
+          raw.length === u8[TONAMELEN(xt)] &&
+          name.toUpperCase() === GetString(TONAME(xt), u8[TONAMELEN(xt)]).toUpperCase()) {
           if (DEBUGGING) { console.log('FOUND REGULAR: ' + name); }
         return xt;
       }
@@ -213,10 +219,11 @@ function Create(name, flags, op) {
   if (DEBUGGING) { console.log('CREATE: ' + name); }
   Finish();
   i32[g_sys_heap>>2] = CELL_ALIGNED(i32[g_sys_heap>>2]);
-  i32[g_sys_heap>>2] = Load(i32[g_sys_heap>>2], name);  // name
+  var name_len = Load(i32[g_sys_heap>>2], name);  // name
+  i32[g_sys_heap>>2] += name_len;
   i32[g_sys_heap>>2] = CELL_ALIGNED(i32[g_sys_heap>>2]);
   COMMA(i32[i32[g_sys_current>>2]>>2]);  // link
-  COMMA((name.length << 8) | flags);  // flags & length
+  COMMA((name_len << 8) | flags);  // flags & length
   i32[i32[g_sys_current>>2]>>2] = i32[g_sys_heap>>2];
   i32[g_sys_latestxt>>2] = i32[g_sys_heap>>2];
   COMMA(op);
@@ -231,9 +238,10 @@ function SetupBuiltins() {
   for (var i = 0; i < builtins.length; ++i) {
     var name = builtins[i][0];
     builtins[i][0] = i32[g_sys_heap>>2];
-    i32[g_sys_heap>>2] = Load(i32[g_sys_heap>>2], name);  // name
+    var name_len = Load(i32[g_sys_heap>>2], name);  // name
+    i32[g_sys_heap>>2] += name_len;
     i32[g_sys_heap>>2] = CELL_ALIGNED(i32[g_sys_heap>>2]);
-    builtins[i][1] |= (name.length << 8);
+    builtins[i][1] |= (name_len << 8);
   }
   i32[g_sys_builtins>>2] = i32[g_sys_heap>>2];
   for (var i = 0; i < builtins.length; ++i) {
@@ -413,7 +421,8 @@ function Init() {
 
   // setup boot text.
   var source = i32[g_sys_heap>>2];
-  i32[g_sys_heap>>2] = Load(i32[g_sys_heap>>2], boot);
+  var len = Load(i32[g_sys_heap>>2], boot);
+  i32[g_sys_heap>>2] += len;
   var source_len = i32[g_sys_heap>>2] - source;
   i32[g_sys_boot>>2] = source;
   i32[g_sys_boot_size>>2] = source_len;
