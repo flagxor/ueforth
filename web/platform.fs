@@ -82,6 +82,7 @@ if (!globalObj.write) {
   const BACKSPACE = ['&#x232B;', 8, 45];
   const BACKTICK = String.fromCharCode(96);
   const TILDE = String.fromCharCode(126);
+  const PASTE = ['^V', 22, 30];
   const G1 = ['Gap', 0, 15];
   const KEY_COLOR = 'linear-gradient(to bottom right, #ccc, #999)';
   var keymaps = [
@@ -99,13 +100,13 @@ if (!globalObj.write) {
     ]),
     AddKeymap([
       '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'Newline',
-      '@', '#', '$', '_', '&', '-', '+', '(', ')', '/', 'Newline',
+      PASTE, '@', '$', '_', '&', '-', '+', '(', ')', '/', 'Newline',
       SHIFT3, '*', '"', '\'', ':', ';', '!', '?', BACKSPACE, 'Newline',
       ABC, ',', [' ', 32, 5 * 30], '.', ENTER,
     ]),
     AddKeymap([
-      TILDE, BACKTICK, '3', '4', '5', '6', '7', '8', '9', '0', 'Newline',
-      '@', '#', '$', '_', '&', '-', '=', '{', '}', '\\', 'Newline',
+      TILDE, BACKTICK, '3', '4', '5', '^', '7', '8', '9', '0', 'Newline',
+      '#', '@', '$', '_', '&', '-', '=', '{', '}', '\\', 'Newline',
       NUMS, '%', '"', '\'', ':', ';', '[', ']', BACKSPACE, 'Newline',
       ABC, '<', [' ', 32, 5 * 30], '>', ENTER,
     ]),
@@ -115,6 +116,17 @@ if (!globalObj.write) {
       keymaps[i].style.display = i == n ? '' : 'none';
     }
   }
+  context.Inject = function(text) {
+    var data = new TextEncoder().encode(text);
+    for (var i = 0; i < data.length; ++i) {
+      context.inbuffer.push(data[i]);
+    }
+  };
+  context.Paste = function() {
+    navigator.clipboard.readText().then(function(clipText) {
+      context.Inject(clipText);
+    });
+  };
   function AddKey(keymap, item) {
     if (item === 'Newline') {
       var k = document.createElement('br');
@@ -147,6 +159,8 @@ if (!globalObj.write) {
     k.onclick = function() {
       if (item.length > 3) {  // SHIFT
         SwitchKeymap(item[1]);
+      } else if (keycode === 22) {  // PASTE
+        context.Paste();
       } else {
         context.inbuffer.push(keycode);
       }
@@ -246,10 +260,7 @@ if (!globalObj.write) {
         new Uint8Array(context.outbuffer)) + cursor;
   };
   window.addEventListener('paste', function(e) {
-    var data = new TextEncoder().encode(e.clipboardData.getData('text'));
-    for (var i = 0; i < data.length; ++i) {
-      context.inbuffer.push(data[i]);
-    }
+    context.Inject(e.clipboardData.getData('text'));
   });
   setMode(0);
   context.Clear();
