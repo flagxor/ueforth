@@ -94,7 +94,7 @@ if (!globalObj.write) {
     ]),
     AddKeymap([
       'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'Newline',
-      G1, 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Newline',
+      G1, 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', G1, 'Newline',
       SHIFT2, 'Z', 'X', 'C', 'V', 'B', 'N', 'M', BACKSPACE, 'Newline',
       NUMS, '/', [' ', 32, 5 * 30], '.', ENTER,
     ]),
