@@ -64,10 +64,10 @@ if (!globalObj.write) {
   context.ctx = context.canvas.getContext('2d');
 
   context.AddLine = function() {
-    if (context.outbuffer.length > 0) {
+    if (context.last_line) {
       context.Update(true);
-      context.outbuffer = [];
     }
+    context.outbuffer = [];
     var line = document.createElement('pre');
     line.style.width = '100%';
     line.style.whiteSpace = 'pre-wrap';
@@ -91,7 +91,6 @@ if (!globalObj.write) {
     context.outbuffer = [];
     context.AddLine();
   };
-  context.ResetTerminal();
 
   context.keyboard = document.createElement('div');
   context.KEY_HEIGHT = 45;
@@ -285,6 +284,7 @@ if (!globalObj.write) {
     context.last_line.innerText = new TextDecoder('utf-8').decode(
         new Uint8Array(context.outbuffer)) + (newline ? '' : cursor);
   };
+  context.ResetTerminal();
   window.addEventListener('paste', function(e) {
     context.Inject(e.clipboardData.getData('text'));
   });
