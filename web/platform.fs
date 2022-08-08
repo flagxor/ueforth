@@ -77,15 +77,18 @@ if (!globalObj.write) {
     context.last_line = line;
   };
 
-  context.ResetTerminal = function() {
-    if (context.terminal) {
-      context.screen.removeChild(context.terminal);
-    }
-    context.terminal = document.createElement('div');
-    context.terminal.style.width = '100%';
-    context.terminal.style.whiteSpace = 'pre-wrap';
-    context.screen.appendChild(context.terminal);
+  context.terminal = document.createElement('div');
+  context.terminal.style.width = '100%';
+  context.terminal.style.whiteSpace = 'pre-wrap';
+  context.screen.appendChild(context.terminal);
+  context.lines = [];
+  context.last_line = null;
+  context.outbuffer = [];
 
+  context.ResetTerminal = function() {
+    for (var i = 0; i < context.lines.length; ++i) {
+      context.terminal.removeChild(context.lines[i]);
+    }
     context.lines = [];
     context.last_line = null;
     context.outbuffer = [];
