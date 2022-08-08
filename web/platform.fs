@@ -62,10 +62,36 @@ if (!globalObj.write) {
   context.canvas.style.backgroundColor = '#000';
   context.screen.appendChild(context.canvas);
   context.ctx = context.canvas.getContext('2d');
-  context.terminal = document.createElement('pre');
-  context.terminal.style.width = '100%';
-  context.terminal.style.whiteSpace = 'pre-wrap';
-  context.screen.appendChild(context.terminal);
+
+  context.AddLine = function() {
+    if (context.outbuffer.length > 0) {
+      context.Update(true);
+      context.outbuffer = [];
+    }
+    var line = document.createElement('pre');
+    line.style.width = '100%';
+    line.style.whiteSpace = 'pre-wrap';
+    line.style.margin = '0px';
+    context.terminal.appendChild(line);
+    context.lines.push(line);
+    context.last_line = line;
+  };
+
+  context.ResetTerminal = function() {
+    if (context.terminal) {
+      context.screen.removeChild(context.terminal);
+    }
+    context.terminal = document.createElement('div');
+    context.terminal.style.width = '100%';
+    context.terminal.style.whiteSpace = 'pre-wrap';
+    context.screen.appendChild(context.terminal);
+
+    context.lines = [];
+    context.last_line = null;
+    context.outbuffer = [];
+    context.AddLine();
+  };
+  context.ResetTerminal();
 
   context.keyboard = document.createElement('div');
   context.KEY_HEIGHT = 45;
@@ -254,10 +280,10 @@ if (!globalObj.write) {
     }
   }
   window.onkeydown = KeyDown;
-  context.Update = function(active) {
+  context.Update = function(newline) {
     var cursor = String.fromCharCode(0x2592);
-    context.terminal.innerText = new TextDecoder('utf-8').decode(
-        new Uint8Array(context.outbuffer)) + cursor;
+    context.last_line.innerText = new TextDecoder('utf-8').decode(
+        new Uint8Array(context.outbuffer)) + (newline ? '' : cursor);
   };
   window.addEventListener('paste', function(e) {
     context.Inject(e.clipboardData.getData('text'));
@@ -274,25 +300,34 @@ r|
   if (globalObj.write) {
     var text = GetString(a, n);
     write(text);
+    sp += 4; i32[sp>>2] = 0;
   } else {
+    var newline = false;
     for (var i = 0; i < n; ++i) {
       var ch = u8[a + i];
       if (ch == 12) {
+        context.ResetTerminal();
         context.outbuffer = [];
       } else if (ch == 8) {
         context.outbuffer = context.outbuffer.slice(0, -1);
+      } else if (ch == 10) {
+        context.AddLine();
+        newline = true;
       } else if (ch == 13) {
       } else {
         context.outbuffer.push(ch);
       }
     }
     context.Update();
-    window.scrollTo(0, document.body.scrollHeight);
+    if (newline) {
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+    sp += 4; i32[sp>>2] = newline ? -1 : 0;
   }
   return sp;
 })
 | 2 jseval!
-: web-type ( a n -- ) 2 call yield ;
+: web-type ( a n -- ) 2 call if yield then ;
 ' web-type is type
 
 r|
