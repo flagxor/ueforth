@@ -298,6 +298,7 @@ if (!globalObj.write) {
       return;
     }
     var k = document.createElement('button');
+    k.style.fontFamily = 'monospace';
     k.style.verticalAlign = 'middle';
     k.style.border = 'none';
     k.style.margin = '0';
