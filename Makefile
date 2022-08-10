@@ -277,6 +277,7 @@ $(GEN)/web_sys.js: $(GEN)/dump_web_opcodes | $(GEN)
 
 WEB_BOOT =  $(COMMON_PHASE1e) \
             web/platform.fs \
+            common/ansi.fs \
             $(COMMON_PHASE2) \
             web/fini.fs
 $(GEN)/web_boot.js: tools/source_to_string.js $(WEB_BOOT) | $(GEN)

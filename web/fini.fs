@@ -16,6 +16,10 @@ internals definitions
 ( TODO: Figure out why this has to happen so late. )
 transfer internals-builtins
 forth definitions internals
+
+( For now include color list here. )
+: colors    256 0 do i fg i . loop normal cr ;
+
 ( Bring a forth to the top of the vocabulary. )
 : ok   ." uEforth" raw-ok ;
 transfer forth

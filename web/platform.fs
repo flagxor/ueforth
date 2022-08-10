@@ -29,7 +29,6 @@ r|
 
 r~
 context.inbuffer = [];
-context.outbuffer = [];
 if (!globalObj.write) {
   function AddMeta(name, content) {
     var meta = document.createElement('meta');
@@ -63,36 +62,173 @@ if (!globalObj.write) {
   context.screen.appendChild(context.canvas);
   context.ctx = context.canvas.getContext('2d');
 
-  context.AddLine = function() {
-    if (context.last_line) {
-      context.Update(true);
-    }
-    context.outbuffer = [];
-    var line = document.createElement('pre');
-    line.style.width = '100%';
-    line.style.whiteSpace = 'pre-wrap';
-    line.style.margin = '0px';
-    context.terminal.appendChild(line);
-    context.lines.push(line);
-    context.last_line = line;
-  };
-
   context.terminal = document.createElement('div');
   context.terminal.style.width = '100%';
   context.terminal.style.whiteSpace = 'pre-wrap';
   context.screen.appendChild(context.terminal);
+  const DEFAULT_FG = 0x000000;
+  const DEFAULT_BG = 0xFFFFFF;
+  context.attrib = [DEFAULT_FG, DEFAULT_BG];
   context.lines = [];
-  context.last_line = null;
-  context.outbuffer = [];
+  context.escaping = [];
+
+  context.LineFeed = function() {
+    var line = document.createElement('pre');
+    line.style.width = '100%';
+    line.style.whiteSpace = 'pre-wrap';
+    line.style.margin = '0px';
+    if (context.cy < 0) {
+      context.terminal.appendChild(line);
+    } else {
+      context.terminal.insertBefore(line, context.lines[context.cy].nextSibling);
+    }
+    context.cx = 0;  // implicit cr
+    if (context.cy >= 0) {
+      context.dirty[context.cy] = 1;
+    }
+    ++context.cy;
+    context.lines.splice(context.cy, 0, [line, []]);
+    context.dirty[context.cy] = 1;
+  };
 
   context.ResetTerminal = function() {
     for (var i = 0; i < context.lines.length; ++i) {
-      context.terminal.removeChild(context.lines[i]);
+      context.terminal.removeChild(context.lines[i][0]);
     }
     context.lines = [];
-    context.last_line = null;
-    context.outbuffer = [];
-    context.AddLine();
+    context.cx = 0;
+    context.cy = -1;
+    context.dirty = {};
+    context.LineFeed();
+  };
+  context.ResetTerminal();
+
+  context.TermColor = function(n) {
+    n = n & 0xff;
+    if (n < 16) {
+      var i = n & 8;
+      var r = (n & 1) ? (i ? 255 : 192) : (i ? 128 : 0);
+      var g = (n & 2) ? (i ? 255 : 192) : (i ? 128 : 0);
+      var b = (n & 4) ? (i ? 255 : 192) : (i ? 128 : 0);
+      return (r << 16) | (g << 8) | b;
+    } else if (n < 232) {
+      n -= 16;
+      var r = Math.round((Math.floor(n / 36) % 6) * 255 / 5);
+      var g = Math.round((Math.floor(n / 6) % 6) * 255 / 5);
+      var b = Math.round((n % 6) * 255 / 5);
+      return (r << 16) | (g << 8) | b;
+    } else {
+      n = Math.round((n - 232) * 255 / 23);
+      return (n << 16) | (n << 8) | n;
+    }
+  };
+
+  context.EscapeCode = function(code) {
+    var m;
+    if (code == '[2J') {
+      context.ResetTerminal();
+    } else if (code == '[H') {
+      context.cx = 0;
+      context.cy = 0;
+    } else if (code == '[0m') {
+      context.attrib = [DEFAULT_FG, DEFAULT_BG];
+    } else if (m = code.match(/\[38;5;([0-9]+)m/)) {
+      context.attrib[0] = context.TermColor(parseInt(m[1]));
+    } else if (m = code.match(/\[48;5;([0-9]+)m/)) {
+      context.attrib[1] = context.TermColor(parseInt(m[1]));
+    } else {
+      console.log('Unknown escape code: ' + code);
+    }
+  };
+
+  context.Emit = function(ch) {
+    if (ch === 27) {
+      context.escaping = [27];
+      return;
+    }
+    if (context.escaping.length) {
+      context.escaping.push(ch);
+      if ((ch >= 65 && ch <= 90) || (ch >= 97 && ch <= 122)) {  // [A-Za-z]
+        context.EscapeCode(new TextDecoder('utf-8').decode(new Uint8Array(context.escaping)).slice(1));
+        context.escaping = [];
+      }
+      return;
+    }
+    if (ch === 12) {
+      context.ResetTerminal();
+      context.dirty = {};
+      return;
+    } else if (ch == 10) {
+      context.LineFeed();
+      return;
+    }
+    context.dirty[context.cy] = 1;
+    if (ch === 8) {
+      context.cx = Math.max(0, context.cx - 1);
+    } else if (ch === 13) {
+      context.cx = 0;
+    } else {
+      context.lines[context.cy][1].splice(
+          context.cx++, 1, [context.attrib[0], context.attrib[1], ch]);
+    }
+  };
+
+  context.toRGB = function(col) {
+    var r = (col >> 16) & 0xff;
+    var g = (col >> 8) & 0xff;
+    var b = col & 0xff;
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  };
+
+  context.Update = function() {
+    const cursor = String.fromCharCode(0x2592);
+    var count = 0;
+    for (var y in context.dirty) {
+      ++count;
+      var tag = context.lines[y][0];
+      var line = context.lines[y][1];
+      var parts = [];
+      var p = null;
+      for (var x = 0; x < line.length; ++x) {
+        if (x == 0 ||
+            (x == context.cx && y == context.cy) ||
+            p[0] != line[x][0] || p[1] != line[x][1]) {
+          parts.push([line[x][0], line[x][1], []]);
+          p = parts[parts.length - 1];
+          if (x == context.cx && y == context.cy) {
+            p[0] |= 0x1000000;
+          }
+        }
+        p[2].push(line[x][2]);
+      }
+      if (x == context.cx && y == context.cy) {
+        parts.push([DEFAULT_FG | 0x1000000, DEFAULT_BG, []]);
+      }
+      var ntag = document.createElement('pre');
+      ntag.style.width = '100%';
+      ntag.style.whiteSpace = 'pre-wrap';
+      ntag.style.margin = '0px';
+      for (var i = 0; i < parts.length; ++i) {
+        if (parts[i][0] & 0x1000000) {
+          var span = document.createElement('span');
+          span.innerText = '|';
+          ntag.appendChild(span);
+        }
+        var span = document.createElement('span');
+        span.innerText = new TextDecoder('utf-8').decode(new Uint8Array(parts[i][2]));
+        span.style.color = context.toRGB(parts[i][0]);
+        span.style.backgroundColor = context.toRGB(parts[i][1]);
+        ntag.appendChild(span);
+      }
+      context.terminal.replaceChild(ntag, tag);
+      context.lines[y][0] = ntag;
+    }
+    context.dirty = {};
+    var newline = count > 1;
+    if (newline) {
+      window.scrollTo(0, document.body.scrollHeight + 100);
+    }
+    return newline;
   };
 
   context.keyboard = document.createElement('div');
@@ -282,12 +418,6 @@ if (!globalObj.write) {
     }
   }
   window.onkeydown = KeyDown;
-  context.Update = function(newline) {
-    var cursor = String.fromCharCode(0x2592);
-    context.last_line.innerText = new TextDecoder('utf-8').decode(
-        new Uint8Array(context.outbuffer)) + (newline ? '' : cursor);
-  };
-  context.ResetTerminal();
   window.addEventListener('paste', function(e) {
     context.Inject(e.clipboardData.getData('text'));
   });
@@ -305,26 +435,11 @@ r|
     write(text);
     sp += 4; i32[sp>>2] = 0;
   } else {
-    var newline = false;
     for (var i = 0; i < n; ++i) {
       var ch = u8[a + i];
-      if (ch == 12) {
-        context.ResetTerminal();
-        context.outbuffer = [];
-      } else if (ch == 8) {
-        context.outbuffer = context.outbuffer.slice(0, -1);
-      } else if (ch == 10) {
-        context.AddLine();
-        newline = true;
-      } else if (ch == 13) {
-      } else {
-        context.outbuffer.push(ch);
-      }
+      context.Emit(ch);
     }
-    context.Update();
-    if (newline) {
-      window.scrollTo(0, document.body.scrollHeight);
-    }
+    var newline = context.Update();
     sp += 4; i32[sp>>2] = newline ? -1 : 0;
   }
   return sp;
@@ -479,7 +594,6 @@ r|
 forth definitions web
 
 : bye   0 terminate ;
-: page   12 emit ;
 : gr   1 7 call ;
 : text   0 7 call ;
 : mobile ( -- f ) 12 call ;
