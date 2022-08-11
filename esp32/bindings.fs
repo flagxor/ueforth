@@ -100,6 +100,9 @@ transfer sockets-builtins
 : sockaddr   create 16 c, AF_INET c, 0 bs, 0 l, 0 l, 0 l, ;
 : ->port@ ( a -- n ) 2 + >r r@ c@ 256 * r> 1+ c@ + ;
 : ->port! ( n a --  ) 2 + >r dup 256 / r@ c! r> 1+ c! ;
+: ->addr@ ( a -- n ) 4 + ul@ ;
+: ->addr! ( n a --  ) 4 + l! ;
+: ->h_addr ( hostent -- n ) 2 cells + 8 + @ @ ul@ ;
 forth definitions
 
 vocabulary interrupts   interrupts definitions

@@ -373,6 +373,7 @@ static cell_t TimerIsrRegister(cell_t group, cell_t timer, cell_t xt, cell_t arg
 #else
 # ifndef SIM_PRINT_ONLY
 #  include <errno.h>
+#  include <netdb.h>
 #  include <sys/select.h>
 #  include <sys/socket.h>
 #  include <sys/time.h>
@@ -395,6 +396,7 @@ static cell_t TimerIsrRegister(cell_t group, cell_t timer, cell_t xt, cell_t arg
   YV(sockets, recv, n0 = recv(n3, a2, n1, n0); NIPn(3)) \
   YV(sockets, recvfrom, n0 = recvfrom(n5, a4, n3, n2, (struct sockaddr *) a1, (socklen_t *) a0); NIPn(5)) \
   YV(sockets, recvmsg, n0 = recvmsg(n2, (struct msghdr *) a1, n0); NIPn(2)) \
+  YV(sockets, gethostbyname, n0 = (cell_t) gethostbyname(c0)) \
   XV(sockets, "errno", ERRNO, PUSH errno)
 #endif
 

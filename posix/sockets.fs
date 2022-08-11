@@ -31,6 +31,8 @@ z" recv" 4 sysfunc recv
 z" recvfrom" 6 sysfunc recvfrom
 z" recvmsg" 3 sysfunc recvmsg
 
+z" gethostbyname" 1 sysfunc gethostbyname
+
 1 constant SOCK_STREAM
 2 constant SOCK_DGRAM
 3 constant SOCK_RAW
@@ -46,6 +48,9 @@ z" recvmsg" 3 sysfunc recvmsg
 : sockaddr   create AF_INET s, 0 bs, 0 l, 0 l, 0 l, ;
 : ->port@ ( a -- n ) 2 + >r r@ c@ 256 * r> 1+ c@ + ;
 : ->port! ( n a --  ) 2 + >r dup 256 / r@ c! r> 1+ c! ;
+: ->addr@ ( a -- n ) 4 + ul@ ;
+: ->addr! ( n a --  ) 4 + l! ;
+: ->h_addr ( hostent -- n ) 2 cells + 8 + @ @ ul@ ;
 
 ( Fixup return )
 : sockaccept sockaccept sign-extend ;
