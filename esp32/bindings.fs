@@ -88,6 +88,8 @@ forth definitions
 vocabulary sockets   sockets definitions
 transfer sockets-builtins
 1 constant SOCK_STREAM
+2 constant SOCK_DGRAM
+3 constant SOCK_RAW
 2 constant AF_INET
 16 constant sizeof(sockaddr_in)
 1 constant SOL_SOCKET
