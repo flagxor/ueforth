@@ -29,6 +29,7 @@ r|
 
 r~
 context.inbuffer = [];
+context.Update = function() {};
 if (!globalObj.write) {
   function AddMeta(name, content) {
     var meta = document.createElement('meta');
@@ -228,7 +229,6 @@ if (!globalObj.write) {
     if (newline) {
       window.scrollTo(0, document.body.scrollHeight + 100);
     }
-    return newline;
   };
 
   context.keyboard = document.createElement('div');
@@ -436,11 +436,15 @@ r|
     write(text);
     sp += 4; i32[sp>>2] = 0;
   } else {
+    var newline = false;
     for (var i = 0; i < n; ++i) {
       var ch = u8[a + i];
+      if (ch == 10) { newline = true; }
       context.Emit(ch);
     }
-    var newline = context.Update();
+    if (newline) {
+      context.Update();
+    }
     sp += 4; i32[sp>>2] = newline ? -1 : 0;
   }
   return sp;
@@ -451,6 +455,7 @@ r|
 
 r|
 (function(sp) {
+  context.Update();
   if (globalObj.readline && !context.inbuffer.length) {
     var line = unescape(encodeURIComponent(readline()));
     for (var i = 0; i < line.length; ++i) {
@@ -471,6 +476,7 @@ r|
 
 r|
 (function(sp) {
+  context.Update();
   if (globalObj.readline) {
     sp += 4; i32[sp>>2] = -1;
     return sp;
