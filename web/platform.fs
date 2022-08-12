@@ -258,10 +258,10 @@ if (!globalObj.write) {
       context.terminal.replaceChild(ntag, tag);
       context.lines[y][0] = ntag;
     }
+    var newline = count > 1 || context.dirty[context.lines.length - 1];
     context.dirty = {};
-    var newline = count > 1;
     if (newline) {
-      window.scrollTo(0, document.body.scrollHeight + 100);
+      window.scrollTo(0, document.body.scrollHeight);
     }
   };
 
