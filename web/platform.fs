@@ -28,6 +28,7 @@ r|
 : jseval ( a n -- ) 1 call ;
 
 r~
+globalObj.ueforth = context;
 context.inbuffer = [];
 context.Update = function() {};
 if (!globalObj.write) {
@@ -63,6 +64,20 @@ if (!globalObj.write) {
   context.screen.appendChild(context.canvas);
   context.ctx = context.canvas.getContext('2d');
 
+  context.cursor = null;
+  context.cursor_time = new Date().getTime();
+  setInterval(function() {
+    if (context.cursor) {
+      var now = new Date().getTime();
+      var state = Math.floor((now - context.cursor_time) / 300) % 2;
+      if (state) {
+        context.cursor.style.visibility = 'hidden';
+      } else {
+        context.cursor.style.visibility = 'visible';
+      }
+    }
+  }, 100);
+
   context.terminal = document.createElement('div');
   context.terminal.style.width = '100%';
   context.terminal.style.whiteSpace = 'pre-wrap';
@@ -92,7 +107,17 @@ if (!globalObj.write) {
     context.dirty[context.cy] = 1;
   };
 
+  context.toRGB = function(col) {
+    var r = (col >> 16) & 0xff;
+    var g = (col >> 8) & 0xff;
+    var b = col & 0xff;
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  };
+
   context.ResetTerminal = function() {
+    // TODO: Make this nicer.
+    document.body.style.color = context.toRGB(context.attrib[0]);
+    document.body.style.backgroundColor = context.toRGB(context.attrib[1]);
     for (var i = 0; i < context.lines.length; ++i) {
       context.terminal.removeChild(context.lines[i][0]);
     }
@@ -174,15 +199,8 @@ if (!globalObj.write) {
     }
   };
 
-  context.toRGB = function(col) {
-    var r = (col >> 16) & 0xff;
-    var g = (col >> 8) & 0xff;
-    var b = col & 0xff;
-    return 'rgb(' + r + ',' + g + ',' + b + ')';
-  };
-
   context.Update = function() {
-    const cursor = String.fromCharCode(0x2592);
+    const CURSOR = String.fromCharCode(0x2592);
     var count = 0;
     for (var y in context.dirty) {
       ++count;
@@ -203,23 +221,39 @@ if (!globalObj.write) {
         p[2].push(line[x][2]);
       }
       if (x == context.cx && y == context.cy) {
-        parts.push([DEFAULT_FG | 0x1000000, DEFAULT_BG, []]);
+        if (parts.length > 0) {
+          parts.push([parts[parts.length - 1][0] | 0x1000000,
+                      parts[parts.length - 1][1], []]);
+        } else {
+          parts.push([context.attrib[0] | 0x1000000,
+                      context.attrib[1], []]);
+        }
       }
       var ntag = document.createElement('pre');
       ntag.style.width = '100%';
       ntag.style.whiteSpace = 'pre-wrap';
       ntag.style.margin = '0px';
       for (var i = 0; i < parts.length; ++i) {
-        if (parts[i][0] & 0x1000000) {
-          var span = document.createElement('span');
-          span.innerText = '|';
-          ntag.appendChild(span);
-        }
         var span = document.createElement('span');
         span.innerText = new TextDecoder('utf-8').decode(new Uint8Array(parts[i][2]));
         span.style.color = context.toRGB(parts[i][0]);
         span.style.backgroundColor = context.toRGB(parts[i][1]);
+        if (parts[i][0] & 0x1000000) {
+          span.style.position = 'relative';
+          var cursor = document.createElement('span');
+          cursor.classList.add('cursor');
+          cursor.innerText = CURSOR;
+          cursor.style.position = 'absolute';
+          cursor.style.left = '0px';
+          cursor.style.backgroundColor = span.style.backgroundColor;
+          span.appendChild(cursor);
+          context.cursor = cursor;
+        }
         ntag.appendChild(span);
+        if (i === parts.length - 1) {
+          ntag.style.color = span.style.color;
+          ntag.style.backgroundColor = span.style.backgroundColor;
+        }
       }
       context.terminal.replaceChild(ntag, tag);
       context.lines[y][0] = ntag;
@@ -406,6 +440,7 @@ if (!globalObj.write) {
     Resize();
   };
   function KeyPress(e) {
+    context.cursor_time = new Date().getTime();
     context.inbuffer.push(e.keyCode);
     e.preventDefault();
     return false;
@@ -413,6 +448,7 @@ if (!globalObj.write) {
   window.onkeypress = KeyPress;
   function KeyDown(e) {
     if (e.keyCode == 8) {
+      context.cursor_time = new Date().getTime();
       context.inbuffer.push(e.keyCode);
       e.preventDefault();
       return false;

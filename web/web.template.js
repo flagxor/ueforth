@@ -592,11 +592,18 @@ function getGlobalObj() {
 var globalObj = getGlobalObj();
 
 var module = VM(globalObj, ffi, heap);
-Init();
 function run() {
   module.run();
   setTimeout(run, 0);
 }
-setTimeout(run, 0);
+if (globalObj.write) {
+  Init();
+  setTimeout(run, 0);
+} else {
+  window.addEventListener('load', function() {
+    Init();
+    setTimeout(run, 0);
+  });
+}
 
 })();
