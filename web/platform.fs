@@ -69,14 +69,14 @@ if (!globalObj.write) {
   setInterval(function() {
     if (context.cursor) {
       var now = new Date().getTime();
-      var state = Math.floor((now - context.cursor_time) / 300) % 2;
+      var state = Math.floor((now - context.cursor_time) / 250) % 2;
       if (state) {
         context.cursor.style.visibility = 'hidden';
       } else {
         context.cursor.style.visibility = 'visible';
       }
     }
-  }, 100);
+  }, 50);
 
   context.terminal = document.createElement('div');
   context.terminal.style.width = '100%';
