@@ -16,12 +16,7 @@
 
 :noname [ ' web-interface >body @ ] literal execute
 r|
-also streams also WiFi also web-interface definitions
-
-: ip# dup 255 and n. [char] . emit 256 / ;
-: ip. ( n -- ) ip# ip# ip# 255 and . ;
-
-also forth definitions
+also streams also WiFi also web-interface
 
 : login ( z z -- )
    WIFI_MODE_STA Wifi.mode

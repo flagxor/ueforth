@@ -42,15 +42,17 @@ z" gethostbyname" 1 sysfunc gethostbyname
 1 constant SOL_SOCKET
 2 constant SO_REUSEADDR
 
-: bs, ( n -- ) dup 256 / c, c, ;
-: s, ( n -- ) dup c, 256 / c, ;
-: l, ( n -- ) dup s, 65536 / s, ;
+: bs, ( n -- ) dup 8 rshift c, c, ;
+: s, ( n -- ) dup c, 8 rshift c, ;
+: l, ( n -- ) dup s, 16 rshift s, ;
 : sockaddr   create AF_INET s, 0 bs, 0 l, 0 l, 0 l, ;
-: ->port@ ( a -- n ) 2 + >r r@ c@ 256 * r> 1+ c@ + ;
-: ->port! ( n a --  ) 2 + >r dup 256 / r@ c! r> 1+ c! ;
+: ->port@ ( a -- n ) 2 + >r r@ c@ 8 lshift r> 1+ c@ + ;
+: ->port! ( n a --  ) 2 + >r dup 8 rshift r@ c! r> 1+ c! ;
 : ->addr@ ( a -- n ) 4 + ul@ ;
 : ->addr! ( n a --  ) 4 + l! ;
 : ->h_addr ( hostent -- n ) 2 cells + 8 + @ @ ul@ ;
+: ip# ( n -- n ) dup 255 and n. [char] . emit 8 rshift ;
+: ip. ( n -- ) ip# ip# ip# 255 and n. ;
 
 ( Fixup return )
 : sockaccept sockaccept sign-extend ;

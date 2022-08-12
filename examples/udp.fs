@@ -2,26 +2,28 @@
 
 also sockets
 also tasks
-also posix
 
 1024 constant max-msg
 create msg max-msg allot
+variable len max-msg len !
 -1 value sockfd
 
-variable len max-msg len !
+sockaddr incoming
+sockaddr outgoing
+
+sockaddr received
+variable received-len sizeof(sockaddr_in) received-len !
+
 : reader
     begin
-        sockfd msg len 0 0 0 recvfrom
+        sockfd msg len 0 received received-len recvfrom
         dup 0 >= if
-          msg swap type cr
+          received ->addr@ ip. ." :" received ->port@ . space space msg swap type cr
         else drop then
         pause
     again
 ;
 ' reader 10 10 task reader-task
-
-sockaddr incoming
-sockaddr outgoing
 
 : udp ( port -- )
   incoming ->port!
@@ -29,7 +31,6 @@ sockaddr outgoing
   sockfd non-block throw
   sockfd incoming sizeof(sockaddr_in) bind throw
   reader-task start-task
-  stdin non-block throw
 ;
 
 : say ( port -- )
