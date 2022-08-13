@@ -45,9 +45,6 @@ also ledc also serial also SPIFFS
 : freq ( n n -- ) 1000 * 13 ledcSetup drop ;
 : tone ( n n -- ) 1000 * ledcWriteTone drop ;
 
-( Utilities )
-: page   30 for cr next ;
-
 ( Basic Ardiuno Constants )
 0 constant LOW
 1 constant HIGH

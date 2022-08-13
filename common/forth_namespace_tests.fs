@@ -466,10 +466,11 @@ e: check-opcodes
 e: check-desktop
   out: graphics 
   check-args
-  check-ansi
 ;e
 
 e: check-filetools
+  out: visual 
+  check-ansi
   check-blocks
   check-imports
   check-snapshots
@@ -590,6 +591,7 @@ e: test-esp32-forth-voclist
   out: WiFi 
   out: Wire 
   out: ESP 
+  out: ansi 
   out: editor 
   out: streams 
   out: tasks 
@@ -606,7 +608,6 @@ e: check-esp32-platform
   out: INPUT 
   out: HIGH 
   out: LOW 
-  out: page 
   out: tone 
   out: freq 
   out: duty 

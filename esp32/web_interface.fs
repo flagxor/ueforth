@@ -16,7 +16,7 @@
 
 :noname [ ' web-interface >body @ ] literal execute
 r|
-also streams also WiFi also web-interface
+also streams also sockets also WiFi also web-interface
 
 : login ( z z -- )
    WIFI_MODE_STA Wifi.mode

@@ -215,9 +215,10 @@ COMMON_PHASE2 = common/utils.fs common/locals.fs
 
 COMMON_FILETOOLS = common/tasks.fs common/streams.fs \
                    common/filetools.fs common/including.fs \
-                   common/blocks.fs
+                   common/blocks.fs common/ansi.fs \
+                   common/visual.fs
 
-COMMON_DESKTOP = common/ansi.fs common/desktop.fs \
+COMMON_DESKTOP = common/desktop.fs \
                  common/graphics.fs common/graphics_utils.fs common/heart.fs
 
 POSIX_BOOT =  $(COMMON_PHASE1) \
