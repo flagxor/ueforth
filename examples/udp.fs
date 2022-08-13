@@ -33,7 +33,8 @@ variable received-len sizeof(sockaddr_in) received-len !
   reader-task start-task
 ;
 
-: say ( port -- )
+: say ( port -- "host" )
+  bl parse s>z gethostbyname ->h_addr outgoing ->addr!
   outgoing ->port!
   sockfd tib >in @ + #tib @ >in @ - 
     0 outgoing sizeof(sockaddr_in) sendto drop
@@ -47,9 +48,9 @@ variable received-len sizeof(sockaddr_in) received-len !
   ." ------------------" cr
   ." <port> udp ( open UDP connection on port )" cr
   ." hear ( wait for messages on udp port and print then )" cr
-  ." <port> say <message text> ( send a message to a port )" cr
+  ." <port> say <host> <message text> ( send a message to a port )" cr
   cr
   ." Example: 9999 udp hear ( listener )" cr
-  ." Example: 9998 udp 9999 say Can you hear me? ( sender )" cr
+  ." Example: 9998 udp 9999 say localhost Can you hear me? ( sender )" cr
 ;
 help quit
