@@ -120,10 +120,40 @@ P ( -- ) Move to the previous block
 N ( -- ) Move to the next block
 </pre>
 
-<h5>Utilities</h5>
+<h5>Sockets</h5>
+<p><b>Requires v7.0.7.2+ for UDP</b></p>
+These words are available inside the <code>sockets</code> vocabulary.
 <pre>
-SEE ( "name" -- ) Attempt to decompile a word
-ECHO ( -- a ) -- Address of flag that determines if commands are echoed
+socket ( domain type protocol -- sock/err )
+setsockopt ( sock level optname optval optlen -- 0/err )
+bind ( sock addr addrlen -- 0/err )
+listen ( sock connections -- 0/err )
+sockaccept ( sock addr addrlen -- sock/err ) -- varies from bsd socks
+connect ( sock addr addrlen -- 0/err )
+select ( numfds readfds writefds errfds timeout -- fd/err )
+poll ( pollfds n timeout -- fd/err )
+send ( sock a n flags -- n/err )
+sendto ( sock a n flags addr addrlen -- n/err )
+sendmsg ( sock msg flags -- n/err )
+recv ( sock a n flags -- n/err )
+recvfrom ( sock a n flags addr addrlen -- n/err )
+recvmsg ( sock msg flags -- n/err )
+gethostbyname ( hostnamez -- hostent/0 )
+errno ( -- err ) -- ESP32 only as of v7.0.7.2
+
+sockaddr ( "name" -- ) creates a sockaddr structure
+-&gt;port@ ( a -- n ) get port from sockaddr
+-&gt;port! ( n a -- ) set port in sockaddr
+-&gt;addr@ ( a -- n ) get big-endian address from sockaddr
+-&gt;addr! ( n a -- ) set big-endian address in sockaddr
+ip. ( n -- ) Print address as x.y.z.w IP address.
+
+( Constants )
+SOCK_STREAM SOCK_DGRAM SOCK_RAW
+AF_INET
+sizeof(sockaddr_in)
+SOL_SOCKET
+SO_REUSEADDR
 </pre>
 
 <h5>Floating-Point</h5>
