@@ -26,7 +26,8 @@ sock googleaddr sizeof(sockaddr_in) connect throw
 
 s" GET / HTTP/1.0" sock write-file throw
 
-: semit ( ch s -- ) swap >r rp@ swap 1 swap write-file throw rdrop ;
+\ : semit ( ch s -- ) swap >r rp@ swap 1 swap write-file throw rdrop ;
+: semit ( ch s -- ) swap >r rp@ 1 0 send 0< throw rdrop ;
 : scr   13 sock semit 10 sock semit ;
 scr
 scr
