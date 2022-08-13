@@ -36,4 +36,6 @@ scr
 
 here 100000 sock read-file throw constant len
 here len type
+sock close-file throw
+
 bye
