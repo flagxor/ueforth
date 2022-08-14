@@ -32,8 +32,20 @@ transfer camera-builtins
 6 constant PIXFORMAT_RGB444
 7 constant PIXFORMAT_RGB555
 
-5 constant FRAMESIZE_QVGA
-8 constant FRAMESIZE_VGA
+0 constant FRAMESIZE_96x96    ( 96x96)
+1 constant FRAMESIZE_QQVGA    ( 160x120 )
+2 constant FRAMESIZE_QCIF     ( 176x144 )
+3 constant FRAMESIZE_HQVGA    ( 240x176 )
+4 constant FRAMESIZE_240x240  ( 176x144 )
+5 constant FRAMESIZE_QVGA     ( 320x240 )
+6 constant FRAMESIZE_CIF      ( 400x296 )
+7 constant FRAMESIZE_HVGA     ( 480x320 )
+8 constant FRAMESIZE_VGA      ( 640x480 )
+9 constant FRAMESIZE_SVGA     ( 800x600 )
+10 constant FRAMESIZE_XGA     ( 1024x768 )
+11 constant FRAMESIZE_HD      ( 1280x720 )
+12 constant FRAMESIZE_SXGA    ( 1280x1024 )
+13 constant FRAMESIZE_UXGA    ( 1600x1200 )
 
 ( See https://github.com/espressif/esp32-camera/blob/master/driver/include/esp_camera.h )
 ( Settings for AI_THINKER )
@@ -46,11 +58,67 @@ create camera-config
   0 , ( ledc_timer ) 0 , ( ledc_channel )
   here
   PIXFORMAT_JPEG , ( pixel_format )
-  FRAMESIZE_VGA , ( frame_size ) 12 , ( jpeg_quality 0-63 low good )
+  here
+  FRAMESIZE_VGA , ( frame_size )
+  here
+  12 , ( jpeg_quality 0-63 low good )
   here
   1 , ( fb_count )
 constant camera-fb-count
+constant camera-jpeg-quality
+constant camera-frame-size
 constant camera-format
+
+: field@ ( n -- n ) dup create , cell+ does> @ + @ ;
+
+0
+field@ fb->buf
+field@ fb->len
+field@ fb->width
+field@ fb->height
+field@ fb->format
+field@ fb->sec
+field@ fb->usec
+drop
+
+5 cells
+field@ s->xclk_freq_hz ( a )
+field@ s->init_status ( s )
+field@ s->reset ( s )
+field@ s->set_pixformat ( s pixformat )
+field@ s->set_framesize ( s framesize )
+field@ s->set_contrast ( s level )
+field@ s->set_brightness ( s level )
+field@ s->set_saturation ( s level )
+field@ s->set_sharpness ( s level )
+field@ s->set_denoise ( s level )
+field@ s->set_gainceiling ( s gainceil )
+field@ s->set_quality ( s quality )
+field@ s->set_colorbar ( s enable )
+field@ s->set_whitebal ( s enable )
+field@ s->set_gain_ctrl ( s enable )
+field@ s->set_exposure_ctrl ( s enable )
+field@ s->set_hmirror ( s enable )
+field@ s->set_vflip ( s enable )
+
+field@ s->set_aec2 ( s enable )
+field@ s->set_awb_gain ( s enable )
+field@ s->set_agc_gain ( s gain )
+field@ s->set_aec_value ( s gain )
+
+field@ s->set_special_effect ( s effect )
+field@ s->set_wb_mode ( s mode )
+field@ s->set_ae_level ( s level )
+
+field@ s->set_raw_gma ( s enable )
+field@ s->set_lenc ( s enable )
+
+field@ s->get_reg ( s reg mask )
+field@ s->set_reg ( s reg mask value )
+field@ s->set_res_raw ( s startX startY endX endY offsetX offsetY totalX totalY outputX outputY scale binning )
+field@ s->set_pll ( s bypass mul sys root pre seld5 pclken pclk )
+field@ s->set_xclk ( s time xclk )
+drop
 
 forth definitions
 camera

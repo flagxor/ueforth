@@ -365,7 +365,9 @@ static cell_t TimerIsrRegister(cell_t group, cell_t timer, cell_t xt, cell_t arg
   YV(camera, esp_camera_deinit, PUSH esp_camera_deinit()) \
   YV(camera, esp_camera_fb_get, PUSH esp_camera_fb_get()) \
   YV(camera, esp_camera_fb_return, esp_camera_fb_return((camera_fb_t *) a0); DROP) \
-  YV(camera, esp_camera_sensor_get, PUSH esp_camera_sensor_get())
+  YV(camera, esp_camera_sensor_get, PUSH esp_camera_sensor_get()) \
+  YV(camera, esp_camera_save_to_nvs, n0 = esp_camera_save_to_nvs(c0)) \
+  YV(camera, esp_camera_load_from_nvs, n0 = esp_camera_load_from_nvs(c0))
 #endif
 
 #ifndef ENABLE_SOCKETS_SUPPORT

@@ -428,6 +428,7 @@ $(ESP32_SIM)/Esp32forth-sim: \
     common/tier1_opcodes.h \
     common/tier2_opcodes.h \
     common/floats.h \
+    common/calls.h \
     common/calling.h \
     common/floats.h \
     common/bits.h \
@@ -452,6 +453,7 @@ ESP32_PARTS = tools/replace.js \
               common/tier1_opcodes.h \
               common/tier2_opcodes.h \
               common/floats.h \
+              common/calls.h \
               common/calling.h \
               common/bits.h \
               common/core.h \
@@ -469,6 +471,7 @@ $(ESP32)/ESP32forth/ESP32forth.ino: $(ESP32_PARTS) | $(ESP32)/ESP32forth
      tier0_opcodes=@common/tier0_opcodes.h \
      tier1_opcodes=@common/tier1_opcodes.h \
      tier2_opcodes=@common/tier2_opcodes.h \
+     calls=@common/calls.h \
      calling=@common/calling.h \
      floats=@common/floats.h \
      bits=@common/bits.h \
