@@ -614,6 +614,87 @@ esp_camera_deinit ( -- f )
 esp_camera_fb_get ( -- fb )
 esp_camera_fb_return ( fb -- )
 esp_camera_sensor_get ( -- sensor )
+esp_camera_save_to_nvs ( key -- n )
+esp_camera_load_from_nvs ( key -- n )
+
+( formats )
+PIXFORMAT_RGB565
+PIXFORMAT_YUV422
+PIXFORMAT_GRAYSCALE
+PIXFORMAT_JPEG
+PIXFORMAT_RGB888
+PIXFORMAT_RAW
+PIXFORMAT_RGB444
+PIXFORMAT_RGB555
+
+( frame sizes )
+FRAMESIZE_96x96    ( 96x96)
+FRAMESIZE_QQVGA    ( 160x120 )
+FRAMESIZE_QCIF     ( 176x144 )
+FRAMESIZE_HQVGA    ( 240x176 )
+FRAMESIZE_240x240  ( 176x144 )
+FRAMESIZE_QVGA     ( 320x240 )
+FRAMESIZE_CIF      ( 400x296 )
+FRAMESIZE_HVGA     ( 480x320 )
+FRAMESIZE_VGA      ( 640x480 )
+FRAMESIZE_SVGA     ( 800x600 )
+FRAMESIZE_XGA     ( 1024x768 )
+FRAMESIZE_HD      ( 1280x720 )
+FRAMESIZE_SXGA    ( 1280x1024 )
+FRAMESIZE_UXGA    ( 1600x1200 )
+
+( access to config )
+camera-fb-count ( -- a )
+camera-jpeg-quality ( -- a )
+camera-frame-size ( -- a )
+camera-format ( -- a )
+
+( Access a frame returned by esp_camera_fb_get )
+fb->buf ( -- a )
+fb->len ( -- n )
+fb->width ( -- n )
+fb->height ( -- n )
+fb->format ( -- n )
+fb->sec ( -- n )
+fb->usec ( -- n )
+
+( Access methods in struct returned by esp_camera_sensor_get )
+s->xclk_freq_hz ( a )
+s->init_status ( s )
+s->reset ( s )
+s->set_pixformat ( s pixformat )
+s->set_framesize ( s framesize )
+s->set_contrast ( s level )
+s->set_brightness ( s level )
+s->set_saturation ( s level )
+s->set_sharpness ( s level )
+s->set_denoise ( s level )
+s->set_gainceiling ( s gainceil )
+s->set_quality ( s quality )
+s->set_colorbar ( s enable )
+s->set_whitebal ( s enable )
+s->set_gain_ctrl ( s enable )
+s->set_exposure_ctrl ( s enable )
+s->set_hmirror ( s enable )
+s->set_vflip ( s enable )
+( --- )
+s->set_aec2 ( s enable )
+s->set_awb_gain ( s enable )
+s->set_agc_gain ( s gain )
+s->set_aec_value ( s gain )
+( --- )
+s->set_special_effect ( s effect )
+s->set_wb_mode ( s mode )
+s->set_ae_level ( s level )
+( --- )
+s->set_raw_gma ( s enable )
+s->set_lenc ( s enable )
+( --- )
+s->get_reg ( s reg mask )
+s->set_reg ( s reg mask value )
+s->set_res_raw ( s startX startY endX endY offsetX offsetY totalX totalY outputX outputY scale binning )
+s->set_pll ( s bypass mul sys root pre seld5 pclken pclk )
+s->set_xclk ( s time xclk )
 </pre>
 
 <h5>Camera Server</h5>
@@ -804,7 +885,7 @@ Example:
 tasks
 : hi   begin ." Time is: " ms-ticks . cr 1000 ms again ;
 ' hi 100 100 task my-counter
-my-counter start-task 
+my-counter start-task
 </pre>
 
 <h5 id="timers">Timers</h5>
@@ -869,7 +950,7 @@ These words are inside the <code>RTOS</code> vocabulary.
 <pre>
 xPortGetCoreID ( -- n )
 xTaskCreatePinnedToCore ( fn name stack-depth params priority taskout coreid -- )
-vTaskDelete ( task ) -- ) 
+vTaskDelete ( task ) -- )
 </pre>
 
 <h3 id="webui">ESP32 WebUI</h3>
