@@ -39,6 +39,17 @@ sockaddr httpd-port   sockaddr client   variable client-len
   sockfd max-connections listen throw
 ;
 
+: upper ( ch -- ch )
+  dup [char] a >= over [char] z <= and if 95 and then ;
+: strcase= ( a n a n -- f )
+  >r swap r@ <> if rdrop 2drop 0 exit then r>
+  for aft
+    2dup c@ upper swap c@ upper <> if 2drop 0 exit then
+    1+ swap 1+ swap
+  then next
+  2drop -1
+;
+
 variable goal   variable goal#
 : end< ( n -- f ) chunk-filled < ;
 : in@<> ( n ch -- f ) >r chunk + c@ r> <> ;
@@ -51,7 +62,7 @@ variable goal   variable goal#
   goal# ! goal ! 0 nl skipover
   begin dup end< while
     dup crnl= if drop chunk 0 exit then
-    [char] : eat goal @ goal# @ str= if 2 + 13 eat rot drop exit then
+    [char] : eat goal @ goal# @ strcase= if 2 + 13 eat rot drop exit then
     nl skipover
   repeat drop chunk 0
 ;
@@ -88,7 +99,7 @@ variable goal   variable goal#
   -1
 ;
 
-: hasHeader ( a n -- f ) 2drop header 0 0 str= 0= ;
+: hasHeader ( a n -- f ) 2drop header 0 0 strcase= 0= ;
 : method ( -- a n ) 0 bl eat rot drop ;
 : path ( -- a n ) 0 bl skipover bl eat rot drop ;
 : send ( a n -- ) client-type ;
