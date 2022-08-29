@@ -124,7 +124,7 @@ create out-string out-size 1+ allot align
 ;
 
 : handle-input
-   body input-stream >stream pause
+   begin body dup >r input-stream >stream pause r> 0= until
    out-string out-size output-stream stream>
    s" text/plain" ok-response
    out-string z>s send
