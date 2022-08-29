@@ -30,17 +30,6 @@ sockaddr httpd-port   sockaddr client   variable client-len
 : client-emit ( ch -- ) >r rp@ 1 client-type rdrop ;
 : client-cr   13 client-emit nl client-emit ;
 
-: handleClient
-  clientfd close-file drop
-  -1 to clientfd
-  sockfd client client-len sockaccept
-  dup 0< if drop 0 exit then
-  to clientfd
-  chunk chunk-size erase
-  chunk chunk-size clientfd read-file throw to chunk-filled
-  -1
-;
-
 : server ( port -- )
   httpd-port ->port!  ." Listening on port " httpd-port ->port@ . cr
   AF_INET SOCK_STREAM 0 socket to sockfd
@@ -67,11 +56,36 @@ variable goal   variable goal#
   repeat drop chunk 0
 ;
 : body ( -- a n )
+  ( TODO: Fix to handle body bigger than chunk size )
   0 nl skipover
   begin dup end< while
     dup crnl= if 2 + chunk-filled over - swap chunk + swap exit then
     nl skipover
   repeat drop chunk 0
+;
+: completed? ( -- f )
+  0 begin dup end< while
+    dup crnl= if drop -1 exit then
+    nl skipover
+  repeat drop 0
+;
+: read-headers
+  0 to chunk-filled
+  begin completed? 0= while
+    chunk chunk-filled + chunk-size chunk-filled -
+      clientfd read-file throw +to chunk-filled
+  repeat
+;
+
+: handleClient
+  clientfd close-file drop
+  -1 to clientfd
+  sockfd client client-len sockaccept
+  dup 0< if drop 0 exit then
+  to clientfd
+  chunk chunk-size erase
+  read-headers
+  -1
 ;
 
 : hasHeader ( a n -- f ) 2drop header 0 0 str= 0= ;
