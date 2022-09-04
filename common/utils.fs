@@ -17,12 +17,26 @@
 ( For tests and asserts )
 : assert ( f -- ) 0= throw ;
 
-( Examine Memory )
-: dump ( a n -- )
-   cr 0 swap for dup 16 mod 0= if cr then 2dup + c@ . 1+ next 2drop cr ;
-
 ( Print spaces )
 : spaces ( n -- ) for aft space then next ;
+
+internals definitions
+
+( Safe memory access, i.e. aligned )
+: ca@ ( a -- n ) dup cell 1- invert and @ swap cell 1- and 8 * rshift 255 and ;
+
+( Print address line leaving room )
+: dump-line ( a -- a ) cr <# #s #> 20 over - >r type r> spaces ;
+
+forth definitions internals
+
+( Examine Memory )
+: dump ( a n -- )
+   over 15 and if over dump-line over 15 and 3 * spaces then
+   for aft
+     dup 15 and 0= if dup dump-line then
+     dup ca@ <# # #s #> type space 1+
+   then next drop cr ;
 
 ( Remove from Dictionary )
 : forget ( "name" ) ' dup >link current @ !  >name drop here - allot ;

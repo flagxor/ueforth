@@ -397,8 +397,8 @@ e: check-utils
   out: str= 
   out: :noname 
   out: forget 
-  out: spaces 
   out: dump 
+  out: spaces 
   out: assert 
 ;e
 
