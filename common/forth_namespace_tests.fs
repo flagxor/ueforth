@@ -479,8 +479,13 @@ e: check-filetools
   check-tasks
 ;e
 
+e: check-asm
+  out: asm 
+;e
+
 e: check-phase2
   check-locals
+  check-asm
   check-utils
 ;e
 

@@ -48,6 +48,7 @@ z" wait" 1 sysfunc wait
 z" waitpid" 3 sysfunc waitpid
 z" mmap" 6 sysfunc mmap
 z" munmap" 2 sysfunc munmap
+z" mprotect" 3 sysfunc mprotect
 z" unlink" 1 sysfunc unlink
 z" rename" 2 sysfunc rename
 z" malloc" 1 sysfunc malloc

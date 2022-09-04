@@ -17,6 +17,7 @@
 #include "common/tier1_opcodes.h"
 #include "common/tier2_opcodes.h"
 #include "common/floats.h"
+#include "common/calls.h"
 #include "common/calling.h"
 
 #define SIM_HEAP_SIZE (100 * 1024 + 1024 * 1024)
@@ -25,6 +26,7 @@ static cell_t *simulated(cell_t *sp, const char *op);
 
 #define PLATFORM_OPCODE_LIST \
   PLATFORM_SIMULATED_OPCODE_LIST \
+  CALLING_OPCODE_LIST \
   FLOATING_POINT_LIST
 
 #include "gen/esp32_sim_opcodes.h"

@@ -25,6 +25,9 @@ typedef cell_t (CALLTYPE *call_t)();
 #define ct0 ((call_t) n0)
 
 #define CALLING_OPCODE_LIST \
+  YV(internals, CALLCODE, float *t_fp = fp; DUP; \
+      sp = (cell_t *) (*(call_t*) (w + sizeof(cell_t)))(sp, &t_fp); \
+      fp = t_fp; DROP) \
   YV(internals, CALL0, n0 = ct0()) \
   YV(internals, CALL1, n0 = ct0(n1); --sp) \
   YV(internals, CALL2, n0 = ct0(n2, n1); sp -= 2) \
