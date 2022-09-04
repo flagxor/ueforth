@@ -28,6 +28,11 @@ internals definitions
 ( Print address line leaving room )
 : dump-line ( a -- a ) cr <# #s #> 20 over - >r type r> spaces ;
 
+( Semi-dangerous word to trim down the system heap )
+DEFINED? realloc [IF]
+: relinquish ( n -- ) negate 'heap-size +! 'heap-start @ 'heap-size @ realloc drop ;
+[THEN]
+
 forth definitions internals
 
 ( Examine Memory )

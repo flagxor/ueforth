@@ -15,15 +15,22 @@
 ( Lazy loaded Bluetooth Serial Terminal )
 : bterm r|
 vocabulary bterm  bterm definitions
-also bluetooth also internals
+also bluetooth also internals also esp
+120000 getFreeHeap - 0 max relinquish ( must have 110k for bluetooth )
+z" forth xx:xx:xx:xx:xx:xx" constant name
+( Create unique name for device )
+base @ hex getEfuseMac
+<# # # char : hold # # #> name 6 + swap cmove
+<# # # char : hold # # char : hold # # char : hold # # #> name c + swap cmove
+base !
 SerialBT.new constant bt
-z" forth" 0 bt SerialBT.begin drop
-esp_bt_dev_get_address hex 6 dump cr
-: bt-type bt SerialBT.write drop ;
-: bt-key
-   begin bt SerialBT.available until 0 >r rp@ 1 bt SerialBT.readBytes drop r> ;
-: bt-on ['] bt-type is type ['] bt-key is key ;
-: bt-off ['] serial-type is type ['] serial-key is key ;
+name 0 bt SerialBT.begin drop
+." Bluetooth Serial Terminal on: " name z>s type cr
+: bt-type ( a n -- ) bt SerialBT.write drop ;
+: bt-key? ( -- f ) bt SerialBT.available 0<> pause ;
+: bt-key ( -- ch ) begin bt-key? until 0 >r rp@ 1 bt SerialBT.readBytes drop r> ;
+: bt-on  ['] bt-type is type      ['] bt-key is key      ['] bt-key? is key? ;
+: bt-off ['] default-type is type ['] default-key is key ['] default-key? is key? ;
 only forth definitions
 bterm 500 ms bt-on
 | evaluate ;

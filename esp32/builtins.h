@@ -76,7 +76,9 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   YV(ESP, getFlashChipSize, PUSH ESP.getFlashChipSize()) \
   YV(ESP, getCpuFreqMHz, PUSH ESP.getCpuFreqMHz()) \
   YV(ESP, getSketchSize, PUSH ESP.getSketchSize()) \
-  YV(ESP, deepSleep, ESP.deepSleep(tos); DROP)
+  YV(ESP, deepSleep, ESP.deepSleep(tos); DROP) \
+  YV(ESP, getEfuseMac, PUSH (cell_t) ESP.getEfuseMac(); PUSH (cell_t) (ESP.getEfuseMac() >> 32)) \
+  YV(ESP, esp_log_level_set, esp_log_level_set(c1, (esp_log_level_t) n0); DROPn(2))
 
 #define REQUIRED_SYSTEM_SUPPORT \
   X("MS-TICKS", MS_TICKS, PUSH millis()) \
@@ -90,12 +92,14 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   XV(serial, "Serial.readBytes", SERIAL_READ_BYTES, n0 = Serial.readBytes(b1, n0); NIP) \
   XV(serial, "Serial.write", SERIAL_WRITE, n0 = Serial.write(b1, n0); NIP) \
   XV(serial, "Serial.flush", SERIAL_FLUSH, Serial.flush()) \
+  XV(serial, "Serial.setDebugOutput", SERIAL_DEBUG_OUTPUT, Serial.setDebugOutput(n0); DROP) \
   XV(serial, "Serial2.begin", SERIAL2_BEGIN, Serial2.begin(tos); DROP) \
   XV(serial, "Serial2.end", SERIAL2_END, Serial2.end()) \
   XV(serial, "Serial2.available", SERIAL2_AVAILABLE, PUSH Serial2.available()) \
   XV(serial, "Serial2.readBytes", SERIAL2_READ_BYTES, n0 = Serial2.readBytes(b1, n0); NIP) \
   XV(serial, "Serial2.write", SERIAL2_WRITE, n0 = Serial2.write(b1, n0); NIP) \
-  XV(serial, "Serial2.flush", SERIAL2_FLUSH, Serial2.flush())
+  XV(serial, "Serial2.flush", SERIAL2_FLUSH, Serial2.flush()) \
+  XV(serial, "Serial2.setDebugOutput", SERIAL2_DEBUG_OUTPUT, Serial2.setDebugOutput(n0); DROP)
 
 #define REQUIRED_ARDUINO_GPIO_SUPPORT \
   Y(pinMode, pinMode(n1, n0); DROPn(2)) \
