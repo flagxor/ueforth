@@ -17,9 +17,10 @@
 asm forth 
 
 code my2*
-  $48 code1, $89 code1, $f8 code1, ( mov %rdi, %rax )
-  $48 code1, $d1 code1, $27 code1, ( shlq [%rdi] )
-  $c3 code1,                       ( ret )
+  $02 code1, $48 code1,             ( l32i.n  a4, a2, 0 )
+  $11 code1, $44 code1, $f0 code1,  ( slli    a4, a4, 1 )
+  $02 code1, $49 code1,             ( s32i.n  a4, a2, 0 )
+  $f0 code1, $0d code1,             ( ret.n )
 end-code
 
 see my2*
