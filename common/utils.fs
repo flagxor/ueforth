@@ -131,9 +131,10 @@ variable indent
     ?see-flags cr
     exit
   then
-  dup >flags BUILTIN_FORK and if ." Built-in fork: " see. exit then
+  dup >flags BUILTIN_FORK and if ." Built-in-fork: " see. exit then
   dup @ ['] input-buffer @ = if ." CREATE/VARIABLE: " see. cr exit then
   dup @ ['] SMUDGE @ = if ." DOES>/CONSTANT: " see. cr exit then
+  dup @ ['] callcode @ = if ." Code: " see. cr exit then
   dup >params 0= if ." Built-in: " see. cr exit then
   ." Unsupported: " see. cr ;
 

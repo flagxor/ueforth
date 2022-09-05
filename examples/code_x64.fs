@@ -8,5 +8,6 @@ code my2*
   $c3 code1,                       ( ret )
 end-code
 
+see my2*
 123 my2* . cr
 bye
