@@ -17,10 +17,11 @@
 asm forth 
 
 code my2*
-  $02 code1, $48 code1,             ( l32i.n  a4, a2, 0 )
-  $11 code1, $44 code1, $f0 code1,  ( slli    a4, a4, 1 )
-  $02 code1, $49 code1,             ( s32i.n  a4, a2, 0 )
-  $f0 code1, $0d code1,             ( ret.n )
+  $364100 code3, ( entry   a1, 32 )
+  $8802   code2, ( l32i.n  a8, a2, 0 )
+  $f08811 code3, ( slli    a8, a8, 1 )
+  $8902   code2, ( s32i.n  a8, a2, 0 )
+  $1df0   code2, ( retw.n )
 end-code
 
 see my2*

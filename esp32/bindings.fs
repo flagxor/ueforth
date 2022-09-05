@@ -171,16 +171,14 @@ forth definitions
 
 internals definitions
 ( Heap Capabilities )
-binary
-0001 constant MALLOC_CAP_EXEC
-0010 constant MALLOC_CAP_32BIT
-0100 constant MALLOC_CAP_8BIT
-1000 constant MALLOC_CAP_DMA
-: MALLOC_CAP_PID ( n -- ) 10000 over 11 ( 3 ) - for 2* next ;
-000010000000000 constant MALLOC_CAP_SPIRAM
-000100000000000 constant MALLOC_CAP_INTERNAL
-001000000000000 constant MALLOC_CAP_DEFAULT
-010000000000000 constant MALLOC_CAP_IRAM_8BIT
-010000000000000 constant MALLOC_CAP_RETENTION
-decimal
+1 0 lshift constant MALLOC_CAP_EXEC
+1 1 lshift constant MALLOC_CAP_32BIT
+1 2 lshift constant MALLOC_CAP_8BIT
+1 3 lshift constant MALLOC_CAP_DMA
+1 10 lshift constant MALLOC_CAP_SPIRAM
+1 11 lshift constant MALLOC_CAP_INTERNAL
+1 12 lshift constant MALLOC_CAP_DEFAULT
+1 13 lshift constant MALLOC_CAP_IRAM_8BIT
+1 14 lshift constant MALLOC_CAP_RETENTION
+1 15 lshift constant MALLOC_CAP_RTCRAM
 forth definitions

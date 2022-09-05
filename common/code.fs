@@ -16,8 +16,13 @@
 : asm r|
 
 also forth definitions
-vocabulary asm   asm definitions
-also internals
+vocabulary asm
+internals definitions
+
+: ca! ( n a -- ) dup cell-base >r cell-shift swap over lshift
+                 swap 255 swap lshift invert r@ @ and or r> ! ;
+
+also asm definitions
 
 variable code-start
 variable code-at
@@ -25,7 +30,8 @@ variable code-at
 DEFINED? posix [IF]
 also posix
 : reserve ( n -- )
-  0 swap PROT_READ PROT_WRITE PROT_EXEC or or MAP_ANONYMOUS -1 0 mmap code-start ! ;
+  0 swap PROT_READ PROT_WRITE PROT_EXEC or or
+  MAP_ANONYMOUS MAP_PRIVATE or -1 0 mmap code-start ! ;
 previous
 4096 reserve
 [THEN]
@@ -37,14 +43,19 @@ previous
 1024 reserve
 [THEN]
 
-code-start code-at !
+code-start @ code-at !
 
 : chere ( -- a ) code-at @ ;
 : callot ( n -- ) code-at +! ;
-: code, ( n -- ) chere ! cell callot ;
-: code1, ( n -- ) chere c! 1 callot ;
-: code2, ( n -- ) chere w! 2 callot ;
-: code4, ( n -- ) chere l! 4 callot ;
+: code1, ( n -- ) chere ca! 1 callot ;
+: code2, ( n -- ) dup code1, 8 rshift code1, ;
+: code3, ( n -- ) dup code2, 16 rshift code1, ;
+: code4, ( n -- ) dup code2, 16 rshift code2, ;
+cell 8 = [IF]
+: code,  dup code4, 32 rshift code4, ;
+[ELSE]
+: code,  code4, ;
+[THEN]
 : end-code   previous ;
 
 also forth definitions

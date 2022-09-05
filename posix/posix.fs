@@ -85,6 +85,7 @@ z" __errno_location" 0 sysfunc __errno_location
 1 constant PROT_READ
 2 constant PROT_WRITE
 4 constant PROT_EXEC
+$2 constant MAP_PRIVATE
 $10 constant MAP_FIXED
 $20 constant MAP_ANONYMOUS
 

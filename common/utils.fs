@@ -22,8 +22,16 @@
 
 internals definitions
 
+( Temporary for platforms without CALLCODE )
+DEFINED? CALLCODE 0= [IF]
+  create CALLCODE
+[THEN]
+
 ( Safe memory access, i.e. aligned )
-: ca@ ( a -- n ) dup cell 1- invert and @ swap cell 1- and 8 * rshift 255 and ;
+cell 1- constant cell-mask
+: cell-base ( a -- a ) cell-mask invert and ;
+: cell-shift ( a -- a ) cell-mask and 8 * ;
+: ca@ ( a -- n ) dup cell-base @ swap cell-shift rshift 255 and ;
 
 ( Print address line leaving room )
 : dump-line ( a -- a ) cr <# #s #> 20 over - >r type r> spaces ;
