@@ -109,6 +109,8 @@ start-size value capacity
          fileh close-file throw
      else
          drop
+         0 to capacity
+         0 to length
      then
 ;
 
