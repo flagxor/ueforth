@@ -14,11 +14,13 @@
 
 ( Migrate various words to separate vocabularies, and constants )
 
+forth definitions internals
+: read-dir ( dh -- a n ) dup if errno else 0 then ;
+forth definitions
+
 vocabulary ESP   ESP definitions
 transfer ESP-builtins
 only forth definitions
-
-forth definitions
 
 vocabulary Wire   Wire definitions
 transfer wire-builtins

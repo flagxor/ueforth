@@ -58,8 +58,10 @@ z" usleep" 1 sysfunc usleep
 z" signal" 2 sysfunc signal
 
 ( Directories )
+z" chdir" 1 sysfunc chdir
 z" mkdir" 2 sysfunc mkdir
 z" rmdir" 1 sysfunc rmdir
+z" getwd" 1 sysfunc getwd
 z" opendir" 1 sysfunc opendir
 z" closedir" 1 sysfunc closedir
 z" readdir" 1 sysfunc readdir
@@ -114,7 +116,10 @@ only posix definitions
 ' posix-bye is bye
 
 ( I/O Error Helpers )
-: d0<ior ( n -- n ior ) dup 0< if errno else 0 then ;
+: 0<ior ( n -- ior ) 0< if errno else 0 then ;
+: 0=ior ( n -- ior ) 0= if errno else 0 then ;
+: d0<ior ( n -- n ior ) dup 0<ior ;
+: d0=ior ( n -- n ior ) dup 0=ior ;
 
 ( errno.h )
 11 constant EAGAIN
@@ -164,18 +169,18 @@ O_WRONLY constant W/O
 O_RDWR constant R/W
 : BIN ( fh -- fh ) ;
 
-: CLOSE-FILE ( fh -- ior ) close sign-extend ;
-: FLUSH-FILE ( fh -- ior ) fsync sign-extend ;
+: CLOSE-FILE ( fh -- ior ) close 0<ior ;
+: FLUSH-FILE ( fh -- ior ) fsync 0<ior ;
 : OPEN-FILE ( a n fam -- fh ior ) >r s>z r> 0777 open sign-extend d0<ior ;
 : CREATE-FILE ( a n fam -- fh ior )
    >r s>z r> O_CREAT or 0777 open sign-extend d0<ior ;
-: DELETE-FILE ( a n -- ior ) s>z unlink sign-extend ;
-: RENAME-FILE ( a n a n -- ior ) s>z -rot s>z swap rename sign-extend ;
-: WRITE-FILE ( a n fh -- ior ) -rot dup >r write r> = 0= ;
+: DELETE-FILE ( a n -- ior ) s>z unlink 0<ior ;
+: RENAME-FILE ( a n a n -- ior ) s>z -rot s>z swap rename 0<ior ;
+: WRITE-FILE ( a n fh -- ior ) -rot dup >r write r> = 0=ior ;
 : READ-FILE ( a n fh -- n ior ) -rot read d0<ior ;
 : FILE-POSITION ( fh -- n ior ) 0 SEEK_CUR lseek d0<ior ;
-: REPOSITION-FILE ( n fh -- ior ) swap SEEK_SET lseek 0< ;
-: RESIZE-FILE ( n fh -- ior ) swap ftruncate 0< ;
+: REPOSITION-FILE ( n fh -- ior ) swap SEEK_SET lseek 0<ior ;
+: RESIZE-FILE ( n fh -- ior ) swap ftruncate 0<ior ;
 : FILE-SIZE ( fh -- n ior )
    dup 0 SEEK_CUR lseek >r
    dup 0 SEEK_END lseek r> swap >r
@@ -183,11 +188,22 @@ O_RDWR constant R/W
 ( Non-standard )
 : NON-BLOCK ( fh -- ior ) F_SETFL FNDELAY fcntl ;
 
+( Directories )
+: OPEN-DIR ( a n -- dh ior ) s>z opendir d0=ior ;
+: CLOSE-DIR ( dh -- ior ) closedir 0<ior ;
+: READ-DIR ( dh -- a n ) readdir dup if .d_name z>s else 0 then ;
+
 ( Other Utils )
 : ms ( n -- ) 1000 * usleep drop ;
 : ms-ticks ( -- n )
    0 >r 0 >r CLOCK_MONOTONIC_RAW rp@ cell - clock_gettime throw
    r> 1000000 / r> 1000 * + ;
+
+( Shell ops )
+: cd ( "path" -- ) bl parse s>z chdir throw ;
+: mkdir ( "path" -- ) bl parse s>z 0777 mkdir throw ;
+: rmdir ( "path" -- ) bl parse s>z rmdir throw ;
+: pwd   here getwd z>s type cr ;
 
 forth
 

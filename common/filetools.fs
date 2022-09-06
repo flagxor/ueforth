@@ -53,6 +53,16 @@ forth definitions internals
   again
 ;
 
+DEFINED? read-dir [IF]
+: ls ( "path" -- )
+  bl parse open-dir throw { dh } begin
+    dh read-dir dup 0= if
+      2drop dh close-dir throw exit
+    then type cr
+  again
+;
+[THEN]
+
 internals definitions
 ( Leave some room for growth of starting system. )
 0 value saving-base

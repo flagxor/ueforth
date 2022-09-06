@@ -14,6 +14,7 @@
 
 #ifndef SIM_PRINT_ONLY
 
+# include <dirent.h>
 # include <errno.h>
 # include <unistd.h>
 # include <fcntl.h>
@@ -128,7 +129,7 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   X("RENAME-FILE", RENAME_FILE, \
     cell_t len = n0; DROP; memcpy(filename, a0, len); filename[len] = 0; DROP; \
     cell_t len2 = n0; DROP; memcpy(filename2, a0, len2); filename2[len2] = 0; \
-    n0 = rename(filename, filename2); n0 = n0 ? errno : 0) \
+    n0 = rename(filename2, filename); n0 = n0 ? errno : 0) \
   X("WRITE-FILE", WRITE_FILE, cell_t fd = n0; DROP; cell_t len = n0; DROP; \
     n0 = write(fd, a0, len); n0 = n0 != len ? errno : 0) \
   X("READ-FILE", READ_FILE, cell_t fd = n0; DROP; cell_t len = n0; DROP; \
@@ -141,7 +142,11 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   X("FILE-SIZE", FILE_SIZE, struct stat st; w = fstat(n0, &st); \
     n0 = (cell_t) st.st_size; PUSH w < 0 ? errno : 0) \
   X("NON-BLOCK", NON_BLOCK, n0 = fcntl(n0, F_SETFL, O_NONBLOCK); \
-    n0 = n0 < 0 ? errno : 0)
+    n0 = n0 < 0 ? errno : 0) \
+  X("OPEN-DIR", OPEN_DIR, memcpy(filename, a1, n0); filename[n0] = 0; \
+    n1 = (cell_t) opendir(filename); n0 = n1 ? 0 : errno) \
+  X("CLOSE-DIR", CLOSE_DIR, n0 = closedir((DIR *) n0); n0 = n0 ? errno : 0) \
+  YV(internals, READDIR, SET readdir((DIR *) n0)->d_name)
 
 #ifndef ENABLE_LEDC_SUPPORT
 # define OPTIONAL_LEDC_SUPPORT
