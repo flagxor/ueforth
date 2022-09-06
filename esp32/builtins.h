@@ -146,7 +146,8 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   X("OPEN-DIR", OPEN_DIR, memcpy(filename, a1, n0); filename[n0] = 0; \
     n1 = (cell_t) opendir(filename); n0 = n1 ? 0 : errno) \
   X("CLOSE-DIR", CLOSE_DIR, n0 = closedir((DIR *) n0); n0 = n0 ? errno : 0) \
-  YV(internals, READDIR, SET readdir((DIR *) n0)->d_name)
+  YV(internals, READDIR, \
+    struct dirent *ent = readdir((DIR *) n0); SET (ent ? ent->d_name: 0))
 
 #ifndef ENABLE_LEDC_SUPPORT
 # define OPTIONAL_LEDC_SUPPORT

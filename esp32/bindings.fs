@@ -15,7 +15,7 @@
 ( Migrate various words to separate vocabularies, and constants )
 
 forth definitions internals
-: read-dir ( dh -- a n ) dup if errno else 0 then ;
+: read-dir ( dh -- a n ) readdir dup if z>s else 0 then ;
 forth definitions
 
 vocabulary ESP   ESP definitions
