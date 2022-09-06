@@ -409,7 +409,9 @@ e: check-snapshots
   out: remember 
   out: restore 
   out: save 
+  out: touch 
   out: rm 
+  out: mv 
   out: cp 
   out: cat 
   out: dump-file 

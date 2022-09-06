@@ -13,6 +13,7 @@
 // limitations under the License.
 
 static char filename[PATH_MAX];
+static char filename2[PATH_MAX];
 
 {{bits}}
 {{core}}

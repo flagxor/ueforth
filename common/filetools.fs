@@ -37,7 +37,14 @@
   again
 ;
 
-: rm ( "path" --- ) bl parse delete-file throw ;
+: mv ( "src" "dst" -- ) bl parse bl parse rename-file throw ;
+: rm ( "path" -- ) bl parse delete-file throw ;
+
+: touch ( "path" -- )
+  bl parse 2dup w/o open-file
+  if drop w/o create-file throw then
+  close-file throw
+;
 
 internals definitions
 ( Leave some room for growth of starting system. )
