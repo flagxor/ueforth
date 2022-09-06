@@ -43,6 +43,44 @@ DUMP ( a n -- ) Dump a memory region
 SEE ( "name" -- ) Attempt to decompile a word
 VARIABLE ECHO -- Determines if commands are echoed
 REMAINING ( -- n ) Bytes remaining in Forth heap.
+DUMP-FILE ( data data# fn fn# -- ) Write contents of a file throws on error.
+</pre>
+
+<h5>Shell Utilities</h5>
+<p><b>Requires v7.0.7.3+ -- ONLY Posix + ESP32</b></p>
+<pre>
+cp ( "src" "dst" -- ) Copy "src" file to "dst".
+mv ( "src" "dst" -- ) Rename "src" file to "dst".
+rm ( "path" -- ) Remove "path" file.
+touch ( "path" -- ) Create "path" file if it doesn't exist.
+cat ( "path" -- ) Print contents of "path" file.
+ls ( "path" -- ) List files or directories in "path".
+</pre>
+<p><b>Requires v7.0.7.3+ -- ONLY Posix</b></p>
+<pre>
+cd ( "path" -- ) Change director to "path".
+mkdir ( "path" -- ) Create directory "path".
+rmdir ( "path" -- ) Remove directory "path".
+pwd ( -- ) Print current directory.
+</pre>
+
+<h5>Visual Editor</h5>
+<p><b>Requires v7.0.7.2+</b></p>
+<pre>
+VISUAL EDIT ( "path" --) Enters a visual editor opening file "path".
+
+NOTE: On ESP32 requires connection over an ANSI serial terminal like Putty.
+
+LIMITATIONS: Terminal doesn't know screen dimensions
+             and is very redraw inefficient.
+
+Keys:
+  Ctrl-S          -- Save now.
+  Ctrl-X / Ctrl-Q -- Quit, asking Y/N to save.
+  Ctrl-L          -- Redraw the screen.
+  Backspace       -- Delete a character backwards.
+  Arrow Keys      -- Movement.
+  PgUp/PgDn       -- Scroll up/down a page.
 </pre>
 
 <h5>Vocabularies</h5>
@@ -157,7 +195,7 @@ SO_REUSEADDR
 </pre>
 
 <h5>Floating-Point</h5>
-<p><b>(Requires v7.0.6.5+)</b></p>
+<p><b>Requires v7.0.6.5+</b></p>
 <p>
 Single precision floating-point support is available as a work in progress.
 While initially left out in the name of minimalism,
