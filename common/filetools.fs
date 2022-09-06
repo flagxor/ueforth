@@ -18,6 +18,15 @@
   r> close-file drop
 ;
 
+: cat ( "path" -- )
+  parse r/o open-file if ." not found!" exit then { fh }
+  begin
+    here 80 fh read-file if drop exit fh close-file drop exit then
+    dup 0= if exit then
+    here swap type
+  again
+;
+
 internals definitions
 ( Leave some room for growth of starting system. )
 0 value saving-base
