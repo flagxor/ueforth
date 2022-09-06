@@ -125,8 +125,9 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   X("DELETE-FILE", DELETE_FILE, cell_t len = n0; DROP; \
     memcpy(filename, a0, len); filename[len] = 0; \
     n0 = unlink(filename); n0 = n0 ? errno : 0) \
-  X("RENAME-FILE", RENAME_FILE, memcpy(filename, a1, n0); filename[n0] = 0; \
-    memcpy(filename2, a3, n2); filename2[n2] = 0; \
+  X("RENAME-FILE", RENAME_FILE, \
+    cell_t len = n0; DROP; memcpy(filename, a0, len); filename[len] = 0; DROP; \
+    cell_t len2 = n0; DROP; memcpy(filename2, a0, len2); filename2[len2] = 0; \
     n0 = rename(filename, filename2); n0 = n0 ? errno : 0) \
   X("WRITE-FILE", WRITE_FILE, cell_t fd = n0; DROP; cell_t len = n0; DROP; \
     n0 = write(fd, a0, len); n0 = n0 != len ? errno : 0) \

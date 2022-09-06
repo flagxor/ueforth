@@ -39,9 +39,6 @@ start-size value capacity
 : down ( n -- n ) begin dup length < over text + c@ nl <> and while 1+ repeat 1+ length min ;
 : ndown ( n -- n ) 10 for down next ;
 
-: cremit ( ch -- ) dup nl = if drop cr else emit then ;
-: crtype ( a n -- ) for aft dup c@ cremit 1+ then next drop ;
-
 : update
     caret nup dup 0<> if 1+ 1+ then { before }
     before ndown ndown { after }

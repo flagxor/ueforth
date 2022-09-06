@@ -18,15 +18,6 @@
   r> close-file drop
 ;
 
-: cat ( "path" -- )
-  bl parse r/o bin open-file throw { fh }
-  begin
-    here 80 fh read-file throw
-    dup 0= if drop fh close-file throw exit then
-    here swap type
-  again
-;
-
 : cp ( "src" "dst" -- )
   bl parse r/o bin open-file throw { inf }
   bl parse w/o bin create-file throw { outf }
@@ -44,6 +35,22 @@
   bl parse 2dup w/o open-file
   if drop w/o create-file throw then
   close-file throw
+;
+
+internals definitions
+
+: cremit ( ch -- ) dup nl = if drop cr else emit then ;
+: crtype ( a n -- ) for aft dup c@ cremit 1+ then next drop ;
+
+forth definitions internals
+
+: cat ( "path" -- )
+  bl parse r/o bin open-file throw { fh }
+  begin
+    here 80 fh read-file throw
+    dup 0= if drop fh close-file throw exit then
+    here swap crtype
+  again
 ;
 
 internals definitions
