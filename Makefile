@@ -211,7 +211,7 @@ COMMON_PHASE1e = common/comments.fs \
                  common/floats.fs \
                  common/structures.fs
 
-COMMON_PHASE2 = common/utils.fs common/code.fs common/locals.fs
+COMMON_PHASE2 = common/utils.fs common/code.fs common/locals.fs common/case.fs
 
 COMMON_FILETOOLS = common/tasks.fs common/streams.fs \
                    common/filetools.fs common/including.fs \

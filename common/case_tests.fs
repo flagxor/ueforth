@@ -12,20 +12,37 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-needs testing.fs
-needs utils.fs
-needs base_tests.fs
-needs utils_tests.fs
-needs vocabulary_tests.fs
-needs locals_tests.fs
-needs case_tests.fs
-needs doloop_tests.fs
-needs conditionals_tests.fs
-needs float_tests.fs
-needs forth_namespace_tests.fs
-needs structures_tests.fs
-needs including_tests/including_tests.fs
-needs modules_tests.fs
-needs ../lib/hashing/sha1_tests.fs
-needs ../lib/hashing/sha256_tests.fs
-run-tests
+( Test CASE Works )
+
+e: test-case
+  : foo
+    case
+      1 of ." one" cr endof
+      2 of ." two" cr endof
+      ." other: " dup . cr
+    endcase
+  ;
+  1 foo
+  out: one
+  2 foo
+  out: two
+  3 foo
+  out: other: 3 
+;e
+
+e: test-case-dup
+  : foo
+    case
+      1 of ." one" cr endof
+      2 of ." two" cr endof
+      1 of ." onemore" cr endof
+      ." other: " dup . cr
+    endcase
+  ;
+  1 foo
+  out: one
+  2 foo
+  out: two
+  3 foo
+  out: other: 3 
+;e

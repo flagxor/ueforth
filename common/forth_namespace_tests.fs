@@ -26,6 +26,13 @@ also internals
     >link
   repeat drop ;
 
+e: check-case
+  out: ENDOF 
+  out: OF 
+  out: ENDCASE 
+  out: CASE 
+;e
+
 e: check-locals
   out: +to 
   out: to 
@@ -507,6 +514,7 @@ e: check-asm
 ;e
 
 e: check-phase2
+  check-case
   check-locals
   check-asm
   check-utils
