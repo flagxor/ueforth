@@ -12,8 +12,14 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-: CASE ( n -- ) postpone ahead >r postpone begin
-                postpone ahead r> postpone then swap ; immediate
-: ENDCASE   drop postpone drop postpone then ; immediate
+internals definitions
+variable cases
+forth definitions internals
+
+: CASE ( n -- ) cases @  0 cases ! ; immediate
+: ENDCASE   cases @ for aft postpone then then next
+            cases ! postpone drop ; immediate
 : OF ( n -- ) postpone over postpone = postpone if ; immediate
-: ENDOF   postpone drop over postpone again postpone then ; immediate
+: ENDOF   1 cases +! postpone else ; immediate
+
+forth definitions
