@@ -69,8 +69,13 @@
 # endif
 #endif
 
+#if !defined(USER_VOCABULARIES)
+# define USER_VOCABULARIES
+#endif
+
 #define VOCABULARY_LIST \
   V(forth) V(internals) \
   V(rtos) V(SPIFFS) V(serial) V(SD) V(SD_MMC) V(ESP) \
   V(ledc) V(Wire) V(WiFi) V(bluetooth) V(sockets) V(oled) \
-  V(rmt) V(interrupts) V(spi_flash) V(camera) V(timers)
+  V(rmt) V(interrupts) V(spi_flash) V(camera) V(timers) \
+  USER_VOCABULARIES
