@@ -38,6 +38,7 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   REQUIRED_ESP_SUPPORT \
   REQUIRED_MEMORY_SUPPORT \
   REQUIRED_SERIAL_SUPPORT \
+  OPTIONAL_SERIAL2_SUPPORT \
   REQUIRED_ARDUINO_GPIO_SUPPORT \
   REQUIRED_SYSTEM_SUPPORT \
   REQUIRED_FILES_SUPPORT \
@@ -94,7 +95,12 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   XV(serial, "Serial.readBytes", SERIAL_READ_BYTES, n0 = Serial.readBytes(b1, n0); NIP) \
   XV(serial, "Serial.write", SERIAL_WRITE, n0 = Serial.write(b1, n0); NIP) \
   XV(serial, "Serial.flush", SERIAL_FLUSH, Serial.flush()) \
-  XV(serial, "Serial.setDebugOutput", SERIAL_DEBUG_OUTPUT, Serial.setDebugOutput(n0); DROP) \
+  XV(serial, "Serial.setDebugOutput", SERIAL_DEBUG_OUTPUT, Serial.setDebugOutput(n0); DROP)
+
+#ifndef ENABLE_SERIAL2_SUPPORT
+# define OPTIONAL_SERIAL2_SUPPORT
+#else
+# define OPTIONAL_SERIAL2_SUPPORT \
   XV(serial, "Serial2.begin", SERIAL2_BEGIN, Serial2.begin(tos); DROP) \
   XV(serial, "Serial2.end", SERIAL2_END, Serial2.end()) \
   XV(serial, "Serial2.available", SERIAL2_AVAILABLE, PUSH Serial2.available()) \
@@ -102,6 +108,7 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   XV(serial, "Serial2.write", SERIAL2_WRITE, n0 = Serial2.write(b1, n0); NIP) \
   XV(serial, "Serial2.flush", SERIAL2_FLUSH, Serial2.flush()) \
   XV(serial, "Serial2.setDebugOutput", SERIAL2_DEBUG_OUTPUT, Serial2.setDebugOutput(n0); DROP)
+#endif
 
 #define REQUIRED_ARDUINO_GPIO_SUPPORT \
   Y(pinMode, pinMode(n1, n0); DROPn(2)) \

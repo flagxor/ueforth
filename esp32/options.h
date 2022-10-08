@@ -33,8 +33,13 @@
 # define ENABLE_SD_MMC_SUPPORT
 #endif
 
-// ESP32-C3 has no DACs.
-#if !defined(CONFIG_IDF_TARGET_ESP32C3)
+// Serial2 does not work on ESP32-S2 / ESP32-C3
+#if !defined(CONFIG_IDF_TARGET_ESP32S2) && !defined(CONFIG_IDF_TARGET_ESP32C3)
+# define ENABLE_SERIAL2_SUPPORT
+#endif
+
+// No DACS on ESP32-S3 and ESP32-C3.
+#if !defined(CONFIG_IDF_TARGET_ESP32S3) && !defined(CONFIG_IDF_TARGET_ESP32C3)
 # define ENABLE_DAC_SUPPORT
 #endif
 
