@@ -16,7 +16,7 @@
 var fs = require('fs');
 var process = require('process');
 
-var source = fs.readFileSync(process.stdin.fd).toString();
+var source = fs.readFileSync('/dev/stdin').toString();
 
 if (source.match(/Invalid/)) {
   console.log('BAD ASM.JS');
