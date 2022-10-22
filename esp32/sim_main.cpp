@@ -56,6 +56,10 @@ static cell_t *simulated(cell_t *sp, const char *op) {
   if (op == STR_MALLOC) {
     *sp = (cell_t) malloc(*sp);
     return sp;
+  } else if (op == STR_heap_caps_malloc) {
+    --sp;
+    *sp = (cell_t) malloc(*sp);
+    return sp;
   } else if (op == STR_SYSFREE) {
     free((void*) *sp--);
     return sp;
