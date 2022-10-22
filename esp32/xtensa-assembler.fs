@@ -27,7 +27,7 @@ vocabulary xtensa xtensa definitions
 
 numeric operand im
 : imm4   im im im im ;
-: imm8   imm4 ;
+: imm8   imm4 imm4 ;
 : imm12   imm4 imm4 imm4 ;
 : imm16   imm8 imm8 ;
 : offset   imm8 imm8 im im ;

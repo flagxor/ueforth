@@ -110,7 +110,7 @@ variable istep
 : disasm1 ( a -- a )
   dup . ."  --  " 0 istep ! ['] matchit for-ops
   istep @ 0= if 1 istep ! ." UNKNOWN!!!" then
-  9 emit 9 emit ." -- " dup istep @ m.
+  9 emit 9 emit ." -- " dup m@ istep @ m.
   istep @ +
   cr
 ;
