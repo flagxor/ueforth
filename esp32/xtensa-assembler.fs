@@ -38,6 +38,12 @@ numeric operand im
 ' >ofs ' ofs. operand ofs
 : offset   18 for aft ofs then next ;
 
+( Offsets for CALL* )
+: >cofs ( n -- n ) chere - 2 rshift 4 - ;
+: cofs. ( n -- ) 18 sextend 2 lshift address @ + 4 + . ;
+' >cofs ' cofs. operand cofs
+: coffset   18 for aft cofs then next ;
+
 ( Frame size of ENTRY )
 : >entry12 ( n -- n ) 3 rshift ;
 : entry12. ( n -- ) 3 lshift . ;
@@ -133,7 +139,7 @@ offset  o o  o l l o  OP J,
 $0 BRANCH2b BF,    $1 BRANCH2b BT,
 $8 BRANCH2b LOOP,  $9 BRANCH2b LOOPNEZ,  $a BRANCH2b LOOPGTZ,
 
-: CALLOP   offset  2 bits  o l o l  OP ;
+: CALLOP   coffset  2 bits  o l o l  OP ;
 0 CALLOP CALL0,  1 CALLOP CALL4,  2 CALLOP CALL8,  3 CALLOP CALL12,
 
 : CALLXOP   o o o o  o o o o  o o o o  ssss  l l 2 bits  o o o o  OP ;
