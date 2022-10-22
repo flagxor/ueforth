@@ -30,17 +30,33 @@ numeric operand im
 : imm8   imm4 imm4 ;
 : imm12   imm4 imm4 imm4 ;
 : imm16   imm8 imm8 ;
-: offset   imm8 imm8 im im ;
 : sr   imm8 ;
+
+( Offsets for J )
+: >ofs ( n -- n ) chere - 4 - ;
+: ofs. ( n -- ) 18 sextend address @ + 4 + . ;
+' >ofs ' ofs. operand ofs
+: offset   18 for aft ofs then next ;
+
+( Frame size of ENTRY )
+: >entry12 ( n -- n ) 3 rshift ;
+: entry12. ( n -- ) 3 lshift . ;
+' >entry12 ' entry12. operand entry12'
+: entry12   12 for aft entry12' then next ;
+
+: >sa ( n -- n ) 32 swap - ;
+: sa. ( n -- ) 32 swap - . ;
+' >sa ' sa. operand sa
+
+numeric operand x   : xxxx   x x x x ;
+numeric operand i   : iiii   i i i i ;
+numeric operand w
+numeric operand y
+numeric operand b   : bbbb   b b b b ;
 
 register operand r   : rrrr   r r r r ;
 register operand s   : ssss   s s s s ;
 register operand t   : tttt   t t t t ;
-numeric operand i   : iiii   i i i i ;
-numeric operand w
-numeric operand x   : xxxx   x x x x ;
-numeric operand y
-numeric operand b   : bbbb   b b b b ;
 
 imm4     ssss     tttt     l o o o  OP L32I.N,
 imm4     ssss     tttt     l o o l  OP S32I.N,
@@ -107,7 +123,8 @@ imm8  l l l b  ssss  bbbb  o l l l  OP BBSI,
 
 : BRANCH2   imm12  ssss  4 bits  o l l o  OP ;
 : BRANCH2a   imm8  rrrr     ssss  4 bits  o l l o  OP ;
-( $0 J, )  $1 BRANCH2 BEQZ,  $2 BRANCH2a BEQI,  $3 BRANCH2 ENTRY,
+: BRANCH2e   entry12  ssss  4 bits  o l l o  OP ;
+( $0 J, )  $1 BRANCH2 BEQZ,  $2 BRANCH2a BEQI,  $3 BRANCH2e ENTRY,
 ( $4 J, )  $5 BRANCH2 BNEZ,  $6 BRANCH2a BNEI,  ( BRANCH2b's )
 ( $8 J, )  $9 BRANCH2 BLTZ,  $a BRANCH2a BLTI,  $b BRANCH2a BLTUI,
 ( $c J, )  $d BRANCH2 BGEZ,  $e BRANCH2a BGEI,  $f BRANCH2a BGEUI,
@@ -247,7 +264,7 @@ o o l o  o o l l  rrrr  ssss  tttt  o o o o  OP SEXT,
 l l l l  o o o l  o o o l  ssss  tttt  o o o o  OP SICT,
 l l l l  o o o l  o o l l  ssss  tttt  o o o o  OP SICW,
 l o l o  o o o l  rrrr  ssss  o o o o  o o o o  OP SLL,
-o o o x  o o o l  rrrr  ssss  xxxx  o o o o  OP SLLI,
+o o o sa  o o o l  rrrr  ssss  sa sa sa sa  o o o o  OP SLLI,
 l o l l  o o o l  rrrr  o o o o  tttt  o o o o  OP SRA,
 o o l x  o o o l  rrrr  xxxx  tttt  o o o o  OP SRAI,
 l o o o  o o o l  rrrr  ssss  tttt  o o o o  OP SRC,

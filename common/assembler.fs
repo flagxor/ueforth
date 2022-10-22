@@ -86,7 +86,7 @@ variable opcodes
          r@ >pattern
          0 r@ >operands begin dup @ while >r 1+ r> 2 cells + repeat
          swap for aft
-           2 cells - dup >r cell+ @ swap >r enmask r> swap r@ @ >inop execute or r>
+           2 cells - dup >r swap >r dup cell+ @ >r @ >inop execute r> enmask r> or r>
          then next
          drop
          r> >length coden,
@@ -97,8 +97,10 @@ variable opcodes
 
 : m@ ( a -- n ) 0 swap cell 0 do dup ca@ i 8 * lshift swap >r or r> 1+ loop drop ;
 : m. ( n n -- ) base @ hex >r >r <# r> 1- for # # next #> type r> base ! ;
+: sextend ( n n -- n ) cell 8 * swap - dup >r lshift r> arshift ;
 
 variable istep
+variable address
 : matchit ( a xt -- a )
   >r dup m@ r@ >mask and r@ >pattern = if
     r@ >operands begin dup @ while
@@ -108,7 +110,7 @@ variable istep
     r@ >length 8 / istep !
   then rdrop ;
 : disasm1 ( a -- a )
-  dup . ."  --  " 0 istep ! ['] matchit for-ops
+  dup address ! dup . ."  --  " 0 istep ! ['] matchit for-ops
   istep @ 0= if 1 istep ! ." UNKNOWN!!!" then
   9 emit 9 emit ." -- " dup m@ istep @ m.
   istep @ +
