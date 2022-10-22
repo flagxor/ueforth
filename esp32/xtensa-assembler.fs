@@ -15,10 +15,9 @@
 ( Lazy loaded xtensa assembler )
 : xtensa-assembler r|
 
-also assembler
-also forth definitions
-vocabulary xtensa-assembler
-also xtensa-assembler definitions
+current @
+also assembler definitions
+vocabulary xtensa xtensa definitions
 
 16 names a0 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14 a15
 : nop ;
@@ -271,8 +270,11 @@ o l o l  o o o o  o l l o  ssss  tttt     o o o o  OP WITLB,
 o o o l  o o l l  sr             tttt     o o o o  OP WSR,
 l l l l  o o l l  sr             tttt     o o o o  OP WUR,
 
-previous previous previous
+also forth definitions
+: xtensa-assembler xtensa ;
+previous previous
 xtensa-assembler
+current !
 
 | evaluate ;
 

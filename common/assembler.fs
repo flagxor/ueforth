@@ -15,11 +15,9 @@
 ( Lazy loaded assembler/disassembler framework )
 : assembler r|
 
-also asm
-also forth definitions
-vocabulary assembler
+current @
 also internals
-also assembler definitions
+also asm definitions
 
 -1 1 rshift invert constant high-bit
 : odd? ( n -- f ) 1 and ;
@@ -111,7 +109,11 @@ variable istep
 : disasm1 ( a -- a ) 0 istep ! ['] matchit for-ops istep @ 8 / + ;
 : disasm ( a n -- ) for aft disasm1 then next drop ;
 
-previous previous previous previous
+previous previous
+also forth definitions
+: assembler asm ;
+previous
 assembler
+current !
 
 | evaluate ;
