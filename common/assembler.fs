@@ -106,7 +106,9 @@ variable istep
     r@ see. cr
     r@ >length istep !
   then rdrop ;
-: disasm1 ( a -- a ) 0 istep ! ['] matchit for-ops istep @ 8 / + ;
+: disasm1 ( a -- a )
+  dup . ."  --  " 0 istep ! ['] matchit for-ops istep @ 8 / +
+  istep @ 0= if 1+ ." UNKNOWN" cr then ;
 : disasm ( a n -- ) for aft disasm1 then next drop ;
 
 previous previous
