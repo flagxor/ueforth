@@ -39,8 +39,8 @@ numeric operand im
 : offset   18 for aft ofs then next ;
 
 ( Offsets for CALL* )
-: >cofs ( n -- n ) chere - 2 rshift 4 - ;
-: cofs. ( n -- ) 18 sextend 2 lshift address @ + 4 + . ;
+: >cofs ( n -- n ) chere - 2 rshift 1- ;
+: cofs. ( n -- ) 18 sextend 1+ 2 lshift address @ + . ;
 ' >cofs ' cofs. operand cofs
 : coffset   18 for aft cofs then next ;
 
