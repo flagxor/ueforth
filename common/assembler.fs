@@ -96,6 +96,7 @@ variable opcodes
    >r opcodes @ begin dup while r> 2dup >r >r execute r> >body @ repeat rdrop drop ;
 
 : m@ ( a -- n ) 0 swap cell 0 do dup ca@ i 8 * lshift swap >r or r> 1+ loop drop ;
+: m. ( n n -- ) base @ hex >r >r <# r> 1- for # # next #> type r> base ! ;
 
 variable istep
 : matchit ( a xt -- a )
@@ -103,12 +104,16 @@ variable istep
     r@ >operands begin dup @ while
       >r dup m@ r@ cell+ @ demask r@ @ >printop execute r> 2 cells +
     repeat drop
-    r@ see. cr
-    r@ >length istep !
+    r@ see.
+    r@ >length 8 / istep !
   then rdrop ;
 : disasm1 ( a -- a )
-  dup . ."  --  " 0 istep ! ['] matchit for-ops istep @ 8 / +
-  istep @ 0= if 1+ ." UNKNOWN" cr then ;
+  dup . ."  --  " 0 istep ! ['] matchit for-ops
+  istep @ 0= if 1 istep ! ." UNKNOWN!!!" then
+  9 emit 9 emit ." -- " dup istep @ m.
+  istep @ +
+  cr
+;
 : disasm ( a n -- ) for aft disasm1 then next drop ;
 
 previous previous
