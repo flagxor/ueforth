@@ -634,6 +634,74 @@ r|
 })
 | 13 jseval!
 
+r|
+(function(sp) {
+  var x = i32[sp>>2]; sp -= 4;
+  var y = i32[sp>>2]; sp -= 4;
+  if (globalObj.write) {
+    return sp;
+  }
+  context.ctx.translate(x, y);
+  return sp;
+})
+| 14 jseval!
+
+r|
+(function(sp) {
+  var d = i32[sp>>2]; sp -= 4;
+  var x = i32[sp>>2]; sp -= 4;
+  var y = i32[sp>>2]; sp -= 4;
+  if (globalObj.write) {
+    return sp;
+  }
+  context.ctx.scale(x / d, y / d);
+  return sp;
+})
+| 15 jseval!
+
+r|
+(function(sp) {
+  var d = i32[sp>>2]; sp -= 4;
+  var angle = i32[sp>>2]; sp -= 4;
+  if (globalObj.write) {
+    return sp;
+  }
+  context.ctx.rotate(Math.PI * 2 * angle / d);
+  return sp;
+})
+| 16 jseval!
+
+r|
+(function(sp) {
+  if (globalObj.write) {
+    return sp;
+  }
+  context.ctx.save();
+  return sp;
+})
+| 17 jseval!
+
+r|
+(function(sp) {
+  if (globalObj.write) {
+    return sp;
+  }
+  context.ctx.restore();
+  return sp;
+})
+| 18 jseval!
+
+r|
+(function(sp) {
+  var f = i32[sp>>2]; sp -= 4;
+  if (globalObj.write) {
+    return sp;
+  }
+  context.canvas.style.imageRendering = f ? '' : 'pixelated';
+  return sp;
+})
+| 19 jseval!
+
 forth definitions web
 
 : bye   0 terminate ;
@@ -651,5 +719,11 @@ $ffffff value color
   else
     mobile if 0 keys-height else 0 0 then
   then 11 call ;
+: translate ( x y ) 14 call ;
+: scale ( x y div ) 15 call ;
+: rotate ( angle div ) 16 call ;
+: gpush   17 call ;
+: gpop   18 call ;
+: smooth ( f -- ) 19 call ;
 
 forth definitions
