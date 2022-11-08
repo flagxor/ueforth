@@ -40,7 +40,7 @@ numeric operand im
 
 ( Offsets for CALL* )
 : >cofs ( n -- n ) chere - 2 rshift 1- ;
-: cofs. ( n -- ) 18 sextend 1+ 2 lshift address @ + . ;
+: cofs. ( n -- ) 18 sextend 1+ 2 lshift address @ 3 invert and + . ;
 ' >cofs ' cofs. operand cofs
 : coffset   18 for aft cofs then next ;
 
@@ -167,9 +167,9 @@ $4 LDSTORE S8I,   $5 LDSTORE S16I,   $6 LDSTORE S32I,
                   $9 LDSTORE L16SI,  ( $a MOVI )         $b LDSTORE L32AI,
 $c LDSTORE ADDI,  $d LDSTORE ADDMI,  $e LDSTORE S32C1I,  $f LDSTORE S32RI,
 
-o l o o  l o o l  rrrr     ssss  tttt  o o o o  OP S32E,
+o l o o  l o o l  rrrr  ssss  tttt  o o o o  OP S32E,
 
-\ TODO: EXTUI
+x x x x  o l o sa  rrrr  sa sa sa sa  tttt  o o o o  OP EXTUI,
 
 imm16  tttt  o o o l  OP L32R,
 l o o l  o o o o  o o w w  ssss  o o o o  o l o o  OP LDDEC,
