@@ -46,3 +46,20 @@ e: test-case-dup
   3 foo
   out: other: 3 
 ;e
+
+e: test-case-string
+  : foo
+    case
+      1 of s" one" endof
+      2 of s" two" endof
+      1 of s" onemore" endof
+      >r s" other" r>
+    endcase
+  ;
+  1 foo type cr
+  out: one
+  2 foo type cr
+  out: two
+  3 foo type cr
+  out: other
+;e

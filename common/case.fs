@@ -17,9 +17,9 @@ variable cases
 forth definitions internals
 
 : CASE ( n -- ) cases @  0 cases ! ; immediate
-: ENDCASE   cases @ for aft postpone then then next
-            cases ! postpone drop ; immediate
-: OF ( n -- ) postpone over postpone = postpone if ; immediate
+: ENDCASE   postpone drop cases @ for aft postpone then then next
+            cases ! ; immediate
+: OF ( n -- ) postpone over postpone = postpone if postpone drop ; immediate
 : ENDOF   1 cases +! postpone else ; immediate
 
 forth definitions
