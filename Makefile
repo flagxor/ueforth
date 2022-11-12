@@ -251,7 +251,7 @@ ESP32_BOOT = $(COMMON_PHASE1) \
              esp32/allocation.fs esp32/bindings.fs \
              $(COMMON_PHASE2) $(COMMON_FILETOOLS) \
              esp32/platform.fs \
-             common/assembler.fs esp32/xtensa-assembler.fs \
+             common/assembler.fs esp32/xtensa-assembler.fs esp32/riscv-assembler.fs \
              posix/httpd.fs posix/web_interface.fs esp32/web_interface.fs \
              esp32/registers.fs esp32/timers.fs \
              esp32/bterm.fs posix/telnetd.fs \
