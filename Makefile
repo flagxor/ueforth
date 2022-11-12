@@ -534,6 +534,9 @@ esp32all: \
 
 PORT?=COM3
 
+putty:
+	${HOME}/Desktop/putty.exe -serial ${PORT} -sercfg 115200
+
 BAUD_esp32=921600
 BAUD_esp32s2=921600
 BAUD_esp32s3=921600
