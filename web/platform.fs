@@ -78,6 +78,14 @@ if (!globalObj.write) {
     }
   }, 50);
 
+  context.GetRawString = function(addr, len) {
+    var data = '';
+    for (var i = 0; i < len; ++i) {
+      data += String.fromCharCode(u8[addr + i]);
+    }
+    return data;
+  };
+
   context.terminal = document.createElement('div');
   context.terminal.style.width = '100%';
   context.terminal.style.whiteSpace = 'pre-wrap';
@@ -702,6 +710,54 @@ r|
 })
 | 19 jseval!
 
+r|
+(function(sp) {
+  var session = i32[sp>>2]; sp -= 4;
+  var key_len = i32[sp>>2]; sp -= 4;
+  var key = i32[sp>>2]; sp -= 4;
+  var value_len = i32[sp>>2]; sp -= 4;
+  var value = i32[sp>>2]; sp -= 4;
+  if (globalObj.write) {
+    return sp;
+  }
+  if (session) {
+    sessionStorage.setItem(context.GetRawString(key, key_len),
+                           context.GetRawString(value, value_len));
+  } else {
+    localStorage.setItem(context.GetRawString(key, key_len),
+                         context.GetRawString(value, value_len));
+  }
+  return sp;
+})
+| 20 jseval!
+
+r|
+(function(sp) {
+  var session = i32[sp>>2]; sp -= 4;
+  var key_len = i32[sp>>2]; sp -= 4;
+  var key = i32[sp>>2]; sp -= 4;
+  var dst_limit = i32[sp>>2]; sp -= 4;
+  var dst = i32[sp>>2]; sp -= 4;
+  if (globalObj.write) {
+    return sp;
+  }
+  if (session) {
+    var data = sessionStorage.getItem(context.GetRawString(key, key_len));
+  } else {
+    var data = localStorage.getItem(context.GetRawString(key, key_len));
+  }
+  if (data === null) {
+    sp += 4; i32[sp>>2] = -1;
+    return sp;
+  }
+  for (var i = 0; i < dst_limit && i < data.length; ++i) {
+    u8[dst + i] = data.charCodeAt(i);
+  }
+  sp += 4; i32[sp>>2] = data.length;
+  return sp;
+})
+| 21 jseval!
+
 forth definitions web
 
 : bye   0 terminate ;
@@ -725,5 +781,7 @@ $ffffff value color
 : gpush   17 call ;
 : gpop   18 call ;
 : smooth ( f -- ) 19 call ;
+: setItem ( a n a n sess -- ) 20 call ;
+: getItem ( a n a n sess -- n ) 21 call ;
 
 forth definitions
