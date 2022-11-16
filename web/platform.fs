@@ -86,6 +86,22 @@ if (!globalObj.write) {
     return data;
   };
 
+  context.handles = [];
+  context.free_handles = [];
+  context.next_handle = 1;
+  context.AllotHandle = function() {
+    if (context.free_handles.length) {
+      return context.free_handles.pop();
+    }
+    return context.next_handle++;
+  };
+  context.ReleaseHandle = function(id) {
+    if (context.handles[id] !== null) {
+      context.handles[id] = null;
+      context.free_handles.push(id);
+    }
+  };
+
   context.terminal = document.createElement('div');
   context.terminal.style.width = '100%';
   context.terminal.style.whiteSpace = 'pre-wrap';
@@ -554,7 +570,9 @@ r|
   }
   return sp;
 })
-| 6 jseval! 6 call echo !
+| 6 jseval!
+: shouldEcho? 6 call ;
+shouldEcho? echo !
 
 r|
 (function(sp) {
@@ -566,6 +584,9 @@ r|
   return sp;
 })
 | 7 jseval!
+: grmode ( mode -- ) 7 call ;
+: gr   1 grmode ;
+: text   0 grmode ;
 
 r|
 (function(sp) {
@@ -587,6 +608,9 @@ r|
   return sp;
 })
 | 8 jseval!
+: rawbox ( x y w h col -- ) 8 call ;
+$ffffff value color
+: box ( x y w h -- ) color rawbox ;
 
 r|
 (function(sp) {
@@ -600,6 +624,7 @@ r|
   return sp;
 })
 | 9 jseval!
+: window ( w h -- ) 9 call ;
 
 r|
 (function(sp) {
@@ -613,6 +638,7 @@ r|
   return sp;
 })
 | 10 jseval!
+: viewport@ ( -- w h ) 10 call ;
 
 r|
 (function(sp) {
@@ -627,6 +653,7 @@ r|
   return sp;
 })
 | 11 jseval!
+: textRatios ( tf mp -- ) ;
 
 r|
 (function(sp) {
@@ -634,6 +661,7 @@ r|
   return sp;
 })
 | 12 jseval!
+: mobile ( -- f ) 12 call ;
 
 r|
 (function(sp) {
@@ -641,6 +669,14 @@ r|
   return sp;
 })
 | 13 jseval!
+: keys-height ( -- n ) 13 call ;
+
+: show-text ( f -- )
+  if
+    mobile if 3000 120 keys-height + else 1667 120 then
+  else
+    mobile if 0 keys-height else 0 0 then
+  then textRatios ;
 
 r|
 (function(sp) {
@@ -653,6 +689,7 @@ r|
   return sp;
 })
 | 14 jseval!
+: translate ( x y ) 14 call ;
 
 r|
 (function(sp) {
@@ -666,6 +703,7 @@ r|
   return sp;
 })
 | 15 jseval!
+: scale ( x y div ) 15 call ;
 
 r|
 (function(sp) {
@@ -678,6 +716,7 @@ r|
   return sp;
 })
 | 16 jseval!
+: rotate ( angle div ) 16 call ;
 
 r|
 (function(sp) {
@@ -688,6 +727,7 @@ r|
   return sp;
 })
 | 17 jseval!
+: gpush   17 call ;
 
 r|
 (function(sp) {
@@ -698,6 +738,7 @@ r|
   return sp;
 })
 | 18 jseval!
+: gpop   18 call ;
 
 r|
 (function(sp) {
@@ -709,6 +750,7 @@ r|
   return sp;
 })
 | 19 jseval!
+: smooth ( f -- ) 19 call ;
 
 r|
 (function(sp) {
@@ -730,6 +772,7 @@ r|
   return sp;
 })
 | 20 jseval!
+: setItem ( a n a n sess -- ) 20 call ;
 
 r|
 (function(sp) {
@@ -757,6 +800,7 @@ r|
   return sp;
 })
 | 21 jseval!
+: getItem ( a n a n sess -- n ) 21 call ;
 
 r|
 (function(sp) {
@@ -784,6 +828,7 @@ r|
   return sp;
 })
 | 22 jseval!
+: getKey ( a n sess -- n ) 22 call ;
 
 r|
 (function(sp) {
@@ -801,33 +846,73 @@ r|
   return sp;
 })
 | 23 jseval!
+: keyCount ( sess -- n ) 23 call ;
+
+r|
+(function(sp) {
+  var handle = i32[sp>>2]; sp -= 4;
+  context.ReleaseHandle(handle);
+  return sp;
+})
+| 24 jseval!
+: release ( handle -- ) 24 call ;
+
+r|
+(function(sp) {
+  var i = context.AllotHandle();
+  sp += 4; i32[sp>>2] = i;
+  context.handles[i] = new AudioContext();
+  return sp;
+})
+| 25 jseval!
+: newAudioContext ( -- h ) 25 call ;
+
+r|
+(function(sp) {
+  var audio_ctx = i32[sp>>2]; sp -= 4;
+  var i = context.AllotHandle();
+  sp += 4; i32[sp>>2] = i;
+  context.handles[i] = context.handles[audio_ctx].createOscillator();
+  return sp;
+})
+| 26 jseval!
+: createOscillator ( h -- h ) 26 call ;
+
+r|
+(function(sp) {
+  var audio_ctx = i32[sp>>2]; sp -= 4;
+  var i = context.AllotHandle();
+  sp += 4; i32[sp>>2] = i;
+  context.handles[i] = context.handles[audio_ctx].createGain();
+  return sp;
+})
+| 27 jseval!
+: createGain ( h -- h ) 27 call ;
+
+r|
+(function(sp) {
+  var audio_ctx = i32[sp>>2]; sp -= 4;
+  var i = context.AllotHandle();
+  sp += 4; i32[sp>>2] = i;
+  context.handles[i] = context.handles[audio_ctx].createBiquadFilter();
+  return sp;
+})
+| 28 jseval!
+: createBiquadFilter ( h -- h ) 28 call ;
+
+r|
+(function(sp) {
+  var audio_ctx = i32[sp>>2]; sp -= 4;
+  var i = context.AllotHandle();
+  sp += 4; i32[sp>>2] = i;
+  context.handles[i] = context.handles[audio_ctx].createBufferSource();
+  return sp;
+})
+| 29 jseval!
+: createBufferSource ( h -- h ) 29 call ;
 
 forth definitions web
 
 : bye   0 terminate ;
-: gr   1 7 call ;
-: text   0 7 call ;
-: mobile ( -- f ) 12 call ;
-: keys-height ( -- n ) 13 call ;
-$ffffff value color
-: box ( x y w h -- ) color 8 call ;
-: window ( w h -- ) 9 call ;
-: viewport@ ( -- w h ) 10 call ;
-: show-text ( f -- )
-  if
-    mobile if 3000 120 keys-height + else 1667 120 then
-  else
-    mobile if 0 keys-height else 0 0 then
-  then 11 call ;
-: translate ( x y ) 14 call ;
-: scale ( x y div ) 15 call ;
-: rotate ( angle div ) 16 call ;
-: gpush   17 call ;
-: gpop   18 call ;
-: smooth ( f -- ) 19 call ;
-: setItem ( a n a n sess -- ) 20 call ;
-: getItem ( a n a n sess -- n ) 21 call ;
-: getKey ( a n sess -- n ) 22 call ;
-: keyCount ( sess -- n ) 23 call ;
 
 forth definitions
