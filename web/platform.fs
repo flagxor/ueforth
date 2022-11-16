@@ -758,6 +758,50 @@ r|
 })
 | 21 jseval!
 
+r|
+(function(sp) {
+  var session = i32[sp>>2]; sp -= 4;
+  var index = i32[sp>>2]; sp -= 4;
+  var key_limit = i32[sp>>2]; sp -= 4;
+  var key = i32[sp>>2]; sp -= 4;
+  if (globalObj.write) {
+    sp += 4; i32[sp>>2] = -1;
+    return sp;
+  }
+  if (session) {
+    var data = sessionStorage.key(index);
+  } else {
+    var data = localStorage.key(index);
+  }
+  if (data === null) {
+    sp += 4; i32[sp>>2] = -1;
+    return sp;
+  }
+  for (var i = 0; i < key_limit && i < data.length; ++i) {
+    u8[key + i] = data.charCodeAt(i);
+  }
+  sp += 4; i32[sp>>2] = data.length;
+  return sp;
+})
+| 22 jseval!
+
+r|
+(function(sp) {
+  var session = i32[sp>>2]; sp -= 4;
+  if (globalObj.write) {
+    sp += 4; i32[sp>>2] = -1;
+    return sp;
+  }
+  if (session) {
+    var len = sessionStorage.length;
+  } else {
+    var len = localStorage.length;
+  }
+  sp += 4; i32[sp>>2] = len;
+  return sp;
+})
+| 23 jseval!
+
 forth definitions web
 
 : bye   0 terminate ;
@@ -783,5 +827,7 @@ $ffffff value color
 : smooth ( f -- ) 19 call ;
 : setItem ( a n a n sess -- ) 20 call ;
 : getItem ( a n a n sess -- n ) 21 call ;
+: getKey ( a n sess -- n ) 22 call ;
+: keyCount ( sess -- n ) 23 call ;
 
 forth definitions
