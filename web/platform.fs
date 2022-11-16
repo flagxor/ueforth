@@ -14,10 +14,9 @@
 
 vocabulary web   web definitions
 
-: jseval! ( a n index -- ) 0 call ;
-
 1 value jsslot
-: JSWORD ( "name" )
+: jseval! ( a n index -- ) 0 call ;
+: JSWORD: ( "name" )
    create jsslot jseval! jsslot , 1 +to jsslot
    does> @ call ;
 
@@ -29,7 +28,7 @@ r|
   eval(text);
   return sp;
 })
-| JSWORD jseval ( a n -- )
+| JSWORD: jseval ( a n -- )
 
 r~
 globalObj.ueforth = context;
@@ -513,7 +512,7 @@ r|
   }
   return sp;
 })
-| JSWORD web-type-raw ( a n -- yield? )
+| JSWORD: web-type-raw ( a n -- yield? )
 : web-type ( a n -- ) web-type-raw if yield then ;
 ' web-type is type
 
@@ -534,7 +533,7 @@ r|
   }
   return sp;
 })
-| JSWORD web-key-raw ( -- n )
+| JSWORD: web-key-raw ( -- n )
 : web-key ( -- n ) begin yield web-key-raw dup if exit then drop again ;
 ' web-key is key
 
@@ -548,7 +547,7 @@ r|
   sp += 4; i32[sp>>2] = context.inbuffer.length ? -1 : 0;
   return sp;
 })
-| JSWORD web-key?-raw ( -- f )
+| JSWORD: web-key?-raw ( -- f )
 : web-key? ( -- f ) yield web-key?-raw ;
 ' web-key? is key?
 
@@ -562,7 +561,7 @@ r|
   }
   return sp;
 })
-| JSWORD terminate ( n -- )
+| JSWORD: terminate ( n -- )
 
 r|
 (function(sp) {
@@ -573,7 +572,7 @@ r|
   }
   return sp;
 })
-| JSWORD shouldEcho? ( -- f )
+| JSWORD: shouldEcho? ( -- f )
 shouldEcho? echo !
 
 r|
@@ -585,7 +584,7 @@ r|
   context.setMode(mode);
   return sp;
 })
-| JSWORD grmode ( mode -- )
+| JSWORD: grmode ( mode -- )
 : gr   1 grmode ;
 : text   0 grmode ;
 
@@ -608,7 +607,7 @@ r|
   context.ctx.fillRect(x, y, w, h);
   return sp;
 })
-| JSWORD rawbox ( x y w h col -- )
+| JSWORD: rawbox ( x y w h col -- )
 $ffffff value color
 : box ( x y w h -- ) color rawbox ;
 
@@ -623,7 +622,7 @@ r|
   context.canvas.height = h;
   return sp;
 })
-| JSWORD window ( w h -- )
+| JSWORD: window ( w h -- )
 
 r|
 (function(sp) {
@@ -636,7 +635,7 @@ r|
   sp += 4; i32[sp>>2] = context.height;
   return sp;
 })
-| JSWORD viewport@ ( -- w h )
+| JSWORD: viewport@ ( -- w h )
 
 r|
 (function(sp) {
@@ -650,21 +649,21 @@ r|
   context.Resize();
   return sp;
 })
-| JSWORD textRatios ( tf mp -- )
+| JSWORD: textRatios ( tf mp -- )
 
 r|
 (function(sp) {
   sp += 4; i32[sp>>2] = context.mobile;
   return sp;
 })
-| JSWORD mobile ( -- f )
+| JSWORD: mobile ( -- f )
 
 r|
 (function(sp) {
   sp += 4; i32[sp>>2] = context.KEYBOARD_HEIGHT;
   return sp;
 })
-| JSWORD keys-height ( -- n )
+| JSWORD: keys-height ( -- n )
 
 : show-text ( f -- )
   if
@@ -683,7 +682,7 @@ r|
   context.ctx.translate(x, y);
   return sp;
 })
-| JSWORD translate ( x y )
+| JSWORD: translate ( x y )
 
 r|
 (function(sp) {
@@ -696,7 +695,7 @@ r|
   context.ctx.scale(x / d, y / d);
   return sp;
 })
-| JSWORD scale ( x y div )
+| JSWORD: scale ( x y div )
 
 r|
 (function(sp) {
@@ -708,7 +707,7 @@ r|
   context.ctx.rotate(Math.PI * 2 * angle / d);
   return sp;
 })
-| JSWORD rotate ( angle div )
+| JSWORD: rotate ( angle div )
 
 r|
 (function(sp) {
@@ -718,7 +717,7 @@ r|
   context.ctx.save();
   return sp;
 })
-| JSWORD gpush
+| JSWORD: gpush
 
 r|
 (function(sp) {
@@ -728,7 +727,7 @@ r|
   context.ctx.restore();
   return sp;
 })
-| JSWORD gpop
+| JSWORD: gpop
 
 r|
 (function(sp) {
@@ -739,7 +738,7 @@ r|
   context.canvas.style.imageRendering = f ? '' : 'pixelated';
   return sp;
 })
-| JSWORD smooth ( f -- )
+| JSWORD: smooth ( f -- )
 
 r|
 (function(sp) {
@@ -760,7 +759,7 @@ r|
   }
   return sp;
 })
-| JSWORD setItem ( a n a n sess -- )
+| JSWORD: setItem ( a n a n sess -- )
 
 r|
 (function(sp) {
@@ -787,7 +786,7 @@ r|
   sp += 4; i32[sp>>2] = data.length;
   return sp;
 })
-| JSWORD getItem ( a n a n sess -- n )
+| JSWORD: getItem ( a n a n sess -- n )
 
 r|
 (function(sp) {
@@ -814,7 +813,7 @@ r|
   sp += 4; i32[sp>>2] = data.length;
   return sp;
 })
-| JSWORD getKey ( a n sess -- n )
+| JSWORD: getKey ( a n sess -- n )
 
 r|
 (function(sp) {
@@ -831,7 +830,7 @@ r|
   sp += 4; i32[sp>>2] = len;
   return sp;
 })
-| JSWORD keyCount ( sess -- n )
+| JSWORD: keyCount ( sess -- n )
 
 r|
 (function(sp) {
@@ -839,7 +838,7 @@ r|
   context.ReleaseHandle(handle);
   return sp;
 })
-| JSWORD release ( handle -- )
+| JSWORD: release ( handle -- )
 
 r|
 (function(sp) {
@@ -848,7 +847,7 @@ r|
   context.handles[i] = new AudioContext();
   return sp;
 })
-| JSWORD newAudioContext ( -- h )
+| JSWORD: newAudioContext ( -- h )
 
 r|
 (function(sp) {
@@ -858,7 +857,7 @@ r|
   context.handles[i] = context.handles[audio_ctx].createOscillator();
   return sp;
 })
-| JSWORD createOscillator ( h -- h )
+| JSWORD: createOscillator ( h -- h )
 
 r|
 (function(sp) {
@@ -868,7 +867,7 @@ r|
   context.handles[i] = context.handles[audio_ctx].createGain();
   return sp;
 })
-| JSWORD createGain ( h -- h )
+| JSWORD: createGain ( h -- h )
 
 r|
 (function(sp) {
@@ -878,7 +877,7 @@ r|
   context.handles[i] = context.handles[audio_ctx].createBiquadFilter();
   return sp;
 })
-| JSWORD createBiquadFilter ( h -- h )
+| JSWORD: createBiquadFilter ( h -- h )
 
 r|
 (function(sp) {
@@ -888,7 +887,7 @@ r|
   context.handles[i] = context.handles[audio_ctx].createBufferSource();
   return sp;
 })
-| JSWORD createBufferSource ( h -- h )
+| JSWORD: createBufferSource ( h -- h )
 
 forth definitions web
 
