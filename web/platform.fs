@@ -16,6 +16,11 @@ vocabulary web   web definitions
 
 : jseval! ( a n index -- ) 0 call ;
 
+1 value jsslot
+: JSWORD ( "name" )
+   create jsslot jseval! jsslot , 1 +to jsslot
+   does> @ call ;
+
 r|
 (function(sp) {
   var n = i32[sp>>2]; sp -= 4;
@@ -24,8 +29,7 @@ r|
   eval(text);
   return sp;
 })
-| 1 jseval!
-: jseval ( a n -- ) 1 call ;
+| JSWORD jseval ( a n -- )
 
 r~
 globalObj.ueforth = context;
@@ -509,8 +513,8 @@ r|
   }
   return sp;
 })
-| 2 jseval!
-: web-type ( a n -- ) 2 call if yield then ;
+| JSWORD web-type-raw ( a n -- yield? )
+: web-type ( a n -- ) web-type-raw if yield then ;
 ' web-type is type
 
 r|
@@ -530,8 +534,8 @@ r|
   }
   return sp;
 })
-| 3 jseval!
-: web-key ( -- n ) begin yield 3 call dup if exit then drop again ;
+| JSWORD web-key-raw ( -- n )
+: web-key ( -- n ) begin yield web-key-raw dup if exit then drop again ;
 ' web-key is key
 
 r|
@@ -544,8 +548,8 @@ r|
   sp += 4; i32[sp>>2] = context.inbuffer.length ? -1 : 0;
   return sp;
 })
-| 4 jseval!
-: web-key? ( -- f ) yield 4 call ;
+| JSWORD web-key?-raw ( -- f )
+: web-key? ( -- f ) yield web-key?-raw ;
 ' web-key? is key?
 
 r|
@@ -558,8 +562,7 @@ r|
   }
   return sp;
 })
-| 5 jseval!
-: terminate ( n -- ) 5 call ;
+| JSWORD terminate ( n -- )
 
 r|
 (function(sp) {
@@ -570,8 +573,7 @@ r|
   }
   return sp;
 })
-| 6 jseval!
-: shouldEcho? 6 call ;
+| JSWORD shouldEcho? ( -- f )
 shouldEcho? echo !
 
 r|
@@ -583,8 +585,7 @@ r|
   context.setMode(mode);
   return sp;
 })
-| 7 jseval!
-: grmode ( mode -- ) 7 call ;
+| JSWORD grmode ( mode -- )
 : gr   1 grmode ;
 : text   0 grmode ;
 
@@ -607,8 +608,7 @@ r|
   context.ctx.fillRect(x, y, w, h);
   return sp;
 })
-| 8 jseval!
-: rawbox ( x y w h col -- ) 8 call ;
+| JSWORD rawbox ( x y w h col -- )
 $ffffff value color
 : box ( x y w h -- ) color rawbox ;
 
@@ -623,8 +623,7 @@ r|
   context.canvas.height = h;
   return sp;
 })
-| 9 jseval!
-: window ( w h -- ) 9 call ;
+| JSWORD window ( w h -- )
 
 r|
 (function(sp) {
@@ -637,8 +636,7 @@ r|
   sp += 4; i32[sp>>2] = context.height;
   return sp;
 })
-| 10 jseval!
-: viewport@ ( -- w h ) 10 call ;
+| JSWORD viewport@ ( -- w h )
 
 r|
 (function(sp) {
@@ -652,24 +650,21 @@ r|
   context.Resize();
   return sp;
 })
-| 11 jseval!
-: textRatios ( tf mp -- ) ;
+| JSWORD textRatios ( tf mp -- )
 
 r|
 (function(sp) {
   sp += 4; i32[sp>>2] = context.mobile;
   return sp;
 })
-| 12 jseval!
-: mobile ( -- f ) 12 call ;
+| JSWORD mobile ( -- f )
 
 r|
 (function(sp) {
   sp += 4; i32[sp>>2] = context.KEYBOARD_HEIGHT;
   return sp;
 })
-| 13 jseval!
-: keys-height ( -- n ) 13 call ;
+| JSWORD keys-height ( -- n )
 
 : show-text ( f -- )
   if
@@ -688,8 +683,7 @@ r|
   context.ctx.translate(x, y);
   return sp;
 })
-| 14 jseval!
-: translate ( x y ) 14 call ;
+| JSWORD translate ( x y )
 
 r|
 (function(sp) {
@@ -702,8 +696,7 @@ r|
   context.ctx.scale(x / d, y / d);
   return sp;
 })
-| 15 jseval!
-: scale ( x y div ) 15 call ;
+| JSWORD scale ( x y div )
 
 r|
 (function(sp) {
@@ -715,8 +708,7 @@ r|
   context.ctx.rotate(Math.PI * 2 * angle / d);
   return sp;
 })
-| 16 jseval!
-: rotate ( angle div ) 16 call ;
+| JSWORD rotate ( angle div )
 
 r|
 (function(sp) {
@@ -726,8 +718,7 @@ r|
   context.ctx.save();
   return sp;
 })
-| 17 jseval!
-: gpush   17 call ;
+| JSWORD gpush
 
 r|
 (function(sp) {
@@ -737,8 +728,7 @@ r|
   context.ctx.restore();
   return sp;
 })
-| 18 jseval!
-: gpop   18 call ;
+| JSWORD gpop
 
 r|
 (function(sp) {
@@ -749,8 +739,7 @@ r|
   context.canvas.style.imageRendering = f ? '' : 'pixelated';
   return sp;
 })
-| 19 jseval!
-: smooth ( f -- ) 19 call ;
+| JSWORD smooth ( f -- )
 
 r|
 (function(sp) {
@@ -771,8 +760,7 @@ r|
   }
   return sp;
 })
-| 20 jseval!
-: setItem ( a n a n sess -- ) 20 call ;
+| JSWORD setItem ( a n a n sess -- )
 
 r|
 (function(sp) {
@@ -799,8 +787,7 @@ r|
   sp += 4; i32[sp>>2] = data.length;
   return sp;
 })
-| 21 jseval!
-: getItem ( a n a n sess -- n ) 21 call ;
+| JSWORD getItem ( a n a n sess -- n )
 
 r|
 (function(sp) {
@@ -827,8 +814,7 @@ r|
   sp += 4; i32[sp>>2] = data.length;
   return sp;
 })
-| 22 jseval!
-: getKey ( a n sess -- n ) 22 call ;
+| JSWORD getKey ( a n sess -- n )
 
 r|
 (function(sp) {
@@ -845,8 +831,7 @@ r|
   sp += 4; i32[sp>>2] = len;
   return sp;
 })
-| 23 jseval!
-: keyCount ( sess -- n ) 23 call ;
+| JSWORD keyCount ( sess -- n )
 
 r|
 (function(sp) {
@@ -854,8 +839,7 @@ r|
   context.ReleaseHandle(handle);
   return sp;
 })
-| 24 jseval!
-: release ( handle -- ) 24 call ;
+| JSWORD release ( handle -- )
 
 r|
 (function(sp) {
@@ -864,8 +848,7 @@ r|
   context.handles[i] = new AudioContext();
   return sp;
 })
-| 25 jseval!
-: newAudioContext ( -- h ) 25 call ;
+| JSWORD newAudioContext ( -- h )
 
 r|
 (function(sp) {
@@ -875,8 +858,7 @@ r|
   context.handles[i] = context.handles[audio_ctx].createOscillator();
   return sp;
 })
-| 26 jseval!
-: createOscillator ( h -- h ) 26 call ;
+| JSWORD createOscillator ( h -- h )
 
 r|
 (function(sp) {
@@ -886,8 +868,7 @@ r|
   context.handles[i] = context.handles[audio_ctx].createGain();
   return sp;
 })
-| 27 jseval!
-: createGain ( h -- h ) 27 call ;
+| JSWORD createGain ( h -- h )
 
 r|
 (function(sp) {
@@ -897,8 +878,7 @@ r|
   context.handles[i] = context.handles[audio_ctx].createBiquadFilter();
   return sp;
 })
-| 28 jseval!
-: createBiquadFilter ( h -- h ) 28 call ;
+| JSWORD createBiquadFilter ( h -- h )
 
 r|
 (function(sp) {
@@ -908,8 +888,7 @@ r|
   context.handles[i] = context.handles[audio_ctx].createBufferSource();
   return sp;
 })
-| 29 jseval!
-: createBufferSource ( h -- h ) 29 call ;
+| JSWORD createBufferSource ( h -- h )
 
 forth definitions web
 
