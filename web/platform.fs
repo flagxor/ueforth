@@ -14,21 +14,46 @@
 
 vocabulary web   web definitions
 
-1 value jsslot
 : jseval! ( a n index -- ) 0 call ;
-: JSWORD: ( "name" )
-   create jsslot jseval! jsslot , 1 +to jsslot
-   does> @ call ;
 
-r|
+r~
 (function(sp) {
+  var slot = i32[sp>>2]; sp -= 4;
   var n = i32[sp>>2]; sp -= 4;
   var a = i32[sp>>2]; sp -= 4;
   var text = GetString(a, n);
-  eval(text);
+  var parts = text.split('\n');
+  var args = parts[0].split(' ');
+  var code = '(function(sp) {\n';
+  for (var i = args.length - 1; i >= 0; --i) {
+    if (args[i].length === 0 ||
+        args[i] === '{' ||
+        args[i] === '}') {
+      continue;
+    }
+    code += 'var ' + args[i] + ' = i32[sp>>2]; sp -= 4;\n';
+  }
+  code += parts.slice(1).join('\n');
+  code += '  return sp;\n';
+  code += '})\n';
+  objects[slot] = eval(code);
   return sp;
 })
-| JSWORD: jseval ( a n -- )
+~ 1 jseval!
+
+2 value jsslot
+: JSWORD| ( "args.." )
+   create postpone r| jsslot 1 call jsslot , 1 +to jsslot
+   does> @ call ;
+
+JSWORD| jseval { a n }
+  var text = GetString(a, n);
+  eval(text);
+|
+
+: JSWORD: ( "name" )
+   create jsslot jseval! jsslot , 1 +to jsslot
+   does> @ call ;
 
 r~
 globalObj.ueforth = context;
@@ -551,17 +576,13 @@ r|
 : web-key? ( -- f ) yield web-key?-raw ;
 ' web-key? is key?
 
-r|
-(function(sp) {
-  var val = i32[sp>>2]; sp -= 4;
+JSWORD| terminate { retval }
   if (globalObj.quit) {
-    quit(val);
+    quit(retval);
   } else {
     Init();
   }
-  return sp;
-})
-| JSWORD: terminate ( n -- )
+|
 
 r|
 (function(sp) {
@@ -575,29 +596,13 @@ r|
 | JSWORD: shouldEcho? ( -- f )
 shouldEcho? echo !
 
-r|
-(function(sp) {
-  var mode = i32[sp>>2]; sp -= 4;
-  if (globalObj.write) {
-    return sp;
-  }
+JSWORD| grmode { mode }
   context.setMode(mode);
-  return sp;
-})
-| JSWORD: grmode ( mode -- )
+|
 : gr   1 grmode ;
 : text   0 grmode ;
 
-r|
-(function(sp) {
-  var c = i32[sp>>2]; sp -= 4;
-  var h = i32[sp>>2]; sp -= 4;
-  var w = i32[sp>>2]; sp -= 4;
-  var y = i32[sp>>2]; sp -= 4;
-  var x = i32[sp>>2]; sp -= 4;
-  if (globalObj.write) {
-    return sp;
-  }
+JSWORD| rawbox { x y w h c }
   function HexDig(n) {
     return ('0' + n.toString(16)).slice(-2);
   }
@@ -605,24 +610,14 @@ r|
                                 HexDig((c >> 8) & 0xff) +
                                 HexDig(c & 0xff);
   context.ctx.fillRect(x, y, w, h);
-  return sp;
-})
-| JSWORD: rawbox ( x y w h col -- )
+|
 $ffffff value color
 : box ( x y w h -- ) color rawbox ;
 
-r|
-(function(sp) {
-  var h = i32[sp>>2]; sp -= 4;
-  var w = i32[sp>>2]; sp -= 4;
-  if (globalObj.write) {
-    return sp;
-  }
+JSWORD| window { w h }
   context.canvas.width = w;
   context.canvas.height = h;
-  return sp;
-})
-| JSWORD: window ( w h -- )
+|
 
 r|
 (function(sp) {
@@ -637,19 +632,11 @@ r|
 })
 | JSWORD: viewport@ ( -- w h )
 
-r|
-(function(sp) {
-  var mp = i32[sp>>2]; sp -= 4;
-  var tf = i32[sp>>2]; sp -= 4;
-  if (globalObj.write) {
-    return sp;
-  }
+JSWORD| textRatios { tf mp }
   context.text_fraction = tf;
   context.min_text_portion = mp;
   context.Resize();
-  return sp;
-})
-| JSWORD: textRatios ( tf mp -- )
+|
 
 r|
 (function(sp) {
@@ -672,84 +659,31 @@ r|
     mobile if 0 keys-height else 0 0 then
   then textRatios ;
 
-r|
-(function(sp) {
-  var x = i32[sp>>2]; sp -= 4;
-  var y = i32[sp>>2]; sp -= 4;
-  if (globalObj.write) {
-    return sp;
-  }
+JSWORD| translate { x y }
   context.ctx.translate(x, y);
-  return sp;
-})
-| JSWORD: translate ( x y )
+|
 
-r|
-(function(sp) {
-  var d = i32[sp>>2]; sp -= 4;
-  var x = i32[sp>>2]; sp -= 4;
-  var y = i32[sp>>2]; sp -= 4;
-  if (globalObj.write) {
-    return sp;
-  }
-  context.ctx.scale(x / d, y / d);
-  return sp;
-})
-| JSWORD: scale ( x y div )
+JSWORD| scale { x y div }
+  context.ctx.scale(x / div, y / div);
+|
 
-r|
-(function(sp) {
-  var d = i32[sp>>2]; sp -= 4;
-  var angle = i32[sp>>2]; sp -= 4;
-  if (globalObj.write) {
-    return sp;
-  }
-  context.ctx.rotate(Math.PI * 2 * angle / d);
-  return sp;
-})
-| JSWORD: rotate ( angle div )
+JSWORD| rotate { angle div }
+  context.ctx.rotate(Math.PI * 2 * angle / div);
+|
 
-r|
-(function(sp) {
-  if (globalObj.write) {
-    return sp;
-  }
+JSWORD| gpush { }
   context.ctx.save();
-  return sp;
-})
-| JSWORD: gpush
+|
 
-r|
-(function(sp) {
-  if (globalObj.write) {
-    return sp;
-  }
+JSWORD| gpop { }
   context.ctx.restore();
-  return sp;
-})
-| JSWORD: gpop
+|
 
-r|
-(function(sp) {
-  var f = i32[sp>>2]; sp -= 4;
-  if (globalObj.write) {
-    return sp;
-  }
+JSWORD| smooth { f }
   context.canvas.style.imageRendering = f ? '' : 'pixelated';
-  return sp;
-})
-| JSWORD: smooth ( f -- )
+|
 
-r|
-(function(sp) {
-  var session = i32[sp>>2]; sp -= 4;
-  var key_len = i32[sp>>2]; sp -= 4;
-  var key = i32[sp>>2]; sp -= 4;
-  var value_len = i32[sp>>2]; sp -= 4;
-  var value = i32[sp>>2]; sp -= 4;
-  if (globalObj.write) {
-    return sp;
-  }
+JSWORD| setItem { value value_len key key_len session }
   if (session) {
     sessionStorage.setItem(context.GetRawString(key, key_len),
                            context.GetRawString(value, value_len));
@@ -757,9 +691,7 @@ r|
     localStorage.setItem(context.GetRawString(key, key_len),
                          context.GetRawString(value, value_len));
   }
-  return sp;
-})
-| JSWORD: setItem ( a n a n sess -- )
+|
 
 r|
 (function(sp) {
@@ -832,13 +764,9 @@ r|
 })
 | JSWORD: keyCount ( sess -- n )
 
-r|
-(function(sp) {
-  var handle = i32[sp>>2]; sp -= 4;
+JSWORD| release { handle }
   context.ReleaseHandle(handle);
-  return sp;
-})
-| JSWORD: release ( handle -- )
+|
 
 r|
 (function(sp) {
