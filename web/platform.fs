@@ -25,16 +25,39 @@ r~
   var parts = text.split('\n');
   var args = parts[0].split(' ');
   var code = '(function(sp) {\n';
-  for (var i = args.length - 1; i >= 0; --i) {
+  code += 'var results = (function() {\n';
+  var params = [];
+  var results = [];
+  var at_results = false;
+  for (var i = 0; i < args.length; ++i) {
     if (args[i].length === 0 ||
         args[i] === '{' ||
         args[i] === '}') {
       continue;
     }
-    code += 'var ' + args[i] + ' = i32[sp>>2]; sp -= 4;\n';
+    if (args[i] === '--') {
+      at_results = true;
+      continue;
+    }
+    if (at_results) {
+      results.push(args[i]);
+    } else {
+      params.push(args[i]);
+    }
+  }
+  for (var i = params.length - 1; i >= 0; --i) {
+    code += 'var ' + params[i] + ' = i32[sp>>2]; sp -= 4;\n';
   }
   code += parts.slice(1).join('\n');
-  code += '  return sp;\n';
+  code += '})();\n';
+  if (results.length === 1) {
+    code += 'sp += 4; i32[sp>>2] = results;\n';
+  } else {
+    for (var i = 0; i < results.length; ++i) {
+      code += 'sp += 4; i32[sp>>2] = results[' + i + '];\n';
+    }
+  }
+  code += 'return sp;\n';
   code += '})\n';
   objects[slot] = eval(code);
   return sp;
@@ -42,18 +65,14 @@ r~
 ~ 1 jseval!
 
 2 value jsslot
-: JSWORD| ( "args.." )
-   create postpone r| jsslot 1 call jsslot , 1 +to jsslot
+: JSWORD: ( "args.." )
+   create postpone r~ jsslot 1 call jsslot , 1 +to jsslot
    does> @ call ;
 
-JSWORD| jseval { a n }
+JSWORD: jseval { a n }
   var text = GetString(a, n);
   eval(text);
-|
-
-: JSWORD: ( "name" )
-   create jsslot jseval! jsslot , 1 +to jsslot
-   does> @ call ;
+~
 
 r~
 globalObj.ueforth = context;
@@ -515,14 +534,11 @@ if (!globalObj.write) {
 }
 ~ jseval
 
-r|
-(function(sp) {
-  var n = i32[sp>>2]; sp -= 4;
-  var a = i32[sp>>2]; sp -= 4;
+JSWORD: web-type-raw { a n -- yld }
   if (globalObj.write) {
     var text = GetString(a, n);
     write(text);
-    sp += 4; i32[sp>>2] = 0;
+    return 0;
   } else {
     var newline = false;
     for (var i = 0; i < n; ++i) {
@@ -533,16 +549,13 @@ r|
     if (newline) {
       context.Update();
     }
-    sp += 4; i32[sp>>2] = newline ? -1 : 0;
+    return newline ? -1 : 0;
   }
-  return sp;
-})
-| JSWORD: web-type-raw ( a n -- yield? )
+~
 : web-type ( a n -- ) web-type-raw if yield then ;
 ' web-type is type
 
-r|
-(function(sp) {
+JSWORD: web-key-raw { -- n }
   context.Update();
   if (globalObj.readline && !context.inbuffer.length) {
     var line = unescape(encodeURIComponent(readline()));
@@ -552,57 +565,48 @@ r|
     context.inbuffer.push(13);
   }
   if (context.inbuffer.length) {
-    sp += 4; i32[sp>>2] = context.inbuffer.shift();
+    return context.inbuffer.shift();
   } else {
-    sp += 4; i32[sp>>2] = 0;
+    return 0;
   }
-  return sp;
-})
-| JSWORD: web-key-raw ( -- n )
+~
 : web-key ( -- n ) begin yield web-key-raw dup if exit then drop again ;
 ' web-key is key
 
-r|
-(function(sp) {
+JSWORD: web-key?-raw { -- f }
   context.Update();
   if (globalObj.readline) {
-    sp += 4; i32[sp>>2] = -1;
-    return sp;
+    return -1;
   }
-  sp += 4; i32[sp>>2] = context.inbuffer.length ? -1 : 0;
-  return sp;
-})
-| JSWORD: web-key?-raw ( -- f )
+  return context.inbuffer.length ? -1 : 0;
+~
 : web-key? ( -- f ) yield web-key?-raw ;
 ' web-key? is key?
 
-JSWORD| terminate { retval }
+JSWORD: terminate { retval }
   if (globalObj.quit) {
     quit(retval);
   } else {
     Init();
   }
-|
+~
 
-r|
-(function(sp) {
+JSWORD: shouldEcho? { -- f }
   if (globalObj.write) {
-    sp += 4; i32[sp>>2] = 0;  // Disable echo.
+    return 0;  // Disable echo.
   } else {
-    sp += 4; i32[sp>>2] = -1;  // Enable echo.
+    return -1;  // Enable echo.
   }
-  return sp;
-})
-| JSWORD: shouldEcho? ( -- f )
+~
 shouldEcho? echo !
 
-JSWORD| grmode { mode }
+JSWORD: grmode { mode }
   context.setMode(mode);
-|
+~
 : gr   1 grmode ;
 : text   0 grmode ;
 
-JSWORD| rawbox { x y w h c }
+JSWORD: rawbox { x y w h c }
   function HexDig(n) {
     return ('0' + n.toString(16)).slice(-2);
   }
@@ -610,47 +614,35 @@ JSWORD| rawbox { x y w h c }
                                 HexDig((c >> 8) & 0xff) +
                                 HexDig(c & 0xff);
   context.ctx.fillRect(x, y, w, h);
-|
+~
 $ffffff value color
 : box ( x y w h -- ) color rawbox ;
 
-JSWORD| window { w h }
+JSWORD: window { w h }
   context.canvas.width = w;
   context.canvas.height = h;
-|
+~
 
-r|
-(function(sp) {
+JSWORD: viewport@ { -- w h }
   if (globalObj.write) {
-    sp += 4; i32[sp>>2] = 1;
-    sp += 4; i32[sp>>2] = 1;
-    return sp;
+    return [1, 1];
   }
-  sp += 4; i32[sp>>2] = context.width;
-  sp += 4; i32[sp>>2] = context.height;
-  return sp;
-})
-| JSWORD: viewport@ ( -- w h )
+  return [context.width, context.height];
+~
 
-JSWORD| textRatios { tf mp }
+JSWORD: textRatios { tf mp }
   context.text_fraction = tf;
   context.min_text_portion = mp;
   context.Resize();
-|
+~
 
-r|
-(function(sp) {
-  sp += 4; i32[sp>>2] = context.mobile;
-  return sp;
-})
-| JSWORD: mobile ( -- f )
+JSWORD: mobile { -- f }
+  return context.mobile;
+~
 
-r|
-(function(sp) {
-  sp += 4; i32[sp>>2] = context.KEYBOARD_HEIGHT;
-  return sp;
-})
-| JSWORD: keys-height ( -- n )
+JSWORD: keys-height { -- n }
+  return context.KEYBOARD_HEIGHT;
+~
 
 : show-text ( f -- )
   if
@@ -659,31 +651,31 @@ r|
     mobile if 0 keys-height else 0 0 then
   then textRatios ;
 
-JSWORD| translate { x y }
+JSWORD: translate { x y }
   context.ctx.translate(x, y);
-|
+~
 
-JSWORD| scale { x y div }
+JSWORD: scale { x y div }
   context.ctx.scale(x / div, y / div);
-|
+~
 
-JSWORD| rotate { angle div }
+JSWORD: rotate { angle div }
   context.ctx.rotate(Math.PI * 2 * angle / div);
-|
+~
 
-JSWORD| gpush { }
+JSWORD: gpush { }
   context.ctx.save();
-|
+~
 
-JSWORD| gpop { }
+JSWORD: gpop { }
   context.ctx.restore();
-|
+~
 
-JSWORD| smooth { f }
+JSWORD: smooth { f }
   context.canvas.style.imageRendering = f ? '' : 'pixelated';
-|
+~
 
-JSWORD| setItem { value value_len key key_len session }
+JSWORD: setItem { value value_len key key_len session }
   if (session) {
     sessionStorage.setItem(context.GetRawString(key, key_len),
                            context.GetRawString(value, value_len));
@@ -691,131 +683,80 @@ JSWORD| setItem { value value_len key key_len session }
     localStorage.setItem(context.GetRawString(key, key_len),
                          context.GetRawString(value, value_len));
   }
-|
+~
 
-r|
-(function(sp) {
-  var session = i32[sp>>2]; sp -= 4;
-  var key_len = i32[sp>>2]; sp -= 4;
-  var key = i32[sp>>2]; sp -= 4;
-  var dst_limit = i32[sp>>2]; sp -= 4;
-  var dst = i32[sp>>2]; sp -= 4;
-  if (globalObj.write) {
-    return sp;
-  }
+JSWORD: getItem { dst dst_limit key key_len session -- n }
   if (session) {
     var data = sessionStorage.getItem(context.GetRawString(key, key_len));
   } else {
     var data = localStorage.getItem(context.GetRawString(key, key_len));
   }
   if (data === null) {
-    sp += 4; i32[sp>>2] = -1;
-    return sp;
+    return -1;
   }
   for (var i = 0; i < dst_limit && i < data.length; ++i) {
     u8[dst + i] = data.charCodeAt(i);
   }
-  sp += 4; i32[sp>>2] = data.length;
-  return sp;
-})
-| JSWORD: getItem ( a n a n sess -- n )
+  return data.length;
+~
 
-r|
-(function(sp) {
-  var session = i32[sp>>2]; sp -= 4;
-  var index = i32[sp>>2]; sp -= 4;
-  var key_limit = i32[sp>>2]; sp -= 4;
-  var key = i32[sp>>2]; sp -= 4;
-  if (globalObj.write) {
-    sp += 4; i32[sp>>2] = -1;
-    return sp;
-  }
+JSWORD: getKey { key key_limit index session -- n }
   if (session) {
     var data = sessionStorage.key(index);
   } else {
     var data = localStorage.key(index);
   }
   if (data === null) {
-    sp += 4; i32[sp>>2] = -1;
-    return sp;
+    return -1;
   }
   for (var i = 0; i < key_limit && i < data.length; ++i) {
     u8[key + i] = data.charCodeAt(i);
   }
-  sp += 4; i32[sp>>2] = data.length;
-  return sp;
-})
-| JSWORD: getKey ( a n sess -- n )
+  return i;
+~
 
-r|
-(function(sp) {
-  var session = i32[sp>>2]; sp -= 4;
-  if (globalObj.write) {
-    sp += 4; i32[sp>>2] = -1;
-    return sp;
-  }
+JSWORD: keyCount { session -- n }
   if (session) {
     var len = sessionStorage.length;
   } else {
     var len = localStorage.length;
   }
-  sp += 4; i32[sp>>2] = len;
-  return sp;
-})
-| JSWORD: keyCount ( sess -- n )
+  return len;
+~
 
-JSWORD| release { handle }
+JSWORD: release { handle }
   context.ReleaseHandle(handle);
-|
+~
 
-r|
-(function(sp) {
+JSWORD: newAudioContext { -- h }
   var i = context.AllotHandle();
-  sp += 4; i32[sp>>2] = i;
   context.handles[i] = new AudioContext();
-  return sp;
-})
-| JSWORD: newAudioContext ( -- h )
+  return i;
+~
 
-r|
-(function(sp) {
-  var audio_ctx = i32[sp>>2]; sp -= 4;
+JSWORD: createOscillator { audio_ctx -- h }
   var i = context.AllotHandle();
-  sp += 4; i32[sp>>2] = i;
   context.handles[i] = context.handles[audio_ctx].createOscillator();
-  return sp;
-})
-| JSWORD: createOscillator ( h -- h )
+  return i;
+~
 
-r|
-(function(sp) {
-  var audio_ctx = i32[sp>>2]; sp -= 4;
+JSWORD: createGain { audio_ctx -- h }
   var i = context.AllotHandle();
-  sp += 4; i32[sp>>2] = i;
   context.handles[i] = context.handles[audio_ctx].createGain();
-  return sp;
-})
-| JSWORD: createGain ( h -- h )
+  return i;
+~
 
-r|
-(function(sp) {
-  var audio_ctx = i32[sp>>2]; sp -= 4;
+JSWORD: createBiquadFilter { audio_ctx -- h }
   var i = context.AllotHandle();
-  sp += 4; i32[sp>>2] = i;
   context.handles[i] = context.handles[audio_ctx].createBiquadFilter();
-  return sp;
-})
-| JSWORD: createBiquadFilter ( h -- h )
+  return i;
+~
 
-r|
-(function(sp) {
-  var audio_ctx = i32[sp>>2]; sp -= 4;
+JSWORD: createBufferSource { audio_ctx -- h }
   var i = context.AllotHandle();
-  sp += 4; i32[sp>>2] = i;
   context.handles[i] = context.handles[audio_ctx].createBufferSource();
-  return sp;
-})
-| JSWORD: createBufferSource ( h -- h )
+  return i;
+~
 
 forth definitions web
 
