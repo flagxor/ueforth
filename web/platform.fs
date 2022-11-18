@@ -728,38 +728,43 @@ JSWORD: release { handle }
   context.ReleaseHandle(handle);
 ~
 
-JSWORD: newAudioContext { -- h }
-  var i = context.AllotHandle();
-  context.handles[i] = new AudioContext();
-  return i;
+r~
+context.audio_contexts = [];
+context.newAudio = function() {
+  if (context.audio_contexts.length < 30) {
+    var ctx = new AudioContext();
+    context.audio_contexts.push(ctx);
+    return ctx;
+  }
+  var ctx = context.audio_contexts[0];
+  context.audio_contexts.splice(0, 1);
+  context.audio_contexts.push(ctx);
+  return ctx;
+};
+~ jseval
+
+JSWORD: tone { pitch duration volume -- }
+  var audio = context.newAudio();
+  var oscillator = audio.createOscillator();
+  oscillator.type = 'sine';
+  oscillator.frequency.setValueAtTime(27.5 * Math.pow(2, (pitch - 21) / 12), audio.currentTime);
+  var gain = audio.createGain();
+  gain.gain.setValueAtTime(0, audio.currentTime);
+  gain.gain.linearRampToValueAtTime(volume / 100, audio.currentTime + duration / 1000 * 0.1);
+  gain.gain.linearRampToValueAtTime(volume / 100, audio.currentTime + duration / 1000 * 0.9);
+  gain.gain.linearRampToValueAtTime(0, audio.currentTime + duration / 1000);
+  oscillator.connect(gain);
+  gain.connect(audio.destination);
+  oscillator.start();
 ~
 
-JSWORD: createOscillator { audio_ctx -- h }
-  var i = context.AllotHandle();
-  context.handles[i] = context.handles[audio_ctx].createOscillator();
-  return i;
-~
-
-JSWORD: createGain { audio_ctx -- h }
-  var i = context.AllotHandle();
-  context.handles[i] = context.handles[audio_ctx].createGain();
-  return i;
-~
-
-JSWORD: createBiquadFilter { audio_ctx -- h }
-  var i = context.AllotHandle();
-  context.handles[i] = context.handles[audio_ctx].createBiquadFilter();
-  return i;
-~
-
-JSWORD: createBufferSource { audio_ctx -- h }
-  var i = context.AllotHandle();
-  context.handles[i] = context.handles[audio_ctx].createBufferSource();
-  return i;
+JSWORD: ms-ticks { -- ms }
+  return Date.now();
 ~
 
 forth definitions web
 
 : bye   0 terminate ;
+: ms-ticks   ms-ticks ;
 
 forth definitions

@@ -281,6 +281,7 @@ WEB_BOOT =  $(COMMON_PHASE1e) \
             web/platform.fs \
             common/ansi.fs \
             $(COMMON_PHASE2) \
+            common/tasks.fs \
             web/fini.fs
 $(GEN)/web_boot.js: tools/source_to_string.js $(WEB_BOOT) | $(GEN)
 	$< -web boot $(VERSION) $(REVISION) $(WEB_BOOT) >$@
