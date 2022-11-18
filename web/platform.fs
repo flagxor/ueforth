@@ -729,34 +729,35 @@ JSWORD: release { handle }
 ~
 
 r~
-context.audio_contexts = [];
-context.newAudio = function() {
-  if (context.audio_contexts.length < 30) {
-    var ctx = new AudioContext();
-    context.audio_contexts.push(ctx);
-    return ctx;
+context.audio_context = null;
+context.audio_channels = [];
+context.initAudio = function() {
+  if (context.audio_context !== null) {
+    return;
   }
-  var ctx = context.audio_contexts[0];
-  context.audio_contexts.splice(0, 1);
-  context.audio_contexts.push(ctx);
-  return ctx;
+  context.audio_context = new AudioContext();
+  var master = context.audio_context.createGain();
+  master.connect(context.audio_context.destination);
+  master.gain.value = 1/8;
+  for (var i = 0; i < 8; ++i) {
+    var oscillator = context.audio_context.createOscillator();
+    oscillator.type = 'sine';
+    var gain = context.audio_context.createGain();
+    gain.gain.value = 0;
+    oscillator.connect(gain);
+    gain.connect(master);
+    oscillator.start();
+    context.audio_channels.push([gain, oscillator]);
+  }
 };
 ~ jseval
 
-JSWORD: tone { pitch duration volume -- }
-  var audio = context.newAudio();
-  var oscillator = audio.createOscillator();
-  oscillator.type = 'sine';
-  oscillator.frequency.setValueAtTime(27.5 * Math.pow(2, (pitch - 21) / 12), audio.currentTime);
-  var gain = audio.createGain();
-  gain.gain.setValueAtTime(0, audio.currentTime);
-  gain.gain.linearRampToValueAtTime(volume / 100, audio.currentTime + duration / 1000 * 0.1);
-  gain.gain.linearRampToValueAtTime(volume / 100, audio.currentTime + duration / 1000 * 0.9);
-  gain.gain.linearRampToValueAtTime(0, audio.currentTime + duration / 1000);
-  oscillator.connect(gain);
-  gain.connect(audio.destination);
-  oscillator.start();
+JSWORD: tone { pitch volume channel -- }
+  context.initAudio();
+  context.audio_channels[channel][0].gain.value = volume / 100;
+  context.audio_channels[channel][1].frequency.value = 27.5 * Math.pow(2, (pitch - 21) / 12);
 ~
+: silence   8 0 do 0 0 i tone loop ;
 
 JSWORD: ms-ticks { -- ms }
   return Date.now();
