@@ -82,10 +82,10 @@ function UPPER(ch) {
 function TOFLAGS(xt) { return xt - 1 * 4; }
 function TONAMELEN(xt) { return TOFLAGS(xt) + 1; }
 function TOPARAMS(xt) { return TOFLAGS(xt) + 2; }
-function TOSIZE(xt) { return CELL_ALIGNED(u8[TONAMELEN(xt)>>2]) + 4 * i32[TOPARAMS(xt)>>2]; }
+function TOSIZE(xt) { return CELL_ALIGNED(u8[TONAMELEN(xt)>>2]) + 4 * u16[TOPARAMS(xt)>>1]; }
 function TOLINK(xt) { return xt - 2 * 4; }
 function TONAME(xt) {
-  return (u8[TOFLAGS(xt)>>2] & BUILTIN_MARK)
+  return (u8[TOFLAGS(xt)] & BUILTIN_MARK)
     ? i32[TOLINK(xt)] : TOLINK(xt) - CELL_ALIGNED(u8[TONAMELEN(xt)]);
 }
 function TOBODY(xt) {

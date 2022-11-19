@@ -125,10 +125,10 @@ if (!globalObj.write) {
     }
   }, 50);
 
-  context.GetRawString = function(addr, len) {
+  context.GetRawString = function(data8, addr, len) {
     var data = '';
     for (var i = 0; i < len; ++i) {
-      data += String.fromCharCode(u8[addr + i]);
+      data += String.fromCharCode(data8[addr + i]);
     }
     return data;
   };
@@ -677,19 +677,19 @@ JSWORD: smooth { f }
 
 JSWORD: setItem { value value_len key key_len session }
   if (session) {
-    sessionStorage.setItem(context.GetRawString(key, key_len),
-                           context.GetRawString(value, value_len));
+    sessionStorage.setItem(context.GetRawString(u8, key, key_len),
+                           context.GetRawString(u8, value, value_len));
   } else {
-    localStorage.setItem(context.GetRawString(key, key_len),
-                         context.GetRawString(value, value_len));
+    localStorage.setItem(context.GetRawString(u8, key, key_len),
+                         context.GetRawString(u8, value, value_len));
   }
 ~
 
 JSWORD: getItem { dst dst_limit key key_len session -- n }
   if (session) {
-    var data = sessionStorage.getItem(context.GetRawString(key, key_len));
+    var data = sessionStorage.getItem(context.GetRawString(u8, key, key_len));
   } else {
-    var data = localStorage.getItem(context.GetRawString(key, key_len));
+    var data = localStorage.getItem(context.GetRawString(u8, key, key_len));
   }
   if (data === null) {
     return -1;
@@ -761,6 +761,57 @@ JSWORD: tone { pitch volume channel -- }
 
 JSWORD: ms-ticks { -- ms }
   return Date.now();
+~
+
+r~
+if (!globalObj.write) {
+  var filepick = document.createElement('input');
+  filepick.type = 'file';
+  filepick.name = 'files[]';
+  filepick.style.display = 'none';
+  document.body.appendChild(filepick);
+  filepick.onchange = function(event) {
+    if (event.target.files.length > 0) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var data = context.GetRawString(
+           new Uint8Array(e.target.result), 0, e.target.result.byteLength);
+        try {
+          localStorage.setItem(context.filepick_filename, data);
+          context.filepick_result = -1;
+          context.filepick_filename = null;
+        } catch (e) {
+          context.filepick_result = 0;
+          context.filepick_filename = null;
+        }
+      };
+      reader.readAsArrayBuffer(event.target.files[0]);
+    } else {
+      context.filepick_filename = null;
+      context.filepick_result = 0;
+    }
+  };
+  context.filepick = filepick;
+  context.filepick_filename = null;
+  context.filepick_result = 0;
+}
+~ jseval
+
+JSWORD: upload-start { filename n }
+  context.filepick_filename = context.GetRawString(u8, filename, n);
+  context.filepick.click();
+~
+
+JSWORD: upload-done? { -- f }
+  return context.filepick_filename == null ? -1 : 0;
+~
+
+JSWORD: upload-success? { -- f }
+  return context.filepick_result;
+~
+
+JSWORD: log { a n -- }
+  console.log(GetString(a, n));
 ~
 
 forth definitions web
