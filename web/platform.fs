@@ -621,21 +621,52 @@ JSWORD: grmode { mode }
 : gr   1 grmode ;
 : text   0 grmode ;
 
-JSWORD: fillcolor! { c }
+JSWORD: color! { c }
   function HexDig(n) {
     return ('0' + n.toString(16)).slice(-2);
   }
   context.ctx.fillStyle = '#' + HexDig((c >> 16) & 0xff) +
                                 HexDig((c >> 8) & 0xff) +
                                 HexDig(c & 0xff);
+  context.ctx.strokeStyle = '#' + HexDig((c >> 16) & 0xff) +
+                                  HexDig((c >> 8) & 0xff) +
+                                  HexDig(c & 0xff);
 ~
 
-JSWORD: rawbox { x y w h }
+JSWORD: lineWidth { w -- }
+  context.ctx.lineWidth = w;
+~
+
+JSWORD: box { x y w h }
   context.ctx.fillRect(x, y, w, h);
 ~
 
-$ffffff value color
-: box ( x y w h -- ) color fillcolor! rawbox ;
+JSWORD: beginPath { }
+  context.ctx.beginPath();
+~
+
+JSWORD: moveTo { x y }
+  context.ctx.moveTo(x, y);
+~
+
+JSWORD: lineTo { x y }
+  context.ctx.lineTo(x, y);
+~
+
+JSWORD: stroke { }
+  context.ctx.stroke();
+~
+
+JSWORD: fill { }
+  context.ctx.fill();
+~
+
+: line ( x1 y1 x2 y2 -- )
+  beginPath
+  >r >r moveTo
+  r> r> lineTo
+  stroke
+;
 
 JSWORD: window { w h }
   context.canvas.width = w;
@@ -849,10 +880,9 @@ JSWORD: font { a n -- }
   context.ctx.font = GetString(a, n);
 ~
 
-JSWORD: rawFillText { a n x y -- }
+JSWORD: fillText { a n x y -- }
   context.ctx.fillText(GetString(a, n), x, y);
 ~
-: fillText ( a n x y ) color fillcolor! rawFillText ;
 
 JSWORD: textWidth { a n -- w }
   return context.ctx.measureText(GetString(a, n)).width;
