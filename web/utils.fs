@@ -14,6 +14,13 @@
 
 web definitions
 
+: web-type ( a n -- ) web-type-raw if pause then ;
+' web-type is type
+: web-key ( -- n ) begin pause web-key-raw dup if exit then drop again ;
+' web-key is key
+: web-key? ( -- f ) pause web-key?-raw ;
+' web-key? is key?
+
 : upload-file ( a n -- )
    upload-start
    begin yield upload-done? until
@@ -30,5 +37,9 @@ web definitions
 ; 
 
 : import  s" _temp.fs" 2dup upload-file include-file ;
+
+: yielding  begin 50 ms yield again ;
+' yielding 10 10 task yielding-task
+yielding-task start-task
 
 forth definitions

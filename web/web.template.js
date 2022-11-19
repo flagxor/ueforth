@@ -593,10 +593,7 @@ var globalObj = getGlobalObj();
 
 var module = VM(globalObj, ffi, heap);
 function run() {
-  var lastTimeout = Date.now();
-  while (Date.now() - lastTimeout < 50) {
-    module.run();
-  }
+  module.run();
   setTimeout(run, 0);
 }
 if (globalObj.write) {

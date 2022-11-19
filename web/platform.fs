@@ -111,13 +111,33 @@ if (!globalObj.write) {
   context.screen.appendChild(context.canvas);
   context.ctx = context.canvas.getContext('2d');
 
+  context.mouse_x = 0;
+  context.mouse_y = 0;
+  context.mouse_b = 0;
+  context.canvas.onpointermove = function(e) {
+    context.mouse_x = e.clientX;
+    context.mouse_y = e.clientY;
+  };
+  context.canvas.onpointerdown = function(e) {
+    context.mouse_x = e.clientX;
+    context.mouse_y = e.clientY;
+    context.mouse_b = 1;
+    e.target.setPointerCapture(e.pointerId);
+  };
+  context.canvas.onpointerup = function(e) {
+    context.mouse_x = e.clientX;
+    context.mouse_y = e.clientY;
+    context.mouse_b = 0;
+    e.target.releasePointerCapture(e.pointerId);
+  };
+
   context.cursor = null;
   context.cursor_time = new Date().getTime();
   setInterval(function() {
     if (context.cursor) {
       var now = new Date().getTime();
       var state = Math.floor((now - context.cursor_time) / 250) % 2;
-      if (state) {
+      if (state || context.min_text_portion === 0) {
         context.cursor.style.visibility = 'hidden';
       } else {
         context.cursor.style.visibility = 'visible';
@@ -319,6 +339,7 @@ if (!globalObj.write) {
           cursor.style.backgroundColor = span.style.backgroundColor;
           span.appendChild(cursor);
           context.cursor = cursor;
+          context.cursor.style.visibility = 'hidden';
         }
         ntag.appendChild(span);
         if (i === parts.length - 1) {
@@ -552,8 +573,6 @@ JSWORD: web-type-raw { a n -- yld }
     return newline ? -1 : 0;
   }
 ~
-: web-type ( a n -- ) web-type-raw if yield then ;
-' web-type is type
 
 JSWORD: web-key-raw { -- n }
   context.Update();
@@ -570,8 +589,6 @@ JSWORD: web-key-raw { -- n }
     return 0;
   }
 ~
-: web-key ( -- n ) begin yield web-key-raw dup if exit then drop again ;
-' web-key is key
 
 JSWORD: web-key?-raw { -- f }
   context.Update();
@@ -580,8 +597,6 @@ JSWORD: web-key?-raw { -- f }
   }
   return context.inbuffer.length ? -1 : 0;
 ~
-: web-key? ( -- f ) yield web-key?-raw ;
-' web-key? is key?
 
 JSWORD: terminate { retval }
   if (globalObj.quit) {
@@ -606,21 +621,28 @@ JSWORD: grmode { mode }
 : gr   1 grmode ;
 : text   0 grmode ;
 
-JSWORD: rawbox { x y w h c }
+JSWORD: fillcolor! { c }
   function HexDig(n) {
     return ('0' + n.toString(16)).slice(-2);
   }
   context.ctx.fillStyle = '#' + HexDig((c >> 16) & 0xff) +
                                 HexDig((c >> 8) & 0xff) +
                                 HexDig(c & 0xff);
+~
+
+JSWORD: rawbox { x y w h }
   context.ctx.fillRect(x, y, w, h);
 ~
+
 $ffffff value color
-: box ( x y w h -- ) color rawbox ;
+: box ( x y w h -- ) color fillcolor! rawbox ;
 
 JSWORD: window { w h }
-  context.canvas.width = w;
-  context.canvas.height = h;
+  if (context.canvas.width !== w ||
+      context.canvas.height) {
+    context.canvas.width = w;
+    context.canvas.height = h;
+  }
 ~
 
 JSWORD: viewport@ { -- w h }
@@ -812,6 +834,23 @@ JSWORD: upload-success? { -- f }
 
 JSWORD: log { a n -- }
   console.log(GetString(a, n));
+~
+
+JSWORD: font { a n -- }
+  context.ctx.font = GetString(a, n);
+~
+
+JSWORD: rawFillText { a n x y -- }
+  context.ctx.fillText(GetString(a, n), x, y);
+~
+: fillText ( a n x y ) color fillcolor! rawFillText ;
+
+JSWORD: mouse { -- x y }
+  return [context.mouse_x, context.mouse_y];
+~
+
+JSWORD: button { -- b }
+  return context.mouse_b;
 ~
 
 forth definitions web
