@@ -638,17 +638,11 @@ $ffffff value color
 : box ( x y w h -- ) color fillcolor! rawbox ;
 
 JSWORD: window { w h }
-  if (context.canvas.width !== w ||
-      context.canvas.height) {
-    context.canvas.width = w;
-    context.canvas.height = h;
-  }
+  context.canvas.width = w;
+  context.canvas.height = h;
 ~
 
 JSWORD: viewport@ { -- w h }
-  if (globalObj.write) {
-    return [1, 1];
-  }
   return [context.width, context.height];
 ~
 
@@ -845,12 +839,20 @@ JSWORD: rawFillText { a n x y -- }
 ~
 : fillText ( a n x y ) color fillcolor! rawFillText ;
 
+JSWORD: textWidth { a n -- w }
+  return context.ctx.measureText(GetString(a, n)).width;
+~
+
 JSWORD: mouse { -- x y }
   return [context.mouse_x, context.mouse_y];
 ~
 
 JSWORD: button { -- b }
   return context.mouse_b;
+~
+
+JSWORD: random { n -- n }
+  return Math.floor(Math.random() * n);
 ~
 
 forth definitions web
