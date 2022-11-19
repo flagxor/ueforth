@@ -786,6 +786,20 @@ if (!globalObj.write) {
   filepick.name = 'files[]';
   filepick.style.display = 'none';
   document.body.appendChild(filepick);
+  context.handleImport = function() {
+    document.body.onfocus = null;
+    context.filepick_filename = null;
+    context.filepick_result = 0;
+  };
+  context.handleImport = function() {
+    document.body.onfocus = null;
+    setTimeout(function() {
+      if (filepick.files.length === 0) {
+        context.filepick_result = 0;
+        context.filepick_filename = null;
+      }
+    }, 100);
+  };
   filepick.onchange = function(event) {
     if (event.target.files.length > 0) {
       var reader = new FileReader();
@@ -815,11 +829,12 @@ if (!globalObj.write) {
 
 JSWORD: upload-start { filename n }
   context.filepick_filename = context.GetRawString(u8, filename, n);
+  document.body.onfocus = context.handleImport;
   context.filepick.click();
 ~
 
 JSWORD: upload-done? { -- f }
-  return context.filepick_filename == null ? -1 : 0;
+  return context.filepick_filename === null ? -1 : 0;
 ~
 
 JSWORD: upload-success? { -- f }
