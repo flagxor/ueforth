@@ -33,8 +33,12 @@ web definitions
   0 0 a n 0 getItem { len }
   here { buf } len allot
   buf len a n 0 getItem len = assert
+  a n 0 removeItem
   buf len evaluate
 ; 
+
+: ls   0 keyCount 0 do pad 80 i 0 getKey pad swap type cr loop ;
+: rm   bl parse 0 removeItem ;
 
 : import  s" _temp.fs" 2dup upload-file include-file ;
 

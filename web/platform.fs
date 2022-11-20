@@ -747,6 +747,22 @@ JSWORD: getItem { dst dst_limit key key_len session -- n }
   return data.length;
 ~
 
+JSWORD: removeItem { key key_len session }
+  if (session) {
+    sessionStorage.removeItem(context.GetRawString(u8, key, key_len));
+  } else {
+    localStorage.removeItem(context.GetRawString(u8, key, key_len));
+  }
+~
+
+JSWORD: clearItems { session }
+  if (session) {
+    sessionStorage.clear();
+  } else {
+    localStorage.clear();
+  }
+~
+
 JSWORD: getKey { key key_limit index session -- n }
   if (session) {
     var data = sessionStorage.key(index);
@@ -818,18 +834,17 @@ if (!globalObj.write) {
   filepick.style.display = 'none';
   document.body.appendChild(filepick);
   context.handleImport = function() {
-    document.body.onfocus = null;
-    context.filepick_filename = null;
-    context.filepick_result = 0;
-  };
-  context.handleImport = function() {
-    document.body.onfocus = null;
-    setTimeout(function() {
-      if (filepick.files.length === 0) {
-        context.filepick_result = 0;
-        context.filepick_filename = null;
-      }
-    }, 100);
+    document.body.onblur = function() {
+      document.body.onfocus = function() {
+        document.body.onfocus = null;
+        setTimeout(function() {
+          if (filepick.files.length === 0) {
+            context.filepick_result = 0;
+            context.filepick_filename = null;
+          }
+        }, 500);
+      };
+    };
   };
   filepick.onchange = function(event) {
     if (event.target.files.length > 0) {
@@ -838,6 +853,7 @@ if (!globalObj.write) {
         var data = context.GetRawString(
            new Uint8Array(e.target.result), 0, e.target.result.byteLength);
         try {
+          if (context.filepick_filename === null) { throw 'fail'; }
           localStorage.setItem(context.filepick_filename, data);
           context.filepick_result = -1;
           context.filepick_filename = null;
@@ -860,7 +876,7 @@ if (!globalObj.write) {
 
 JSWORD: upload-start { filename n }
   context.filepick_filename = context.GetRawString(u8, filename, n);
-  document.body.onfocus = context.handleImport;
+  context.handleImport();
   context.filepick.click();
 ~
 
