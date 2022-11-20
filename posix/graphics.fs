@@ -25,7 +25,7 @@ also posix also x11
 0 value display
 0 value screen
 0 value colormap
-0 value visual
+0 value xvisual
 0 value screen-depth
 0 value black
 0 value white
@@ -51,7 +51,7 @@ StructureNotifyMask or constant EVENT-MASK
   w to width   h to height
   image if image XDestroyImage drop then
   w h * 4* malloc dup 0= throw to backbuffer
-  display visual screen-depth ZPixmap 0 backbuffer
+  display xvisual screen-depth ZPixmap 0 backbuffer
     width height 32 width 4* XCreateImage to image
 ;
 
@@ -136,7 +136,7 @@ also graphics definitions
   NULL XOpenDisplay to display
   display XDefaultScreen to screen
   display screen XDefaultColorMap to colormap
-  display screen XDefaultVisual to visual
+  display screen XDefaultVisual to xvisual
   display screen XDefaultDepth to screen-depth
   display screen XBlackPixel to black
   display screen XWhitePixel to white
