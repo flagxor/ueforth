@@ -37,7 +37,6 @@ CFLAGS_MINIMIZE = \
                 -ffreestanding \
                 -fno-stack-protector \
                 -fomit-frame-pointer \
-                -mno-stack-arg-probe \
                 -fno-ident -Wl,--build-id=none \
                 -ffunction-sections -fdata-sections \
                 -fmerge-all-constants
