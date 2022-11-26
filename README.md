@@ -34,6 +34,12 @@ make win64
 make web
 ```
 
+To install to /usr/bin on Linux / POSIX do:
+
+```
+make install
+```
+
 ESP32 boards can be compiled and flashed with:
 
 ```
