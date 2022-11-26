@@ -93,6 +93,12 @@ RC64 = "$(shell $(LSQ) ${MSKITS}/*/bin/*/x64/rc.exe | head -n 1)"
 
 D8 = "$(shell $(LSQ) ${HOME}/src/v8/v8/out/x64.release/d8)"
 
+NODEJS = "$(shell $(LSQ) /usr/bin/nodejs)"
+
+ifeq ("", $(NODEJS))
+  $(error "ERROR: Missing nodejs. Run: sudo apt-get install nodejs")
+endif
+
 # Selectively enable windows if tools available
 DEPLOYABLE := 1
 ifneq ("", $(CL32))
@@ -100,11 +106,11 @@ ifneq ("", $(CL32))
     TARGETS += win32_target
     TESTS += win32_tests
   else
-    $(warning "Missing Visual Studio rc.exe skipping 32-bit Windows.")
+    $(warning "WARNING: Missing Visual Studio rc.exe skipping 32-bit Windows.")
     DEPLOYABLE := 0
   endif
 else
-  $(warning "Missing Visual Studio cl.exe skipping 32-bit Windows.")
+  $(warning "WARNING: Missing Visual Studio cl.exe skipping 32-bit Windows.")
   DEPLOYABLE := 0
 endif
 ifneq ("", $(CL64))
@@ -112,11 +118,11 @@ ifneq ("", $(CL64))
     TARGETS += win64_target
     TESTS += win64_tests
   else
-    $(warning "Missing Visual Studio rc.exe skipping 64-bit Windows.")
+    $(warning "WARNING: Missing Visual Studio rc.exe skipping 64-bit Windows.")
     DEPLOYABLE := 0
   endif
 else
-  $(warning "Missing Visual Studio cl.exe skipping 64-bit Windows.")
+  $(warning "WARNING: Missing Visual Studio cl.exe skipping 64-bit Windows.")
   DEPLOYABLE := 0
 endif
 
@@ -125,7 +131,7 @@ DEPLOY_TARGETS =
 ifeq (1, $(DEPLOYABLE))
   DEPLOY_TARGETS := $(DEPLOY)/app.yaml
 else
-  $(warning "Missing some platforms skipping deployment build.")
+  $(warning "WARNING: Missing some platforms skipping deployment build.")
 endif
 
 WEB_D8_TESTS =
