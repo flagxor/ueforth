@@ -345,6 +345,8 @@ $(WEB)/ueforth.js: \
 
 # ---- POSIX ----
 
+POSIX_CFLAGS = -DHAS_SIGNALS
+
 posix: posix_target posix_tests
 posix_target: $(POSIX)/ueforth
 
@@ -363,7 +365,7 @@ $(POSIX)/ueforth: \
     common/bits.h \
     common/core.h \
     $(GEN)/posix_boot.h | $(POSIX)
-	$(CXX) $(CFLAGS) $< -o $@ $(LIBS)
+	$(CXX) $(CFLAGS) $(POSIX_CFLAGS) $< -o $@ $(LIBS)
 	strip $(STRIP_ARGS) $@
 
 # ---- WINDOWS ----

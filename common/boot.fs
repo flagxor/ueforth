@@ -81,6 +81,7 @@ create I ' r@ @ ' i !  ( i is same as r@ )
 
 ( Exceptions )
 variable handler
+handler 'throw-handler !
 : catch ( xt -- n )
   fp@ >r sp@ >r handler @ >r rp@ handler ! execute
   r> handler ! rdrop rdrop 0 ;

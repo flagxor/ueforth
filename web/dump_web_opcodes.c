@@ -97,6 +97,7 @@ int main(int argc, char *argv[]) {
     EMITSYS(argc);
     EMITSYS(argv);
     EMITSYS(runner);
+    EMITSYS(throw_handler);
     EMITSYS(rp);
     EMITSYS(DOLIT_XT);
     EMITSYS(DOFLIT_XT);

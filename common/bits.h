@@ -29,6 +29,7 @@ typedef struct {
   int argc;
   char **argv;
   cell_t *(*runner)(cell_t *rp);  // pointer to forth_run
+  cell_t **throw_handler;
 
   // Layout not used by Forth.
   cell_t *rp;  // spot to park main thread

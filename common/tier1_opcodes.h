@@ -80,6 +80,7 @@
   XV(internals, "'argc", ARGC, DUP; tos = (cell_t) &g_sys->argc) \
   XV(internals, "'argv", ARGV, DUP; tos = (cell_t) &g_sys->argv) \
   XV(internals, "'runner", RUNNER, DUP; tos = (cell_t) &g_sys->runner) \
+  XV(internals, "'throw-handler", TTHROW_HANDLER, DUP; tos = (cell_t) &g_sys->throw_handler) \
   Y(context, DUP; tos = (cell_t) (g_sys->context + 1)) \
   Y(latestxt, DUP; tos = (cell_t) g_sys->latestxt) \
   XV(forth_immediate, "[", LBRACKET, g_sys->state = 0) \

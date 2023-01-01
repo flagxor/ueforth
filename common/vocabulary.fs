@@ -55,7 +55,7 @@ transfer{
   voc-stack-end last-vocabulary notfound
   *key *emit wascr eat-till-cr
   immediate? input-buffer ?echo ?arrow. arrow
-  evaluate-buffer aliteral value-bind
+  evaluate-buffer evaluate&fill aliteral value-bind
   leaving( )leaving leaving leaving,
   parse-quote digit $@ raw.s
   tib-setup input-limit sp-limit ?stack
