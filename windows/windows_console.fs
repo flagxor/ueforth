@@ -64,7 +64,6 @@ variable console-mode
 : raw-key ( -- n ) 0 >r stdin rp@ 1 NULL NULL ReadFile drop r> ;
 : win-key? ( -- f ) stdin 0 WaitForSingleObject 0= ;
 : win-key ( -- n ) raw-key dup 13 = if drop nl then ;
-: win-bye ( -- ) 0 ExitProcess drop ;
 
 also forth definitions
 : default-type win-type ;
@@ -74,6 +73,6 @@ only windows definitions
 ' default-type is type
 ' default-key is key
 ' default-key? is key?
-' win-bye is bye
+' ExitProcess is terminate
 
 only forth definitions

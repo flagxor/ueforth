@@ -93,6 +93,7 @@ e: check-boot
   out: space 
   out: emit 
   out: bye 
+  out: terminate 
   out: key? 
   out: key 
   out: type 
@@ -669,7 +670,6 @@ e: check-esp32-builtins
   out: analogRead 
   out: pulseIn 
   out: MS-TICKS 
-  out: TERMINATE 
   check-files-reverse
   check-files-dir-reverse
   out: dacWrite 

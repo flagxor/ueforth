@@ -20,6 +20,7 @@ web definitions
 ' web-key is key
 : web-key? ( -- f ) pause web-key?-raw ;
 ' web-key? is key?
+' web-terminate is terminate
 
 : upload-file ( a n -- )
    upload-start

@@ -16,7 +16,8 @@
 defer type
 defer key
 defer key?
-defer bye
+defer terminate
+: bye   0 terminate ;
 : emit ( n -- ) >r rp@ 1 type rdrop ;
 : space bl emit ;   : cr 13 emit nl emit ;
 

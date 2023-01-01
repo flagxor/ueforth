@@ -14,17 +14,6 @@
 
 also ansi also internals
 
-DEFINED? windows [IF]
-  also windows
-  : sysexit ( n -- ) ExitProcess ;
-[ELSE]
-  DEFINED? posix [IF]
-    also posix
-  [ELSE]
-    : sysexit ( n -- ) terminate ;
-  [THEN]
-[THEN]
-
 ( Support for eval tests )
 40000 constant expect-limit
 create expect-buffer expect-limit allot
@@ -117,5 +106,5 @@ variable tests-found   variable tests-run    variable tests-passed
 : run-tests
    reset-test-counters ['] count-test for-tests
    ['] run-test for-tests show-test-results
-   tests-passed @ tests-found @ <> sysexit ;
+   tests-passed @ tests-found @ <> terminate ;
 only forth

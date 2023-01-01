@@ -598,7 +598,7 @@ JSWORD: web-key?-raw { -- f }
   return context.inbuffer.length ? -1 : 0;
 ~
 
-JSWORD: terminate { retval }
+JSWORD: web-terminate { retval }
   if (globalObj.quit) {
     quit(retval);
   } else {
@@ -918,7 +918,6 @@ JSWORD: random { n -- n }
 
 forth definitions web
 
-: bye   0 terminate ;
 : ms-ticks   ms-ticks ;
 
 forth definitions

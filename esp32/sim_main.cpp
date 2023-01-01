@@ -97,7 +97,7 @@ static cell_t *simulated(cell_t *sp, const char *op) {
   } else if (op == STR_SERIAL_AVAILABLE) {
     *++sp = 1;
     return sp;
-  } else if (op == STR_TERMINATE) {
+  } else if (op == STR_RAW_TERMINATE) {
     exit(*sp--);
     return sp;
   } else if (op == STR_R_O) {

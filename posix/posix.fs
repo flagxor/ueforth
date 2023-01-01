@@ -105,7 +105,6 @@ decimal
 ( Hookup I/O )
 : stdout-write ( a n -- ) stdout -rot write drop ;
 : stdin-key ( -- n ) 0 >r stdin rp@ 1 read drop r> ;
-: posix-bye   0 sysexit ;
 
 also forth definitions
 : default-type stdout-write ;
@@ -113,7 +112,7 @@ also forth definitions
 only posix definitions
 ' default-type is type
 ' default-key is key
-' posix-bye is bye
+' sysexit is terminate
 
 ( I/O Error Helpers )
 : 0<ior ( n -- ior ) 0< if errno else 0 then ;

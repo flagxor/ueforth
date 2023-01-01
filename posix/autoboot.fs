@@ -13,12 +13,12 @@
 \ limitations under the License.
 
 ( Include first argument if any )
-posix also internals definitions
+internals definitions
 : autoexec
    ( Open passed file if any. )
-   argc 2 >= if 1 argv ['] included catch if 1 sysexit then exit then
+   argc 2 >= if 1 argv ['] included catch if 1 terminate then exit then
    ( Open remembered file if any. )
    ['] revive catch drop
 ;
 ' autoexec ( leave on dstack for fini.fs )
-only forth definitions
+forth definitions
