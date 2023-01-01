@@ -69,6 +69,7 @@ static cell_t *forth_run(cell_t *init_rp) {
     *g_sys->throw_handler = (cell_t *) *rp--;
     sp = (cell_t *) *rp--;
     fp = (float *) *rp--;
+    ip = (cell_t *) *rp--;
     --sp;
     tos = -g_forth_signal;
   }
