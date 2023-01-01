@@ -25,6 +25,15 @@ enum {
 #undef Z
 };
 
+static BOOL WINAPI forth_ctrl_handler(DWORD fdwCtrlType) {
+  if (fdwCtrlType == CTRL_C_EVENT ||
+      fdwCtrlType == CTRL_BREAK_EVENT) {
+//    RaiseException(EXCEPTION_BREAKPOINT, 0, 0, 0);
+    return TRUE;
+  }
+  return FALSE;
+}
+
 static cell_t *forth_run(cell_t *init_rp) {
   static const BUILTIN_WORD builtins[] = {
 #define Z(flags, name, op, code) \
@@ -45,6 +54,7 @@ static cell_t *forth_run(cell_t *init_rp) {
   }
   register cell_t *ip, *rp, *sp, tos, w;
   register float *fp, ft;
+  SetConsoleCtrlHandler(forth_ctrl_handler, TRUE);
   rp = init_rp; UNPARK;
   for (;;) {
     __try {
