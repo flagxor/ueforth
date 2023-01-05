@@ -52,6 +52,11 @@
 # define ENABLE_RMT_SUPPORT
 #endif
 
+// ESP32-C3 doesn't support fault handling yet.
+#if !defined(CONFIG_IDF_TARGET_ESP32C3)
+# define ENABLE_ESP32_FORTH_FAULT_HANDLING
+#endif
+
 // Uncomment this #define for OLED Support.
 // You will need to install these libraries from the Library Manager:
 //   Adafruit SSD1306
