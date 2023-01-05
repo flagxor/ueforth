@@ -57,6 +57,7 @@ static cell_t *forth_run(cell_t *init_rp) {
     sigaction(SIGSEGV, &sa, 0);
     sigaction(SIGBUS, &sa, 0);
     sigaction(SIGINT, &sa, 0);
+    sigaction(SIGFPE, &sa, 0);
 #endif
     return 0;
   }
