@@ -52,6 +52,11 @@
 # define ENABLE_RMT_SUPPORT
 #endif
 
+// ESP32-C3 doesn't support fault handling yet.
+#if !defined(CONFIG_IDF_TARGET_ESP32C3)
+# define ENABLE_ESP32_FORTH_FAULT_HANDLING
+#endif
+
 // Uncomment this #define for OLED Support.
 // You will need to install these libraries from the Library Manager:
 //   Adafruit SSD1306
@@ -63,9 +68,10 @@
 // camera support and BluetoothSerial.
 // ESP32-CAM always have PSRAM, but so do WROVER boards,
 // so this isn't an ideal indicator.
+// Also limiting to ESP32 classic only, as these can't be ESP32-CAM.
 // Some boards (e.g. ESP32-S2-WROVER) don't seem to have
 // built the serial library, so check if its enabled as well.
-#if defined(BOARD_HAS_PSRAM) || defined(SIM_PRINT_ONLY)
+#if (defined(CONFIG_IDF_TARGET_ESP32) && defined(BOARD_HAS_PSRAM)) || defined(SIM_PRINT_ONLY)
 # define ENABLE_CAMERA_SUPPORT
 # if (defined(CONFIG_BT_ENABLED) && \
       defined(CONFIG_BLUEDROID_ENABLED)) || \

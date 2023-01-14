@@ -109,6 +109,9 @@ static cell_t same(const char *a, const char *b, cell_t len) {
 }
 
 static cell_t find(const char *name, cell_t len) {
+  if (len == 0) {
+    return 0;
+  }
   for (cell_t ***voc = g_sys->context; *voc; ++voc) {
     cell_t xt = (cell_t) **voc;
     while (xt) {

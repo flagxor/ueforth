@@ -28,21 +28,26 @@ vocabulary xtensa xtensa definitions
 numeric operand im
 : imm4   im im im im ;
 : imm8   imm4 imm4 ;
-: imm12   imm4 imm4 imm4 ;
 : imm16   imm8 imm8 ;
 : sr   imm8 ;
 
-( Offsets for J )
+( Offsets for J and branches )
 : >ofs ( n -- n ) chere - 4 - ;
-: ofs. ( n -- ) 18 sextend address @ + 4 + . ;
-' >ofs ' ofs. operand ofs
-: offset   18 for aft ofs then next ;
+: ofs8. ( n -- ) 8 sextend address @ + 4 + . ;
+: ofs12. ( n -- ) 12 sextend address @ + 4 + . ;
+: ofs18. ( n -- ) 18 sextend address @ + 4 + . ;
+' >ofs ' ofs8. operand ofs8
+' >ofs ' ofs12. operand ofs12
+' >ofs ' ofs18. operand ofs18
+: offset8   8 for aft ofs8 then next ;
+: offset12   12 for aft ofs12 then next ;
+: offset18   18 for aft ofs18 then next ;
 
 ( Offsets for CALL* )
 : >cofs ( n -- n ) chere - 2 rshift 1- ;
 : cofs. ( n -- ) 18 sextend 1+ 2 lshift address @ 3 invert and + . ;
 ' >cofs ' cofs. operand cofs
-: coffset   18 for aft cofs then next ;
+: coffset18   18 for aft cofs then next ;
 
 ( Frame size of ENTRY )
 : >entry12 ( n -- n ) 3 rshift ;
@@ -119,27 +124,27 @@ $4 ALU2 XORB,
 $8 ALU2 MULL,                  $a ALU2 MULUH,  $b ALU2 MULSH,
 $c ALU2 QUOU,  $d ALU2 QUOS,   $e ALU2 REMU,   $f ALU2 REMS,
 
-: BRANCH1   imm8  4 bits  ssss  tttt  o l l l  OP ;
+: BRANCH1   offset8  4 bits  ssss  tttt  o l l l  OP ;
 $0 BRANCH1 BNONE,  $1 BRANCH1 BEQ,  $2 BRANCH1 BLT,  $3 BRANCH1 BLTU,
 $4 BRANCH1 BALL,   $5 BRANCH1 BBC,
-imm8  o l l b  ssss  bbbb  o l l l  OP BBCI,
+offset8  o l l b  ssss  bbbb  o l l l  OP BBCI,
 $8 BRANCH1 BANY,   $9 BRANCH1 BNE,  $a BRANCH1 BGE,  $b BRANCH1 BGEU,
 $c BRANCH1 BNALL,  $d BRANCH1 BBS,
-imm8  l l l b  ssss  bbbb  o l l l  OP BBSI,
+offset8  l l l b  ssss  bbbb  o l l l  OP BBSI,
 
-: BRANCH2   imm12  ssss  4 bits  o l l o  OP ;
-: BRANCH2a   imm8  rrrr     ssss  4 bits  o l l o  OP ;
+: BRANCH2   offset12  ssss  4 bits  o l l o  OP ;
+: BRANCH2a   offset8  rrrr     ssss  4 bits  o l l o  OP ;
 : BRANCH2e   entry12  ssss  4 bits  o l l o  OP ;
 ( $0 J, )  $1 BRANCH2 BEQZ,  $2 BRANCH2a BEQI,  $3 BRANCH2e ENTRY,
 ( $4 J, )  $5 BRANCH2 BNEZ,  $6 BRANCH2a BNEI,  ( BRANCH2b's )
 ( $8 J, )  $9 BRANCH2 BLTZ,  $a BRANCH2a BLTI,  $b BRANCH2a BLTUI,
 ( $c J, )  $d BRANCH2 BGEZ,  $e BRANCH2a BGEI,  $f BRANCH2a BGEUI,
-offset  o o  o l l o  OP J,
-: BRANCH2b   imm8  4 bits  ssss  o l l l  o l l o  OP ;
+offset18  o o  o l l o  OP J,
+: BRANCH2b   offset8  4 bits  ssss  o l l l  o l l o  OP ;
 $0 BRANCH2b BF,    $1 BRANCH2b BT,
 $8 BRANCH2b LOOP,  $9 BRANCH2b LOOPNEZ,  $a BRANCH2b LOOPGTZ,
 
-: CALLOP   coffset  2 bits  o l o l  OP ;
+: CALLOP   coffset18  2 bits  o l o l  OP ;
 0 CALLOP CALL0,  1 CALLOP CALL4,  2 CALLOP CALL8,  3 CALLOP CALL12,
 
 : CALLXOP   o o o o  o o o o  o o o o  ssss  l l 2 bits  o o o o  OP ;

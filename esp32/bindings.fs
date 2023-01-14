@@ -143,9 +143,15 @@ vocabulary rtos   rtos definitions
 transfer rtos-builtins
 forth definitions
 
-vocabulary bluetooth   bluetooth definitions
-transfer bluetooth-builtins
-forth definitions
+DEFINED? SerialBT.new [IF]
+  vocabulary bluetooth   bluetooth definitions
+  transfer bluetooth-builtins
+  forth definitions
+[ELSE]
+  internals definitions
+  transfer bluetooth-builtins
+  forth definitions
+[THEN]
 
 vocabulary oled   oled definitions
 transfer oled-builtins

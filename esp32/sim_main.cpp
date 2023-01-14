@@ -39,6 +39,9 @@ PLATFORM_SIMULATED_OPCODE_LIST
 #define heap_caps_get_largest_free_block(x) SIM_HEAP_SIZE
 #define heap_caps_get_free_size(x) SIM_HEAP_SIZE
 
+// Fault handling can't work in the simulator for now.
+#undef ENABLE_ESP32_FORTH_FAULT_HANDLING
+
 #include "common/bits.h"
 #include "common/core.h"
 #include "common/interp.h"

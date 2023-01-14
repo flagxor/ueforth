@@ -86,7 +86,7 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
 #define REQUIRED_SYSTEM_SUPPORT \
   X("MS-TICKS", MS_TICKS, PUSH millis()) \
   XV(internals, "RAW-YIELD", RAW_YIELD, yield()) \
-  XV(internals, "RAW-TERMINATE", RAW_TERMINATE, exit(n0))
+  XV(internals, "RAW-TERMINATE", RAW_TERMINATE, ESP.restart())
 
 #define REQUIRED_SERIAL_SUPPORT \
   XV(serial, "Serial.begin", SERIAL_BEGIN, Serial.begin(tos); DROP) \

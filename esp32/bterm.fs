@@ -12,6 +12,8 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
+DEFINED? bluetooth [IF]
+
 ( Lazy loaded Bluetooth Serial Terminal )
 : bterm r|
 vocabulary bterm  bterm definitions
@@ -34,3 +36,5 @@ name 0 bt SerialBT.begin drop
 only forth definitions
 bterm 500 ms bt-on
 | evaluate ;
+
+[THEN]

@@ -117,6 +117,9 @@ function BUILTIN_CODE(i) {
 }
 
 function Find(name) {
+  if (name.length === 0) {
+    return 0;
+  }
   name = name.toUpperCase();
   var raw = unescape(encodeURIComponent(name));
   for (var voc = i32[g_sys_context>>2]; i32[voc>>2]; voc += 4) {
