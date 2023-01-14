@@ -14,6 +14,7 @@
 
 internals definitions
 transfer camera-builtins
+DEFINED? esp_camera_init [IF]
 forth definitions
 
 ( Lazy loaded camera handling for ESP32-CAM )
@@ -124,4 +125,6 @@ forth definitions
 camera
 | evaluate ;
 
+[ELSE]
+forth definitions
 [THEN]
