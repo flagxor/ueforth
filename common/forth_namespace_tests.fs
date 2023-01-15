@@ -553,9 +553,6 @@ e: test-windows-forth-namespace
   out: ms 
   out: windows 
   check-phase1
-  out: GetProcAddress 
-  out: LoadLibraryA 
-  out: WindowProcShim 
   check-opcodes
   out: forth-builtins 
 ;e

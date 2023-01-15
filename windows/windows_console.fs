@@ -58,6 +58,7 @@ variable console-mode
                        ENABLE_WINDOW_INPUT or invert and SetConsoleMode drop
   stdout console-mode GetConsoleMode drop
   stdout console-mode @ ENABLE_VIRTUAL_TERMINAL_PROCESSING or SetConsoleMode drop
+  SetupCtrlBreakHandler
 ;
 
 : win-type ( a n -- ) init-console stdout -rot NULL NULL WriteFile drop ;

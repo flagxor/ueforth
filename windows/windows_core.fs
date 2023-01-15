@@ -21,6 +21,7 @@ internals
  ' call5 ,  ' call6 ,  ' call7 ,  ' call8 ,  ' call9 ,
 ' call10 , ' call11 , ' call12 , ' call13 , ' call14 , ' call15 ,
 windows
+transfer windows-builtins
 : sofunc ( z n a "name" -- )
    >r dup 15 > throw r> ( Check there aren't too many args )
    swap >r swap GetProcAddress dup 0= throw create , r> cells calls + @ ,
