@@ -24,6 +24,7 @@ needs conditionals_tests.fs
 needs float_tests.fs
 needs forth_namespace_tests.fs
 needs structures_tests.fs
+needs fault_tests.fs
 needs including_tests/including_tests.fs
 needs modules_tests.fs
 needs ../lib/hashing/sha1_tests.fs
