@@ -17,6 +17,7 @@ static char filename2[PATH_MAX];
 
 {{bits}}
 {{core}}
+{{faults}}
 {{interp}}
 {{boot}}
 

@@ -34,6 +34,9 @@ typedef uintptr_t ucell_t;
 
 #define PARK   DUP; *++rp = (cell_t) fp; *++rp = (cell_t) sp; *++rp = (cell_t) ip
 #define UNPARK ip = (cell_t *) *rp--; sp = (cell_t *) *rp--; fp = (float *) *rp--; DROP
+#define THROWIT(n) rp = *g_sys->throw_handler; *g_sys->throw_handler = (cell_t *) *rp--; \
+                   sp = (cell_t *) *rp--; fp = (float *) *rp--; ip = (cell_t *) *rp--; \
+                   NIP; tos = (n);
 
 #define TOFLAGS(xt) ((uint8_t *) (((cell_t *) (xt)) - 1))
 #define TONAMELEN(xt) (TOFLAGS(xt) + 1)

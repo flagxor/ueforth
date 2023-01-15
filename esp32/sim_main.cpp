@@ -42,6 +42,9 @@ PLATFORM_SIMULATED_OPCODE_LIST
 // Fault handling can't work in the simulator for now.
 #undef ENABLE_ESP32_FORTH_FAULT_HANDLING
 
+#define forth_faults_setup()
+#define FAULT_ENTRY
+
 #include "common/bits.h"
 #include "common/core.h"
 #include "common/interp.h"

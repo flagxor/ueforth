@@ -34,6 +34,7 @@
 
 #include "common/bits.h"
 #include "common/core.h"
+#include "posix/faults.h"
 #include "common/interp.h"
 
 #include "gen/posix_boot.h"

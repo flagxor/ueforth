@@ -345,8 +345,6 @@ $(WEB)/ueforth.js: \
 
 # ---- POSIX ----
 
-POSIX_CFLAGS = -DHAS_SIGNALS
-
 posix: posix_target posix_tests
 posix_target: $(POSIX)/ueforth
 
@@ -355,6 +353,7 @@ $(POSIX):
 
 $(POSIX)/ueforth: \
     posix/main.c \
+    posix/faults.h \
     common/tier0_opcodes.h \
     common/tier1_opcodes.h \
     common/tier2_opcodes.h \
@@ -365,7 +364,7 @@ $(POSIX)/ueforth: \
     common/bits.h \
     common/core.h \
     $(GEN)/posix_boot.h | $(POSIX)
-	$(CXX) $(CFLAGS) $(POSIX_CFLAGS) $< -o $@ $(LIBS)
+	$(CXX) $(CFLAGS) $< -o $@ $(LIBS)
 	strip $(STRIP_ARGS) $@
 
 # ---- WINDOWS ----
@@ -434,6 +433,7 @@ $(GEN)/esp32_sim_opcodes.h: $(GEN)/print-esp32-builtins | $(GEN)
 $(ESP32_SIM)/Esp32forth-sim: \
     esp32/sim_main.cpp \
     esp32/main.cpp \
+    esp32/faults.h \
     common/tier0_opcodes.h \
     common/tier1_opcodes.h \
     common/tier2_opcodes.h \
@@ -468,6 +468,7 @@ ESP32_PARTS = tools/replace.js \
               common/bits.h \
               common/core.h \
               common/interp.h \
+              esp32/faults.h \
               esp32/options.h \
               esp32/builtins.h \
               esp32/builtins.cpp \
@@ -487,6 +488,7 @@ $(ESP32)/ESP32forth/ESP32forth.ino: $(ESP32_PARTS) | $(ESP32)/ESP32forth
      bits=@common/bits.h \
      core=@common/core.h \
      interp=@common/interp.h \
+     faults=@esp32/faults.h \
      options=@esp32/options.h \
      builtins.h=@esp32/builtins.h \
      builtins.cpp=@esp32/builtins.cpp \

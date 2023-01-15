@@ -62,13 +62,7 @@ work:
         }
       }
     } __except (1) {
-      rp = *g_sys->throw_handler;
-      *g_sys->throw_handler = (cell_t *) *rp--;
-      sp = (cell_t *) *rp--;
-      fp = (float *) *rp--;
-      ip = (cell_t *) *rp--;
-      --sp;
-      tos = GetExceptionCode();
+      THROWIT(GetExceptionCode());
     }
   }
 }
