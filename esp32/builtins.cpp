@@ -68,9 +68,9 @@ static void IRAM_ATTR HandleInterrupt(void *arg) {
   cell_t stack[INTERRUPT_STACK_CELLS];
   stack[0] = args->arg;
   cell_t *rp = rstack;
+  *++rp = (cell_t) code;
   *++rp = (cell_t) (fstack + 1);
   *++rp = (cell_t) (stack + 1);
-  *++rp = (cell_t) code;
   forth_run(rp);
 }
 

@@ -340,15 +340,22 @@ function FConvert(pos, n, ret) {
 function Evaluate1(rp) {
   var call = 0;
   var tos, sp, ip, fp;
+
   // UNPARK
-  ip = i32[rp>>2]; rp -= 4; sp = i32[rp>>2]; rp -= 4; fp = i32[rp>>2]; rp -= 4; tos = i32[sp>>2]; sp -= 4;
+  sp = i32[rp>>2]; rp -= 4;
+  tos = i32[sp>>2]; sp -= 4;
+  fp = i32[rp>>2]; rp -= 4;
+  ip = i32[rp>>2]; rp -= 4;
 
   var name = sp + 8;
   var len = Parse(32, name);
   if (len == 0) {  // ignore empty
     sp += 4; i32[sp>>2] = tos; tos = 0;
     // PARK
-    sp += 4; i32[sp>>2] = tos; rp += 4; i32[rp>>2] = fp; rp += 4; i32[rp>>2] = sp; rp += 4; i32[rp>>2] = ip;
+    rp += 4; i32[rp>>2] = ip;
+    rp += 4; i32[rp>>2] = fp;
+    sp += 4; i32[sp>>2] = tos;
+    rp += 4; i32[rp>>2] = sp;
     return rp;
   }
   name = i32[name>>2];
@@ -388,7 +395,10 @@ function Evaluate1(rp) {
   }
   sp += 4; i32[sp>>2] = tos; tos = call;
   // PARK
-  sp += 4; i32[sp>>2] = tos; rp += 4; i32[rp>>2] = fp; rp += 4; i32[rp>>2] = sp; rp += 4; i32[rp>>2] = ip;
+  rp += 4; i32[rp>>2] = ip;
+  rp += 4; i32[rp>>2] = fp;
+  sp += 4; i32[sp>>2] = tos;
+  rp += 4; i32[rp>>2] = sp;
 
   return rp;
 }
@@ -452,9 +462,9 @@ function Init() {
   i32[g_sys_ntib>>2] = source_len;
   i32[g_sys_ntib>>2] = source_len;
 
+  rp += 4; i32[rp>>2] = start;
   rp += 4; i32[rp>>2] = fp;
   rp += 4; i32[rp>>2] = sp;
-  rp += 4; i32[rp>>2] = start;
   i32[g_sys_rp>>2] = rp;
 }
 
@@ -546,10 +556,10 @@ function VM(stdlib, foreign, heap) {
 
     // UNPARK
     rp = i32[g_sys_rp>>2]|0;
-    ip = i32[rp>>2]|0; rp = (rp - 4)|0;
     sp = i32[rp>>2]|0; rp = (rp - 4)|0;
-    fp = i32[rp>>2]|0; rp = (rp - 4)|0;
     tos = i32[sp>>2]|0; sp = (sp - 4)|0;
+    fp = i32[rp>>2]|0; rp = (rp - 4)|0;
+    ip = i32[rp>>2]|0; rp = (rp - 4)|0;
     for (;;) {
       //trace(ip|0, sp|0, tos|0);
       w = i32[ip>>2]|0;

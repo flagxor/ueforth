@@ -285,9 +285,9 @@ static void forth_init(int argc, char *argv[],
   g_sys->tib = src;
   g_sys->ntib = src_len;
 
+  *++rp = (cell_t) start;
   *++rp = (cell_t) fp;
   *++rp = (cell_t) sp;
-  *++rp = (cell_t) start;
   g_sys->rp = rp;
   g_sys->runner = forth_run;
 }
