@@ -25,7 +25,6 @@
 {{tier2_opcodes}}
 {{floats}}
 {{calls}}
-{{calling}}
 {{builtins.h}}
 {{builtins.cpp}}
 {{main.cpp}}

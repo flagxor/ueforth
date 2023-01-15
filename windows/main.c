@@ -31,7 +31,6 @@
 #include "common/tier1_opcodes.h"
 #include "common/tier2_opcodes.h"
 #include "common/floats.h"
-#include "common/calling.h"
 #include "common/calls.h"
 
 #define HEAP_SIZE (10 * 1024 * 1024)
@@ -53,6 +52,7 @@ static void SetupCtrlBreakHandler(void);
 
 #include "common/bits.h"
 #include "common/core.h"
+#include "common/calling.h"
 #include "windows/interp.h"
 
 #include "gen/windows_boot.h"

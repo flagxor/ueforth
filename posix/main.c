@@ -19,7 +19,6 @@
 #include "common/tier1_opcodes.h"
 #include "common/tier2_opcodes.h"
 #include "common/floats.h"
-#include "common/calling.h"
 #include "common/calls.h"
 
 #define HEAP_SIZE (10 * 1024 * 1024)
@@ -35,6 +34,7 @@
 #include "common/bits.h"
 #include "common/core.h"
 #include "posix/faults.h"
+#include "common/calling.h"
 #include "common/interp.h"
 
 #include "gen/posix_boot.h"

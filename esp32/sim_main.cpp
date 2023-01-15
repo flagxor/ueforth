@@ -18,7 +18,6 @@
 #include "common/tier2_opcodes.h"
 #include "common/floats.h"
 #include "common/calls.h"
-#include "common/calling.h"
 
 #define SIM_HEAP_SIZE (100 * 1024 + 1024 * 1024)
 
@@ -47,6 +46,7 @@ PLATFORM_SIMULATED_OPCODE_LIST
 
 #include "common/bits.h"
 #include "common/core.h"
+#include "common/calling.h"
 #include "common/interp.h"
 #include "gen/esp32_boot.h"
 #include "esp32/main.cpp"
