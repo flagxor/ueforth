@@ -62,7 +62,8 @@ variable console-mode
 ;
 
 : win-type ( a n -- ) init-console stdout -rot NULL NULL WriteFile drop ;
-: raw-key ( -- n ) 0 >r stdin rp@ 1 NULL NULL ReadFile drop r> ;
+: raw-key ( -- n )
+   0 >r stdin rp@ 1 NULL NULL ReadFile 0= if rdrop -1 exit then r> ;
 : win-key? ( -- f ) stdin 0 WaitForSingleObject 0= ;
 : win-key ( -- n ) raw-key dup 13 = if drop nl then ;
 

@@ -104,7 +104,7 @@ decimal
 
 ( Hookup I/O )
 : stdout-write ( a n -- ) stdout -rot write drop ;
-: stdin-key ( -- n ) 0 >r stdin rp@ 1 read drop r> ;
+: stdin-key ( -- n ) 0 >r stdin rp@ 1 read 0= if rdrop -1 exit then r> ;
 
 also forth definitions
 : default-type stdout-write ;
