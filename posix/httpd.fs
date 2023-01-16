@@ -50,7 +50,7 @@ sockaddr httpd-port   sockaddr client   variable client-len
 : strcase= ( a n a n -- f )
   >r swap r@ <> if rdrop 2drop 0 exit then r>
   for aft
-    2dup c@ upper swap c@ upper <> if 2drop 0 exit then
+    2dup c@ upper swap c@ upper <> if rdrop 2drop 0 exit then
     1+ swap 1+ swap
   then next
   2drop -1
