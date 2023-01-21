@@ -61,7 +61,7 @@ work:
 #undef Z
         }
       }
-    } __except (1) {
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
       THROWIT(GetExceptionCode());
     }
   }
