@@ -157,3 +157,63 @@ e: test-2@2!
   123 =assert
   999 =assert
 ;e
+
+e: test-/
+  101 2 / 50 =assert
+  101 -2 / -51 =assert
+  -101 -2 / 50 =assert
+  -101 2 / -51 =assert
+
+  100 2 / 50 = assert
+  100 -2 / -50 = assert
+  -100 -2 / 50 = assert
+  -100 2 / -50 = assert
+;e
+
+e: test-mod
+  101 2 mod 1 =assert
+  101 -2 mod -1 =assert
+  -101 -2 mod -1 =assert
+  -101 2 mod 1 =assert
+
+  100 2 mod 0 =assert
+  100 -2 mod 0 =assert
+  -100 -2 mod 0 =assert
+  -100 2 mod 0 =assert
+;e
+
+e: test-/mod-consistent
+  101 2 /mod 50 =assert 1 =assert
+  101 -2 /mod -51 =assert -1 =assert
+  -101 -2 /mod 50 =assert -1 =assert
+  -101 2 /mod -51 =assert 1 =assert
+
+  100 2 /mod 50 = assert 0 =assert
+  100 -2 /mod -50 = assert 0 =assert
+  -100 -2 /mod 50 = assert 0 =assert
+  -100 2 /mod -50 = assert 0 =assert
+;e
+
+e: test-/mod-consistent
+  : /mod-check { a b -- } a b /mod b * + a = assert ;
+  101 2 /mod-check
+  101 -2 /mod-check
+  -101 2 /mod-check
+  -101 -2 /mod-check
+  100 2 /mod-check
+  100 -2 /mod-check
+  -100 2 /mod-check
+  -100 -2 /mod-check
+;e
+
+e: test-*/
+  50 2 4 */ 25 =assert
+  -50 2 4 */ -25 =assert
+;e
+
+e: test-/cell
+  10 cells cell/ 10 =assert
+  10 cells 1+ cell/ 10 =assert
+  -10 cells cell/ -10 =assert
+  -10 cells 1- cell/ -11 =assert
+;e

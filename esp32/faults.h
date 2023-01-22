@@ -23,10 +23,22 @@ static __thread int g_forth_signal;
 static __thread uint32_t g_forth_setlevel;
 
 #define FAULT_ENTRY \
-  if (setjmp(g_forth_fault)) { THROWIT(-g_forth_signal); }
+  if (setjmp(g_forth_fault)) { THROWIT(g_forth_signal); }
 
 static void IRAM_ATTR forth_exception_handler(XtExcFrame *frame) {
-  g_forth_signal = frame->exccause;
+  switch (frame->exccause) {
+    case EXCCAUSE_LOAD_STORE_ERROR:
+    case EXCCAUSE_LOAD_PROHIBITED:
+    case EXCCAUSE_STORE_PROHIBITED:
+    case EXCCAUSE_LOAD_STORE_DATA_ERROR:
+    case EXCCAUSE_LOAD_STORE_RING:
+    case EXCCAUSE_LOAD_STORE_ADDR_ERROR:
+      g_forth_signal = -9;
+      break;
+    case EXCCAUSE_DIVIDE_BY_ZERO: g_forth_signal = -10; break;
+    case EXCCAUSE_UNALIGNED: g_forth_signal = -23; break;
+    default: g_forth_signal = -256 - frame->exccause; break;
+  }
   XTOS_RESTORE_INTLEVEL(g_forth_setlevel);
   longjmp(g_forth_fault, 1);
 }

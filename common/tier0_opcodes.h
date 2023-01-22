@@ -66,8 +66,28 @@ typedef int64_t dcell_t;
 #  error "unsupported cell size"
 # endif
 # define SSMOD_FUNC dcell_t d = (dcell_t) *sp * (dcell_t) sp[-1]; \
-                    --sp; cell_t a = (cell_t) (d < 0 ? ~(~d / tos) : d / tos); \
+                    --sp; cell_t a = (cell_t) (d / tos); \
+                    a = a * tos == d ? a : a - ((d < 0) ^ (tos < 0)); \
                     *sp = (cell_t) (d - ((dcell_t) a) * tos); tos = a
+#endif
+
+#ifdef WEB_DUMP
+// Use */mod as the base for the web version.
+# define SLASHMOD_FUNC DUP; *sp = 1; SSMOD_FUNC
+# define SLASH_FUNC SLASHMOD_FUNC; NIP
+# define MOD_FUNC SLASHMOD_FUNC; DROP
+# define CELLSLASH_FUNC DUP; tos = sizeof(cell_t); SLASH_FUNC
+#else
+// Use separate versions for non-web so throw has the right depth.
+# define SLASHMOD_FUNC cell_t d = *sp; cell_t a = d / tos; \
+                       cell_t b = a * tos == d ? a : a - ((d < 0) ^ (tos < 0)); \
+                       *sp = d - b * tos; tos = b
+# define SLASH_FUNC cell_t d = *sp; cell_t a = d / tos; NIP; \
+                    tos = a * tos == d ? a : a - ((d < 0) ^ (tos < 0))
+# define MOD_FUNC cell_t d = *sp; cell_t a = d / tos; \
+                  cell_t b = a * tos == d ? a : a - ((d < 0) ^ (tos < 0)); \
+                  NIP; tos = d - b * tos
+# define CELLSLASH_FUNC tos = tos < 0 ? ~(~tos / sizeof(cell_t)) : tos / sizeof(cell_t)
 #endif
 
 typedef struct {

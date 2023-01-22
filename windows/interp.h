@@ -62,7 +62,12 @@ work:
         }
       }
     } __except (EXCEPTION_EXECUTE_HANDLER) {
-      THROWIT(GetExceptionCode());
+      DWORD code = GetExceptionCode();
+      switch (code) {
+        case EXCEPTION_INT_DIVIDE_BY_ZERO: THROWIT(-10); break;
+        case EXCEPTION_ACCESS_VIOLATION: THROWIT(-9); break;
+        default: THROWIT(code); break;
+      }
     }
   }
 }

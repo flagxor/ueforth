@@ -17,6 +17,7 @@
 
 #define JMPW continue decode
 #define SSMOD_FUNC SSMOD_FUNC
+#define WEB_DUMP
 #define COMMA COMMA
 
 #include "common/tier0_opcodes.h"

@@ -19,10 +19,16 @@ static __thread jmp_buf g_forth_fault;
 static __thread int g_forth_signal;
 
 #define FAULT_ENTRY \
-  if (setjmp(g_forth_fault)) { THROWIT(-g_forth_signal); }
+  if (setjmp(g_forth_fault)) { THROWIT(g_forth_signal); }
 
 static void forth_signal_handler(int sig) {
-  g_forth_signal = sig;
+  switch (sig) {
+    case SIGSEGV: g_forth_signal = -9; break;
+    case SIGBUS: g_forth_signal = -23; break;
+    case SIGINT: g_forth_signal = -28; break;
+    case SIGFPE: g_forth_signal = -10; break;
+    default: g_forth_signal = -256 - sig; break;
+  }
   sigset_t ss;
   sigemptyset(&ss);
   sigprocmask(SIG_SETMASK, &ss, 0);

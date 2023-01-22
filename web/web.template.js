@@ -192,10 +192,6 @@ function SSMOD(sp) {
   a *= b;
   var x = Math.floor(a / c);
   var m = a - x * c;
-  if (m < 0) {
-    x--;
-    m += c;
-  }
   i32[(sp - 8)>>2] = m;
   i32[sp>>2] = x;
 }
