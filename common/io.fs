@@ -60,6 +60,10 @@ variable hld
    if cr ." ERROR: " type ."  NOT FOUND!" cr -1 throw then ;
 ' notfound 'notfound !
 
+( Abort )
+: abort   -1 throw ;
+: abort"   postpone ." postpone cr -2 aliteral postpone throw ; immediate
+
 ( Input )
 : raw.s   depth 0 max for aft sp@ r@ cells - @ . then next ;
 variable echo -1 echo !   variable arrow -1 arrow !  0 value wascr

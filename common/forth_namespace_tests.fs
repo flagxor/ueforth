@@ -63,6 +63,8 @@ e: check-boot
   out: tib 
   out: accept 
   out: echo 
+  out: abort" 
+  out: abort 
   out: z>s 
   out: s>z 
   out: r~ 
