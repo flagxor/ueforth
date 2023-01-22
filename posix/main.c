@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <dlfcn.h>
+#include <errno.h>
 #include <sys/mman.h>
 
 #include "common/tier0_opcodes.h"
@@ -24,8 +25,11 @@
 #define HEAP_SIZE (10 * 1024 * 1024)
 #define STACK_CELLS (8 * 1024)
 
+// NOTE: errno implemented as opcode to avoid a Linux platform dependency.
+
 #define PLATFORM_OPCODE_LIST \
-  Y(DLSYM, tos = (cell_t) dlsym(a1, c0); --sp) \
+  Y(DLSYM, tos = (cell_t) dlsym(a1 ? a1 : RTLD_DEFAULT, c0); NIP) \
+  XV(internals, "errno", ERRNO_INTERNAL, DUP; tos = (cell_t) errno) \
   CALLING_OPCODE_LIST \
   FLOATING_POINT_LIST
 

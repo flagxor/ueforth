@@ -69,8 +69,9 @@ z" readdir" 1 sysfunc readdir
 : .d_name ( a -- z ) 19 + ;
 
 ( Errno )
-z" __errno_location" 0 sysfunc __errno_location
-: errno ( -- n ) __errno_location sl@ ;
+also internals
+: errno ( -- n ) errno ;
+previous
 
 ( Default Pipes )
 0 constant stdin

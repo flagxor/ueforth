@@ -28,6 +28,8 @@ ESP32 = $(OUT)/esp32
 ESP32_SIM = $(OUT)/esp32-sim
 DEPLOY = $(OUT)/deploy
 
+OS = $(shell uname -s)
+
 CFLAGS_COMMON = -O2 -I ./ -I $(OUT)
 
 CFLAGS_MINIMIZE = \
@@ -37,7 +39,7 @@ CFLAGS_MINIMIZE = \
                 -ffreestanding \
                 -fno-stack-protector \
                 -fomit-frame-pointer \
-                -fno-ident -Wl,--build-id=none \
+                -fno-ident \
                 -ffunction-sections -fdata-sections \
                 -fmerge-all-constants
 CFLAGS = $(CFLAGS_COMMON) \
@@ -47,13 +49,27 @@ CFLAGS = $(CFLAGS_COMMON) \
          -Werror \
          -no-pie \
          -Wl,--gc-sections
-STRIP_ARGS = -S \
-             --strip-unneeded \
-             --remove-section=.note.gnu.gold-version \
-             --remove-section=.comment \
-             --remove-section=.note \
-             --remove-section=.note.gnu.build-id \
-             --remove-section=.note.ABI-tag
+ifeq ($(OS),Darwin)
+  CFLAGS += -Wl,-dead_strip -D_GNU_SOURCE
+endif
+ifeq ($(OS),Linux)
+  CFLAGS_MINIMIZE += -Wl,--build-id=none
+  CFLAGS += -s -Wl,--gc-sections -no-pie -Wl,--build-id=none
+endif
+
+STRIP_ARGS = -S
+ifeq ($(OS),Darwin)
+  STRIP_ARGS += -x
+endif
+ifeq ($(OS),Linux)
+  STRIP_ARGS += --strip-unneeded \
+                --remove-section=.note.gnu.gold-version \
+                --remove-section=.comment \
+                --remove-section=.note \
+                --remove-section=.note.gnu.build-id \
+                --remove-section=.note.ABI-tag
+endif
+
 LIBS=-ldl
 
 WIN_CFLAGS = $(CFLAGS_COMMON) \
