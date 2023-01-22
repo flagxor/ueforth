@@ -100,8 +100,8 @@ create input-buffer   input-limit allot
 
 ( Stack Guards )
 sp0 'stack-cells @ 2 3 */ cells + constant sp-limit
-: ?stack   sp@ sp0 < if ." STACK UNDERFLOW " -1 throw then
-           sp-limit sp@ < if ." STACK OVERFLOW " -1 throw then ;
+: ?stack   sp@ sp0 < if ." STACK UNDERFLOW " -4 throw then
+           sp-limit sp@ < if ." STACK OVERFLOW " -3 throw then ;
 
 ( REPL )
 : prompt   ."  ok" cr ;
