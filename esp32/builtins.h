@@ -35,6 +35,7 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
 
 #define PLATFORM_OPCODE_LIST \
   USER_WORDS \
+  REQUIRED_PLATFORM_SUPPORT \
   REQUIRED_ESP_SUPPORT \
   REQUIRED_MEMORY_SUPPORT \
   REQUIRED_SERIAL_SUPPORT \
@@ -69,6 +70,15 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   YV(internals, heap_caps_free, heap_caps_free(a0); DROP) \
   YV(internals, heap_caps_realloc, \
       tos = (cell_t) heap_caps_realloc(a2, n1, n0); NIPn(2))
+
+#define REQUIRED_PLATFORM_SUPPORT \
+  X("ESP32?", IS_ESP32, PUSH UEFORTH_PLATFORM_IS_ESP32) \
+  X("ESP32-S2?", IS_ESP32S2, PUSH UEFORTH_PLATFORM_IS_ESP32S2) \
+  X("ESP32-S3?", IS_ESP32S3, PUSH UEFORTH_PLATFORM_IS_ESP32S3) \
+  X("ESP32-C3?", IS_ESP32C3, PUSH UEFORTH_PLATFORM_IS_ESP32C3) \
+  X("PSRAM?", HAS_PSRAM, PUSH UEFORTH_PLATFORM_HAS_PSRAM) \
+  X("Xtensa?", IS_XTENSA, PUSH UEFORTH_PLATFORM_IS_XTENSA) \
+  X("RISC-V?", IS_RISCV, PUSH UEFORTH_PLATFORM_IS_RISCV)
 
 #define REQUIRED_ESP_SUPPORT \
   YV(ESP, getHeapSize, PUSH ESP.getHeapSize()) \

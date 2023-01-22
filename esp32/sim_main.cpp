@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "esp32/platform.h"
 #include "esp32/options.h"
 #include "common/tier0_opcodes.h"
 #include "common/tier1_opcodes.h"
@@ -158,6 +159,12 @@ static cell_t *simulated(cell_t *sp, const char *op) {
     return sp;
   } else if (op == STR_esp_partition_t_size) {
     *++sp = 64;
+    return sp;
+  } else if (op == STR_IS_XTENSA) {
+    *++sp = -1;
+    return sp;
+  } else if (op == STR_IS_RISCV) {
+    *++sp = -1;
     return sp;
   } else {
     fprintf(stderr, "MISSING SIM OPCODE: %s\n", op);

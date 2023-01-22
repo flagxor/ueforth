@@ -19,6 +19,7 @@
  * Revision: {{REVISION}}
  */
 
+{{platform}}
 {{options}}
 {{tier0_opcodes}}
 {{tier1_opcodes}}

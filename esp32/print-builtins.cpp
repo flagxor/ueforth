@@ -18,6 +18,7 @@
 
 #define SIM_PRINT_ONLY
 #define ENABLE_OLED_SUPPORT
+#include "esp32/platform.h"
 #include "esp32/options.h"
 #define CALLING_OPCODE_LIST
 #define FLOATING_POINT_LIST

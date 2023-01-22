@@ -12,6 +12,8 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
+RISC-V? [IF]
+
 ( Lazy loaded RISC-V assembler )
 : riscv-assembler r|
 

@@ -485,6 +485,7 @@ ESP32_PARTS = tools/replace.js \
               common/core.h \
               common/interp.h \
               esp32/faults.h \
+              esp32/platform.h \
               esp32/options.h \
               esp32/builtins.h \
               esp32/builtins.cpp \
@@ -505,6 +506,7 @@ $(ESP32)/ESP32forth/ESP32forth.ino: $(ESP32_PARTS) | $(ESP32)/ESP32forth
      core=@common/core.h \
      interp=@common/interp.h \
      faults=@esp32/faults.h \
+     platform=@esp32/platform.h \
      options=@esp32/options.h \
      builtins.h=@esp32/builtins.h \
      builtins.cpp=@esp32/builtins.cpp \

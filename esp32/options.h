@@ -84,6 +84,42 @@
 # define USER_VOCABULARIES
 #endif
 
+#if defined(CONFIG_IDF_TARGET_ESP32)
+# define UEFORTH_PLATFORM_IS_ESP32 -1
+#else
+# define UEFORTH_PLATFORM_IS_ESP32 0
+#endif
+
+#if defined(CONFIG_IDF_TARGET_ESP32S2)
+# define UEFORTH_PLATFORM_IS_ESP32S2 -1
+#else
+# define UEFORTH_PLATFORM_IS_ESP32S2 0
+#endif
+
+#if defined(CONFIG_IDF_TARGET_ESP32S3)
+# define UEFORTH_PLATFORM_IS_ESP32S3 -1
+#else
+# define UEFORTH_PLATFORM_IS_ESP32S3 0
+#endif
+
+#if defined(CONFIG_IDF_TARGET_ESP32C3)
+# define UEFORTH_PLATFORM_IS_ESP32C3 -1
+#else
+# define UEFORTH_PLATFORM_IS_ESP32C3 0
+#endif
+
+#if defined(BOARD_HAS_PSRAM)
+# define UEFORTH_PLATFORM_HAS_PSRAM -1
+#else
+# define UEFORTH_PLATFORM_HAS_PSRAM 0
+#endif
+
+#if defined(BOARD_HAS_PSRAM)
+# define UEFORTH_PLATFORM_HAS_PSRAM -1
+#else
+# define UEFORTH_PLATFORM_HAS_PSRAM 0
+#endif
+
 #define VOCABULARY_LIST \
   V(forth) V(internals) \
   V(rtos) V(SPIFFS) V(serial) V(SD) V(SD_MMC) V(ESP) \

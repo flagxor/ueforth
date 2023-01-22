@@ -660,7 +660,18 @@ e: check-esp32-platform
   out: default-type 
 ;e
 
+e: check-esp32-platform-flags
+  out: ESP32? 
+  out: ESP32-S2? 
+  out: ESP32-S3? 
+  out: ESP32-C3? 
+  out: PSRAM? 
+  out: Xtensa? 
+  out: RISC-V? 
+;e
+
 e: check-esp32-builtins
+  check-esp32-platform-flags
   out: pinMode 
   out: digitalWrite 
   out: digitalRead 
