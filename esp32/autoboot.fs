@@ -25,8 +25,10 @@ internals definitions
 ( Check for autoexec.fs and run if present.
   Failing that, try to revive save image. )
 : autoexec
-   300 for key? if rdrop exit then 10 ms next
-   s" /spiffs/autoexec.fs" ['] included catch 2drop drop
+   ( Allow skip start files if key hit within 100 ms )
+   10 for key? if rdrop exit then 10 ms next
+   s" /spiffs/autoexec.fs" 2dup file-exists?
+     if included else 2drop then
    ['] revive catch drop ;
 ' autoexec ( leave on the stack for fini.fs )
 

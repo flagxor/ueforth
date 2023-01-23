@@ -253,16 +253,20 @@ POSIX_BOOT =  $(COMMON_PHASE1) \
 $(GEN)/posix_boot.h: tools/source_to_string.js $(POSIX_BOOT) | $(GEN)
 	$< boot $(VERSION) $(REVISION) $(POSIX_BOOT) >$@
 
+WINDOWS_BOOT_EXTRA = windows/windows_user.fs \
+                     windows/windows_gdi.fs \
+                     windows/windows_messages.fs \
+                     windows/graphics.fs
+$(GEN)/windows_boot_extra.h: tools/source_to_string.js $(WINDOWS_BOOT_EXTRA) | $(GEN)
+	$< -win boot_extra $(VERSION) $(REVISION) $(WINDOWS_BOOT_EXTRA) >$@
+
 WINDOWS_BOOT = $(COMMON_PHASE1) \
                windows/windows_core.fs \
                windows/windows_files.fs \
                windows/windows_console.fs \
-               windows/windows_user.fs \
-               windows/windows_gdi.fs \
-               windows/windows_messages.fs \
                windows/allocation.fs \
                $(COMMON_PHASE2) $(COMMON_FILETOOLS) $(COMMON_DESKTOP) \
-               windows/graphics.fs \
+               windows/load_extra.fs \
                posix/autoboot.fs \
                common/fini.fs
 $(GEN)/windows_boot.h: tools/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
@@ -404,6 +408,7 @@ $(WINDOWS)/uEf32.obj: \
     common/bits.h \
     common/core.h \
     windows/interp.h \
+    $(GEN)/windows_boot_extra.h \
     $(GEN)/windows_boot.h | $(WINDOWS)
 	$(CL32) /c /Fo$@ $(WIN_CFLAGS) $<
 
@@ -423,6 +428,7 @@ $(WINDOWS)/uEf64.obj: \
     common/bits.h \
     common/core.h \
     windows/interp.h \
+    $(GEN)/windows_boot_extra.h \
     $(GEN)/windows_boot.h | $(WINDOWS)
 	$(CL64) /c /Fo$@ $(WIN_CFLAGS) $<
 

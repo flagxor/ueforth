@@ -38,6 +38,7 @@
 
 static LRESULT WindowProcShim(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 static void SetupCtrlBreakHandler(void);
+static cell_t GetBootExtra(cell_t *start);
 
 #define PLATFORM_OPCODE_LIST \
   YV(windows, GetProcAddress, \
@@ -45,6 +46,7 @@ static void SetupCtrlBreakHandler(void);
   YV(windows, LoadLibraryA, tos = (cell_t) LoadLibraryA((LPCSTR) tos)) \
   YV(windows, WindowProcShim, DUP; tos = (cell_t) &WindowProcShim) \
   YV(windows, SetupCtrlBreakHandler, SetupCtrlBreakHandler()) \
+  YV(windows, boot_extra, DUP; DUP; tos = GetBootExtra(sp)) \
   CALLING_OPCODE_LIST \
   FLOATING_POINT_LIST
 
@@ -56,6 +58,7 @@ static void SetupCtrlBreakHandler(void);
 #include "windows/interp.h"
 
 #include "gen/windows_boot.h"
+#include "gen/windows_boot_extra.h"
 
 static DWORD forth_main_thread_id;
 static uintptr_t forth_main_thread_resume_sp;
@@ -106,6 +109,11 @@ static void SetupCtrlBreakHandler(void) {
   forth_main_thread_resume_sp = context.Esp;
   forth_main_thread_resume_bp = context.Ebp;
 #endif
+}
+
+static cell_t GetBootExtra(cell_t *start) {
+  *start = (cell_t) boot_extra;
+  return (cell_t) sizeof(boot_extra) - 1;
 }
 
 static LRESULT WindowProcShim(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {

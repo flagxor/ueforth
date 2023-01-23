@@ -78,11 +78,12 @@ forth definitions internals
 : included ( a n -- )
    sourcefilename >r >r
    >r >r sourcedirname r> r> path-join 2dup sourcefilename!
-   ['] raw-included catch
-   dup if ." Error including: " sourcefilename type cr then
+   ['] raw-included catch if
+      ." Error including: " sourcefilename type cr
+      -38 throw
+   then
    sourcefilename& include+
-   r> r> sourcefilename!
-   throw ;
+   r> r> sourcefilename! ;
 
 : include ( "name" -- ) bl parse included ;
 
@@ -97,5 +98,7 @@ forth definitions internals
 
 : required ( a n -- ) 2dup included? if 2drop else included then ;
 : needs ( "name" -- ) bl parse required ;
+
+: file-exists? ( "name" -- f ) r/o open-file if drop 0 else close-file throw -1 then ;
 
 forth

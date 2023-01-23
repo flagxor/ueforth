@@ -26,11 +26,11 @@ internals
 ' call10 , ' call11 , ' call12 , ' call13 , ' call14 , ' call15 ,
 posix
 : sofunc ( z n a "name" -- )
-   swap >r swap dlsym dup 0= throw create , r> cells calls + @ ,
+   swap >r swap dlsym dup 0= -38 and throw create , r> cells calls + @ ,
    does> dup @ swap cell+ @ execute ;
 : sysfunc ( z n "name" -- ) 0 sofunc ;
 : shared-library ( z "name" -- )
-   RTLD_NOW dlopen dup 0= throw create , does> @ sofunc ;
+   RTLD_NOW dlopen dup 0= -38 and throw create , does> @ sofunc ;
 : sign-extend ( n -- n ) >r rp@ sl@ rdrop ;
 
 ( Major Syscalls )

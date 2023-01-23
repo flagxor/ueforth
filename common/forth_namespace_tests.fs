@@ -467,6 +467,7 @@ e: check-args
 ;e
 
 e: check-imports
+  out: file-exists? 
   out: needs 
   out: required 
   out: included? 
