@@ -79,30 +79,40 @@ static void IRAM_ATTR forth_exception_handler(XtExcFrame *frame) {
 }
 
 static void forth_faults_setup(void) {
-  xt_set_exception_handler(EXCCAUSE_DIVIDE_BY_ZERO, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_DTLB_MISS, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_DTLB_MULTIHIT, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_EXCLUSIVE_ERROR, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_EXTREG_PRIVILEGE, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_ILLEGAL, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_INSTR_ADDR_ERROR, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_INSTR_DATA_ERROR, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_INSTR_ERROR, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_INSTR_PROHIBITED, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_INSTR_RING, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_ITLB_MISS, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_ITLB_MULTIHIT, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_LOAD_PROHIBITED, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_LOAD_STORE_ADDR_ERROR, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_LOAD_STORE_DATA_ERROR, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_LOAD_STORE_ERROR, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_LOAD_STORE_RING, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_PC_ERROR, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_PRIVILEGED, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_STORE_PROHIBITED, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_UNALIGNED, forth_exception_handler);
+  xt_set_exception_handler(EXCCAUSE_ILLEGAL, forth_exception_handler);                // 0
+  // EXCCAUSE_SYSCALL - used for syscalls                                             // 1
+  xt_set_exception_handler(EXCCAUSE_INSTR_ERROR, forth_exception_handler);            // 2
+  xt_set_exception_handler(EXCCAUSE_LOAD_STORE_ERROR, forth_exception_handler);       // 3
+  xt_set_exception_handler(EXCCAUSE_LEVEL1_INTERRUPT, forth_exception_handler);       // 4
+  // EXCCAUSE_ALLOCA - used to grow with alloca                                       // 5
+  xt_set_exception_handler(EXCCAUSE_DIVIDE_BY_ZERO, forth_exception_handler);         // 6
+  xt_set_exception_handler(EXCCAUSE_PC_ERROR, forth_exception_handler);               // 7
+  xt_set_exception_handler(EXCCAUSE_PRIVILEGED, forth_exception_handler);             // 8
+  xt_set_exception_handler(EXCCAUSE_UNALIGNED, forth_exception_handler);              // 9
+  xt_set_exception_handler(EXCCAUSE_EXTREG_PRIVILEGE, forth_exception_handler);       // 10
+  xt_set_exception_handler(EXCCAUSE_EXCLUSIVE_ERROR, forth_exception_handler);        // 11
+  xt_set_exception_handler(EXCCAUSE_INSTR_DATA_ERROR, forth_exception_handler);       // 12
+  xt_set_exception_handler(EXCCAUSE_LOAD_STORE_DATA_ERROR, forth_exception_handler);  // 13
+  xt_set_exception_handler(EXCCAUSE_INSTR_ADDR_ERROR, forth_exception_handler);       // 14
+  xt_set_exception_handler(EXCCAUSE_LOAD_STORE_ADDR_ERROR, forth_exception_handler);  // 15
+  xt_set_exception_handler(EXCCAUSE_ITLB_MISS, forth_exception_handler);              // 16
+  xt_set_exception_handler(EXCCAUSE_ITLB_MULTIHIT, forth_exception_handler);          // 17
+  xt_set_exception_handler(EXCCAUSE_INSTR_RING, forth_exception_handler);             // 18
+  // Reserved                                                                         // 19
+  xt_set_exception_handler(EXCCAUSE_INSTR_PROHIBITED, forth_exception_handler);       // 20
+  // Reserved                                                                         // 21
+  // Reserved                                                                         // 22
+  // Reserved                                                                         // 23
+  xt_set_exception_handler(EXCCAUSE_DTLB_MISS, forth_exception_handler);              // 24
+  xt_set_exception_handler(EXCCAUSE_DTLB_MULTIHIT, forth_exception_handler);          // 25
+  xt_set_exception_handler(EXCCAUSE_LOAD_STORE_RING, forth_exception_handler);        // 26
+  // Reserved                                                                         // 27
+  xt_set_exception_handler(EXCCAUSE_LOAD_PROHIBITED, forth_exception_handler);        // 28
+  xt_set_exception_handler(EXCCAUSE_STORE_PROHIBITED, forth_exception_handler);       // 29
+  // Reserved                                                                         // 30
+  // Reserved                                                                         // 31
   for (int i = 0; i < 8; ++i) {
-    xt_set_exception_handler(EXCCAUSE_CP_DISABLED(i), forth_exception_handler);
+    xt_set_exception_handler(EXCCAUSE_CP_DISABLED(i), forth_exception_handler);       // 32-39
   }
   uint32_t default_setlevel = XTOS_SET_INTLEVEL(XCHAL_EXCM_LEVEL);
   XTOS_RESTORE_INTLEVEL(default_setlevel);
