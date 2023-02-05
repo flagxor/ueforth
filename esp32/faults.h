@@ -14,6 +14,41 @@
 
 #if defined(ENABLE_ESP32_FORTH_FAULT_HANDLING)
 
+# if defined(CONFIG_IDF_TARGET_ESP32C3)
+
+#include <setjmp.h>
+#include "riscv/csr.h"
+#include "esp_heap_caps.h"
+
+#define FORTH_VECTOR_TABLE_SIZE 32
+
+static __thread jmp_buf g_forth_fault;
+static __thread int g_forth_signal;
+static void **g_forth_vector_table;
+extern void *_vector_table;
+
+#define FAULT_ENTRY \
+  if (setjmp(g_forth_fault)) { THROWIT(g_forth_signal); }
+
+static void forth_faults_setup(void) {
+  g_forth_vector_table = (void **) malloc(sizeof(void *) * FORTH_VECTOR_TABLE_SIZE);
+  //g_forth_vector_table = (void **) heap_caps_malloc(sizeof(void *) * FORTH_VECTOR_TABLE_SIZE,
+  //                                                  MALLOC_CAP_EXEC);
+  void **vector_table = (void **) &_vector_table;
+  for (int i = 0; i < FORTH_VECTOR_TABLE_SIZE; ++i) {
+    g_forth_vector_table[i] = vector_table[i];
+  }
+  // TODO: Actually apply it.
+/*
+  uint32_t mtvec_val = (uint32_t) g_forth_vector_table;
+  mtvec_val |= 1;
+  RV_WRITE_CSR(mtvec, mtvec_val);
+*/
+  //rv_utils_set_mtvec((uint32_t) g_forth_vector_table);
+}
+
+# else
+
 #include <setjmp.h>
 #include "soc/soc.h"
 #include <xtensa/xtensa_api.h>
@@ -44,19 +79,37 @@ static void IRAM_ATTR forth_exception_handler(XtExcFrame *frame) {
 }
 
 static void forth_faults_setup(void) {
-  xt_set_exception_handler(EXCCAUSE_LOAD_STORE_ERROR, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_PRIVILEGED, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_UNALIGNED, forth_exception_handler);
   xt_set_exception_handler(EXCCAUSE_DIVIDE_BY_ZERO, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_INSTR_ERROR, forth_exception_handler);
+  xt_set_exception_handler(EXCCAUSE_DTLB_MISS, forth_exception_handler);
+  xt_set_exception_handler(EXCCAUSE_DTLB_MULTIHIT, forth_exception_handler);
+  xt_set_exception_handler(EXCCAUSE_EXCLUSIVE_ERROR, forth_exception_handler);
+  xt_set_exception_handler(EXCCAUSE_EXTREG_PRIVILEGE, forth_exception_handler);
   xt_set_exception_handler(EXCCAUSE_ILLEGAL, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_LOAD_PROHIBITED, forth_exception_handler);
-  xt_set_exception_handler(EXCCAUSE_STORE_PROHIBITED, forth_exception_handler);
+  xt_set_exception_handler(EXCCAUSE_INSTR_ADDR_ERROR, forth_exception_handler);
+  xt_set_exception_handler(EXCCAUSE_INSTR_DATA_ERROR, forth_exception_handler);
+  xt_set_exception_handler(EXCCAUSE_INSTR_ERROR, forth_exception_handler);
   xt_set_exception_handler(EXCCAUSE_INSTR_PROHIBITED, forth_exception_handler);
+  xt_set_exception_handler(EXCCAUSE_INSTR_RING, forth_exception_handler);
+  xt_set_exception_handler(EXCCAUSE_ITLB_MISS, forth_exception_handler);
+  xt_set_exception_handler(EXCCAUSE_ITLB_MULTIHIT, forth_exception_handler);
+  xt_set_exception_handler(EXCCAUSE_LOAD_PROHIBITED, forth_exception_handler);
+  xt_set_exception_handler(EXCCAUSE_LOAD_STORE_ADDR_ERROR, forth_exception_handler);
+  xt_set_exception_handler(EXCCAUSE_LOAD_STORE_DATA_ERROR, forth_exception_handler);
+  xt_set_exception_handler(EXCCAUSE_LOAD_STORE_ERROR, forth_exception_handler);
+  xt_set_exception_handler(EXCCAUSE_LOAD_STORE_RING, forth_exception_handler);
+  xt_set_exception_handler(EXCCAUSE_PC_ERROR, forth_exception_handler);
+  xt_set_exception_handler(EXCCAUSE_PRIVILEGED, forth_exception_handler);
+  xt_set_exception_handler(EXCCAUSE_STORE_PROHIBITED, forth_exception_handler);
+  xt_set_exception_handler(EXCCAUSE_UNALIGNED, forth_exception_handler);
+  for (int i = 0; i < 8; ++i) {
+    xt_set_exception_handler(EXCCAUSE_CP_DISABLED(i), forth_exception_handler);
+  }
   uint32_t default_setlevel = XTOS_SET_INTLEVEL(XCHAL_EXCM_LEVEL);
   XTOS_RESTORE_INTLEVEL(default_setlevel);
   g_forth_setlevel = default_setlevel;
 }
+
+# endif
 
 #else
 

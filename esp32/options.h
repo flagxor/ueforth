@@ -27,6 +27,7 @@
 #define ENABLE_LEDC_SUPPORT
 #define ENABLE_SD_SUPPORT
 #define ENABLE_SPI_FLASH_SUPPORT
+#define ENABLE_ESP32_FORTH_FAULT_HANDLING
 
 // SD_MMC does not work on ESP32-S2 / ESP32-C3
 #if !defined(CONFIG_IDF_TARGET_ESP32S2) && !defined(CONFIG_IDF_TARGET_ESP32C3)
@@ -54,7 +55,6 @@
 
 // ESP32-C3 doesn't support fault handling yet.
 #if !defined(CONFIG_IDF_TARGET_ESP32C3)
-# define ENABLE_ESP32_FORTH_FAULT_HANDLING
 #endif
 
 // Uncomment this #define for OLED Support.

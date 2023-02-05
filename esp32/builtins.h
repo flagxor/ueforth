@@ -69,7 +69,13 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   YV(internals, heap_caps_malloc, SET heap_caps_malloc(n1, n0); NIP) \
   YV(internals, heap_caps_free, heap_caps_free(a0); DROP) \
   YV(internals, heap_caps_realloc, \
-      tos = (cell_t) heap_caps_realloc(a2, n1, n0); NIPn(2))
+      tos = (cell_t) heap_caps_realloc(a2, n1, n0); NIPn(2)) \
+  YV(internals, heap_caps_get_total_size, n0 = heap_caps_get_total_size(n0)) \
+  YV(internals, heap_caps_get_free_size, n0 = heap_caps_get_free_size(n0)) \
+  YV(internals, heap_caps_get_minimum_free_size, \
+      n0 = heap_caps_get_minimum_free_size(n0)) \
+  YV(internals, heap_caps_get_largest_free_block, \
+      n0 = heap_caps_get_largest_free_block(n0))
 
 #define REQUIRED_PLATFORM_SUPPORT \
   X("ESP32?", IS_ESP32, PUSH UEFORTH_PLATFORM_IS_ESP32) \
