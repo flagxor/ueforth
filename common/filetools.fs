@@ -55,7 +55,8 @@ forth definitions internals
 
 DEFINED? read-dir [IF]
 : ls ( "path" -- )
-  bl parse open-dir throw { dh } begin
+  bl parse dup 0= if 2drop s" ." then
+  open-dir throw { dh } begin
     dh read-dir dup 0= if
       2drop dh close-dir throw exit
     then type cr
