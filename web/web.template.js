@@ -16,7 +16,7 @@
 
 (function() {
 
-const HEAP_SIZE = (1024 * 1024);
+const HEAP_SIZE = (4 * 1024 * 1024);
 const STACK_CELLS = 4096;
 const VOCABULARY_DEPTH = 16;
 
@@ -601,18 +601,29 @@ function getGlobalObj() {
 var globalObj = getGlobalObj();
 
 var module = VM(globalObj, ffi, heap);
+
 function run() {
   module.run();
   setTimeout(run, 0);
 }
-if (globalObj.write) {
+
+function Start() {
   Init();
   setTimeout(run, 0);
+}
+
+if (globalObj.write) {
+  Start();
 } else {
-  window.addEventListener('load', function() {
-    Init();
-    setTimeout(run, 0);
-  });
+  if (globalObj.ueforth === null) {
+    globalObj.ueforth = context;
+    context.Start = Start;
+  } else {
+    window.addEventListener('load', function() {
+      Init();
+      setTimeout(run, 0);
+    });
+  }
 }
 
 })();
