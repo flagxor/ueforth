@@ -24,4 +24,8 @@ forth definitions internals
 : ok   ." uEforth" raw-ok ;
 transfer forth
 forth
+
+( Try to run script tags if any. )
+web scripts scripts# forth evaluate
+
 ok

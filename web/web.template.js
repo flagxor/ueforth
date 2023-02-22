@@ -233,6 +233,21 @@ function Builtin(name, flags, vocab, opcode) {
   builtins.push([name, flags | BUILTIN_MARK, vocab, opcode]);
 }
 
+function LoadScripts() {
+  if (globalObj.write) {
+    return;
+  }
+  var text = '';
+  var tags = document.getElementsByTagName('script');
+  for (var i = 0; i < tags.length; ++i) {
+    if (tags[i].type == 'text/forth') {
+      text += tags[i].text + '\n';
+    }
+  }
+  var encoder = new TextEncoder();
+  context.scripts = encoder.encode(text);
+}
+
 function SetupBuiltins() {
   for (var i = 0; i < builtins.length; ++i) {
     var name = builtins[i][0];
@@ -608,6 +623,7 @@ function run() {
 }
 
 function Start() {
+  LoadScripts();
   Init();
   setTimeout(run, 0);
 }
@@ -620,8 +636,7 @@ if (globalObj.write) {
     context.Start = Start;
   } else {
     window.addEventListener('load', function() {
-      Init();
-      setTimeout(run, 0);
+      Start();
     });
   }
 }

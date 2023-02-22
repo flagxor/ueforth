@@ -346,7 +346,11 @@ $(RES)/ueforth_res64.res: windows/ueforth.rc $(RES)/eforth.ico
 # ---- WEB ----
 
 web: web_target web_tests
-web_target: $(WEB)/terminal.html $(WEB)/lazy_terminal.html $(WEB)/ueforth.js
+web_target: \
+    $(WEB)/terminal.html \
+    $(WEB)/lazy_terminal.html \
+    $(WEB)/script_test.html \
+    $(WEB)/ueforth.js
 
 $(WEB):
 	mkdir -p $(WEB)
@@ -355,6 +359,9 @@ $(WEB)/terminal.html: web/terminal.html | $(WEB)
 	cp $< $@
 
 $(WEB)/lazy_terminal.html: web/lazy_terminal.html | $(WEB)
+	cp $< $@
+
+$(WEB)/script_test.html: web/script_test.html | $(WEB)
 	cp $< $@
 
 $(WEB)/ueforth.js: \

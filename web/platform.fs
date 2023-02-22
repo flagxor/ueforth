@@ -791,6 +791,17 @@ JSWORD: release { handle }
   context.ReleaseHandle(handle);
 ~
 
+JSWORD: importScripts { dst dst_limit -- n }
+  if (context.scripts === undefined) {
+    return 0;
+  }
+  var data = context.scripts;
+  for (var i = 0; i < dst_limit && i < data.length; ++i) {
+    u8[dst + i] = data[i];
+  }
+  return data.length;
+~
+
 r~
 context.audio_context = null;
 context.audio_channels = [];
@@ -915,6 +926,10 @@ JSWORD: button { -- b }
 JSWORD: random { n -- n }
   return Math.floor(Math.random() * n);
 ~
+
+0 0 importScripts constant scripts#
+create scripts   scripts# allot
+scripts scripts# importScripts drop
 
 forth definitions web
 
