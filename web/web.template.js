@@ -233,19 +233,48 @@ function Builtin(name, flags, vocab, opcode) {
   builtins.push([name, flags | BUILTIN_MARK, vocab, opcode]);
 }
 
-function LoadScripts() {
+function HttpGet(url) {
+  return new Promise(function(resolve, reject) {
+    var request = new XMLHttpRequest();
+    request.open('GET', url);
+    request.send();
+    request.onload = function() {
+      if (request.status != 200) {
+        reject(request);
+      } else {
+        resolve(request.responseText);
+      }
+    };
+    request.onerror = function() {
+      reject(request);
+    };
+  });
+}
+
+function LoadScripts(callback) {
   if (globalObj.write) {
+    callback();
     return;
   }
-  var text = '';
+  var textParts = [];
   var tags = document.getElementsByTagName('script');
   for (var i = 0; i < tags.length; ++i) {
     if (tags[i].type == 'text/forth') {
-      text += tags[i].text + '\n';
+      textParts.push(tags[i].text);
+      if (tags[i].src) {
+        textParts.push(HttpGet(tags[i].src));
+      }
     }
   }
-  var encoder = new TextEncoder();
-  context.scripts = encoder.encode(text);
+  Promise.all(textParts).then(function(values) {
+    var text = '';
+    for (var i = 0; i < values.length; ++i) {
+      text += values[i] + '\n';
+    }
+    var encoder = new TextEncoder();
+    context.scripts = encoder.encode(text);
+    callback();
+  });
 }
 
 function SetupBuiltins() {
@@ -623,9 +652,10 @@ function run() {
 }
 
 function Start() {
-  LoadScripts();
-  Init();
-  setTimeout(run, 0);
+  LoadScripts(function() {
+    Init();
+    setTimeout(run, 0);
+  });
 }
 
 if (globalObj.write) {

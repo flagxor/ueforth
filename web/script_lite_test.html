@@ -18,7 +18,11 @@ limitations under the License.
 <script type="text/forth">
 ." Starting Tests..." cr
 </script>
-<script type="text/forth" src="script_test.fs"></script>
+<script type="text/forth">
+: square ( n -- n ) dup * ;
+: foobar ( n -- n ) square square ;
+123
+</script>
 <script src="ueforth.js"></script>
 <script type="text/forth">
 ." Checking for 123..." cr

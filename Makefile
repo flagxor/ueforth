@@ -349,7 +349,9 @@ web: web_target web_tests
 web_target: \
     $(WEB)/terminal.html \
     $(WEB)/lazy_terminal.html \
+    $(WEB)/script_lite_test.html \
     $(WEB)/script_test.html \
+    $(WEB)/script_test.fs \
     $(WEB)/ueforth.js
 
 $(WEB):
@@ -361,7 +363,13 @@ $(WEB)/terminal.html: web/terminal.html | $(WEB)
 $(WEB)/lazy_terminal.html: web/lazy_terminal.html | $(WEB)
 	cp $< $@
 
+$(WEB)/script_lite_test.html: web/script_lite_test.html | $(WEB)
+	cp $< $@
+
 $(WEB)/script_test.html: web/script_test.html | $(WEB)
+	cp $< $@
+
+$(WEB)/script_test.fs: web/script_test.fs | $(WEB)
 	cp $< $@
 
 $(WEB)/ueforth.js: \
