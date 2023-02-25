@@ -903,6 +903,10 @@ JSWORD: log { a n -- }
   console.log(GetString(a, n));
 ~
 
+JSWORD: text-size! { n -- }
+  context.terminal.style.fontSize = n + 'px';
+~
+
 JSWORD: font { a n -- }
   context.ctx.font = GetString(a, n);
 ~
