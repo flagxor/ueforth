@@ -25,7 +25,7 @@ transfer timers-builtins
 
 $3ff5f000 constant TIMG_BASE
 ( group n = 0/1, timer x = 0/1, watchdog m = 0-5 )
-: TIMGn ( n -- a ) $10000 * TIMG_BASE + ;
+: TIMGn ( n -- a ) $1000 * TIMG_BASE + ;
 : TIMGn_Tx ( n x -- a ) $24 * swap TIMGn + ;
 : TIMGn_TxCONFIG_REG ( n x -- a ) TIMGn_Tx 0 cells + ;
 : TIMGn_TxLOHI_REG ( n x -- a ) TIMGn_Tx 1 cells + ;
