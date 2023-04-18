@@ -811,7 +811,9 @@ esp_intr_free ( handle -- 0/err )
 These words are inside the <code>timers</code> vocabulary.
 
 <pre>
-timer_isr_register ( group timer xt arg ret -- 0/err )
+timer_isr_callback_add ( group timer xt arg -- 0/err ) Register a raw timer ISR callback.
+
+timer_isr_register ( group timer xt arg ret -- 0/err ) REMOVED
 </pre>
 
 <h5 id="rmt">RMT</h5>
@@ -890,6 +892,7 @@ my-counter start-task
 
 <h5 id="timers">Timers</h5>
 These words are inside the <code>TIMERS</code> vocabulary.
+
 <br/><b>NOTE: These are low level ESP32 timers. For a periodic background
 operation, you'll probably want to use <a href="#tasks">TASKS</a>.</b>
 
@@ -898,27 +901,38 @@ operation, you'll probably want to use <a href="#tasks">TASKS</a>.</b>
 ( timer t = 0-3 )
 
 interval ( xt usec t -- ) Setup timer t to call xt each after usec
-rerun ( t -- ) Rerun timer t triggering
 
+rerun ( t -- ) REMOVED - rerun no longer required as autoreload used
+</pre>
+
+<br/><b>NOTE: The Interrupt Watchdog timer doesn't work well with
+use of serial output during an interrupt routine.
+Operations durring the handler should be kept to a minimum.</b>
+
+<pre>
 Example:
 timers
-: hi   ." hi" cr   0 rerun ;
+variable x
+: hi   1 x +! ;
 ' hi 1000000 0 interval ( run hi every second )
+x @ . ( See value of x goes up )
 </pre>
 
 <p>Medium Level words:</p>
 <pre>
-timer@ ( t -- lo hi )
-timer! ( lo hi t -- )
-alarm ( t -- a )
+timer@ ( t -- lo hi ) Get timer counter current value
+timer! ( lo hi t -- ) Set timer counter current value
+alarm@ ( t -- lo hi ) Get alarm value
+alarm! ( lo hi t -- ) Set alarm value
 enable! ( f t -- ) Timer enable/disable
 increase! ( f t -- ) Timer increasing/decreasing
 divider! ( n t -- ) Timer divider 2 - 65535
-edgeint! ( f t -- ) Edge trigger
-levelint! ( f t -- ) Level trigger
-alarm-enable! ( f t -- ) Alarm enable
-alarm-enable@ ( t -- f ) Alarm enabled?
+alarm-enable! ( f t -- ) Enable/disable alarm.
+int-enable! ( f t -- ) Enable/disble interrupt.
 onalarm ( xt t -- ) Set callback
+
+alarm ( t -- a ) REMOVED
+alarm-enable@ ( t -- f ) REMOVED
 </pre>
 
 <p>Low Level words:</p>

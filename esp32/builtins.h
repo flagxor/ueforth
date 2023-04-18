@@ -298,7 +298,8 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
 #  include "driver/gpio.h"
 static cell_t EspIntrAlloc(cell_t source, cell_t flags, cell_t xt, cell_t arg, void *ret);
 static cell_t GpioIsrHandlerAdd(cell_t pin, cell_t xt, cell_t arg);
-static cell_t TimerIsrRegister(cell_t group, cell_t timer, cell_t xt, cell_t arg, cell_t flags, void *ret);
+static cell_t TimerIsrCallbackAdd(cell_t group, cell_t timer, cell_t xt, cell_t arg, cell_t flags);
+static void TimerInitNull(cell_t group, cell_t timer);
 # endif
 # define OPTIONAL_INTERRUPTS_SUPPORT \
   YV(interrupts, gpio_config, n0 = gpio_config((const gpio_config_t *) a0)) \
@@ -328,7 +329,43 @@ static cell_t TimerIsrRegister(cell_t group, cell_t timer, cell_t xt, cell_t arg
   YV(interrupts, gpio_get_drive_capability, n0 = gpio_get_drive_capability((gpio_num_t) n1, (gpio_drive_cap_t *) a0); NIP) \
   YV(interrupts, esp_intr_alloc, n0 = EspIntrAlloc(n4, n3, n2, n1, a0); NIPn(4)) \
   YV(interrupts, esp_intr_free, n0 = esp_intr_free((intr_handle_t) n0)) \
-  YV(timers, timer_isr_register, n0 = TimerIsrRegister(n5, n4, n3, n2, n1, a0); NIPn(5))
+  YV(timers, timer_isr_callback_add, n0 = TimerIsrCallbackAdd(n4, n3, n2, n1, n0); NIPn(4)) \
+  YV(timers, timer_init_null, TimerInitNull(n1, n0); DROPn(2)) \
+  YV(timers, timer_get_counter_value, \
+      n0 = timer_get_counter_value((timer_group_t) n2, (timer_idx_t) n1, \
+                                   (uint64_t *) a0); NIPn(2)) \
+  YV(timers, timer_set_counter_value, \
+      uint64_t val = *(uint64_t *) a0; \
+      n0 = timer_set_counter_value((timer_group_t) n2, (timer_idx_t) n1, val); NIPn(2)) \
+  YV(timers, timer_start, \
+      n0 = timer_start((timer_group_t) n1, (timer_idx_t) n0); NIP) \
+  YV(timers, timer_pause, \
+      n0 = timer_pause((timer_group_t) n1, (timer_idx_t) n0); NIP) \
+  YV(timers, timer_set_counter_mode, \
+      n0 = timer_set_counter_mode((timer_group_t) n2, (timer_idx_t) n1, \
+                                  (timer_count_dir_t) n0); NIPn(2)) \
+  YV(timers, timer_set_auto_reload, \
+      n0 = timer_set_auto_reload((timer_group_t) n2, (timer_idx_t) n1, \
+                                 (timer_autoreload_t) n0); NIPn(2)) \
+  YV(timers, timer_set_divider, \
+      n0 = timer_set_divider((timer_group_t) n2, (timer_idx_t) n1, n0); NIPn(2)) \
+  YV(timers, timer_set_alarm_value, uint64_t val = *(uint64_t *) a0; \
+      n0 = timer_set_alarm_value((timer_group_t) n2, (timer_idx_t) n1, val); NIPn(2)) \
+  YV(timers, timer_get_alarm_value, \
+      n0 = timer_get_alarm_value((timer_group_t) n2, (timer_idx_t) n1, \
+                                 (uint64_t *) a0); NIPn(2)) \
+  YV(timers, timer_set_alarm, \
+      n0 = timer_set_alarm((timer_group_t) n2, (timer_idx_t) n1, \
+                           (timer_alarm_t) n0); NIPn(2)) \
+  YV(timers, timer_group_intr_enable, \
+      n0 = timer_group_intr_enable((timer_group_t) n1, (timer_intr_t) n0); NIP) \
+  YV(timers, timer_group_intr_disable, \
+      n0 = timer_group_intr_disable((timer_group_t) n1, (timer_intr_t) n0); NIP) \
+  YV(timers, timer_enable_intr, \
+      n0 = timer_enable_intr((timer_group_t) n1, (timer_idx_t) n0); NIP) \
+  YV(timers, timer_disable_intr, \
+      n0 = timer_disable_intr((timer_group_t) n1, (timer_idx_t) n0); NIP)
+
 #endif
 
 #ifndef ENABLE_RMT_SUPPORT

@@ -75,6 +75,11 @@ static void IRAM_ATTR HandleInterrupt(void *arg) {
   forth_run(rp);
 }
 
+static bool IRAM_ATTR HandleInterruptAndRet(void *arg) {
+  HandleInterrupt(arg);
+  return true;
+}
+
 static cell_t EspIntrAlloc(cell_t source, cell_t flags, cell_t xt, cell_t arg, void *ret) {
   // NOTE: Leaks memory.
   struct handle_interrupt_args *args = (struct handle_interrupt_args *) malloc(sizeof(struct handle_interrupt_args));
@@ -91,11 +96,19 @@ static cell_t GpioIsrHandlerAdd(cell_t pin, cell_t xt, cell_t arg) {
   return gpio_isr_handler_add((gpio_num_t) pin, HandleInterrupt, args);
 }
 
-static cell_t TimerIsrRegister(cell_t group, cell_t timer, cell_t xt, cell_t arg, cell_t flags, void *ret) {
+static void TimerInitNull(cell_t group, cell_t timer) {
+  // Seems to be required starting in the 2.0 IDE.
+  timer_config_t config;
+  memset(&config, 0, sizeof(config));
+  config.divider = 2;
+  timer_init((timer_group_t) group, (timer_idx_t) timer, &config);
+}
+
+static cell_t TimerIsrCallbackAdd(cell_t group, cell_t timer, cell_t xt, cell_t arg, cell_t flags) {
   // NOTE: Leaks memory.
   struct handle_interrupt_args *args = (struct handle_interrupt_args *) malloc(sizeof(struct handle_interrupt_args));
   args->xt = xt;
   args->arg = arg;
-  return timer_isr_register((timer_group_t) group, (timer_idx_t) timer, HandleInterrupt, args, flags, (timer_isr_handle_t *) ret);
+  return timer_isr_callback_add((timer_group_t) group, (timer_idx_t) timer, HandleInterruptAndRet, args, flags);
 }
 #endif
