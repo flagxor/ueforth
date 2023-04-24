@@ -454,7 +454,8 @@ function Init() {
   i32[g_sys_stack_cells>>2] = STACK_CELLS;
 
   // Start heap after G_SYS area.
-  i32[g_sys_heap>>2] = i32[g_sys_heap_start>>2] + 256;
+  // Leave 256 byte gap + another 256 for G_SYS
+  i32[g_sys_heap>>2] = i32[g_sys_heap_start>>2] + 512;
   i32[g_sys_heap>>2] += 4;
 
   // Allocate stacks.
