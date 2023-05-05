@@ -69,10 +69,12 @@ variable leaving
 : UNLOOP   r> rdrop rdrop >r ;
 : LEAVE   r> rdrop rdrop @ >r ;
 : leave   postpone LEAVE leaving, ; immediate
-: +LOOP ( n -- ) dup 0< swap r> r> rot + dup r@ < -rot >r >r xor 0=
+: +LOOP ( n -- ) r> r> dup r@ - >r rot + r> -rot
+                       dup r@ - -rot >r >r xor 0<
                  if r> cell+ rdrop rdrop >r else r> @ >r then ;
 : +loop ( n -- ) postpone +LOOP , )leaving ; immediate
-: LOOP   r> r> 1+ dup r@ < -rot >r >r 0=
+: LOOP   r> r> dup r@ - >r 1+ r> -rot
+               dup r@ - -rot >r >r xor 0<
          if r> cell+ rdrop rdrop >r else r> @ >r then ;
 : loop   postpone LOOP , )leaving ; immediate
 create I ' r@ @ ' i !  ( i is same as r@ )
