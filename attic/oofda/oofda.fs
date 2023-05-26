@@ -39,7 +39,6 @@ variable methods   variable last-method
 : m: ( "name" ) method drop ;   m: .construct  ( make this 0 )
 : m! ( xt n class ) swap 3 + cells + ! ;
 
-: nop-construct ;
 m: .fallback
 : undefined   last-method @ 2 cells - ( body> ) this .fallback ;
 : error-fallback ( xt -- ) ." Undefined method: " >name type cr throw -1 ;
@@ -50,6 +49,7 @@ create ClassClass
   oofda-max-methods 3 + cells , ( size )
   blank-vtable                  ( vtable[] )
 
+: nop-construct ;
 m: .size   m: .grow   m: .vtable   m: .parent   m: .getClass
 :noname ( xt n ) this m! ; m# .setMethod ClassClass m!
 
