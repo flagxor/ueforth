@@ -55,9 +55,11 @@ internals definitions
 0 value included-files
 
 : path-join { a a# b b# -- a n }
+  b if
+    b c@ [char] / = if 0 to a# then
+  then
   a# b# + { r# } r# cell+ cell+ allocate throw { r }
   2 cells +to r
-  b c@ [char] / = if 0 to a# then
   begin b b# starts./ while
     2 +to b -2 +to b#
     a# b# + to r#

@@ -53,3 +53,15 @@ e: test-needs
   out: x.fs 2
   out: x.fs 3
 ;e
+
+e: test-path-join
+  also internals
+  s" /foo/bar/" s" /" path-join s" /" str= assert
+  s" /foo/bar/" s" baz" path-join s" /foo/bar/baz" str= assert
+  s" /foo/bar/" s" ./baz" path-join s" /foo/bar/baz" str= assert
+  s" /foo/bar/" s" ../baz" path-join s" /foo/baz" str= assert
+  s" /foo/bar/" s" baz/qux" path-join s" /foo/bar/baz/qux" str= assert
+  s" /foo/bar/" s" ./baz/qux" path-join s" /foo/bar/baz/qux" str= assert
+  s" /foo/bar/" s" " path-join s" /foo/bar/" str= assert
+  s" ./foo/" s" ../bar" path-join s" ./bar" str= assert
+;e
