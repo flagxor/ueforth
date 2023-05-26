@@ -38,7 +38,6 @@ variable methods   variable last-method
 : m# ( "name" -- n ) method >body @ ;
 : m: ( "name" ) method drop ;   m: .construct  ( make this 0 )
 : m! ( xt n class ) swap 3 + cells + ! ;
-: field' ( "name" -- n ) ' >body @ ;
 
 : nop-construct ;
 m: .fallback
@@ -57,6 +56,7 @@ m: .size   m: .grow   m: .vtable   m: .parent   m: .getClass
 : create ( "name" ) create this .size , does> @ this + ;
 : variable ( "name" ) create this .size , cell this .grow does> @ this + ;
 : value ( "name" ) create this .size , cell this .grow does> @ this + @ ;
+: field' ( "name" -- n ) ' >body @ ;
 : to ( n -- "name" ) field' postpone literal postpone this postpone +
                      postpone ! ; immediate
 : +to ( n -- "name" ) field' postpone literal postpone this postpone +
