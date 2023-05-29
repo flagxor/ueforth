@@ -170,6 +170,8 @@ windows definitions
 248 constant BM_SETDONTCLICK
 
 255 constant WM_INPUT
+
+256 constant WM_KEYFIRST  ( for ranges )
 256 constant WM_KEYDOWN
 257 constant WM_KEYUP
 258 constant WM_CHAR
@@ -179,14 +181,16 @@ windows definitions
 262 constant WM_SYSCHAR
 263 constant WM_SYSDEADCHAR
 265 constant WM_UNICHAR
-265 constant WM_WNT_CONVERTREQUESTEX
+265 constant WM_KEYLAST  ( for ranges )
+
 266 constant WM_CONVERTREQUEST
 267 constant WM_CONVERTRESULT
 268 constant WM_INTERIM
 269 constant WM_IME_STARTCOMPOSITION
 270 constant WM_IME_ENDCOMPOSITION
 271 constant WM_IME_COMPOSITION
-271 constant WM_IME_KEYLAST
+271 constant WM_IME_KEYLAST  ( for ranges )
+
 272 constant WM_INITDIALOG
 273 constant WM_COMMAND
 274 constant WM_SYSCOMMAND
@@ -254,7 +258,7 @@ windows definitions
 356 constant CB_GETCOMBOBOXINFO
 357 constant CB_MSGMAX
 
-512 constant WM_MOUSEFIRST
+512 constant WM_MOUSEFIRST  ( for ranges )
 512 constant WM_MOUSEMOVE
 513 constant WM_LBUTTONDOWN
 514 constant WM_LBUTTONUP
@@ -265,7 +269,8 @@ windows definitions
 519 constant WM_MBUTTONDOWN
 520 constant WM_MBUTTONUP
 521 constant WM_MBUTTONDBLCLK
-521 constant WM_MOUSELAST
+521 constant WM_MOUSELAST  ( for ranges )
+
 522 constant WM_MOUSEWHEEL
 523 constant WM_XBUTTONDOWN
 524 constant WM_XBUTTONUP
@@ -337,6 +342,7 @@ windows definitions
 863 constant WM_HANDHELDLAST
 864 constant WM_AFXFIRST
 895 constant WM_AFXLAST
+
 896 constant WM_PENWINFIRST
 897 constant WM_RCRESULT
 898 constant WM_HOOKRCRESULT
