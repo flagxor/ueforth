@@ -910,7 +910,7 @@ JSWORD: raw-download { data data_n mime mime_n filename filename_n -- }
 ~
 
 JSWORD: http-download { url url_n name name_n session done -- }
-  i32[done] = -1;
+  i32[done>>2] = -1;
   var request = new XMLHttpRequest();
   request.responseType = 'arraybuffer';
   request.open('GET', context.GetRawString(u8, url, url_n));
@@ -924,30 +924,30 @@ JSWORD: http-download { url url_n name name_n session done -- }
       } else {
         localStorage.setItem(key, data);
       }
-      i32[done] = 0;
+      i32[done>>2] = 0;
     } else {
-      i32[done] = 1;
+      i32[done>>2] = 1;
     }
   };
   request.onerror = function() {
-    i32[done] = 2;
+    i32[done>>2] = 2;
   };
   request.send();
 ~
 
 JSWORD: raw-http-upload { data data_n url url_n done -- }
-  i32[done] = -1;
+  i32[done>>2] = -1;
   var request = new XMLHttpRequest();
   request.open('POST', context.GetRawString(u8, url, url_n));
   request.onload = function(e) {
     if (request.status == 200) {
-      i32[done] = 0;
+      i32[done>>2] = 0;
     } else {
-      i32[done] = 1;
+      i32[done>>2] = 1;
     }
   };
   request.onerror = function() {
-    i32[done] = 2;
+    i32[done>>2] = 2;
   };
   request.send();
 ~
