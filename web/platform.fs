@@ -916,7 +916,7 @@ JSWORD: http-download { url url_n name name_n session done -- }
   request.open('GET', context.GetRawString(u8, url, url_n));
   var key = context.GetRawString(u8, name, name_n);
   request.onload = function(e) {
-    if (request.state == 200) {
+    if (request.status == 200) {
       var bytes = new Uint8Array(request.response);
       var data = context.GetRawString(bytes, 0, bytes.byteLength);
       if (session) {
@@ -940,7 +940,7 @@ JSWORD: raw-http-upload { data data_n url url_n done -- }
   var request = new XMLHttpRequest();
   request.open('POST', context.GetRawString(u8, url, url_n));
   request.onload = function(e) {
-    if (request.state == 200) {
+    if (request.status == 200) {
       i32[done] = 0;
     } else {
       i32[done] = 1;
