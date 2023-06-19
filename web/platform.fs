@@ -909,6 +909,49 @@ JSWORD: raw-download { data data_n mime mime_n filename filename_n -- }
   anchor.click();
 ~
 
+JSWORD: http-download { url url_n name name_n session done -- }
+  i32[done] = -1;
+  var request = new XMLHttpRequest();
+  request.responseType = 'arraybuffer';
+  request.open('GET', context.GetRawString(u8, url, url_n));
+  var key = context.GetRawString(u8, name, name_n);
+  request.onload = function(e) {
+    if (request.state == 200) {
+      var bytes = new Uint8Array(request.response);
+      var data = context.GetRawString(bytes, 0, bytes.byteLength);
+      if (session) {
+        sessionStorage.setItem(key, data);
+      } else {
+        localStorage.setItem(key, data);
+      }
+      i32[done] = 0;
+    } else {
+      i32[done] = 1;
+    }
+  };
+  request.onerror = function() {
+    i32[done] = 2;
+  };
+  request.send();
+~
+
+JSWORD: raw-http-upload { data data_n url url_n done -- }
+  i32[done] = -1;
+  var request = new XMLHttpRequest();
+  request.open('POST', context.GetRawString(u8, url, url_n));
+  request.onload = function(e) {
+    if (request.state == 200) {
+      i32[done] = 0;
+    } else {
+      i32[done] = 1;
+    }
+  };
+  request.onerror = function() {
+    i32[done] = 2;
+  };
+  request.send();
+~
+
 JSWORD: log { a n -- }
   console.log(GetString(a, n));
 ~
