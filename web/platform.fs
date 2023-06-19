@@ -899,6 +899,16 @@ JSWORD: upload-success? { -- f }
   return context.filepick_result;
 ~
 
+JSWORD: raw-download { data data_n mime mime_n filename filename_n -- }
+  var anchor = document.createElement('a');
+  var blob = new Blob([u8.slice(data, data + data_n)],
+                      {type: context.GetRawString(u8, mime, mime_n)});
+  var url = URL.createObjectURL(blob);
+  anchor.setAttribute('href', url);
+  anchor.setAttribute('download', context.GetRawString(u8, filename, filename_n));
+  anchor.click();
+~
+
 JSWORD: log { a n -- }
   console.log(GetString(a, n));
 ~

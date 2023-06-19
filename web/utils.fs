@@ -22,6 +22,8 @@ web definitions
 ' web-key? is key?
 ' web-terminate is terminate
 
+0 value session?
+
 : upload-file ( a n -- )
    upload-start
    begin yield upload-done? until
@@ -31,17 +33,40 @@ web definitions
 : upload ( "filename" ) bl parse dup assert upload-file ;
 
 : include-file { a n -- }
-  0 0 a n 0 getItem { len }
+  0 0 a n session? getItem { len }
   here { buf } len allot
-  buf len a n 0 getItem len = assert
-  a n 0 removeItem
+  buf len a n session? getItem len = assert
   buf len evaluate
-; 
+;
 
-: ls   0 keyCount 0 do pad 80 i 0 getKey pad swap type cr loop ;
-: rm   bl parse 0 removeItem ;
+: cat ( "filename" )
+  bl parse { name name# }
+  0 0 name name# session? getItem { len }
+  here len name name# session? getItem len = assert
+  here len type
+;
 
-: import  s" _temp.fs" 2dup upload-file include-file ;
+: download ( "filename" )
+  bl parse { name name# }
+  0 0 name name# session? getItem { len }
+  here len name name# session? getItem len = assert
+  here len s" application/octet-stream"
+    name name# raw-download
+;
+
+: ls
+  session? keyCount 0 ?do
+    pad 80 i session? getKey pad swap type cr
+  loop
+;
+
+: rm   bl parse session? removeItem ;
+
+: import
+  s" _temp.fs" 2dup upload-file
+  2dup >r >r include-file
+  r> r> session? removeItem
+;
 
 : yielding  begin 50 ms yield again ;
 ' yielding 10 10 task yielding-task
