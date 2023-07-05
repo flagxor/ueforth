@@ -644,9 +644,6 @@ e: test-esp32-forth-voclist
 ;e
 
 e: check-esp32-platform
-  out: riscv-assembler 
-  out: xtensa-assembler 
-  out: assembler 
   out: ok 
   out: LED 
   out: OUTPUT 

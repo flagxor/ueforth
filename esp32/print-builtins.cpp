@@ -23,6 +23,7 @@
 #define CALLING_OPCODE_LIST
 #define FLOATING_POINT_LIST
 #define USER_WORDS
+#define OPTIONAL_ASSEMBLERS_SUPPORT
 #include "builtins.h"
 
 #define XV(flags, name, op, code) Z(flags, name, op, code)

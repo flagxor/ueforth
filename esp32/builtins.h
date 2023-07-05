@@ -22,11 +22,18 @@
 # include <sys/stat.h>
 # include <sys/select.h>
 
-// Optional hook to pull in words for userwords.h
+// Hook to pull in words from optional userwords.h
 # if __has_include("userwords.h")
 #  include "userwords.h"
 # else
 #  define USER_WORDS
+# endif
+
+// Hook to pull in words from optional assemblers.h
+# if __has_include("assemblers.h")
+#  include "assemblers.h"
+# else
+#  define OPTIONAL_ASSEMBLERS_SUPPORT
 # endif
 
 static cell_t ResizeFile(cell_t fd, cell_t size);
@@ -35,6 +42,7 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
 
 #define PLATFORM_OPCODE_LIST \
   USER_WORDS \
+  OPTIONAL_ASSEMBLERS_SUPPORT \
   REQUIRED_PLATFORM_SUPPORT \
   REQUIRED_ESP_SUPPORT \
   REQUIRED_MEMORY_SUPPORT \

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VERSION=7.0.7.12
+VERSION=7.0.7.13
 STABLE_VERSION=7.0.6.19
 OLD_STABLE_VERSION=7.0.5.4
 REVISION=$(shell git rev-parse HEAD | head -c 20)
@@ -276,14 +276,30 @@ ESP32_BOOT = $(COMMON_PHASE1) \
              esp32/allocation.fs esp32/bindings.fs \
              $(COMMON_PHASE2) $(COMMON_FILETOOLS) \
              esp32/platform.fs \
-             common/assembler.fs esp32/xtensa-assembler.fs esp32/riscv-assembler.fs \
              posix/httpd.fs posix/web_interface.fs esp32/web_interface.fs \
              esp32/registers.fs esp32/timers.fs \
              esp32/bterm.fs posix/telnetd.fs \
              esp32/camera.fs esp32/camera_server.fs \
+             esp32/optionals.fs \
              esp32/autoboot.fs common/fini.fs
 $(GEN)/esp32_boot.h: tools/source_to_string.js $(ESP32_BOOT) | $(GEN)
 	$< boot $(VERSION) $(REVISION) $(ESP32_BOOT) >$@
+
+ESP32_ASSEMBLERS = common/assembler.fs \
+                   esp32/xtensa-assembler.fs \
+                   esp32/riscv-assembler.fs
+$(GEN)/esp32_assemblers.h: tools/source_to_string.js $(ESP32_ASSEMBLERS) | $(GEN)
+	$< assemblers_source $(VERSION) $(REVISION) $(ESP32_ASSEMBLERS) >$@
+
+OPTIONAL_MODULES = $(ESP32)/ESP32forth/assemblers.h
+
+add-optional: $(OPTIONAL_MODULES)
+
+drop-optional:
+	rm -f $(OPTIONAL_MODULES)
+
+$(ESP32)/ESP32forth/assemblers.h: $(ESP32)/ESP32forth/optional/assemblers.h
+	cp $< $@
 
 $(GEN)/dump_web_opcodes: \
     web/dump_web_opcodes.c \
@@ -492,13 +508,16 @@ $(ESP32_SIM)/Esp32forth-sim: \
 # ---- ESP32 ----
 
 esp32: esp32_target esp32_sim esp32_tests esp32_sim_tests
-esp32_target: $(ESP32)/ESP32forth/ESP32forth.ino
+esp32_target: $(ESP32)/ESP32forth.zip
 
 $(ESP32)/ESP32forth:
 	mkdir -p $@
 
+$(ESP32)/ESP32forth/optional:
+	mkdir -p $@
+
 ESP32_PARTS = tools/replace.js \
-              esp32/template.ino \
+              esp32/ESP32forth.ino \
               common/tier0_opcodes.h \
               common/tier1_opcodes.h \
               common/tier2_opcodes.h \
@@ -517,7 +536,7 @@ ESP32_PARTS = tools/replace.js \
               $(GEN)/esp32_boot.h
 
 $(ESP32)/ESP32forth/ESP32forth.ino: $(ESP32_PARTS) | $(ESP32)/ESP32forth
-	cat esp32/template.ino | tools/replace.js \
+	cat esp32/ESP32forth.ino | tools/replace.js \
      VERSION=$(VERSION) \
      REVISION=$(REVISION) \
      tier0_opcodes=@common/tier0_opcodes.h \
@@ -536,6 +555,27 @@ $(ESP32)/ESP32forth/ESP32forth.ino: $(ESP32_PARTS) | $(ESP32)/ESP32forth
      builtins.cpp=@esp32/builtins.cpp \
      main.cpp=@esp32/main.cpp \
      boot=@$(GEN)/esp32_boot.h \
+     >$@
+
+$(ESP32)/ESP32forth/README.txt: esp32/README.txt | $(ESP32)/ESP32forth
+	cat esp32/README.txt | tools/replace.js \
+     VERSION=$(VERSION) \
+     REVISION=$(REVISION) \
+     >$@
+
+$(ESP32)/ESP32forth/optional/README-optional.txt: \
+    esp32/README-optional.txt | $(ESP32)/ESP32forth/optional
+	cat esp32/README-optional.txt | tools/replace.js \
+     VERSION=$(VERSION) \
+     REVISION=$(REVISION) \
+     >$@
+
+$(ESP32)/ESP32forth/optional/assemblers.h: \
+    esp32/assemblers.h $(GEN)/esp32_assemblers.h | $(ESP32)/ESP32forth/optional
+	cat esp32/assemblers.h | tools/replace.js \
+     VERSION=$(VERSION) \
+     REVISION=$(REVISION) \
+     assemblers=@$(GEN)/esp32_assemblers.h \
      >$@
 
 # ---- ESP32 ARDUINO BUILD AND FLASH ----
@@ -623,9 +663,16 @@ CHIP_esp32cam=esp32
   0xe000 ${ARDUINO_APP}/packages/esp32/hardware/esp32/2.0.5/tools/partitions/boot_app0.bin \
   0x10000 $(ESP32)/$(subst -flash,,$@)_build/ESP32forth.ino.bin
 
+%-build: $(ESP32)/%_build/ESP32forth.ino.bin
+	echo "done"
+
 # ---- PACKAGE ----
 
-$(ESP32)/ESP32forth.zip: $(ESP32)/ESP32forth/ESP32forth.ino
+$(ESP32)/ESP32forth.zip: \
+    $(ESP32)/ESP32forth/ESP32forth.ino \
+    $(ESP32)/ESP32forth/README.txt \
+    $(ESP32)/ESP32forth/optional/README-optional.txt \
+    $(ESP32)/ESP32forth/optional/assemblers.h
 	cd $(ESP32) && rm -f ESP32forth.zip && zip -r ESP32forth.zip ESP32forth
 
 # ---- Publish to Archive ----
