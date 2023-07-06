@@ -278,8 +278,7 @@ ESP32_BOOT = $(COMMON_PHASE1) \
              esp32/platform.fs \
              posix/httpd.fs posix/web_interface.fs esp32/web_interface.fs \
              esp32/registers.fs esp32/timers.fs \
-             esp32/bterm.fs posix/telnetd.fs \
-             esp32/camera.fs esp32/camera_server.fs \
+             posix/telnetd.fs \
              esp32/optionals.fs \
              esp32/autoboot.fs common/fini.fs
 $(GEN)/esp32_boot.h: tools/source_to_string.js $(ESP32_BOOT) | $(GEN)
@@ -298,19 +297,40 @@ $(GEN)/esp32_riscv-assembler.h: \
 	$< riscv_assembler_source $(VERSION) $(REVISION) \
     esp32/optional/assemblers/riscv-assembler.fs >$@
 
+$(GEN)/esp32_camera.h: \
+    tools/source_to_string.js esp32/optional/camera/camera.fs | $(GEN)
+	$< camera_source $(VERSION) $(REVISION) \
+    esp32/optional/camera/camera.fs \
+    esp32/optional/camera/camera_server.fs >$@
+
+$(GEN)/esp32_oled.h: \
+    tools/source_to_string.js esp32/optional/oled/oled.fs | $(GEN)
+	$< camera_source $(VERSION) $(REVISION) \
+    esp32/optional/oled/oled.fs >$@
+
+$(GEN)/esp32_spi-flash.h: \
+    tools/source_to_string.js esp32/optional/spi-flash/spi-flash.fs | $(GEN)
+	$< spi_flash_source $(VERSION) $(REVISION) \
+    esp32/optional/spi-flash/spi-flash.fs >$@
+
+$(GEN)/esp32_serial-bluetooth.h: \
+    tools/source_to_string.js esp32/optional/serial-bluetooth/bterm.fs | $(GEN)
+	$< bterm_source $(VERSION) $(REVISION) \
+    esp32/optional/serial-bluetooth/bterm.fs >$@
+
 OPTIONAL_MODULES = \
+  $(ESP32)/ESP32forth/assemblers.h \
+  $(ESP32)/ESP32forth/camera.h \
   $(ESP32)/ESP32forth/oled.h \
-  $(ESP32)/ESP32forth/assemblers.h
+  $(ESP32)/ESP32forth/serial-bluetooth.h \
+  $(ESP32)/ESP32forth/spi-flash.h
 
 add-optional: $(OPTIONAL_MODULES)
 
 drop-optional:
 	rm -f $(OPTIONAL_MODULES)
 
-$(ESP32)/ESP32forth/assemblers.h: $(ESP32)/ESP32forth/optional/assemblers.h
-	cp $< $@
-
-$(ESP32)/ESP32forth/oled.h: $(ESP32)/ESP32forth/optional/oled.h
+$(ESP32)/ESP32forth/%.h: $(ESP32)/ESP32forth/optional/%.h
 	cp $< $@
 
 $(GEN)/dump_web_opcodes: \
@@ -595,11 +615,40 @@ $(ESP32)/ESP32forth/optional/assemblers.h: \
      riscv_assembler=@$(GEN)/esp32_riscv-assembler.h \
      >$@
 
-$(ESP32)/ESP32forth/optional/oled.h: \
-    esp32/optional/oled.h | $(ESP32)/ESP32forth/optional
-	cat esp32/optional/oled.h | tools/replace.js \
+$(ESP32)/ESP32forth/optional/camera.h: \
+    esp32/optional/camera/camera.h \
+    $(GEN)/esp32_camera.h | $(ESP32)/ESP32forth/optional
+	cat esp32/optional/camera/camera.h | tools/replace.js \
      VERSION=$(VERSION) \
      REVISION=$(REVISION) \
+     camera=@$(GEN)/esp32_camera.h \
+     >$@
+
+$(ESP32)/ESP32forth/optional/oled.h: \
+    esp32/optional/oled/oled.h \
+    $(GEN)/esp32_oled.h | $(ESP32)/ESP32forth/optional
+	cat esp32/optional/oled/oled.h | tools/replace.js \
+     VERSION=$(VERSION) \
+     REVISION=$(REVISION) \
+     oled=@$(GEN)/esp32_oled.h \
+     >$@
+
+$(ESP32)/ESP32forth/optional/serial-bluetooth.h: \
+    esp32/optional/serial-bluetooth/serial-bluetooth.h \
+    $(GEN)/esp32_serial-bluetooth.h | $(ESP32)/ESP32forth/optional
+	cat esp32/optional/serial-bluetooth/serial-bluetooth.h | tools/replace.js \
+     VERSION=$(VERSION) \
+     REVISION=$(REVISION) \
+     serial_bluetooth=@$(GEN)/esp32_serial-bluetooth.h \
+     >$@
+
+$(ESP32)/ESP32forth/optional/spi-flash.h: \
+    esp32/optional/spi-flash/spi-flash.h \
+    $(GEN)/esp32_spi-flash.h | $(ESP32)/ESP32forth/optional
+	cat esp32/optional/spi-flash/spi-flash.h | tools/replace.js \
+     VERSION=$(VERSION) \
+     REVISION=$(REVISION) \
+     spi_flash=@$(GEN)/esp32_spi-flash.h \
      >$@
 
 # ---- ESP32 ARDUINO BUILD AND FLASH ----
@@ -697,7 +746,10 @@ $(ESP32)/ESP32forth.zip: \
     $(ESP32)/ESP32forth/README.txt \
     $(ESP32)/ESP32forth/optional/README-optional.txt \
     $(ESP32)/ESP32forth/optional/assemblers.h \
-    $(ESP32)/ESP32forth/optional/oled.h
+    $(ESP32)/ESP32forth/optional/camera.h \
+    $(ESP32)/ESP32forth/optional/oled.h \
+    $(ESP32)/ESP32forth/optional/serial-bluetooth.h \
+    $(ESP32)/ESP32forth/optional/spi-flash.h
 	cd $(ESP32) && rm -f ESP32forth.zip && zip -r ESP32forth.zip ESP32forth
 
 # ---- Publish to Archive ----

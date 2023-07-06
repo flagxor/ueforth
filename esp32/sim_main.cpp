@@ -22,6 +22,11 @@
 
 #define SIM_HEAP_SIZE (100 * 1024 + 1024 * 1024)
 
+#define OPTIONAL_OLED_VOCABULARY
+#define OPTIONAL_CAMERA_VOCABULARY
+#define OPTIONAL_BLUETOOTH_VOCABULARY
+#define OPTIONAL_SPI_FLASH_VOCABULARY
+
 static cell_t *simulated(cell_t *sp, const char *op);
 
 #define PLATFORM_OPCODE_LIST \
@@ -156,9 +161,6 @@ static cell_t *simulated(cell_t *sp, const char *op) {
     return sp;
   } else if (op == STR_getMaxAllocHeap) {
     *++sp = 80 * 1024;
-    return sp;
-  } else if (op == STR_esp_partition_t_size) {
-    *++sp = 64;
     return sp;
   } else if (op == STR_IS_XTENSA) {
     *++sp = -1;

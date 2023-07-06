@@ -10,6 +10,7 @@ into the parent directory, next to the ESPforth.ino file.
 
 These are the current optional modules:
   * assemblers.h - Assemblers for ESP32 Xtensa and ESP32 RISC-V
+  * camera.h - Support for the ESP32-CAM camera
   * oled.h - Support for the SSD1306 Oled
 
 Initially ESP32forth focused on a minimal C kernel, with most functionality

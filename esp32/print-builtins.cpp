@@ -17,14 +17,24 @@
 #include <stdio.h>
 
 #define SIM_PRINT_ONLY
-#define ENABLE_OLED_SUPPORT
+
 #include "esp32/platform.h"
 #include "esp32/options.h"
 #define CALLING_OPCODE_LIST
 #define FLOATING_POINT_LIST
 #define USER_WORDS
+
 #define OPTIONAL_ASSEMBLERS_SUPPORT
 #define OPTIONAL_OLED_SUPPORT
+#define OPTIONAL_CAMERA_SUPPORT
+#define OPTIONAL_SERIAL_BLUETOOTH_SUPPORT
+#define OPTIONAL_SPI_FLASH_SUPPORT
+
+#define OPTIONAL_OLED_VOCABULARY
+#define OPTIONAL_CAMERA_VOCABULARY
+#define OPTIONAL_BLUETOOTH_VOCABULARY
+#define OPTIONAL_SPI_FLASH_VOCABULARY
+
 #include "builtins.h"
 
 #define XV(flags, name, op, code) Z(flags, name, op, code)

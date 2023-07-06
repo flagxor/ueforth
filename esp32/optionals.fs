@@ -21,3 +21,19 @@ internals DEFINED? xtensa-assembler-source [IF]
 internals DEFINED? riscv-assembler-source [IF]
   riscv-assembler-source evaluate
 [THEN] forth
+
+internals DEFINED? camera-source [IF]
+  camera-source evaluate
+[THEN] forth
+
+internals DEFINED? oled-source [IF]
+  oled-source evaluate
+[THEN] forth
+
+internals DEFINED? serial-bluetooth-source [IF]
+  serial-bluetooth-source evaluate
+[THEN] forth
+
+internals DEFINED? spi-flash-source [IF]
+  spi-flash-source evaluate
+[THEN] forth

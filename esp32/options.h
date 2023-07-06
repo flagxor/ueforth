@@ -26,7 +26,6 @@
 #define ENABLE_INTERRUPTS_SUPPORT
 #define ENABLE_LEDC_SUPPORT
 #define ENABLE_SD_SUPPORT
-#define ENABLE_SPI_FLASH_SUPPORT
 #define ENABLE_ESP32_FORTH_FAULT_HANDLING
 
 // SD_MMC does not work on ESP32-S2 / ESP32-C3
@@ -55,22 +54,6 @@
 
 // ESP32-C3 doesn't support fault handling yet.
 #if !defined(CONFIG_IDF_TARGET_ESP32C3)
-#endif
-
-// For now assume only boards with PSRAM should enable
-// camera support and BluetoothSerial.
-// ESP32-CAM always have PSRAM, but so do WROVER boards,
-// so this isn't an ideal indicator.
-// Also limiting to ESP32 classic only, as these can't be ESP32-CAM.
-// Some boards (e.g. ESP32-S2-WROVER) don't seem to have
-// built the serial library, so check if its enabled as well.
-#if (defined(CONFIG_IDF_TARGET_ESP32) && defined(BOARD_HAS_PSRAM)) || defined(SIM_PRINT_ONLY)
-# define ENABLE_CAMERA_SUPPORT
-# if (defined(CONFIG_BT_ENABLED) && \
-      defined(CONFIG_BLUEDROID_ENABLED)) || \
-     defined(SIM_PRINT_ONLY)
-#  define ENABLE_SERIAL_BLUETOOTH_SUPPORT
-# endif
 #endif
 
 #if !defined(USER_VOCABULARIES)
@@ -116,6 +99,10 @@
 #define VOCABULARY_LIST \
   V(forth) V(internals) \
   V(rtos) V(SPIFFS) V(serial) V(SD) V(SD_MMC) V(ESP) \
-  V(ledc) V(Wire) V(WiFi) V(bluetooth) V(sockets) V(oled) \
-  V(rmt) V(interrupts) V(spi_flash) V(camera) V(timers) \
+  V(ledc) V(Wire) V(WiFi) V(sockets) \
+  V(rmt) V(interrupts) V(timers) \
+  OPTIONAL_CAMERA_VOCABULARY \
+  OPTIONAL_BLUETOOTH_VOCABULARY \
+  OPTIONAL_OLED_VOCABULARY \
+  OPTIONAL_SPI_FLASH_VOCABULARY \
   USER_VOCABULARIES

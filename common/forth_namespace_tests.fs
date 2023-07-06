@@ -622,8 +622,6 @@ e: test-esp32-forth-voclist
   out: editor 
   out: streams 
   out: tasks 
-  out: oled 
-  out: bluetooth 
   out: rtos 
   out: rmt 
   out: interrupts 
@@ -631,7 +629,6 @@ e: test-esp32-forth-voclist
   out: Serial 
   out: ledc 
   out: SPIFFS 
-  out: spi_flash 
   out: SD_MMC 
   out: SD 
   out: WiFi 
@@ -685,8 +682,6 @@ e: check-esp32-builtins
 ;e
 
 e: check-esp32-bindings
-  out: oled 
-  out: bluetooth 
   out: rtos 
   out: rmt 
   out: interrupts 
@@ -694,7 +689,6 @@ e: check-esp32-bindings
   out: Serial 
   out: ledc 
   out: SPIFFS 
-  out: spi_flash 
   out: SD_MMC 
   out: SD 
   out: WiFi 
@@ -706,10 +700,7 @@ e: check-esp32-bindings
 e: test-esp32-forth-namespace
   ' forth list-from
   out: FORTH 
-  out: camera-server 
-  out: camera 
   out: telnetd 
-  out: bterm 
   out: timers 
   out: registers 
   out: webui 

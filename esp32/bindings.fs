@@ -43,38 +43,6 @@ vocabulary SD_MMC   SD_MMC definitions
 transfer SD_MMC-builtins
 forth definitions
 
-vocabulary spi_flash   spi_flash definitions
-transfer spi_flash-builtins
-DEFINED? spi_flash_init [IF]
-0 constant SPI_PARTITION_TYPE_APP
-1 constant SPI_PARTITION_TYPE_DATA
-$ff constant SPI_PARTITION_SUBTYPE_ANY
-
-also structures
-struct esp_partition_t
-  ( Work around changing struct layout )
-  esp_partition_t_size 40 >= [IF]
-    ptr field p>gap
-  [THEN]
-  ptr field p>type
-  ptr field p>subtype
-  ptr field p>address
-  ptr field p>size
-  ptr field p>label
-
-: p. ( part -- )
-  base @ >r >r decimal
-  ." TYPE: " r@ p>type @ . ." SUBTYPE: " r@ p>subtype @ .
-  ." ADDR: " r@ hex p>address @ .  ." SIZE: " r@ p>size @ .
-  ." LABEL: " r> p>label @ z>s type cr r> base ! ;
-: list-partition-type ( type -- )
-  SPI_PARTITION_SUBTYPE_ANY 0 esp_partition_find
-  begin dup esp_partition_get p. esp_partition_next dup 0= until drop ;
-: list-partitions   SPI_PARTITION_TYPE_APP list-partition-type
-                    SPI_PARTITION_TYPE_DATA list-partition-type ;
-[THEN]
-only forth definitions
-
 vocabulary SPIFFS   SPIFFS definitions
 transfer SPIFFS-builtins
 forth definitions
@@ -141,40 +109,6 @@ forth definitions
 
 vocabulary rtos   rtos definitions
 transfer rtos-builtins
-forth definitions
-
-DEFINED? SerialBT.new [IF]
-  vocabulary bluetooth   bluetooth definitions
-  transfer bluetooth-builtins
-  forth definitions
-[ELSE]
-  internals definitions
-  transfer bluetooth-builtins
-  forth definitions
-[THEN]
-
-vocabulary oled   oled definitions
-transfer oled-builtins
-DEFINED? OledNew [IF]
-128 constant WIDTH
-64 constant HEIGHT
--1 constant OledReset
-0 constant BLACK
-1 constant WHITE
-1 constant SSD1306_EXTERNALVCC
-2 constant SSD1306_SWITCHCAPVCC
-: OledInit
-  OledAddr @ 0= if
-    WIDTH HEIGHT OledReset OledNew
-    SSD1306_SWITCHCAPVCC $3C OledBegin drop
-  then
-  OledCLS
-  2 OledTextsize  ( Draw 2x Scale Text )
-  WHITE OledTextc  ( Draw white text )
-  0 0 OledSetCursor  ( Start at top-left corner )
-  z" *Esp32forth*" OledPrintln OledDisplay
-;
-[THEN]
 forth definitions
 
 internals definitions

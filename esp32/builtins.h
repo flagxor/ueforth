@@ -29,18 +29,43 @@
 #  define USER_WORDS
 # endif
 
-// Hook to pull in words from optional assemblers.h
+// Hook to pull in words from optional assemblers.
 # if __has_include("assemblers.h")
 #  include "assemblers.h"
 # else
 #  define OPTIONAL_ASSEMBLERS_SUPPORT
 # endif
 
-// Hook to pull in words from optional oled.h
+// Hook to pull in words from optional Oled support.
 # if __has_include("oled.h")
 #  include "oled.h"
 # else
+#  define OPTIONAL_OLED_VOCABULARY
 #  define OPTIONAL_OLED_SUPPORT
+# endif
+
+// Hook to pull in words from optional ESP32-CAM camera support.
+# if __has_include("camera.h")
+#  include "camera.h"
+# else
+#  define OPTIONAL_CAMERA_VOCABULARY
+#  define OPTIONAL_CAMERA_SUPPORT
+# endif
+
+// Hook to pull in words from optional serial bluetooth support.
+# if __has_include("serial-bluetooth.h")
+#  include "bluetooth-serial.h"
+# else
+#  define OPTIONAL_SERIAL_BLUETOOTH_SUPPORT
+#  define OPTIONAL_BLUETOOTH_VOCABULARY
+# endif
+
+// Hook to pull in words from optional SPI flash support.
+# if __has_include("spi-flash.h")
+#  include "spi-flash.h"
+# else
+#  define OPTIONAL_SPI_FLASH_SUPPORT
+#  define OPTIONAL_SPI_FLASH_VOCABULARY
 # endif
 
 static cell_t ResizeFile(cell_t fd, cell_t size);
@@ -49,7 +74,7 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
 
 #define PLATFORM_OPCODE_LIST \
   USER_WORDS \
-  OPTIONAL_ASSEMBLERS_SUPPORT \
+  EXTERNAL_OPTIONAL_MODULE_SUPPORT \
   REQUIRED_PLATFORM_SUPPORT \
   REQUIRED_ESP_SUPPORT \
   REQUIRED_MEMORY_SUPPORT \
@@ -66,16 +91,19 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   OPTIONAL_SD_SUPPORT \
   OPTIONAL_SD_MMC_SUPPORT \
   OPTIONAL_I2C_SUPPORT \
-  OPTIONAL_SERIAL_BLUETOOTH_SUPPORT \
-  OPTIONAL_CAMERA_SUPPORT \
   OPTIONAL_SOCKETS_SUPPORT \
   OPTIONAL_FREERTOS_SUPPORT \
   OPTIONAL_INTERRUPTS_SUPPORT \
   OPTIONAL_RMT_SUPPORT \
-  OPTIONAL_OLED_SUPPORT \
-  OPTIONAL_SPI_FLASH_SUPPORT \
   CALLING_OPCODE_LIST \
   FLOATING_POINT_LIST
+
+#define EXTERNAL_OPTIONAL_MODULE_SUPPORT \
+  OPTIONAL_ASSEMBLERS_SUPPORT \
+  OPTIONAL_CAMERA_SUPPORT \
+  OPTIONAL_SPI_FLASH_SUPPORT \
+  OPTIONAL_SERIAL_BLUETOOTH_SUPPORT \
+  OPTIONAL_OLED_SUPPORT \
 
 #define REQUIRED_MEMORY_SUPPORT \
   YV(internals, MALLOC, SET malloc(n0)) \
@@ -209,68 +237,6 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
 # else
 # define OPTIONAL_DAC_SUPPORT \
   Y(dacWrite, dacWrite(n1, n0); DROPn(2))
-#endif
-
-#ifndef ENABLE_SPI_FLASH_SUPPORT
-# define OPTIONAL_SPI_FLASH_SUPPORT
-#else
-# ifndef SIM_PRINT_ONLY
-#  include "esp_spi_flash.h"
-#  include "esp_partition.h"
-# endif
-# define OPTIONAL_SPI_FLASH_SUPPORT \
-  YV(spi_flash, spi_flash_init, spi_flash_init()) \
-  YV(spi_flash, spi_flash_get_chip_size, PUSH spi_flash_get_chip_size()) \
-  YV(spi_flash, spi_flash_erase_sector, n0 = spi_flash_erase_sector(n0)) \
-  YV(spi_flash, spi_flash_erase_range, n0 = spi_flash_erase_range(n1, n0); DROP) \
-  YV(spi_flash, spi_flash_write, n0 = spi_flash_write(n2, a1, n0); NIPn(2)) \
-  YV(spi_flash, spi_flash_write_encrypted, n0 = spi_flash_write_encrypted(n2, a1, n0); NIPn(2)) \
-  YV(spi_flash, spi_flash_read, n0 = spi_flash_read(n2, a1, n0); NIPn(2)) \
-  YV(spi_flash, spi_flash_read_encrypted, n0 = spi_flash_read_encrypted(n2, a1, n0); NIPn(2)) \
-  YV(spi_flash, spi_flash_mmap, \
-      n0 = spi_flash_mmap(n4, n3, (spi_flash_mmap_memory_t) n2, \
-                          (const void **) a1, (spi_flash_mmap_handle_t *) a0); NIPn(4)) \
-  YV(spi_flash, spi_flash_mmap_pages, \
-      n0 = spi_flash_mmap_pages((const int *) a4, n3, (spi_flash_mmap_memory_t) n2, \
-                                (const void **) a1, (spi_flash_mmap_handle_t *) a0); NIPn(4)) \
-  YV(spi_flash, spi_flash_munmap, spi_flash_munmap((spi_flash_mmap_handle_t) a0); DROP) \
-  YV(spi_flash, spi_flash_mmap_dump, spi_flash_mmap_dump()) \
-  YV(spi_flash, spi_flash_mmap_get_free_pages, \
-      n0 = spi_flash_mmap_get_free_pages((spi_flash_mmap_memory_t) n0)) \
-  YV(spi_flash, spi_flash_cache2phys, n0 = spi_flash_cache2phys(a0)) \
-  YV(spi_flash, spi_flash_phys2cache, \
-      n0 = (cell_t) spi_flash_phys2cache(n1, (spi_flash_mmap_memory_t) n0); NIP) \
-  YV(spi_flash, spi_flash_cache_enabled, PUSH spi_flash_cache_enabled()) \
-  YV(spi_flash, esp_partition_find, \
-      n0 = (cell_t) esp_partition_find((esp_partition_type_t) n2, \
-                                       (esp_partition_subtype_t) n1, c0); NIPn(2)) \
-  YV(spi_flash, esp_partition_find_first, \
-      n0 = (cell_t) esp_partition_find_first((esp_partition_type_t) n2, \
-                                             (esp_partition_subtype_t) n1, c0); NIPn(2)) \
-  YV(spi_flash, esp_partition_t_size, PUSH sizeof(esp_partition_t)) \
-  YV(spi_flash, esp_partition_get, \
-      n0 = (cell_t) esp_partition_get((esp_partition_iterator_t) a0)) \
-  YV(spi_flash, esp_partition_next, \
-      n0 = (cell_t) esp_partition_next((esp_partition_iterator_t) a0)) \
-  YV(spi_flash, esp_partition_iterator_release, \
-      esp_partition_iterator_release((esp_partition_iterator_t) a0); DROP) \
-  YV(spi_flash, esp_partition_verify, n0 = (cell_t) esp_partition_verify((esp_partition_t *) a0)) \
-  YV(spi_flash, esp_partition_read, \
-      n0 = esp_partition_read((const esp_partition_t *) a3, n2, a1, n0); NIPn(3)) \
-  YV(spi_flash, esp_partition_write, \
-      n0 = esp_partition_write((const esp_partition_t *) a3, n2, a1, n0); NIPn(3)) \
-  YV(spi_flash, esp_partition_erase_range, \
-      n0 = esp_partition_erase_range((const esp_partition_t *) a2, n1, n0); NIPn(2)) \
-  YV(spi_flash, esp_partition_mmap, \
-      n0 = esp_partition_mmap((const esp_partition_t *) a5, n4, n3, \
-                              (spi_flash_mmap_memory_t) n2, \
-                              (const void **) a1, \
-                              (spi_flash_mmap_handle_t *) a0); NIPn(5)) \
-  YV(spi_flash, esp_partition_get_sha256, \
-      n0 = esp_partition_get_sha256((const esp_partition_t *) a1, b0); NIP) \
-  YV(spi_flash, esp_partition_check_identity, \
-      n0 = esp_partition_check_identity((const esp_partition_t *) a1, \
-                                        (const esp_partition_t *) a0); NIP)
 #endif
 
 #ifndef ENABLE_SPIFFS_SUPPORT
@@ -443,22 +409,6 @@ static void TimerInitNull(cell_t group, cell_t timer);
   YV(rmt, rmt_write_sample, n0 = rmt_write_sample((rmt_channel_t) n3, b2, n1, n0); NIPn(3))
 #endif
 
-#ifndef ENABLE_CAMERA_SUPPORT
-# define OPTIONAL_CAMERA_SUPPORT
-#else
-# ifndef SIM_PRINT_ONLY
-#  include "esp_camera.h"
-# endif
-# define OPTIONAL_CAMERA_SUPPORT \
-  YV(camera, esp_camera_init, n0 = esp_camera_init((camera_config_t *) a0)) \
-  YV(camera, esp_camera_deinit, PUSH esp_camera_deinit()) \
-  YV(camera, esp_camera_fb_get, PUSH esp_camera_fb_get()) \
-  YV(camera, esp_camera_fb_return, esp_camera_fb_return((camera_fb_t *) a0); DROP) \
-  YV(camera, esp_camera_sensor_get, PUSH esp_camera_sensor_get()) \
-  YV(camera, esp_camera_save_to_nvs, n0 = esp_camera_save_to_nvs(c0)) \
-  YV(camera, esp_camera_load_from_nvs, n0 = esp_camera_load_from_nvs(c0))
-#endif
-
 #ifndef ENABLE_SOCKETS_SUPPORT
 # define OPTIONAL_SOCKETS_SUPPORT
 #else
@@ -546,37 +496,6 @@ static void TimerInitNull(cell_t group, cell_t timer);
   XV(Wire, "Wire.read", WIRE_READ, PUSH Wire.read()) \
   XV(Wire, "Wire.peek", WIRE_PEEK, PUSH Wire.peek()) \
   XV(Wire, "Wire.flush", WIRE_FLUSH, Wire.flush())
-#endif
-
-#ifndef ENABLE_SERIAL_BLUETOOTH_SUPPORT
-# define OPTIONAL_SERIAL_BLUETOOTH_SUPPORT
-#else
-# ifndef SIM_PRINT_ONLY
-#  include "esp_bt_device.h"
-#  include "BluetoothSerial.h"
-#  define bt0 ((BluetoothSerial *) a0)
-# endif
-# define OPTIONAL_SERIAL_BLUETOOTH_SUPPORT \
-  XV(bluetooth, "SerialBT.new", SERIALBT_NEW, PUSH new BluetoothSerial()) \
-  XV(bluetooth, "SerialBT.delete", SERIALBT_DELETE, delete bt0; DROP) \
-  XV(bluetooth, "SerialBT.begin", SERIALBT_BEGIN, n0 = bt0->begin(c2, n1); NIPn(2)) \
-  XV(bluetooth, "SerialBT.end", SERIALBT_END, bt0->end(); DROP) \
-  XV(bluetooth, "SerialBT.available", SERIALBT_AVAILABLE, n0 = bt0->available()) \
-  XV(bluetooth, "SerialBT.readBytes", SERIALBT_READ_BYTES, n0 = bt0->readBytes(b2, n1); NIPn(2)) \
-  XV(bluetooth, "SerialBT.write", SERIALBT_WRITE, n0 = bt0->write(b2, n1); NIPn(2)) \
-  XV(bluetooth, "SerialBT.flush", SERIALBT_FLUSH, bt0->flush(); DROP) \
-  XV(bluetooth, "SerialBT.hasClient", SERIALBT_HAS_CLIENT, n0 = bt0->hasClient()) \
-  XV(bluetooth, "SerialBT.enableSSP", SERIALBT_ENABLE_SSP, bt0->enableSSP(); DROP) \
-  XV(bluetooth, "SerialBT.setPin", SERIALBT_SET_PIN, n0 = bt0->setPin(c1); NIP) \
-  XV(bluetooth, "SerialBT.unpairDevice", SERIALBT_UNPAIR_DEVICE, \
-      n0 = bt0->unpairDevice(b1); NIP) \
-  XV(bluetooth, "SerialBT.connect", SERIALBT_CONNECT, n0 = bt0->connect(c1); NIP) \
-  XV(bluetooth, "SerialBT.connectAddr", SERIALBT_CONNECT_ADDR, n0 = bt0->connect(b1); NIP) \
-  XV(bluetooth, "SerialBT.disconnect", SERIALBT_DISCONNECT, n0 = bt0->disconnect()) \
-  XV(bluetooth, "SerialBT.connected", SERIALBT_CONNECTED, n0 = bt0->connected(n1); NIP) \
-  XV(bluetooth, "SerialBT.isReady", SERIALBT_IS_READY, n0 = bt0->isReady(n2, n1); NIPn(2)) \
-  /* Bluetooth */ \
-  YV(bluetooth, esp_bt_dev_get_address, PUSH esp_bt_dev_get_address())
 #endif
 
 #ifndef ENABLE_WIFI_SUPPORT

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /*
- * ESP32forth Assemblers v{{VERSION}}
+ * ESP32forth Oled v{{VERSION}}
  * Revision: {{REVISION}}
  */
 
@@ -22,12 +22,15 @@
 //   Adafruit GFX Library
 //   Adafruit BusIO
 
-# ifndef SIM_PRINT_ONLY
-#  include <Adafruit_GFX.h>
-#  include <Adafruit_SSD1306.h>
+#ifndef SIM_PRINT_ONLY
+# include <Adafruit_GFX.h>
+# include <Adafruit_SSD1306.h>
 static Adafruit_SSD1306 *oled_display = 0;
-# endif
-# define OPTIONAL_OLED_SUPPORT \
+#endif
+#define OPTIONAL_OLED_VOCABULARY V(oled)
+#define OPTIONAL_OLED_SUPPORT \
+  XV(internals, "oled-source", OLED_SOURCE, \
+      PUSH oled_source; PUSH sizeof(oled_source) - 1) \
   YV(oled, OledAddr, PUSH &oled_display) \
   YV(oled, OledNew, oled_display = new Adafruit_SSD1306(n2, n1, &Wire, n0); DROPn(3)) \
   YV(oled, OledDelete, delete oled_display) \
@@ -51,3 +54,5 @@ static Adafruit_SSD1306 *oled_display = 0;
   YV(oled, OledRectF, oled_display->fillRect(n4, n3, n2, n1, n0); DROPn(3)) \
   YV(oled, OledRectR, oled_display->drawRoundRect(n5, n4, n3, n2, n1, n0); DROPn(5)) \
   YV(oled, OledRectRF, oled_display->fillRoundRect(n5, n4, n3, n2, n1, n0 ); DROPn(5))
+
+{{oled}}
