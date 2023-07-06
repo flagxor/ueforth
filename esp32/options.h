@@ -57,13 +57,6 @@
 #if !defined(CONFIG_IDF_TARGET_ESP32C3)
 #endif
 
-// Uncomment this #define for OLED Support.
-// You will need to install these libraries from the Library Manager:
-//   Adafruit SSD1306
-//   Adafruit GFX Library
-//   Adafruit BusIO
-//#define ENABLE_OLED_SUPPORT
-
 // For now assume only boards with PSRAM should enable
 // camera support and BluetoothSerial.
 // ESP32-CAM always have PSRAM, but so do WROVER boards,

@@ -36,6 +36,13 @@
 #  define OPTIONAL_ASSEMBLERS_SUPPORT
 # endif
 
+// Hook to pull in words from optional oled.h
+# if __has_include("oled.h")
+#  include "oled.h"
+# else
+#  define OPTIONAL_OLED_SUPPORT
+# endif
+
 static cell_t ResizeFile(cell_t fd, cell_t size);
 
 #endif
@@ -623,38 +630,4 @@ static cell_t FromIP(IPAddress ip) {
 # define OPTIONAL_MDNS_SUPPORT \
   /* mDNS */ \
   X("MDNS.begin", MDNS_BEGIN, n0 = MDNS.begin(c0))
-#endif
-
-#ifndef ENABLE_OLED_SUPPORT
-# define OPTIONAL_OLED_SUPPORT
-#else
-# ifndef SIM_PRINT_ONLY
-#  include <Adafruit_GFX.h>
-#  include <Adafruit_SSD1306.h>
-static Adafruit_SSD1306 *oled_display = 0;
-# endif
-# define OPTIONAL_OLED_SUPPORT \
-  YV(oled, OledAddr, PUSH &oled_display) \
-  YV(oled, OledNew, oled_display = new Adafruit_SSD1306(n2, n1, &Wire, n0); DROPn(3)) \
-  YV(oled, OledDelete, delete oled_display) \
-  YV(oled, OledBegin, n0 = oled_display->begin(n1, n0); NIP) \
-  YV(oled, OledHOME, oled_display->setCursor(0,0); DROP) \
-  YV(oled, OledCLS, oled_display->clearDisplay()) \
-  YV(oled, OledTextc, oled_display->setTextColor(n0); DROP) \
-  YV(oled, OledPrintln, oled_display->println(c0); DROP) \
-  YV(oled, OledNumln, oled_display->println(n0); DROP) \
-  YV(oled, OledNum, oled_display->print(n0); DROP) \
-  YV(oled, OledDisplay, oled_display->display()) \
-  YV(oled, OledPrint, oled_display->write(c0); DROP) \
-  YV(oled, OledInvert, oled_display->invertDisplay(n0); DROP) \
-  YV(oled, OledTextsize, oled_display->setTextSize(n0); DROP) \
-  YV(oled, OledSetCursor, oled_display->setCursor(n1,n0); DROPn(2)) \
-  YV(oled, OledPixel, oled_display->drawPixel(n2, n1, n0); DROPn(2)) \
-  YV(oled, OledDrawL, oled_display->drawLine(n4, n3, n2, n1, n0); DROPn(4)) \
-  YV(oled, OledCirc, oled_display->drawCircle(n3,n2, n1, n0); DROPn(3)) \
-  YV(oled, OledCircF, oled_display->fillCircle(n3, n2, n1, n0); DROPn(3)) \
-  YV(oled, OledRect, oled_display->drawRect(n4, n3, n2, n1, n0); DROPn(4)) \
-  YV(oled, OledRectF, oled_display->fillRect(n4, n3, n2, n1, n0); DROPn(3)) \
-  YV(oled, OledRectR, oled_display->drawRoundRect(n5, n4, n3, n2, n1, n0); DROPn(5)) \
-  YV(oled, OledRectRF, oled_display->fillRoundRect(n5, n4, n3, n2, n1, n0 ); DROPn(5))
 #endif

@@ -19,8 +19,27 @@
  * Revision: {{REVISION}}
  */
 
-{{assemblers}}
-
 #define OPTIONAL_ASSEMBLERS_SUPPORT \
-  XV(internals, "assemblers-source", ASSEMBLERS_SOURCE, \
-      PUSH assemblers_source; PUSH sizeof(assemblers_source))
+  XV(internals, "assembler-source", ASSEMBLER_SOURCE, \
+      PUSH assembler_source; PUSH sizeof(assembler_source) - 1) \
+  PLATFORM_ASSEMBLER_SUPPORT
+
+{{assembler}}
+
+#if defined(__riscv)
+
+# define PLATFORM_ASSEMBLER_SUPPORT \
+   XV(internals, "riscv-assembler-source", RISCV_ASSEMBLER_SOURCE, \
+       PUSH riscv_assembler_source; PUSH sizeof(riscv_assembler_source) - 1)
+
+{{riscv_assembler}}
+
+#else
+
+# define PLATFORM_ASSEMBLER_SUPPORT \
+   XV(internals, "xtensa-assembler-source", XTENSA_ASSEMBLER_SOURCE, \
+       PUSH xtensa_assembler_source; PUSH sizeof(xtensa_assembler_source) - 1)
+
+{{xtensa_assembler}}
+
+#endif

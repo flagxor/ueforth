@@ -285,13 +285,22 @@ ESP32_BOOT = $(COMMON_PHASE1) \
 $(GEN)/esp32_boot.h: tools/source_to_string.js $(ESP32_BOOT) | $(GEN)
 	$< boot $(VERSION) $(REVISION) $(ESP32_BOOT) >$@
 
-ESP32_ASSEMBLERS = common/assembler.fs \
-                   esp32/xtensa-assembler.fs \
-                   esp32/riscv-assembler.fs
-$(GEN)/esp32_assemblers.h: tools/source_to_string.js $(ESP32_ASSEMBLERS) | $(GEN)
-	$< assemblers_source $(VERSION) $(REVISION) $(ESP32_ASSEMBLERS) >$@
+$(GEN)/esp32_assembler.h: tools/source_to_string.js common/assembler.fs | $(GEN)
+	$< assembler_source $(VERSION) $(REVISION) common/assembler.fs >$@
 
-OPTIONAL_MODULES = $(ESP32)/ESP32forth/assemblers.h
+$(GEN)/esp32_xtensa-assembler.h: \
+    tools/source_to_string.js esp32/optional/assemblers/xtensa-assembler.fs | $(GEN)
+	$< xtensa_assembler_source $(VERSION) $(REVISION) \
+    esp32/optional/assemblers/xtensa-assembler.fs >$@
+
+$(GEN)/esp32_riscv-assembler.h: \
+    tools/source_to_string.js esp32/optional/assemblers/riscv-assembler.fs | $(GEN)
+	$< riscv_assembler_source $(VERSION) $(REVISION) \
+    esp32/optional/assemblers/riscv-assembler.fs >$@
+
+OPTIONAL_MODULES = \
+  $(ESP32)/ESP32forth/oled.h \
+  $(ESP32)/ESP32forth/assemblers.h
 
 add-optional: $(OPTIONAL_MODULES)
 
@@ -299,6 +308,9 @@ drop-optional:
 	rm -f $(OPTIONAL_MODULES)
 
 $(ESP32)/ESP32forth/assemblers.h: $(ESP32)/ESP32forth/optional/assemblers.h
+	cp $< $@
+
+$(ESP32)/ESP32forth/oled.h: $(ESP32)/ESP32forth/optional/oled.h
 	cp $< $@
 
 $(GEN)/dump_web_opcodes: \
@@ -564,18 +576,30 @@ $(ESP32)/ESP32forth/README.txt: esp32/README.txt | $(ESP32)/ESP32forth
      >$@
 
 $(ESP32)/ESP32forth/optional/README-optional.txt: \
-    esp32/README-optional.txt | $(ESP32)/ESP32forth/optional
-	cat esp32/README-optional.txt | tools/replace.js \
+    esp32/optional/README-optional.txt | $(ESP32)/ESP32forth/optional
+	cat esp32/optional/README-optional.txt | tools/replace.js \
      VERSION=$(VERSION) \
      REVISION=$(REVISION) \
      >$@
 
 $(ESP32)/ESP32forth/optional/assemblers.h: \
-    esp32/assemblers.h $(GEN)/esp32_assemblers.h | $(ESP32)/ESP32forth/optional
-	cat esp32/assemblers.h | tools/replace.js \
+    esp32/optional/assemblers/assemblers.h \
+    $(GEN)/esp32_assembler.h \
+    $(GEN)/esp32_xtensa-assembler.h \
+    $(GEN)/esp32_riscv-assembler.h | $(ESP32)/ESP32forth/optional
+	cat esp32/optional/assemblers/assemblers.h | tools/replace.js \
      VERSION=$(VERSION) \
      REVISION=$(REVISION) \
-     assemblers=@$(GEN)/esp32_assemblers.h \
+     assembler=@$(GEN)/esp32_assembler.h \
+     xtensa_assembler=@$(GEN)/esp32_xtensa-assembler.h \
+     riscv_assembler=@$(GEN)/esp32_riscv-assembler.h \
+     >$@
+
+$(ESP32)/ESP32forth/optional/oled.h: \
+    esp32/optional/oled.h | $(ESP32)/ESP32forth/optional
+	cat esp32/optional/oled.h | tools/replace.js \
+     VERSION=$(VERSION) \
+     REVISION=$(REVISION) \
      >$@
 
 # ---- ESP32 ARDUINO BUILD AND FLASH ----
@@ -672,7 +696,8 @@ $(ESP32)/ESP32forth.zip: \
     $(ESP32)/ESP32forth/ESP32forth.ino \
     $(ESP32)/ESP32forth/README.txt \
     $(ESP32)/ESP32forth/optional/README-optional.txt \
-    $(ESP32)/ESP32forth/optional/assemblers.h
+    $(ESP32)/ESP32forth/optional/assemblers.h \
+    $(ESP32)/ESP32forth/optional/oled.h
 	cd $(ESP32) && rm -f ESP32forth.zip && zip -r ESP32forth.zip ESP32forth
 
 # ---- Publish to Archive ----

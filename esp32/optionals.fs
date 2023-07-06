@@ -12,8 +12,12 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-internals
-
-DEFINED? assemblers-source [IF] assemblers-source evaluate [THEN]
-
-forth
+internals DEFINED? assembler-source [IF]
+  assembler-source evaluate
+[THEN] forth
+internals DEFINED? xtensa-assembler-source [IF]
+  xtensa-assembler-source evaluate
+[THEN] forth
+internals DEFINED? riscv-assembler-source [IF]
+  riscv-assembler-source evaluate
+[THEN] forth

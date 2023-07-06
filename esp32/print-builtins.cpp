@@ -24,6 +24,7 @@
 #define FLOATING_POINT_LIST
 #define USER_WORDS
 #define OPTIONAL_ASSEMBLERS_SUPPORT
+#define OPTIONAL_OLED_SUPPORT
 #include "builtins.h"
 
 #define XV(flags, name, op, code) Z(flags, name, op, code)
