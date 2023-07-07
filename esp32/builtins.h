@@ -54,7 +54,7 @@
 
 // Hook to pull in words from optional serial bluetooth support.
 # if __has_include("serial-bluetooth.h")
-#  include "bluetooth-serial.h"
+#  include "serial-bluetooth.h"
 # else
 #  define OPTIONAL_SERIAL_BLUETOOTH_SUPPORT
 #  define OPTIONAL_BLUETOOTH_VOCABULARY

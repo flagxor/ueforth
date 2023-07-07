@@ -46,6 +46,5 @@
   XV(bluetooth, "SerialBT.isReady", SERIALBT_IS_READY, n0 = bt0->isReady(n2, n1); NIPn(2)) \
   /* Bluetooth */ \
   YV(bluetooth, esp_bt_dev_get_address, PUSH esp_bt_dev_get_address())
-#endif
 
 {{serial_bluetooth}}

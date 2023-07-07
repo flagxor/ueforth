@@ -162,6 +162,9 @@ fast: posix esp32_sim esp32
 targets: $(TARGETS)
 tests: $(TESTS)
 
+clean-esp32:
+	rm -rf $(ESP32)/esp32*_build $(ESP32)/esp32*_cache
+
 clean:
 	rm -rf $(OUT)
 
@@ -305,7 +308,7 @@ $(GEN)/esp32_camera.h: \
 
 $(GEN)/esp32_oled.h: \
     tools/source_to_string.js esp32/optional/oled/oled.fs | $(GEN)
-	$< camera_source $(VERSION) $(REVISION) \
+	$< oled_source $(VERSION) $(REVISION) \
     esp32/optional/oled/oled.fs >$@
 
 $(GEN)/esp32_spi-flash.h: \
@@ -656,6 +659,8 @@ $(ESP32)/ESP32forth/optional/spi-flash.h: \
 ARDUINO_BUILDER="/mnt/c/Program Files (x86)/Arduino/arduino-builder.exe"
 ARDUINO="c:/Program Files (x86)/Arduino"
 LOCALAPPDATA=$(subst \,/,$(shell cmd.exe /c echo %LOCALAPPDATA%))
+USERPROFILE=$(subst \,/,$(shell cmd.exe /c echo %USERPROFILE%))
+DOCUMENTS_ARDUINO=${USERPROFILE}/Documents/Arduino
 ARDUINO_APP=${LOCALAPPDATA}/Arduino15
 ARDUINO_APP_DIR=$(subst C:/,/mnt/c/,${ARDUINO_APP})
 ESPTOOL=${ARDUINO_APP_DIR}/packages/esp32/tools/esptool_py/4.2.1/esptool.exe
@@ -685,6 +690,7 @@ $(ESP32)/%_build/ESP32forth.ino.bin: $(ESP32)/ESP32forth/ESP32forth.ino | \
     -tools ${ARDUINO}/hardware/tools/avr \
     -tools ${ARDUINO_APP}/packages \
     -built-in-libraries ${ARDUINO}/libraries \
+    -libraries ${DOCUMENTS_ARDUINO}/libraries \
     -prefs=build.warn_data_percentage=75 \
     ${ESP32_BOARD_$(subst _build,,$(notdir $(word 1,$|)))} \
     -build-path $(word 1,$|) \
