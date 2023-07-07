@@ -28,7 +28,8 @@ long-size long-size typer long
 
 variable last-struct
 
-: struct ( "name" ) 1 0 typer latestxt >body last-struct ! ;
+: struct ( "name" ) 1 0 typer latestxt >body last-struct !
+                    1 last-align ! ;
 : align-by ( a n -- a ) 1- dup >r + r> invert and ;
 : struct-align ( n -- )
   dup last-struct @ cell+ @ max last-struct @ cell+ !

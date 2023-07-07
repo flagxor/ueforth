@@ -46,3 +46,17 @@ e: test-nested-structure
   1000 ->bar ->right 1012 =assert
   1000 ->bar ->bottom 1016 =assert
 ;e
+
+e: test-forth-structure
+  also structures
+  0 last-align !
+  struct foo
+    1 field t1
+    4 field t2
+    9 field t3
+   12 field t4
+  0 t1 0 =assert
+  0 t2 1 =assert
+  0 t3 5 =assert
+  0 t4 14 =assert
+;e

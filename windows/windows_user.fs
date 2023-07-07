@@ -115,7 +115,7 @@ struct MSG
     i16 field ->wParam
     i32 field ->lParam
     i32 field ->time
-   POINT field ->pt
+  POINT field ->pt
     i32 field ->lPrivate
 0 constant PM_NOREMOVE
 1 constant PM_REMOVE
