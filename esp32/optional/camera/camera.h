@@ -17,9 +17,8 @@
  * Revision: {{REVISION}}
  */
 
-#ifndef SIM_PRINT_ONLY
-# include "esp_camera.h"
-#endif
+#include "esp_camera.h"
+
 #define OPTIONAL_CAMERA_VOCABULARY V(camera)
 #define OPTIONAL_CAMERA_SUPPORT \
   XV(internals, "camera-source", CAMERA_SOURCE, \

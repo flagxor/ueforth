@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VERSION=7.0.7.14
+VERSION=7.0.7.15
 STABLE_VERSION=7.0.6.19
 OLD_STABLE_VERSION=7.0.5.4
 REVISION=$(shell git rev-parse HEAD | head -c 20)
@@ -164,6 +164,18 @@ tests: $(TESTS)
 
 clean-esp32:
 	rm -rf $(ESP32)/esp32*_build $(ESP32)/esp32*_cache
+
+vet:
+	$(MAKE) clean
+	$(MAKE) all
+	$(MAKE) esp32-build
+	$(MAKE) esp32s2-build
+	$(MAKE) esp32c3-build
+	$(MAKE) clean-esp32
+	$(MAKE) add-optional
+	$(MAKE) esp32-build
+	$(MAKE) clean
+	$(MAKE) all
 
 clean:
 	rm -rf $(OUT)
@@ -335,6 +347,7 @@ OPTIONAL_MODULES = \
   $(ESP32)/ESP32forth/assemblers.h \
   $(ESP32)/ESP32forth/camera.h \
   $(ESP32)/ESP32forth/oled.h \
+  $(ESP32)/ESP32forth/rmt.h \
   $(ESP32)/ESP32forth/serial-bluetooth.h \
   $(ESP32)/ESP32forth/spi-flash.h
 
@@ -646,6 +659,13 @@ $(ESP32)/ESP32forth/optional/oled.h: \
      oled=@$(GEN)/esp32_oled.h \
      >$@
 
+$(ESP32)/ESP32forth/optional/rmt.h: \
+    esp32/optional/rmt.h | $(ESP32)/ESP32forth/optional
+	cat esp32/optional/rmt.h | tools/replace.js \
+     VERSION=$(VERSION) \
+     REVISION=$(REVISION) \
+     >$@
+
 $(ESP32)/ESP32forth/optional/serial-bluetooth.h: \
     esp32/optional/serial-bluetooth/serial-bluetooth.h \
     $(GEN)/esp32_serial-bluetooth.h | $(ESP32)/ESP32forth/optional
@@ -764,6 +784,7 @@ $(ESP32)/ESP32forth.zip: \
     $(ESP32)/ESP32forth/optional/assemblers.h \
     $(ESP32)/ESP32forth/optional/camera.h \
     $(ESP32)/ESP32forth/optional/oled.h \
+    $(ESP32)/ESP32forth/optional/rmt.h \
     $(ESP32)/ESP32forth/optional/serial-bluetooth.h \
     $(ESP32)/ESP32forth/optional/spi-flash.h
 	cd $(ESP32) && rm -f ESP32forth.zip && zip -r ESP32forth.zip ESP32forth

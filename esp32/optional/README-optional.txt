@@ -12,6 +12,10 @@ These are the current optional modules:
   * assemblers.h - Assemblers for ESP32 Xtensa and ESP32 RISC-V
   * camera.h - Support for the ESP32-CAM camera
   * oled.h - Support for the SSD1306 Oled
+  * rmt.h - Support for RMT (Remote Control)
+  * serial-bluetooth.h - Support for Bluetooth serial and
+                         bterm a Bluetooth serial redirector for the terminal
+  * spi-flash.h - Support for low level SPI Flash partition access
 
 Initially ESP32forth focused on a minimal C kernel, with most functionality
 built in Forth code loaded at boot. Eventually, as support for more capabilities

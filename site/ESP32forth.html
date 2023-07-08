@@ -830,7 +830,10 @@ timer_isr_register ( group timer xt arg ret -- 0/err ) REMOVED
 
 <h5 id="rmt">RMT</h5>
 These words are inside the <code>RMT</code> vocabulary.
-
+<p><b>
+  NOTE: Starting in v7.0.7.15 the optional module rmt.h must be
+  placed next to ESP32forth.ino to include this capability.
+</b></p>
 <pre>
 rmt_set_clk_div ( channel div8 -- err )
 rmt_get_clk_div ( channel @div8 -- err )

@@ -22,11 +22,11 @@
 //   Adafruit GFX Library
 //   Adafruit BusIO
 
-#ifndef SIM_PRINT_ONLY
-# include <Adafruit_GFX.h>
-# include <Adafruit_SSD1306.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
 static Adafruit_SSD1306 *oled_display = 0;
-#endif
+
 #define OPTIONAL_OLED_VOCABULARY V(oled)
 #define OPTIONAL_OLED_SUPPORT \
   XV(internals, "oled-source", OLED_SOURCE, \

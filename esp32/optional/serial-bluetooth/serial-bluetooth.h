@@ -17,11 +17,11 @@
  * Revision: {{REVISION}}
  */
 
-#ifndef SIM_PRINT_ONLY
-# include "esp_bt_device.h"
-# include "BluetoothSerial.h"
-# define bt0 ((BluetoothSerial *) a0)
-#endif
+#include "esp_bt_device.h"
+#include "BluetoothSerial.h"
+
+#define bt0 ((BluetoothSerial *) a0)
+
 #define OPTIONAL_BLUETOOTH_VOCABULARY V(bluetooth)
 #define OPTIONAL_SERIAL_BLUETOOTH_SUPPORT \
   XV(internals, "serial-bluetooth-source", SERIAL_BLUETOOTH_SOURCE, \

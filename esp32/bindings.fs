@@ -103,10 +103,6 @@ ESP_INTR_FLAG_DEFAULT gpio_install_isr_service drop
 [THEN]
 forth definitions
 
-vocabulary rmt   rmt definitions
-transfer rmt-builtins
-forth definitions
-
 vocabulary rtos   rtos definitions
 transfer rtos-builtins
 forth definitions

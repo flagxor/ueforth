@@ -25,6 +25,7 @@
 #define OPTIONAL_OLED_VOCABULARY
 #define OPTIONAL_CAMERA_VOCABULARY
 #define OPTIONAL_BLUETOOTH_VOCABULARY
+#define OPTIONAL_RMT_VOCABULARY
 #define OPTIONAL_SPI_FLASH_VOCABULARY
 
 static cell_t *simulated(cell_t *sp, const char *op);

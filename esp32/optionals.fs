@@ -30,6 +30,12 @@ internals DEFINED? oled-source [IF]
   oled-source evaluate
 [THEN] forth
 
+DEFINED? rmt-builtins [IF]
+  vocabulary rmt   rmt definitions
+  transfer rmt-builtins
+  forth definitions
+[THEN]
+
 internals DEFINED? serial-bluetooth-source [IF]
   serial-bluetooth-source evaluate
 [THEN] forth

@@ -17,10 +17,9 @@
  * Revision: {{REVISION}}
  */
 
-#ifndef SIM_PRINT_ONLY
-# include "esp_spi_flash.h"
-# include "esp_partition.h"
-#endif
+#include "esp_spi_flash.h"
+#include "esp_partition.h"
+
 #define OPTIONAL_SPI_FLASH_VOCABULARY V(spi_flash)
 #define OPTIONAL_SPI_FLASH_SUPPORT \
   XV(internals, "spi-flash-source", SPI_FLASH_SOURCE, \

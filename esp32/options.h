@@ -43,15 +43,6 @@
 # define ENABLE_DAC_SUPPORT
 #endif
 
-// RMT support designed around v2.0.1 toolchain.
-// While ESP32 also has RMT, for now only include for
-// ESP32-S2 and ESP32-C3.
-#if defined(CONFIG_IDF_TARGET_ESP32S2) || \
-    defined(CONFIG_IDF_TARGET_ESP32C3) || \
-    defined(SIM_PRINT_ONLY)
-# define ENABLE_RMT_SUPPORT
-#endif
-
 // ESP32-C3 doesn't support fault handling yet.
 #if !defined(CONFIG_IDF_TARGET_ESP32C3)
 #endif
@@ -100,9 +91,10 @@
   V(forth) V(internals) \
   V(rtos) V(SPIFFS) V(serial) V(SD) V(SD_MMC) V(ESP) \
   V(ledc) V(Wire) V(WiFi) V(sockets) \
-  V(rmt) V(interrupts) V(timers) \
+  V(interrupts) V(timers) \
   OPTIONAL_CAMERA_VOCABULARY \
   OPTIONAL_BLUETOOTH_VOCABULARY \
   OPTIONAL_OLED_VOCABULARY \
+  OPTIONAL_RMT_VOCABULARY \
   OPTIONAL_SPI_FLASH_VOCABULARY \
   USER_VOCABULARIES

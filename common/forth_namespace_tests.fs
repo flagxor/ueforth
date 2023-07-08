@@ -623,7 +623,6 @@ e: test-esp32-forth-voclist
   out: streams 
   out: tasks 
   out: rtos 
-  out: rmt 
   out: interrupts 
   out: sockets 
   out: Serial 
@@ -683,7 +682,6 @@ e: check-esp32-builtins
 
 e: check-esp32-bindings
   out: rtos 
-  out: rmt 
   out: interrupts 
   out: sockets 
   out: Serial 
