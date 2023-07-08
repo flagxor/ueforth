@@ -23,7 +23,7 @@
 #endif
 #define OPTIONAL_SPI_FLASH_VOCABULARY V(spi_flash)
 #define OPTIONAL_SPI_FLASH_SUPPORT \
-  XV(internals, "spi_flash-source", SPI_FLASH_SOURCE, \
+  XV(internals, "spi-flash-source", SPI_FLASH_SOURCE, \
       PUSH spi_flash_source; PUSH sizeof(spi_flash_source) - 1) \
   YV(spi_flash, spi_flash_init, spi_flash_init()) \
   YV(spi_flash, spi_flash_get_chip_size, PUSH spi_flash_get_chip_size()) \

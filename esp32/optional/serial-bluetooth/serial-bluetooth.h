@@ -24,8 +24,8 @@
 #endif
 #define OPTIONAL_BLUETOOTH_VOCABULARY V(bluetooth)
 #define OPTIONAL_SERIAL_BLUETOOTH_SUPPORT \
-  XV(internals, "bterm-source", BTERM_SOURCE, \
-      PUSH bterm_source; PUSH sizeof(bterm_source) - 1) \
+  XV(internals, "serial-bluetooth-source", SERIAL_BLUETOOTH_SOURCE, \
+      PUSH serial_bluetooth_source; PUSH sizeof(serial_bluetooth_source) - 1) \
   XV(bluetooth, "SerialBT.new", SERIALBT_NEW, PUSH new BluetoothSerial()) \
   XV(bluetooth, "SerialBT.delete", SERIALBT_DELETE, delete bt0; DROP) \
   XV(bluetooth, "SerialBT.begin", SERIALBT_BEGIN, n0 = bt0->begin(c2, n1); NIPn(2)) \

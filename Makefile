@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VERSION=7.0.7.13
+VERSION=7.0.7.14
 STABLE_VERSION=7.0.6.19
 OLD_STABLE_VERSION=7.0.5.4
 REVISION=$(shell git rev-parse HEAD | head -c 20)
@@ -287,21 +287,28 @@ ESP32_BOOT = $(COMMON_PHASE1) \
 $(GEN)/esp32_boot.h: tools/source_to_string.js $(ESP32_BOOT) | $(GEN)
 	$< boot $(VERSION) $(REVISION) $(ESP32_BOOT) >$@
 
-$(GEN)/esp32_assembler.h: tools/source_to_string.js common/assembler.fs | $(GEN)
-	$< assembler_source $(VERSION) $(REVISION) common/assembler.fs >$@
+$(GEN)/esp32_assembler.h: \
+    tools/source_to_string.js \
+    common/assembler.fs | $(GEN)
+	$< assembler_source $(VERSION) $(REVISION) \
+    common/assembler.fs >$@
 
 $(GEN)/esp32_xtensa-assembler.h: \
-    tools/source_to_string.js esp32/optional/assemblers/xtensa-assembler.fs | $(GEN)
+    tools/source_to_string.js \
+    esp32/optional/assemblers/xtensa-assembler.fs | $(GEN)
 	$< xtensa_assembler_source $(VERSION) $(REVISION) \
     esp32/optional/assemblers/xtensa-assembler.fs >$@
 
 $(GEN)/esp32_riscv-assembler.h: \
-    tools/source_to_string.js esp32/optional/assemblers/riscv-assembler.fs | $(GEN)
+    tools/source_to_string.js \
+    esp32/optional/assemblers/riscv-assembler.fs | $(GEN)
 	$< riscv_assembler_source $(VERSION) $(REVISION) \
     esp32/optional/assemblers/riscv-assembler.fs >$@
 
 $(GEN)/esp32_camera.h: \
-    tools/source_to_string.js esp32/optional/camera/camera.fs | $(GEN)
+    tools/source_to_string.js \
+    esp32/optional/camera/camera_server.fs \
+    esp32/optional/camera/camera.fs | $(GEN)
 	$< camera_source $(VERSION) $(REVISION) \
     esp32/optional/camera/camera.fs \
     esp32/optional/camera/camera_server.fs >$@
@@ -317,8 +324,11 @@ $(GEN)/esp32_spi-flash.h: \
     esp32/optional/spi-flash/spi-flash.fs >$@
 
 $(GEN)/esp32_serial-bluetooth.h: \
-    tools/source_to_string.js esp32/optional/serial-bluetooth/bterm.fs | $(GEN)
-	$< bterm_source $(VERSION) $(REVISION) \
+    tools/source_to_string.js \
+    esp32/optional/serial-bluetooth/bterm.fs \
+    esp32/optional/serial-bluetooth/serial-bluetooth.fs | $(GEN)
+	$< serial_bluetooth_source $(VERSION) $(REVISION) \
+    esp32/optional/serial-bluetooth/serial-bluetooth.fs \
     esp32/optional/serial-bluetooth/bterm.fs >$@
 
 OPTIONAL_MODULES = \
