@@ -22,9 +22,10 @@
 
 #define SIM_HEAP_SIZE (100 * 1024 + 1024 * 1024)
 
-#define OPTIONAL_OLED_VOCABULARY
-#define OPTIONAL_CAMERA_VOCABULARY
 #define OPTIONAL_BLUETOOTH_VOCABULARY
+#define OPTIONAL_CAMERA_VOCABULARY
+#define OPTIONAL_INTERRUPTS_VOCABULARIES
+#define OPTIONAL_OLED_VOCABULARY
 #define OPTIONAL_RMT_VOCABULARY
 #define OPTIONAL_SPI_FLASH_VOCABULARY
 
@@ -103,9 +104,6 @@ static cell_t *simulated(cell_t *sp, const char *op) {
     return sp;
   } else if (op == STR_digitalWrite) {
     sp -= 2;
-    return sp;
-  } else if (op == STR_gpio_install_isr_service) {
-    *sp = 0;
     return sp;
   } else if (op == STR_SERIAL_AVAILABLE) {
     *++sp = 1;

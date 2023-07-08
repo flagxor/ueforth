@@ -623,7 +623,6 @@ e: test-esp32-forth-voclist
   out: streams 
   out: tasks 
   out: rtos 
-  out: interrupts 
   out: sockets 
   out: Serial 
   out: ledc 
@@ -682,7 +681,6 @@ e: check-esp32-builtins
 
 e: check-esp32-bindings
   out: rtos 
-  out: interrupts 
   out: sockets 
   out: Serial 
   out: ledc 
@@ -699,7 +697,6 @@ e: test-esp32-forth-namespace
   ' forth list-from
   out: FORTH 
   out: telnetd 
-  out: timers 
   out: registers 
   out: webui 
   out: login 

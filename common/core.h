@@ -43,8 +43,6 @@ enum {
 #undef V
 };
 
-static G_SYS *g_sys = 0;
-
 static cell_t convert(const char *pos, cell_t n, cell_t base, cell_t *ret) {
   *ret = 0;
   cell_t negate = 0;

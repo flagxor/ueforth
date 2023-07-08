@@ -474,45 +474,6 @@ WiFi.softAPgetStationNum ( -- num )
 MDNS.begin ( name-z -- )   Start multicast dns
 </pre>
 
-<h5>SPI Flash</h5>
-These words are inside the <code>spi_flash</code> vocabulary.
-<p><b>
-  NOTE: Starting in v7.0.7.13 the optional module spi-flash.h must be
-  placed next to ESP32forth.ino to include this capability.
-</b></p>
-<pre>
-spi_flash_init ( -- ) Init driver access.
-spi_flash_get_chip_size ( -- n ) Get flash size.
-spi_flash_erase_sector ( sector -- err ) Erase a sector.
-spi_flash_erase_range ( addr size -- err ) Erase a range.
-spi_flash_write ( destaddr src size -- err ) Write to flash.
-spi_flash_write_encrypted ( destaddr src size -- err ) Write encrypted.
-spi_flash_read ( srcaddr dst size -- err ) Read from flash.
-spi_flash_read_encrypted ( srcaddr dst size -- err ) Read encrypted.
-spi_flash_mmap ( srcaddr size memtype out outhandle -- err ) Map region.
-spi_flash_mmap_pages ( pages pages# memtype out outhandle -- err ) Map pages.
-spi_flash_munmap ( handle -- ) Unmap region.
-spi_flash_mmap_dump ( -- ) Dump memory map.
-spi_flash_mmap_get_free_pages ( memtype -- n ) Get free pages.
-spi_flash_cache2phys ( a -- addr ) Get flash addr.
-spi_flash_phys2cache ( addr memtype -- a ) Get mapped flash addr.
-spi_flash_cache_enabled ( -- f ) Is flash enabled.
-
-esp_partition_t_size ( -- n ) sizeof(esp_parition_t).
-esp_partition_find ( type subtype szlabel -- it ) Get partition iterator.
-esp_partition_find_first ( type subtype szlabel -- part ) Get first partition.
-esp_partition_get ( it -- part ) Get current partition.
-esp_partition_next ( it -- it' ) Get next partition.
-esp_partition_iterator_release ( it -- ) Free iterator.
-esp_partition_verify ( part -- part' ) Verify partition.
-esp_partition_read ( part srcoff dst size -- err ) Read from partition.
-esp_partition_write ( part dstoff src size -- err ) Write to partition.
-esp_partition_erase_range ( part start size -- err ) Erase range.
-esp_partition_mmap ( part off size memtype out outhandle -- err ) Map memory.
-esp_partition_get_sha256 ( part a -- err ) Get sha256 digest.
-esp_partition_check_identity ( part part -- f ) Check partitions for equality.
-</pre>
-
 <h5>SPIFFS</h5>
 These words are inside the <code>SPIFFS</code> vocabulary.
 <pre>
@@ -612,6 +573,169 @@ Wire.getErrorText ( n -- z )
 Wire.busy ( -- f )
 Wire.writeTransmission ( addr a n sendstop -- err )
 Wire.readTransmission ( addr a n sendstop acount -- err )
+</pre>
+
+<h5>SD</h5>
+These words are inside the <code>SD</code> vocabulary.
+They allow use of an SDcard over SPI.
+<pre>
+SD.begin ( -- ok )   uses all the defaults "/sd" etc.
+SD.beginDefaults ( -- sspin SPIClass frequency mountpointsz maxfiles format_if_empty )
+                 (    SS    SPI      4000000   "/sd"        5        false )
+SD.beginFull ( sspin SPIClass frequency mountpoint maxfiles format_if_empty -- ok )
+SD.end ( -- )
+SD.cardType ( -- n )
+SD.totalBytes ( -- n )
+SD.usedBytes ( -- n )
+</pre>
+
+<h5>SD_MMC</h5>
+These words are inside the <code>SD_MMC</code> vocabulary.
+They allow use of an SDcard over MMC internal interface.
+<br/>
+Note, SD_MMC is unavailable on ESP32-S2 and ESP32-C3.
+<pre>
+SD_MMC.begin ( -- ok )   uses all the defaults "/sdcard" etc.
+SD_MMC.beginDefaults ( -- mountsz   mode1bit format_if_fail )
+                     (    "/sdcard" false    false )
+                     (    sdmmc_freq not supported for generality )
+SD_MMC.beginFull ( mountsz mode1bit format_if_fail -- ok )
+SD_MMC.end ( -- )
+SD_MMC.cardType ( -- n )
+SD_MMC.totalBytes ( -- n )
+SD_MMC.usedBytes ( -- n )
+</pre>
+
+<h5 id="tasks">Tasks</h5>
+These words are inside the <code>TASKS</code> vocabulary.
+
+<pre>
+PAUSE ( -- ) Yield to other tasks.
+MS ( n -- ) Pause for some number of milliseconds (yields to other tasks).
+TASK ( xt dsz rsz "name" -- ) Create a new task with dsz size data stack
+                              and rsz size return stack running xt.
+START-TASK ( task -- ) Activate a task.
+.TASKS ( -- ) List running tasks.
+
+Example:
+tasks
+: hi   begin ." Time is: " ms-ticks . cr 1000 ms again ;
+' hi 100 100 task my-counter
+my-counter start-task
+</pre>
+
+<h5>RTOS</h5>
+These words are inside the <code>RTOS</code> vocabulary.
+<pre>
+xPortGetCoreID ( -- n )
+xTaskCreatePinnedToCore ( fn name stack-depth params priority taskout coreid -- )
+vTaskDelete ( task ) -- )
+</pre>
+
+<h3 id="webui">ESP32 WebUI</h3>
+
+<p>
+A terminal over the web can be activated.
+Contact at port printed or via mDNS <a href="http://forth/">http://forth/</a>.
+</p>
+
+<pre>
+webui ( network-z password-z -- ) login and start webui
+login ( network-z password-z -- ) login to wifi only
+</pre>
+
+<p>Usage:</p>
+
+<pre>
+z" NETWORK-NAME" z" PASSWORD" webui
+</pre>
+
+<p>
+See <a href="https://github.com/flagxor/ueforth/blob/main/esp32/web_interface.fs">web_interface.fs</a>.
+</p>
+
+<h3 id="autoexec">Autoexec.fs</h3>
+
+<p>
+NOTE: This section describes one mechanism for running code at startup.
+See <a href="#dictimages">this</a> for an alternate option.
+</p>
+
+<p>
+The system will automatically attempt to mount SPIFFS filesystem at <code>/spiffs</code>.
+It will then at start attempt to load <code>/spiffs/autoexec.fs</code>
+</p>
+
+<p>
+One way this feature can be used to configure the Web UI to start by default.
+When doing this, be sure to test your Web UI settings work well first.
+</p>
+
+<pre>
+r| z" NETWORK-NAME" z" PASSWORD" webui | s" /spiffs/autoexec.fs" dump-file
+</pre>
+
+<p>
+To remove a previously configured <code>autoexec.fs</code> you will need
+to be able to reboot in a mode with Forth. One way to do this is to search
+for the line in the .ino file that refers to <code>autoexec.fs</code>
+and replace it with a different name. Then run the following:
+</p>
+
+<pre>
+s" /spiffs/autoexec.fs" delete-file
+</pre>
+
+<p>
+See <a href="https://github.com/flagxor/ueforth/blob/main/esp32/autoboot.fs">autoboot.fs</a>.
+</p>
+
+
+<h3>ESP32forth Optional Modules</h3>
+
+<p>
+Several optional modules are now available in the <code>optional/</code>
+directory next to ESP32forth.ino. To use these modules,
+move them up a directory to be adjacent to ESP32forth.ino.
+</p>
+
+<h5>SPI Flash</h5>
+These words are inside the <code>spi_flash</code> vocabulary.
+<p><b>
+  NOTE: Starting in v7.0.7.13 the optional module spi-flash.h must be
+  placed next to ESP32forth.ino to include this capability.
+</b></p>
+<pre>
+spi_flash_init ( -- ) Init driver access.
+spi_flash_get_chip_size ( -- n ) Get flash size.
+spi_flash_erase_sector ( sector -- err ) Erase a sector.
+spi_flash_erase_range ( addr size -- err ) Erase a range.
+spi_flash_write ( destaddr src size -- err ) Write to flash.
+spi_flash_write_encrypted ( destaddr src size -- err ) Write encrypted.
+spi_flash_read ( srcaddr dst size -- err ) Read from flash.
+spi_flash_read_encrypted ( srcaddr dst size -- err ) Read encrypted.
+spi_flash_mmap ( srcaddr size memtype out outhandle -- err ) Map region.
+spi_flash_mmap_pages ( pages pages# memtype out outhandle -- err ) Map pages.
+spi_flash_munmap ( handle -- ) Unmap region.
+spi_flash_mmap_dump ( -- ) Dump memory map.
+spi_flash_mmap_get_free_pages ( memtype -- n ) Get free pages.
+spi_flash_cache2phys ( a -- addr ) Get flash addr.
+spi_flash_phys2cache ( addr memtype -- a ) Get mapped flash addr.
+spi_flash_cache_enabled ( -- f ) Is flash enabled.
+
+esp_partition_t_size ( -- n ) sizeof(esp_parition_t).
+esp_partition_find ( type subtype szlabel -- it ) Get partition iterator.
+esp_partition_find_first ( type subtype szlabel -- part ) Get first partition.
+esp_partition_get ( it -- part ) Get current partition.
+esp_partition_next ( it -- it' ) Get next partition.
+esp_partition_iterator_release ( it -- ) Free iterator.
+esp_partition_verify ( part -- part' ) Verify partition.
+esp_partition_read ( part srcoff dst size -- err ) Read from partition.
+esp_partition_write ( part dstoff src size -- err ) Write to partition.
+esp_partition_erase_range ( part start size -- err ) Erase range.
+esp_partition_mmap ( part off size memtype out outhandle -- err ) Map memory.
+esp_partition_get_sha256 ( part a -- err ) Get sha256 digest.
+esp_partition_check_identity ( part part -- f ) Check partitions for equality.
 </pre>
 
 <h5>Camera</h5>
@@ -718,39 +842,12 @@ server ( port -- ) Start an image server at port,
                    e.g. http://IP/image will produce an image
 </pre>
 
-<h5>SD</h5>
-These words are inside the <code>SD</code> vocabulary.
-They allow use of an SDcard over SPI.
-<pre>
-SD.begin ( -- ok )   uses all the defaults "/sd" etc.
-SD.beginDefaults ( -- sspin SPIClass frequency mountpointsz maxfiles format_if_empty )
-                 (    SS    SPI      4000000   "/sd"        5        false )
-SD.beginFull ( sspin SPIClass frequency mountpoint maxfiles format_if_empty -- ok )
-SD.end ( -- )
-SD.cardType ( -- n )
-SD.totalBytes ( -- n )
-SD.usedBytes ( -- n )
-</pre>
-
-<h5>SD_MMC</h5>
-These words are inside the <code>SD_MMC</code> vocabulary.
-They allow use of an SDcard over MMC internal interface.
-<br/>
-Note, SD_MMC is unavailable on ESP32-S2 and ESP32-C3.
-<pre>
-SD_MMC.begin ( -- ok )   uses all the defaults "/sdcard" etc.
-SD_MMC.beginDefaults ( -- mountsz   mode1bit format_if_fail )
-                     (    "/sdcard" false    false )
-                     (    sdmmc_freq not supported for generality )
-SD_MMC.beginFull ( mountsz mode1bit format_if_fail -- ok )
-SD_MMC.end ( -- )
-SD_MMC.cardType ( -- n )
-SD_MMC.totalBytes ( -- n )
-SD_MMC.usedBytes ( -- n )
-</pre>
-
 <h5 id="interrupts">Interrupts</h5>
 These words are inside the <code>INTERRUPTS</code> vocabulary.
+<p><b>
+  NOTE: Starting in v7.0.7.15 the optional module interrupts.h must be
+  placed next to ESP32forth.ino to include this capability.
+</b></p>
 
 <p>High Level words:</p>
 <pre>
@@ -758,15 +855,13 @@ pinchange ( xt pin -- ) Call xt when pin changes.
 </pre>
 
 <p>Example:</p>
-
 <pre>
 17 input pinMode
 : test ." pinvalue: " 17 digitalRead . cr ;
 ' test 17 pinchange
 </pre>
 
-<h5 id="interrupts">Interrupts</h5>
-These words are inside the <code>interrupts</code> vocabulary.
+<p>Low Level words:</p>
 <pre>
 ESP_INTR_FLAG_DEFAULT -- Default handler allows per pin routing
 
@@ -887,26 +982,12 @@ rmt_clr_intr_enable_mask --- DEPRECATED interrupt handled by driver
 rmt_set_pin --- DEPRECATED use rmt_set_gpio instead
 </pre>
 
-<h5 id="tasks">Tasks</h5>
-These words are inside the <code>TASKS</code> vocabulary.
-
-<pre>
-PAUSE ( -- ) Yield to other tasks.
-MS ( n -- ) Pause for some number of milliseconds (yields to other tasks).
-TASK ( xt dsz rsz "name" -- ) Create a new task with dsz size data stack
-                              and rsz size return stack running xt.
-START-TASK ( task -- ) Activate a task.
-.TASKS ( -- ) List running tasks.
-
-Example:
-tasks
-: hi   begin ." Time is: " ms-ticks . cr 1000 ms again ;
-' hi 100 100 task my-counter
-my-counter start-task
-</pre>
-
 <h5 id="timers">Timers</h5>
 These words are inside the <code>TIMERS</code> vocabulary.
+<p><b>
+  NOTE: Starting in v7.0.7.15 the optional module interrupts.h must be
+  placed next to ESP32forth.ino to include this capability.
+</b></p>
 
 <br/><b>NOTE: These are low level ESP32 timers. For a periodic background
 operation, you'll probably want to use <a href="#tasks">TASKS</a>.</b>
@@ -973,72 +1054,6 @@ TIMGn_Tx_INT_RAW_REG ( n -- a )
 TIMGn_Tx_INT_ST_REG ( n -- a )
 TIMGn_Tx_INT_CLR_REG ( n -- a )
 </pre>
-
-<h5>RTOS</h5>
-These words are inside the <code>RTOS</code> vocabulary.
-<pre>
-xPortGetCoreID ( -- n )
-xTaskCreatePinnedToCore ( fn name stack-depth params priority taskout coreid -- )
-vTaskDelete ( task ) -- )
-</pre>
-
-<h3 id="webui">ESP32 WebUI</h3>
-
-<p>
-A terminal over the web can be activated.
-Contact at port printed or via mDNS <a href="http://forth/">http://forth/</a>.
-</p>
-
-<pre>
-webui ( network-z password-z -- ) login and start webui
-login ( network-z password-z -- ) login to wifi only
-</pre>
-
-<p>Usage:</p>
-
-<pre>
-z" NETWORK-NAME" z" PASSWORD" webui
-</pre>
-
-<p>
-See <a href="https://github.com/flagxor/ueforth/blob/main/esp32/web_interface.fs">web_interface.fs</a>.
-</p>
-
-<h3 id="autoexec">Autoexec.fs</h3>
-
-<p>
-NOTE: This section describes one mechanism for running code at startup.
-See <a href="#dictimages">this</a> for an alternate option.
-</p>
-
-<p>
-The system will automatically attempt to mount SPIFFS filesystem at <code>/spiffs</code>.
-It will then at start attempt to load <code>/spiffs/autoexec.fs</code>
-</p>
-
-<p>
-One way this feature can be used to configure the Web UI to start by default.
-When doing this, be sure to test your Web UI settings work well first.
-</p>
-
-<pre>
-r| z" NETWORK-NAME" z" PASSWORD" webui | s" /spiffs/autoexec.fs" dump-file
-</pre>
-
-<p>
-To remove a previously configured <code>autoexec.fs</code> you will need
-to be able to reboot in a mode with Forth. One way to do this is to search
-for the line in the .ino file that refers to <code>autoexec.fs</code>
-and replace it with a different name. Then run the following:
-</p>
-
-<pre>
-s" /spiffs/autoexec.fs" delete-file
-</pre>
-
-<p>
-See <a href="https://github.com/flagxor/ueforth/blob/main/esp32/autoboot.fs">autoboot.fs</a>.
-</p>
 
 <h3 id="adding_words">Adding Words</h3>
 

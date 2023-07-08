@@ -26,6 +26,10 @@ internals DEFINED? camera-source [IF]
   camera-source evaluate
 [THEN] forth
 
+internals DEFINED? interrupts-source [IF]
+  interrupts-source evaluate
+[THEN] forth
+
 internals DEFINED? oled-source [IF]
   oled-source evaluate
 [THEN] forth

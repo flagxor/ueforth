@@ -167,7 +167,7 @@ clean-esp32:
 
 vet:
 	$(MAKE) clean
-	$(MAKE) all
+	$(MAKE)
 	$(MAKE) esp32-build
 	$(MAKE) esp32s2-build
 	$(MAKE) esp32c3-build
@@ -175,7 +175,7 @@ vet:
 	$(MAKE) add-optional
 	$(MAKE) esp32-build
 	$(MAKE) clean
-	$(MAKE) all
+	$(MAKE)
 
 clean:
 	rm -rf $(OUT)
@@ -292,7 +292,7 @@ ESP32_BOOT = $(COMMON_PHASE1) \
              $(COMMON_PHASE2) $(COMMON_FILETOOLS) \
              esp32/platform.fs \
              posix/httpd.fs posix/web_interface.fs esp32/web_interface.fs \
-             esp32/registers.fs esp32/timers.fs \
+             esp32/registers.fs \
              posix/telnetd.fs \
              esp32/optionals.fs \
              esp32/autoboot.fs common/fini.fs
@@ -325,6 +325,14 @@ $(GEN)/esp32_camera.h: \
     esp32/optional/camera/camera.fs \
     esp32/optional/camera/camera_server.fs >$@
 
+$(GEN)/esp32_interrupts.h: \
+    tools/source_to_string.js \
+    esp32/optional/interrupts/interrupts.fs \
+    esp32/optional/interrupts/timers.fs | $(GEN)
+	$< interrupts_source $(VERSION) $(REVISION) \
+    esp32/optional/interrupts/interrupts.fs \
+    esp32/optional/interrupts/timers.fs >$@
+
 $(GEN)/esp32_oled.h: \
     tools/source_to_string.js esp32/optional/oled/oled.fs | $(GEN)
 	$< oled_source $(VERSION) $(REVISION) \
@@ -347,6 +355,7 @@ OPTIONAL_MODULES = \
   $(ESP32)/ESP32forth/assemblers.h \
   $(ESP32)/ESP32forth/camera.h \
   $(ESP32)/ESP32forth/oled.h \
+  $(ESP32)/ESP32forth/interrupts.h \
   $(ESP32)/ESP32forth/rmt.h \
   $(ESP32)/ESP32forth/serial-bluetooth.h \
   $(ESP32)/ESP32forth/spi-flash.h
@@ -650,6 +659,15 @@ $(ESP32)/ESP32forth/optional/camera.h: \
      camera=@$(GEN)/esp32_camera.h \
      >$@
 
+$(ESP32)/ESP32forth/optional/interrupts.h: \
+    esp32/optional/interrupts/interrupts.h \
+    $(GEN)/esp32_interrupts.h | $(ESP32)/ESP32forth/optional
+	cat esp32/optional/interrupts/interrupts.h | tools/replace.js \
+     VERSION=$(VERSION) \
+     REVISION=$(REVISION) \
+     interrupts=@$(GEN)/esp32_interrupts.h \
+     >$@
+
 $(ESP32)/ESP32forth/optional/oled.h: \
     esp32/optional/oled/oled.h \
     $(GEN)/esp32_oled.h | $(ESP32)/ESP32forth/optional
@@ -784,6 +802,7 @@ $(ESP32)/ESP32forth.zip: \
     $(ESP32)/ESP32forth/optional/assemblers.h \
     $(ESP32)/ESP32forth/optional/camera.h \
     $(ESP32)/ESP32forth/optional/oled.h \
+    $(ESP32)/ESP32forth/optional/interrupts.h \
     $(ESP32)/ESP32forth/optional/rmt.h \
     $(ESP32)/ESP32forth/optional/serial-bluetooth.h \
     $(ESP32)/ESP32forth/optional/spi-flash.h

@@ -26,6 +26,7 @@
 {{tier2_opcodes}}
 {{floats}}
 {{calls}}
+{{bits}}
 {{builtins.h}}
 {{builtins.cpp}}
 {{main.cpp}}

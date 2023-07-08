@@ -15,7 +15,6 @@
 static char filename[PATH_MAX];
 static char filename2[PATH_MAX];
 
-{{bits}}
 {{core}}
 {{faults}}
 {{calling}}
@@ -52,63 +51,3 @@ static cell_t ResizeFile(cell_t fd, cell_t size) {
   if (t < 0) { return errno; }
   return 0;
 }
-
-#ifdef ENABLE_INTERRUPTS_SUPPORT
-struct handle_interrupt_args {
-  cell_t xt;
-  cell_t arg;
-};
-
-static void IRAM_ATTR HandleInterrupt(void *arg) {
-  struct handle_interrupt_args *args = (struct handle_interrupt_args *) arg;
-  cell_t code[2];
-  code[0] = args->xt;
-  code[1] = g_sys->YIELD_XT;
-  cell_t fstack[INTERRUPT_STACK_CELLS];
-  cell_t rstack[INTERRUPT_STACK_CELLS];
-  cell_t stack[INTERRUPT_STACK_CELLS];
-  stack[0] = args->arg;
-  cell_t *rp = rstack;
-  *++rp = (cell_t) code;
-  *++rp = (cell_t) (fstack + 1);
-  *++rp = (cell_t) (stack + 1);
-  forth_run(rp);
-}
-
-static bool IRAM_ATTR HandleInterruptAndRet(void *arg) {
-  HandleInterrupt(arg);
-  return true;
-}
-
-static cell_t EspIntrAlloc(cell_t source, cell_t flags, cell_t xt, cell_t arg, void *ret) {
-  // NOTE: Leaks memory.
-  struct handle_interrupt_args *args = (struct handle_interrupt_args *) malloc(sizeof(struct handle_interrupt_args));
-  args->xt = xt;
-  args->arg = arg;
-  return esp_intr_alloc(source, flags, HandleInterrupt, args, (intr_handle_t *) ret);
-}
-
-static cell_t GpioIsrHandlerAdd(cell_t pin, cell_t xt, cell_t arg) {
-  // NOTE: Leaks memory.
-  struct handle_interrupt_args *args = (struct handle_interrupt_args *) malloc(sizeof(struct handle_interrupt_args));
-  args->xt = xt;
-  args->arg = arg;
-  return gpio_isr_handler_add((gpio_num_t) pin, HandleInterrupt, args);
-}
-
-static void TimerInitNull(cell_t group, cell_t timer) {
-  // Seems to be required starting in the 2.0 IDE.
-  timer_config_t config;
-  memset(&config, 0, sizeof(config));
-  config.divider = 2;
-  timer_init((timer_group_t) group, (timer_idx_t) timer, &config);
-}
-
-static cell_t TimerIsrCallbackAdd(cell_t group, cell_t timer, cell_t xt, cell_t arg, cell_t flags) {
-  // NOTE: Leaks memory.
-  struct handle_interrupt_args *args = (struct handle_interrupt_args *) malloc(sizeof(struct handle_interrupt_args));
-  args->xt = xt;
-  args->arg = arg;
-  return timer_isr_callback_add((timer_group_t) group, (timer_idx_t) timer, HandleInterruptAndRet, args, flags);
-}
-#endif

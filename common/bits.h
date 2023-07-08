@@ -37,3 +37,6 @@ typedef struct {
   void *DOCREATE_OP;
   const BUILTIN_WORD *builtins;
 } G_SYS;
+
+static G_SYS *g_sys = 0;
+static cell_t *forth_run(cell_t *init_rp);

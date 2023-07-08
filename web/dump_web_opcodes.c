@@ -51,6 +51,9 @@ enum {
 #undef V
 };
 
+static cell_t *forth_run(cell_t *init_rp) {
+  return 0;
+}
 
 int main(int argc, char *argv[]) {
   if (argc == 2 && strcmp(argv[1], "cases") == 0) {
@@ -75,6 +78,8 @@ int main(int argc, char *argv[]) {
     TIER0_OPCODE_LIST
 #undef Z
   } else if (argc == 2 && strcmp(argv[1], "sys") == 0) {
+    (void) g_sys;
+    (void) forth_run;
     G_SYS *g_sys = 0;
     #define G_SYS 256
     printf("  const g_sys = %d;\n", G_SYS);
