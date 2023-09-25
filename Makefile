@@ -343,6 +343,11 @@ $(GEN)/esp32_spi-flash.h: \
 	$< spi_flash_source $(VERSION) $(REVISION) \
     esp32/optional/spi-flash/spi-flash.fs >$@
 
+$(GEN)/esp32_espnow.h: \
+    tools/source_to_string.js esp32/optional/espnow/espnow.fs | $(GEN)
+	$< espnow_source $(VERSION) $(REVISION) \
+    esp32/optional/espnow/espnow.fs >$@
+
 $(GEN)/esp32_serial-bluetooth.h: \
     tools/source_to_string.js \
     esp32/optional/serial-bluetooth/bterm.fs \
@@ -358,7 +363,8 @@ OPTIONAL_MODULES = \
   $(ESP32)/ESP32forth/interrupts.h \
   $(ESP32)/ESP32forth/rmt.h \
   $(ESP32)/ESP32forth/serial-bluetooth.h \
-  $(ESP32)/ESP32forth/spi-flash.h
+  $(ESP32)/ESP32forth/spi-flash.h \
+  $(ESP32)/ESP32forth/espnow.h
 
 add-optional: $(OPTIONAL_MODULES)
 
@@ -702,6 +708,15 @@ $(ESP32)/ESP32forth/optional/spi-flash.h: \
      spi_flash=@$(GEN)/esp32_spi-flash.h \
      >$@
 
+$(ESP32)/ESP32forth/optional/espnow.h: \
+    esp32/optional/espnow/espnow.h \
+    $(GEN)/esp32_espnow.h | $(ESP32)/ESP32forth/optional
+	cat esp32/optional/espnow/espnow.h | tools/replace.js \
+     VERSION=$(VERSION) \
+     REVISION=$(REVISION) \
+     espnow=@$(GEN)/esp32_espnow.h \
+     >$@
+
 # ---- ESP32 ARDUINO BUILD AND FLASH ----
 
 ARDUINO_BUILDER="/mnt/c/Program Files (x86)/Arduino/arduino-builder.exe"
@@ -805,7 +820,8 @@ $(ESP32)/ESP32forth.zip: \
     $(ESP32)/ESP32forth/optional/interrupts.h \
     $(ESP32)/ESP32forth/optional/rmt.h \
     $(ESP32)/ESP32forth/optional/serial-bluetooth.h \
-    $(ESP32)/ESP32forth/optional/spi-flash.h
+    $(ESP32)/ESP32forth/optional/spi-flash.h \
+    $(ESP32)/ESP32forth/optional/espnow.h
 	cd $(ESP32) && rm -f ESP32forth.zip && zip -r ESP32forth.zip ESP32forth
 
 # ---- Publish to Archive ----

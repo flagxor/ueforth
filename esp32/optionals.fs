@@ -47,3 +47,7 @@ internals DEFINED? serial-bluetooth-source [IF]
 internals DEFINED? spi-flash-source [IF]
   spi-flash-source evaluate
 [THEN] forth
+
+internals DEFINED? espnow-source [IF]
+  espnow-source evaluate
+[THEN] forth
