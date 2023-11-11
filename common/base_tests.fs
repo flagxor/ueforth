@@ -217,3 +217,12 @@ e: test-/cell
   -10 cells cell/ -10 =assert
   -10 cells 1- cell/ -11 =assert
 ;e
+
+e: test-u<
+  1 3 u< assert
+  3 1 u< 0= assert
+  0 -1 u< assert
+  -1 0 u< 0= assert
+  0 0 u< 0= assert
+  -1 -1 u< 0= assert
+;e

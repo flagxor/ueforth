@@ -227,6 +227,7 @@ e: check-tier0-opcodes
   out: literal 
   out: 0= 
   out: 0< 
+  out: U< 
   out: + 
   out: U/MOD 
   out: */MOD 

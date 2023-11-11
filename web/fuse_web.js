@@ -43,6 +43,7 @@ cases = ReplaceAll(cases, 'tos *= sizeof(cell_t)', 'tos = (tos * 4)|0');
 cases = ReplaceAll(cases, 'tos += *sp--', 'tos = (tos + *sp)|0; --sp');
 cases = ReplaceAll(cases, 'tos = (*sp--) - tos', 'tos = (*sp - tos)|0; --sp');
 cases = ReplaceAll(cases, 'tos *= *sp--', 'tos = imul(tos, *sp); --sp');
+cases = ReplaceAll(cases, '((ucell_t) *sp)', '(i32[sp>>2]>>>0)');
 cases = ReplaceAll(cases, '(((ucell_t) *sp) >> tos)', 'i32[sp>>2]>>>tos');
 cases = ReplaceAll(cases, '*((cell_t *) tos) += *sp--',
                           'i32[tos>>2] = ((i32[tos>>2]|0) + (i32[sp>>2]|0))|0; --sp');

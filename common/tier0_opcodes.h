@@ -106,6 +106,7 @@ typedef struct {
   YV(internals, NOP, ) \
   X("0=", ZEQUAL, tos = !tos ? -1 : 0) \
   X("0<", ZLESS, tos = (tos|0) < 0 ? -1 : 0) \
+  X("U<", ULESS, tos = ((ucell_t) *sp) < ((ucell_t) tos) ? -1 : 0; --sp) \
   X("+", PLUS, tos += *sp--) \
   X("U/MOD", USMOD, w = *sp; *sp = (ucell_t) w % (ucell_t) tos; \
                     tos = (ucell_t) w / (ucell_t) tos) \
