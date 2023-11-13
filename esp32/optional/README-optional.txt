@@ -16,6 +16,7 @@ These are the current optional modules:
   * serial-bluetooth.h - Support for Bluetooth serial and
                          bterm a Bluetooth serial redirector for the terminal
   * spi-flash.h - Support for low level SPI Flash partition access
+  * espnow.h - Support for ESP NOW
 
 Initially ESP32forth focused on a minimal C kernel, with most functionality
 built in Forth code loaded at boot. Eventually, as support for more capabilities

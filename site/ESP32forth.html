@@ -1055,6 +1055,36 @@ TIMGn_Tx_INT_ST_REG ( n -- a )
 TIMGn_Tx_INT_CLR_REG ( n -- a )
 </pre>
 
+<h5 id="espnow">ESPNOW</h5>
+These words are inside the <code>espnow</code> vocabulary.
+<p><b>
+  NOTE: The optional module espnow.h must be
+  placed next to ESP32forth.ino to include this capability.
+</b></p>
+<pre>
+
+espnow_init ( -- err )
+espnow_deinit ( -- err )
+espnow_add_peer ( a -- err )
+espnow_send ( b2 b1 n0 -- err )
+
+( Constants )
+ESP_OK
+ESP_FAIL
+ESP_ERR_NO_MEM              \ Out of memory
+ESP_ERR_INVALID_ARG         \ Invalid argument
+ESP_ERR_INVALID_STATE       \ Invalid state
+ESP_ERR_INVALID_SIZE        \ Invalid size
+ESP_ERR_NOT_FOUND           \ Requested resource not found
+ESP_ERR_NOT_SUPPORTED       \ Operation or feature not supported
+ESP_ERR_TIMEOUT             \ Operation timed out
+ESP_ERR_INVALID_RESPONSE    \ Received response was invalid
+ESP_ERR_INVALID_CRC         \ CRC or checksum was invalid
+ESP_ERR_INVALID_VERSION     \ Version was invalid
+ESP_ERR_INVALID_MAC         \ MAC address was invalid
+ESP_ERR_NOT_FINISHED        \ Operation has not fully completed
+</pre>
+
 <h3 id="adding_words">Adding Words</h3>
 
 <p>
