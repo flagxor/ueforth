@@ -26,6 +26,8 @@ POSIX = $(OUT)/posix
 WINDOWS = $(OUT)/windows
 ESP32 = $(OUT)/esp32
 ESP32_SIM = $(OUT)/esp32-sim
+PICO_ICE = $(OUT)/pico-ice
+PICO_ICE_SIM = $(OUT)/pico-ice-sim
 DEPLOY = $(OUT)/deploy
 
 OS = $(shell uname -s)
@@ -238,9 +240,9 @@ COMMON_PHASE1 = common/comments.fs \
                 common/structures.fs
 
 COMMON_PHASE1e = common/comments.fs \
-                                    common/tier2a_forth.fs \
+                 common/tier2a_forth.fs \
                  common/boot.fs \
-                                    common/tier2b_forth.fs \
+                 common/tier2b_forth.fs \
                  common/io.fs \
                  common/conditionals.fs \
                  common/vocabulary.fs \
@@ -286,6 +288,16 @@ WINDOWS_BOOT = $(COMMON_PHASE1) \
                common/fini.fs
 $(GEN)/windows_boot.h: tools/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
 	$< -win boot $(VERSION) $(REVISION) $(WINDOWS_BOOT) >$@
+
+PICO_ICE_BOOT =  $(COMMON_PHASE1) \
+                 pico-ice/allocation.fs \
+                 $(COMMON_PHASE2) \
+                 common/tasks.fs common/streams.fs \
+                 pico-ice/platform.fs \
+                 pico-ice/autoboot.fs \
+                 common/fini.fs
+$(GEN)/pico_ice_boot.h: tools/source_to_string.js $(PICO_ICE_BOOT) | $(GEN)
+	$< boot $(VERSION) $(REVISION) $(PICO_ICE_BOOT) >$@
 
 ESP32_BOOT = $(COMMON_PHASE1) \
              esp32/allocation.fs esp32/bindings.fs \
@@ -792,6 +804,53 @@ CHIP_esp32cam=esp32
 
 %-build: $(ESP32)/%_build/ESP32forth.ino.bin
 	echo "done"
+
+# ---- PICO-ICE ----
+
+pico-ice: $(PICO_ICE)/ueforth_pico_ice.uf2
+
+$(PICO_ICE)/ueforth_pico_ice.uf2: \
+    $(PICO_ICE)/Makefile \
+    pico-ice/main.c \
+    pico-ice/builtins.h \
+    common/tier0_opcodes.h \
+    common/tier1_opcodes.h \
+    common/tier2_opcodes.h \
+    common/floats.h \
+    common/calls.h \
+    common/calling.h \
+    common/floats.h \
+    common/bits.h \
+    common/core.h \
+    common/interp.h \
+    $(GEN)/pico_ice_boot.h
+	make -C $(PICO_ICE) VERBOSE=1
+
+$(PICO_ICE)/Makefile:
+	cmake $(PICO_ICE) -S pico-ice -B $(PICO_ICE)
+
+# ---- PICO-ICE-SIM ----
+
+pico-ice-sim: $(PICO_ICE_SIM)/ueforth_pico_ice_sim
+
+$(PICO_ICE_SIM):
+	mkdir -p $@
+
+$(PICO_ICE_SIM)/ueforth_pico_ice_sim: \
+    pico-ice/main.c \
+    pico-ice/builtins.h \
+    common/tier0_opcodes.h \
+    common/tier1_opcodes.h \
+    common/tier2_opcodes.h \
+    common/floats.h \
+    common/calls.h \
+    common/calling.h \
+    common/floats.h \
+    common/bits.h \
+    common/core.h \
+    common/interp.h \
+    $(GEN)/pico_ice_boot.h | $(PICO_ICE_SIM)
+	$(CXX) $(CFLAGS) -DUEFORTH_SIM=1 $< -o $@
 
 # ---- PACKAGE ----
 
