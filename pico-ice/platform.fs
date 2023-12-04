@@ -46,5 +46,9 @@ previous
 ' raw-terminate is terminate
 -1 echo !
 
+vocabulary ice   ice definitions
+transfer ice-builtins
+forth definitions
+
 ( Setup entry )
 internals : ok   ." uEforth" raw-ok ; forth
