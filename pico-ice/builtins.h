@@ -21,6 +21,12 @@
 
 #ifndef UEFORTH_SIM
 # include "pico/time.h"
+# include "ice_cram.h"
+# include "ice_flash.h"
+# include "ice_fpga.h"
+# include "ice_led.h"
+# include "ice_spi.h"
+# include "ice_sram.h"
 #endif
 
 // TODO: Implement RESIZE-FILE.
@@ -30,6 +36,12 @@
   REQUIRED_MEMORY_SUPPORT \
   REQUIRED_SYSTEM_SUPPORT \
   REQUIRED_FILES_SUPPORT \
+  OPTIONAL_CRAM_SUPPORT \
+  OPTIONAL_FLASH_SUPPORT \
+  OPTIONAL_FPGA_SUPPORT \
+  OPTIONAL_LED_SUPPORT \
+  OPTIONAL_SPI_SUPPORT \
+  OPTIONAL_SRAM_SUPPORT \
   CALLING_OPCODE_LIST \
   FLOATING_POINT_LIST
 
@@ -84,7 +96,70 @@
   X("NON-BLOCK", NON_BLOCK, n0 = fcntl(n0, F_SETFL, O_NONBLOCK); \
     n0 = n0 < 0 ? errno : 0)
 
-#define VOCABULARY_LIST V(forth) V(internals)
+#ifdef UEFORTH_SIM
+# define OPTIONAL_CRAM_SUPPORT
+#else
+# define OPTIONAL_CRAM_SUPPORT \
+   YV(ice, ice_cram_open, ice_cram_open()) \
+   YV(ice, ice_cram_write, ice_cram_write(b1, n0); DROPn(2)) \
+   YV(ice, ice_cram_close, ice_cram_close())
+#endif
+
+#ifdef UEFORTH_SIM
+# define OPTIONAL_FLASH_SUPPORT
+#else
+# define OPTIONAL_FLASH_SUPPORT \
+   YV(ice, ICE_FLASH_PAGE_SIZE, PUSH ICE_FLASH_PAGE_SIZE) \
+   YV(ice, ice_flash_init, ice_flash_init()) \
+   YV(ice, ice_flash_read, ice_flash_read(n2, b1, n0); DROPn(3)) \
+   YV(ice, ice_flash_erase_sector, ice_flash_erase_sector(n0); DROP) \
+   YV(ice, ice_flash_program_page, ice_flash_program_page(n1, b0); DROPn(2)) \
+   YV(ice, ice_flash_erase_chip, ice_flash_erase_chip()) \
+   YV(ice, ice_flash_wakeup, ice_flash_wakeup()) \
+   YV(ice, ice_flash_sleep, ice_flash_sleep())
+#endif
+
+#ifdef UEFORTH_SIM
+# define OPTIONAL_FPGA_SUPPORT
+#else
+# define OPTIONAL_FPGA_SUPPORT \
+   YV(ice, ice_fpga_init, ice_fpga_init(n0); DROP) \
+   YV(ice, ice_fpga_stop, ice_fpga_stop(); DROP) \
+   YV(ice, ice_fpga_start, PUSH (ice_fpga_start() ? -1 :0))
+#endif
+
+#ifdef UEFORTH_SIM
+# define OPTIONAL_LED_SUPPORT
+#else
+# define OPTIONAL_LED_SUPPORT \
+   YV(ice, ice_led_init, ice_led_init()) \
+   YV(ice, ice_led_red, ice_led_red(n0); DROP) \
+   YV(ice, ice_led_green, ice_led_green(n0); DROP) \
+   YV(ice, ice_led_blue, ice_led_blue(n0); DROP)
+#endif
+
+#ifdef UEFORTH_SIM
+# define OPTIONAL_SPI_SUPPORT
+#else
+# define OPTIONAL_SPI_SUPPORT \
+   YV(ice, ice_spi_init, ice_spi_init()) \
+   YV(ice, ice_spi_chip_select, ice_spi_chip_select(n0); DROP) \
+   YV(ice, ice_spi_chip_deselect, ice_spi_chip_deselect(n0); DROP) \
+   YV(ice, ice_spi_read_blocking, ice_spi_read_blocking(b1, n0); DROPn(2)) \
+   YV(ice, ice_spi_write_blocking, ice_spi_write_blocking(b1, n0); DROPn(2))
+#endif
+
+#ifdef UEFORTH_SIM
+# define OPTIONAL_SRAM_SUPPORT
+#else
+# define OPTIONAL_SRAM_SUPPORT \
+   YV(ice, ice_sram_init, ice_sram_init()) \
+   YV(ice, ice_sram_get_id, ice_sram_get_id(b0); DROP) \
+   YV(ice, ice_sram_read_blocking, ice_sram_read_blocking(n2, b1, n0); DROPn(3)) \
+   YV(ice, ice_sram_write_blocking, ice_sram_write_blocking(n2, b1, n0); DROPn(3))
+#endif
+
+#define VOCABULARY_LIST V(forth) V(internals) V(ice)
 
 #define PATH_MAX 256
 static char filename[PATH_MAX];
