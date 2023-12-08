@@ -124,7 +124,7 @@
 #else
 # define OPTIONAL_FPGA_SUPPORT \
    YV(ice, ice_fpga_init, ice_fpga_init(n0); DROP) \
-   YV(ice, ice_fpga_stop, ice_fpga_stop(); DROP) \
+   YV(ice, ice_fpga_stop, ice_fpga_stop()) \
    YV(ice, ice_fpga_start, PUSH (ice_fpga_start() ? -1 :0))
 #endif
 
