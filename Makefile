@@ -180,6 +180,7 @@ vet:
 	$(MAKE) clean
 	$(MAKE)
 
+.PHONY: clean
 clean:
 	rm -rf $(OUT)
 
@@ -717,24 +718,18 @@ $(ESP32)/ESP32forth/optional/spi-flash.h: \
 
 # ---- ESP32 ARDUINO BUILD AND FLASH ----
 
-ARDUINO_BUILDER="/mnt/c/Program Files (x86)/Arduino/arduino-builder.exe"
-ARDUINO="c:/Program Files (x86)/Arduino"
-LOCALAPPDATA=$(subst \,/,$(shell cmd.exe /c echo %LOCALAPPDATA%))
-USERPROFILE=$(subst \,/,$(shell cmd.exe /c echo %USERPROFILE%))
-DOCUMENTS_ARDUINO=${USERPROFILE}/Documents/Arduino
-ARDUINO_APP=${LOCALAPPDATA}/Arduino15
-ARDUINO_APP_DIR=$(subst C:/,/mnt/c/,${ARDUINO_APP})
-ESPTOOL=${ARDUINO_APP_DIR}/packages/esp32/tools/esptool_py/4.2.1/esptool.exe
+LOCALAPPDATA=$(subst C:/,/mnt/c/,$(subst \,/,$(shell cmd.exe /c echo %LOCALAPPDATA%)))
+ARDUINO_CLI="${LOCALAPPDATA}/Programs/arduino-ide/resources/app/lib/backend/resources/arduino-cli.exe"
 
-ESP32_BOARD_esp32=-fqbn=esp32:esp32:esp32:PSRAM=disabled,PartitionScheme=no_ota,CPUFreq=240,FlashMode=qio,FlashFreq=80,FlashSize=4M,UploadSpeed=921600,LoopCore=1,EventsCore=1,DebugLevel=none,EraseFlash=none
+ESP32_BOARD_esp32=--fqbn=esp32:esp32:esp32:PSRAM=disabled,PartitionScheme=no_ota,CPUFreq=240,FlashMode=qio,FlashFreq=80,FlashSize=4M,UploadSpeed=921600,LoopCore=1,EventsCore=1,DebugLevel=none,EraseFlash=none
 
-ESP32_BOARD_esp32s2=-fqbn=esp32:esp32:esp32s2:CDCOnBoot=default,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,PSRAM=disabled,PartitionScheme=default,CPUFreq=240,FlashMode=qio,FlashFreq=80,FlashSize=4M,UploadSpeed=921600,DebugLevel=none,EraseFlash=none
+ESP32_BOARD_esp32s2=--fqbn=esp32:esp32:esp32s2:CDCOnBoot=default,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,PSRAM=disabled,PartitionScheme=default,CPUFreq=240,FlashMode=qio,FlashFreq=80,FlashSize=4M,UploadSpeed=921600,DebugLevel=none,EraseFlash=none
 
-ESP32_BOARD_esp32s3=-fqbn=esp32:esp32:esp32s3:PSRAM=disabled,FlashMode=qio,FlashSize=4M,LoopCore=1,EventsCore=1,USBMode=hwcdc,CDCOnBoot=default,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,PartitionScheme=default,CPUFreq=240,UploadSpeed=921600,DebugLevel=none,EraseFlash=none
+ESP32_BOARD_esp32s3=--fqbn=esp32:esp32:esp32s3:PSRAM=disabled,FlashMode=qio,FlashSize=4M,LoopCore=1,EventsCore=1,USBMode=hwcdc,CDCOnBoot=default,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,PartitionScheme=default,CPUFreq=240,UploadSpeed=921600,DebugLevel=none,EraseFlash=none
 
-ESP32_BOARD_esp32c3=-fqbn=esp32:esp32:esp32c3:CDCOnBoot=default,PartitionScheme=default,CPUFreq=160,FlashMode=qio,FlashFreq=80,FlashSize=4M,UploadSpeed=921600,DebugLevel=none,EraseFlash=none
+ESP32_BOARD_esp32c3=--fqbn=esp32:esp32:esp32c3:CDCOnBoot=default,PartitionScheme=default,CPUFreq=160,FlashMode=qio,FlashFreq=80,FlashSize=4M,UploadSpeed=921600,DebugLevel=none,EraseFlash=none
 
-ESP32_BOARD_esp32cam=-fqbn=esp32:esp32:esp32cam:CPUFreq=240,FlashMode=qio,PartitionScheme=huge_app,FlashFreq=80,DebugLevel=none,EraseFlash=none
+ESP32_BOARD_esp32cam=--fqbn=esp32:esp32:esp32cam:CPUFreq=240,FlashMode=qio,PartitionScheme=huge_app,FlashFreq=80,DebugLevel=none,EraseFlash=none
 
 $(ESP32)/%_build:
 	mkdir -p $@
@@ -744,20 +739,16 @@ $(ESP32)/%_cache:
 
 $(ESP32)/%_build/ESP32forth.ino.bin: $(ESP32)/ESP32forth/ESP32forth.ino | \
     $(ESP32)/%_build $(ESP32)/%_cache
-	${ARDUINO_BUILDER} \
-    -hardware ${ARDUINO}/hardware \
-    -hardware ${ARDUINO_APP}/packages \
-    -tools ${ARDUINO}/tools-builder \
-    -tools ${ARDUINO}/hardware/tools/avr \
-    -tools ${ARDUINO_APP}/packages \
-    -built-in-libraries ${ARDUINO}/libraries \
-    -libraries ${DOCUMENTS_ARDUINO}/libraries \
-    -prefs=build.warn_data_percentage=75 \
+	${ARDUINO_CLI} compile \
     ${ESP32_BOARD_$(subst _build,,$(notdir $(word 1,$|)))} \
-    -build-path $(word 1,$|) \
-    -build-cache $(word 2,$|) \
+    --build-path $(word 1,$|) \
+    --build-cache-path $(word 2,$|) \
     $(ESP32)/ESP32forth/ESP32forth.ino
 
+.PRECIOUS: $(ESP32)/%_build
+.PRECIOUS: $(ESP32)/%_cache
+
+.PHONY: esp32all
 esp32all: \
   $(ESP32)/esp32_build/ESP32forth.ino.bin \
   $(ESP32)/esp32s2_build/ESP32forth.ino.bin \
@@ -767,42 +758,22 @@ esp32all: \
 
 PORT?=COM3
 
+.PHONY: putty
 putty:
 	${HOME}/Desktop/putty.exe -serial ${PORT} -sercfg 115200 &
 
-BAUD_esp32=921600
-BAUD_esp32s2=921600
-BAUD_esp32s3=921600
-BAUD_esp32c3=921600
-BAUD_esp32cam=460800
+.PHONY: %-flash
+%-flash: $(ESP32)/%_build/ESP32forth.ino.bin | \
+    $(ESP32)/%_build $(ESP32)/%_cache
+	${ARDUINO_CLI} compile \
+	  --port $(PORT) \
+	  --upload \
+    ${ESP32_BOARD_$(subst -flash,,$(notdir $(word 1,$@)))} \
+    --build-path $(word 1,$|) \
+    --build-cache-path $(word 2,$|) \
+    $(ESP32)/ESP32forth/ESP32forth.ino
 
-BOOTLOADER_esp32=0x1000
-BOOTLOADER_esp32s2=0x1000
-BOOTLOADER_esp32s3=0x0
-BOOTLOADER_esp32c3=0x0
-BOOTLOADER_esp32cam=0x1000
-
-CHIP_esp32=esp32
-CHIP_esp32s2=esp32s2
-CHIP_esp32s3=esp32s3
-CHIP_esp32c3=esp32c3
-CHIP_esp32cam=esp32
-
-%-flash: $(ESP32)/%_build/ESP32forth.ino.bin
-	${ESPTOOL} \
-  --chip ${CHIP_$(subst -flash,,$@)} \
-  --baud ${BAUD_$(subst -flash,,$@)} \
-  --port ${PORT} \
-  --before default_reset \
-  --after hard_reset write_flash -z \
-  --flash_mode dio \
-  --flash_freq 80m \
-  --flash_size 4MB \
-  ${BOOTLOADER_$(subst -flash,,$@)} $(ESP32)/$(subst -flash,,$@)_build/ESP32forth.ino.bootloader.bin \
-  0x8000 $(ESP32)/$(subst -flash,,$@)_build/ESP32forth.ino.partitions.bin \
-  0xe000 ${ARDUINO_APP}/packages/esp32/hardware/esp32/2.0.5/tools/partitions/boot_app0.bin \
-  0x10000 $(ESP32)/$(subst -flash,,$@)_build/ESP32forth.ino.bin
-
+.PHONY: %-build
 %-build: $(ESP32)/%_build/ESP32forth.ino.bin
 	echo "done"
 
