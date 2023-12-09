@@ -94,7 +94,8 @@ WIN_LIBS=user32.lib
 TARGETS = posix_target \
           web_target \
           esp32_target \
-          esp32_sim_target
+          esp32_sim_target \
+          pico_ice_sim_target
 TESTS = posix_tests web_tests esp32_sim_tests
 
 LSQ = ls 2>/dev/null
@@ -807,9 +808,13 @@ CHIP_esp32cam=esp32
 
 # ---- PICO-ICE ----
 
-pico-ice: $(PICO_ICE)/ueforth_pico_ice.uf2
+pico-ice: pico_ice_target
+pico_ice_target: $(PICO_ICE)/ueforth-pico-ice.zip
 
-$(PICO_ICE)/ueforth_pico_ice.uf2: \
+$(PICO_ICE)/ueforth-pico-ice:
+	mkdir -p $@
+
+$(PICO_ICE)/ieforth-pico-ice/ueforth_pico_ice.uf2: \
     $(PICO_ICE)/Makefile \
     pico-ice/main.c \
     pico-ice/builtins.h \
@@ -829,9 +834,25 @@ $(PICO_ICE)/ueforth_pico_ice.uf2: \
 $(PICO_ICE)/Makefile:
 	cmake $(PICO_ICE) -S pico-ice -B $(PICO_ICE)
 
+$(PICO_ICE)/ueforth-pico-ice/README.txt: pico-ice/README.txt | $(PICO_ICE)/ueforth-pico-ice
+	cat pico-ice/README.txt | tools/replace.js \
+     VERSION=$(VERSION) \
+     REVISION=$(REVISION) \
+     >$@
+
+$(PICO_ICE)/ueforth-pico-ice/LICENSE: LICENSE
+	cp $< $@
+
+$(PICO_ICE)/ueforth-pico-ice/pico-ice-sdk-LICENSE.md: pico-ice/pico-ice-sdk/LICENSE.md
+	cp $< $@
+
+$(PICO_ICE)/ueforth-pico-ice/pico-sdk-LICENSE.TXT: pico-ice/pico-sdk/LICENSE.TXT
+	cp $< $@
+
 # ---- PICO-ICE-SIM ----
 
-pico-ice-sim: $(PICO_ICE_SIM)/ueforth_pico_ice_sim
+pico-ice-sim: pico_ice_sim_target
+pico_ice_sim_target: $(PICO_ICE_SIM)/ueforth_pico_ice_sim
 
 $(PICO_ICE_SIM):
 	mkdir -p $@
@@ -852,7 +873,7 @@ $(PICO_ICE_SIM)/ueforth_pico_ice_sim: \
     $(GEN)/pico_ice_boot.h | $(PICO_ICE_SIM)
 	$(CXX) $(CFLAGS) -DUEFORTH_SIM=1 $< -o $@
 
-# ---- PACKAGE ----
+# ---- PACKAGE ESP32 ----
 
 $(ESP32)/ESP32forth.zip: \
     $(ESP32)/ESP32forth/ESP32forth.ino \
@@ -866,6 +887,16 @@ $(ESP32)/ESP32forth.zip: \
     $(ESP32)/ESP32forth/optional/serial-bluetooth.h \
     $(ESP32)/ESP32forth/optional/spi-flash.h
 	cd $(ESP32) && rm -f ESP32forth.zip && zip -r ESP32forth.zip ESP32forth
+
+# ---- PACKAGE pico-ice ----
+
+$(PICO_ICE)/ueforth-pico-ice.zip: \
+    $(PICO_ICE)/ueforth-pico-ice.uf2 \
+    $(PICO_ICE)/pico-ice/README.txt \
+    $(PICO_ICE)/pico-ice/LICENSE \
+    $(PICO_ICE)/pico-ice/pico-ice-sdk-LICENSE.md \
+    $(PICO_ICE)/pico-ice/pico-sdk-LICENSE.TXT
+	cd $(PICO_ICE) && rm -f ueforth-pico-ice.zip && zip -r ueforth-pico-ice.zip ueforth-pico-ice
 
 # ---- Publish to Archive ----
 
@@ -882,6 +913,14 @@ publish-esp32: $(ESP32)/ESP32forth.zip
 	$(GSUTIL_CP) \
     $(ESP32)/ESP32forth.zip \
     $(ARCHIVE)/ESP32forth-$(VERSION).zip
+
+publish-pico-ice: $(PICO_ICE)/ueforth-pico-ice.zip
+	$(GSUTIL_CP) \
+    $(PICO_ICE)/ueforth-pico-ice.zip \
+    $(ARCHIVE)/ueforth-pico-ice-$(VERSION)-$(REVSHORT).zip
+	$(GSUTIL_CP) \
+    $(PICO_ICE)/ueforth-pico-ice.zip \
+    $(ARCHIVE)/ueforth-pico-ice-$(VERSION).zip
 
 publish-linux: $(POSIX)/ueforth
 	$(GSUTIL_CP) \
@@ -919,7 +958,7 @@ publish-index: | $(GEN)
     $(GEN)/archive.html \
     gs://eforth/releases/archive.html
 
-publish: publish-esp32 publish-linux publish-web publish-windows publish-index
+publish: publish-esp32 publish-pico-ice publish-linux publish-web publish-windows publish-index
 
 # ---- DEPLOY ----
 
@@ -929,6 +968,7 @@ $(DEPLOY):
 REPLACE = tools/replace.js \
           HEAD=@site/head.html \
           COMMON=@site/common.html \
+          FILES_COMMON=@site/files_common.html \
           POSIX_COMMON=@site/posix_common.html \
           DESKTOP_COMMON=@site/desktop_common.html \
           MENU=@site/menu.html \
@@ -954,6 +994,7 @@ $(DEPLOY)/app.yaml: $(RES)/eforth.ico \
 	cp out/web/ueforth.js $(DEPLOY)/
 	cat site/web.html | $(ESP_REPLACE) >$(DEPLOY)/web.html
 	cat site/ESP32forth.html | $(ESP_REPLACE) >$(DEPLOY)/ESP32forth.html
+	cat site/pico-ice.html | $(UE_REPLACE) >$(DEPLOY)/pico-ice.html
 	cat site/index.html | $(UE_REPLACE) >$(DEPLOY)/index.html
 	cat site/linux.html | $(UE_REPLACE) >$(DEPLOY)/linux.html
 	cat site/windows.html | $(UE_REPLACE) >$(DEPLOY)/windows.html

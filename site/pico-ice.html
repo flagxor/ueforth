@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<!--
+Copyright 2023 Bradley D. Nelson
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<head>
+  {{HEAD}}
+  <title>pico-ice</title>
+</head>
+
+<body>
+<h1>pico-ice</h1>
+{{MENU}}
+<div class="wrapper">
+
+<h2>Download</h2>
+
+<h3>Beta Release</h3>
+<p>
+<a href="https://eforth.storage.googleapis.com/releases/ueforth-pico-ice-{{VERSION}}.zip">ueforth-pico-ice-{{VERSION}}.zip</a><br/>
+  <i>Version: {{VERSION}} (Beta)</i>
+</p>
+
+<hr/>
+
+<p>
+<a href="https://eforth.storage.googleapis.com/releases/archive.html" target="_blank">Release Archive</a>
+  - Prior Releases
+</p>
+<p>
+<a href="https://github.com/flagxor/ueforth" target="_blank">http://github.com/flagxor/ueforth</a>
+  - Complete Unprocessed Source Code
+</p>
+
+<h2>License</h2>
+
+<p>
+<b>
+NOTE: Although ueforth is licensed under Apache 2.0,
+please be aware that binaries are built with SDKs that include other licenses including
+<a href="https://github.com/tinyvision-ai-inc/pico-ice-sdk/blob/main/LICENSE.md">MIT</a>,
+<a href="https://github.com/raspberrypi/pico-sdk/blob/master/LICENSE.TXT">Raspberry Pi License</a>,
+and possibly others.
+<u>Be sure to consult a lawyer before using for comercial purposes.</u>
+</b>
+</p>
+
+<hr/>
+
+<pre>
+Copyright 2023 Bradley D. Nelson
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    <a target="_blank" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a>
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+</pre>
+
+<h2>Install</h2>
+
+<p>
+<ul>
+  <li>Connect your pico-ice to USB.</li>
+  <li>Connect the USB_BOOT pin to ground.</li>
+  <li>Press reset.</li>
+  <li>Copy the ueforth-pico-ice.uf2 to the mounted drive.</li>
+</ul>
+<br/>
+<img src="https://pico-ice.tinyvision.ai/images/pico_ice_reset_button.jpg" width="300" height="auto">
+<br/>
+<a href="https://pico-ice.tinyvision.ai/programming_the_mcu.html">See detailed instructions for MCU programming</a>
+</p>
+
+<h2>Use</h2>
+
+<p>
+Initially µEforth can be interacted with over a serial port (over USB).
+One popular option is to use the serial port option on
+<a href="https://www.putty.org/">PuTTY</a>.
+Be sure to config the serial port to: <code>baud rate = 115200, data bits = 8, stop bits = 1, and parity = N</code>.
+</p>
+
+<h2>pico-ice Features</h2>
+
+<h3>pico-ice Words</h3>
+
+{{COMMON}}
+
+<h3>pico-ice Bindings</h3>
+
+<h5>Allocation</h5>
+These words are inside the <code>internals</code> vocabulary.
+<pre>
+MALLOC ( n -- a | 0 )   System malloc
+SYSFREE ( a -- )   System free
+REALLOC ( a n -- a | 0 )   System realloc
+</pre>
+
+<h5>System</h5>
+<pre>
+MS ( n -- ) Pause for some number of milliseconds.
+MS-TICKS ( -- n ) Time since start in milliseconds.
+TERMINATE ( n -- ) Call system exit.
+</pre>
+
+<h5>Files</h5>
+<pre>
+R/O ( -- mode )
+R/W ( -- mode )
+W/O ( -- mode )
+BIN ( mode -- mode )
+CLOSE-FILE ( fh -- ior )
+OPEN-FILE ( a n mode -- fh ior )
+CREATE-FILE ( a n mode -- fh ior )
+DELETE-FILE ( a n -- ior )
+WRITE-FILE ( a n fh -- ior )
+READ-FILE ( a n fh -- n ior )
+FILE-POSITION ( fh -- n ior )
+REPOSITION-FILE ( n fh -- ior )
+FILE-SIZE ( fh -- n ior )
+</pre>
+
+<h5>ice</h5>
+These words are inside the <code>ice</code> vocabulary.
+See <a href="https://pico-ice.tinyvision.ai/pico_ice_sdk.html">here</a>
+for details on the underlying SDK.
+<pre>
+ice_cram_open ( -- ) Open FPGA config RAM connection.
+ice_cram_write ( a n -- ) Write bytes to the FPGA config RAM connection.
+ice_cram_close ( -- ) Close FPGA config RAM connection.
+
+ICE_FLASH_PAGE_SIZE ( -- n ) Get the size of a flash page.
+ice_flash_init ( -- ) Init flash connection.
+ice_flash_read ( addr a n -- ) Read from a flash address to a buffer.
+ice_flash_erase_sector ( n -- ) Erase a flash sector.
+ice_flash_program_page ( addr a -- ) Program a flash page.
+ice_flash_erase_chip ( -- ) Erase whole flash.
+ice_flash_wakeup ( -- ) Wakeup flash.
+ice_flash_sleep ( -- ) Put flash in sleep mode.
+
+ice_fpga_init ( n -- ) Init FPGA to a clock speed in MHz.
+                       Valid inputs: 1, 2, 3, 4, 6, 8, 12, 16, 24, 48
+ice_fpga_start ( -- ) Start FPGA.
+ice_fpga_stop ( -- ) Stop FPGA.
+
+ice_led_init ( -- ) Initialize LED.
+ice_led_red ( f -- ) Set on/off state of led red channel.
+ice_led_green ( f -- ) Set on/off state of led green channel.
+ice_led_blue ( f -- ) Set on/off state of led blue channel.
+
+ice_spi_init ( -- ) Initialize SPI.
+ice_spi_init_cs_pin ( cs_pin active_high -- ) Init selecting more options.
+ice_spi_chip_select ( n -- ) Set csn_pin to assert.
+                             Also set the SPI TX and SCK pins to output/drive mode,
+                             and keeps the RX pin to input/high-z mode.
+ice_spi_chip_deselect ( n -- ) Set csn_pin to assert.
+                               Also set the SPI TX and SCK pins back to input/high-z mode.
+ice_spi_read_blocking ( a n -- ) Read from SPI into buffer.
+ice_spi_write_blocking ( a n -- ) Write to SPI from buffer.
+
+ice_sram_init ( -- ) Initialize SRAM.
+ice_sram_get_id ( a -- ) Read SRAM id into 8 byte buffer.
+ice_sram_read_blocking ( addr a n -- ) Read from address in SRAM to memory.
+ice_sram_write_blocking ( addr a n -- ) Write from memory to SRAM.
+</pre>

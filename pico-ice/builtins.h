@@ -143,6 +143,7 @@
 #else
 # define OPTIONAL_SPI_SUPPORT \
    YV(ice, ice_spi_init, ice_spi_init()) \
+   YV(ice, ice_spi_init_cs_pin, ice_spi_init_cs_pin(n1, n0); DROPn(2)) \
    YV(ice, ice_spi_chip_select, ice_spi_chip_select(n0); DROP) \
    YV(ice, ice_spi_chip_deselect, ice_spi_chip_deselect(n0); DROP) \
    YV(ice, ice_spi_read_blocking, ice_spi_read_blocking(b1, n0); DROPn(2)) \
