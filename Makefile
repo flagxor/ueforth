@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VERSION=7.0.7.15
+VERSION=7.0.7.16
 STABLE_VERSION=7.0.6.19
 OLD_STABLE_VERSION=7.0.5.4
 REVISION=$(shell git rev-parse HEAD | head -c 20)
@@ -815,6 +815,10 @@ $(PICO_ICE)/ueforth-pico-ice:
 	mkdir -p $@
 
 $(PICO_ICE)/ueforth-pico-ice/ueforth-pico-ice.uf2: \
+    $(PICO_ICE)/ueforth_pico_ice.uf2 | $(PICO_ICE)/ueforth-pico-ice
+	cp $< $@
+
+$(PICO_ICE)/ueforth_pico_ice.uf2: \
     $(PICO_ICE)/Makefile \
     pico-ice/main.c \
     pico-ice/builtins.h \
