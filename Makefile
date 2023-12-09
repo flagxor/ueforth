@@ -819,7 +819,7 @@ $(PICO_ICE)/ueforth-pico-ice/ueforth-pico-ice.uf2: \
 	cp $< $@
 
 $(PICO_ICE)/ueforth_pico_ice.uf2: \
-    $(PICO_ICE)/Makefile \
+    $(PICO_ICE)/build.ninja \
     pico-ice/main.c \
     pico-ice/builtins.h \
     common/tier0_opcodes.h \
@@ -833,10 +833,22 @@ $(PICO_ICE)/ueforth_pico_ice.uf2: \
     common/core.h \
     common/interp.h \
     $(GEN)/pico_ice_boot.h
-	make -C $(PICO_ICE) VERBOSE=1 ueforth_pico_ice
+	ninja -C $(PICO_ICE) ueforth_pico_ice
 
-$(PICO_ICE)/Makefile:
-	cmake $(PICO_ICE) -S pico-ice -B $(PICO_ICE)
+$(PICO_ICE)/build.ninja: \
+    pico-ice/pico-sdk/README.md \
+    pico-ice/pico-ice-sdk/README.md \
+    pico-ice/pico-sdk/lib/tinyusb/README.rst
+	cmake $(PICO_ICE) -G Ninja -S pico-ice -B $(PICO_ICE)
+
+pico-ice/pico-sdk/README.md:
+	git submodule update --init pico-ice/pico-sdk
+
+pico-ice/pico-sdk/lib/tinyusb/README.rst: pico-ice/pico-sdk/README.md
+	cd pico-ice/pico-sdk && git submodule update --init lib/tinyusb
+
+pico-ice/pico-ice-sdk/README.md:
+	git submodule update --init pico-ice/pico-ice-sdk
 
 $(PICO_ICE)/ueforth-pico-ice/README.txt: pico-ice/README.txt | $(PICO_ICE)/ueforth-pico-ice
 	cat pico-ice/README.txt | tools/replace.js \
