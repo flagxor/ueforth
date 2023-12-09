@@ -833,7 +833,7 @@ $(PICO_ICE)/ueforth_pico_ice.uf2: \
     common/core.h \
     common/interp.h \
     $(GEN)/pico_ice_boot.h
-	make -C $(PICO_ICE) VERBOSE=1
+	make -C $(PICO_ICE) VERBOSE=1 ueforth_pico_ice
 
 $(PICO_ICE)/Makefile:
 	cmake $(PICO_ICE) -S pico-ice -B $(PICO_ICE)
