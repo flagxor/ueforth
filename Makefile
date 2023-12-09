@@ -814,7 +814,7 @@ pico_ice_target: $(PICO_ICE)/ueforth-pico-ice.zip
 $(PICO_ICE)/ueforth-pico-ice:
 	mkdir -p $@
 
-$(PICO_ICE)/ieforth-pico-ice/ueforth_pico_ice.uf2: \
+$(PICO_ICE)/ueforth-pico-ice/ueforth-pico-ice.uf2: \
     $(PICO_ICE)/Makefile \
     pico-ice/main.c \
     pico-ice/builtins.h \
@@ -891,11 +891,11 @@ $(ESP32)/ESP32forth.zip: \
 # ---- PACKAGE pico-ice ----
 
 $(PICO_ICE)/ueforth-pico-ice.zip: \
-    $(PICO_ICE)/ueforth-pico-ice.uf2 \
-    $(PICO_ICE)/pico-ice/README.txt \
-    $(PICO_ICE)/pico-ice/LICENSE \
-    $(PICO_ICE)/pico-ice/pico-ice-sdk-LICENSE.md \
-    $(PICO_ICE)/pico-ice/pico-sdk-LICENSE.TXT
+    $(PICO_ICE)/ueforth-pico-ice/ueforth-pico-ice.uf2 \
+    $(PICO_ICE)/ueforth-pico-ice/README.txt \
+    $(PICO_ICE)/ueforth-pico-ice/LICENSE \
+    $(PICO_ICE)/ueforth-pico-ice/pico-ice-sdk-LICENSE.md \
+    $(PICO_ICE)/ueforth-pico-ice/pico-sdk-LICENSE.TXT
 	cd $(PICO_ICE) && rm -f ueforth-pico-ice.zip && zip -r ueforth-pico-ice.zip ueforth-pico-ice
 
 # ---- Publish to Archive ----
