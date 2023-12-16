@@ -27,6 +27,7 @@
 # include "ice_led.h"
 # include "ice_spi.h"
 # include "ice_sram.h"
+# include "hardware/adc.h"
 #endif
 
 // TODO: Implement RESIZE-FILE.
@@ -42,6 +43,7 @@
   OPTIONAL_LED_SUPPORT \
   OPTIONAL_SPI_SUPPORT \
   OPTIONAL_SRAM_SUPPORT \
+  OPTIONAL_ADC_SUPPORT \
   CALLING_OPCODE_LIST \
   FLOATING_POINT_LIST
 
@@ -160,7 +162,29 @@
    YV(ice, ice_sram_write_blocking, ice_sram_write_blocking(n2, b1, n0); DROPn(3))
 #endif
 
-#define VOCABULARY_LIST V(forth) V(internals) V(ice)
+#ifdef UEFORTH_SIM
+# define OPTIONAL_ADC_SUPPORT
+#else
+# define OPTIONAL_ADC_SUPPORT \
+   YV(pico, adc_init, adc_init()) \
+   YV(pico, adc_gpio_init, adc_gpio_init(n0); DROP) \
+   YV(pico, adc_select_input, adc_select_input(n0); DROP) \
+   YV(pico, adc_get_selected_input, PUSH adc_get_selected_input()) \
+   YV(pico, adc_set_round_robin, adc_set_round_robin(n0); DROP) \
+   YV(pico, adc_set_temp_sensor_enabled, adc_set_temp_sensor_enabled(n0); DROP) \
+   YV(pico, adc_read, PUSH adc_read()) \
+   YV(pico, adc_run, adc_run(n0); DROP) \
+   YV(pico, adc_set_clkdiv, adc_set_clkdiv(*fp--)) \
+   YV(pico, adc_fifo_setup, adc_fifo_setup(n4, n3, n2, n1, n0); DROPn(5)) \
+   YV(pico, adc_fifo_is_empty, PUSH adc_fifo_is_empty()) \
+   YV(pico, adc_fifo_get_level, PUSH adc_fifo_get_level()) \
+   YV(pico, adc_fifo_get, PUSH adc_fifo_get()) \
+   YV(pico, adc_fifo_get_blocking, PUSH adc_fifo_get_blocking()) \
+   YV(pico, adc_fifo_drain, adc_fifo_drain()) \
+   YV(pico, adc_irq_set_enabled, adc_irq_set_enabled(n0))
+#endif
+
+#define VOCABULARY_LIST V(forth) V(internals) V(pico) V(ice)
 
 #define PATH_MAX 256
 static char filename[PATH_MAX];

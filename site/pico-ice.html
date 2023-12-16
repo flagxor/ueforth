@@ -139,6 +139,29 @@ REPOSITION-FILE ( n fh -- ior )
 FILE-SIZE ( fh -- n ior )
 </pre>
 
+<h5>pico</h5>
+These words are inside the <code>pico</code> vocabulary.
+See <a href="https://www.raspberrypi.com/documentation/pico-sdk/hardware.html">here</a>
+for details on the underlying hardware SDK.
+<pre>
+adc_init ( -- ) Initialize HW ADC
+adc_gpio_init ( n -- ) Init GPIO for use as ADC
+adc_select_input ( n -- ) Select ADC input
+adc_get_selected_input ( -- n ) Get selected ADC input
+adc_set_round_robin ( mask -- ) Round robin sampler selector
+adc_set_temp_sensor_enabled ( f -- ) Enable/disable onboard tempurature sensor
+adc_read ( -- u ) Perform a single conversion
+adc_run ( f -- ) Enable/disable free-running sample mode
+adc_set_clkdiv ( f: clkdiv -- ) Set ADC clock divisor
+adc_fifo_setup ( en dreq_en dreq_thresh err_in_fifo byte_shift -- ) Setup ADC FIFO
+adc_fifo_is_empty ( -- f ) Check FIFO empty state
+adc_fifo_get_level ( -- n ) Get number ADC FIFO entries
+adc_fifo_get ( -- n ) Get ADC result from FIFO
+adc_fifo_drain ( -- ) Drain FIFO.
+adc_fifo_get_blocking ( -- n ) Wait for ADC to have data
+adc_irq_set_enabled ( f -- ) Enable/disable ADC interrupts
+</pre>
+
 <h5>ice</h5>
 These words are inside the <code>ice</code> vocabulary.
 See <a href="https://pico-ice.tinyvision.ai/pico_ice_sdk.html">here</a>
