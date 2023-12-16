@@ -46,6 +46,10 @@ previous
 ' raw-terminate is terminate
 -1 echo !
 
+vocabulary pico   pico definitions
+transfer pico-builtins
+forth definitions
+
 vocabulary ice   ice definitions
 transfer ice-builtins
 forth definitions
