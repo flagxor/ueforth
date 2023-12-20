@@ -43,9 +43,6 @@ z" lseek" 3 sysfunc lseek
 z" ftruncate" 2 sysfunc ftruncate
 z" fsync" 1 sysfunc fsync
 z" exit" 1 sysfunc sysexit
-z" fork" 0 sysfunc fork
-z" wait" 1 sysfunc wait
-z" waitpid" 3 sysfunc waitpid
 z" mmap" 6 sysfunc mmap
 z" munmap" 2 sysfunc munmap
 z" mprotect" 3 sysfunc mprotect
@@ -56,6 +53,14 @@ z" free" 1 sysfunc sysfree
 z" realloc" 2 sysfunc realloc
 z" usleep" 1 sysfunc usleep
 z" signal" 2 sysfunc signal
+
+( Processes )
+z" fork" 0 sysfunc fork
+z" wait" 1 sysfunc wait
+z" waitpid" 3 sysfunc waitpid
+z" execvp" 2 sysfunc execvp
+z" dup2" 2 sysfunc dup2
+z" pipe" 1 sysfunc pipe
 
 ( Directories )
 z" chdir" 1 sysfunc chdir
