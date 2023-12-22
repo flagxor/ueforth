@@ -358,13 +358,10 @@ drop-optional:
 $(ESP32)/ESP32forth/%.h: $(ESP32)/ESP32forth/optional/%.h
 	cp $< $@
 
-$(GEN)/dump_web_opcodes: \
-    web/dump_web_opcodes.c \
-    common/tier0_opcodes.h \
-    common/tier1_opcodes.h \
-    common/bits.h \
-    common/floats.h | $(GEN)
-	$(CXX) $(CFLAGS) $< -o $@
+-include $(GEN)/dump_web_opcodes.dd
+
+$(GEN)/dump_web_opcodes: web/dump_web_opcodes.c | $(GEN)
+	$(CXX) $(CFLAGS) $< -o $@ -MD -MF $@.dd
 
 $(GEN)/web_cases.js: $(GEN)/dump_web_opcodes | $(GEN)
 	$< cases >$@
@@ -463,20 +460,11 @@ posix_target: $(POSIX)/ueforth
 $(POSIX):
 	mkdir -p $@
 
+-include $(GEN)/ueforth_posix.dd
+
 $(POSIX)/ueforth: \
-    posix/main.c \
-    posix/faults.h \
-    common/tier0_opcodes.h \
-    common/tier1_opcodes.h \
-    common/tier2_opcodes.h \
-    common/calls.h \
-    common/calling.h \
-    common/floats.h \
-    common/interp.h \
-    common/bits.h \
-    common/core.h \
-    $(GEN)/posix_boot.h | $(POSIX)
-	$(CXX) $(CFLAGS) $< -o $@ $(LIBS)
+    posix/main.c $(GEN)/posix_boot.h | $(POSIX)
+	$(CXX) $(CFLAGS) $< -o $@ $(LIBS) -MD -MF $(GEN)/ueforth_posix.dd
 	strip $(STRIP_ARGS) $@
 
 # ---- WINDOWS ----
@@ -537,30 +525,21 @@ esp32_sim_target: $(ESP32_SIM)/Esp32forth-sim
 $(ESP32_SIM):
 	mkdir -p $@
 
-$(GEN)/print-esp32-builtins: \
-    esp32/print-builtins.cpp esp32/builtins.h | $(GEN)
-	$(CXX) $(CFLAGS) $< -o $@
+-include $(GEN)/print-esp32-builtins.dd
+
+$(GEN)/print-esp32-builtins: esp32/print-builtins.cpp | $(GEN)
+	$(CXX) $(CFLAGS) $< -o $@ -MD -MF $@.dd
 
 $(GEN)/esp32_sim_opcodes.h: $(GEN)/print-esp32-builtins | $(GEN)
 	$< >$@
 
+-include $(GEN)/esp32_sim.dd
+
 $(ESP32_SIM)/Esp32forth-sim: \
     esp32/sim_main.cpp \
-    esp32/main.cpp \
-    esp32/faults.h \
-    common/tier0_opcodes.h \
-    common/tier1_opcodes.h \
-    common/tier2_opcodes.h \
-    common/floats.h \
-    common/calls.h \
-    common/calling.h \
-    common/floats.h \
-    common/bits.h \
-    common/core.h \
-    common/interp.h \
     $(GEN)/esp32_boot.h \
     $(GEN)/esp32_sim_opcodes.h | $(ESP32_SIM)
-	$(CXX) $(CFLAGS) $< -o $@
+	$(CXX) $(CFLAGS) $< -o $@ -MD -MF $(GEN)/esp32_sim.dd
 	strip $(STRIP_ARGS) $@
 
 # ---- ESP32 ----
@@ -821,21 +800,11 @@ pico_ice_sim_target: $(PICO_ICE_SIM)/ueforth_pico_ice_sim
 $(PICO_ICE_SIM):
 	mkdir -p $@
 
+-include $(GEN)/pico_ice_sim.dd
+
 $(PICO_ICE_SIM)/ueforth_pico_ice_sim: \
-    pico-ice/main.c \
-    pico-ice/builtins.h \
-    common/tier0_opcodes.h \
-    common/tier1_opcodes.h \
-    common/tier2_opcodes.h \
-    common/floats.h \
-    common/calls.h \
-    common/calling.h \
-    common/floats.h \
-    common/bits.h \
-    common/core.h \
-    common/interp.h \
-    $(GEN)/pico_ice_boot.h | $(PICO_ICE_SIM)
-	$(CXX) $(CFLAGS) -DUEFORTH_SIM=1 $< -o $@
+    pico-ice/main.c $(GEN)/pico_ice_boot.h | $(PICO_ICE_SIM) $(GEN)
+	$(CXX) $(CFLAGS) -DUEFORTH_SIM=1 $< -o $@ -MD -MF $(GEN)/pico_ice_sim.dd
 
 # ---- PACKAGE ESP32 ----
 
