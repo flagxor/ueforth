@@ -261,57 +261,48 @@ COMMON_FILETOOLS = common/tasks.fs common/streams.fs \
 COMMON_DESKTOP = common/desktop.fs \
                  common/graphics.fs common/graphics_utils.fs common/heart.fs
 
-POSIX_BOOT =  $(COMMON_PHASE1) \
-              posix/posix.fs posix/allocation.fs posix/termios.fs \
-              $(COMMON_PHASE2) $(COMMON_FILETOOLS) $(COMMON_DESKTOP) \
-              posix/x11.fs \
-              posix/graphics.fs \
-              posix/sockets.fs posix/telnetd.fs posix/httpd.fs posix/web_interface.fs \
-              posix/autoboot.fs \
-              common/fini.fs
-$(GEN)/posix_boot.h: tools/source_to_string.js $(POSIX_BOOT) | $(GEN)
-	$< boot $(VERSION) $(REVISION) $(POSIX_BOOT) >$@
+$(GEN)/posix_boot_merged.fs: tools/importation.py posix/posix_boot.fs | $(GEN)
+	$^ -I . -I $(GEN) \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION) >$@
 
-WINDOWS_BOOT_EXTRA = windows/windows_user.fs \
-                     windows/windows_gdi.fs \
-                     windows/windows_messages.fs \
-                     windows/graphics.fs
-$(GEN)/windows_boot_extra.h: tools/source_to_string.js $(WINDOWS_BOOT_EXTRA) | $(GEN)
-	$< -win boot_extra $(VERSION) $(REVISION) $(WINDOWS_BOOT_EXTRA) >$@
+$(GEN)/posix_boot.h: tools/source_to_string.js $(GEN)/posix_boot_merged.fs | $(GEN)
+	$< boot $(VERSION) $(REVISION) $(GEN)/posix_boot_merged.fs >$@
 
-WINDOWS_BOOT = $(COMMON_PHASE1) \
-               windows/windows_core.fs \
-               windows/windows_files.fs \
-               windows/windows_console.fs \
-               windows/allocation.fs \
-               $(COMMON_PHASE2) $(COMMON_FILETOOLS) $(COMMON_DESKTOP) \
-               windows/load_extra.fs \
-               posix/autoboot.fs \
-               common/fini.fs
-$(GEN)/windows_boot.h: tools/source_to_string.js $(WINDOWS_BOOT) | $(GEN)
-	$< -win boot $(VERSION) $(REVISION) $(WINDOWS_BOOT) >$@
+$(GEN)/windows_boot_extra_merged.fs: \
+    tools/importation.py windows/windows_boot_extra.fs | $(GEN)
+	$^ -I . -I $(GEN) \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION) >$@
 
-PICO_ICE_BOOT =  $(COMMON_PHASE1) \
-                 pico-ice/allocation.fs \
-                 $(COMMON_PHASE2) \
-                 common/tasks.fs common/streams.fs \
-                 pico-ice/platform.fs \
-                 pico-ice/autoboot.fs \
-                 common/fini.fs
-$(GEN)/pico_ice_boot.h: tools/source_to_string.js $(PICO_ICE_BOOT) | $(GEN)
-	$< boot $(VERSION) $(REVISION) $(PICO_ICE_BOOT) >$@
+$(GEN)/windows_boot_extra.h: tools/source_to_string.js $(GEN)/windows_boot_extra_merged.fs | $(GEN)
+	$< -win boot_extra $(VERSION) $(REVISION) $(GEN)/windows_boot_extra_merged.fs >$@
 
-ESP32_BOOT = $(COMMON_PHASE1) \
-             esp32/allocation.fs esp32/bindings.fs \
-             $(COMMON_PHASE2) $(COMMON_FILETOOLS) \
-             esp32/platform.fs \
-             posix/httpd.fs posix/web_interface.fs esp32/web_interface.fs \
-             esp32/registers.fs \
-             posix/telnetd.fs \
-             esp32/optionals.fs \
-             esp32/autoboot.fs common/fini.fs
-$(GEN)/esp32_boot.h: tools/source_to_string.js $(ESP32_BOOT) | $(GEN)
-	$< boot $(VERSION) $(REVISION) $(ESP32_BOOT) >$@
+$(GEN)/windows_boot_merged.fs: tools/importation.py windows/windows_boot.fs | $(GEN)
+	$^ -I . -I $(GEN) \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION) >$@
+
+$(GEN)/windows_boot.h: tools/source_to_string.js $(GEN)/windows_boot_merged.fs | $(GEN)
+	$< -win boot $(VERSION) $(REVISION) $(GEN)/windows_boot_merged.fs >$@
+
+$(GEN)/pico_ice_boot_merged.fs: \
+    tools/importation.py pico-ice/pico_ice_boot.fs | $(GEN)
+	$^ -I . -I $(GEN) \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION) >$@
+
+$(GEN)/pico_ice_boot.h: tools/source_to_string.js $(GEN)/pico_ice_boot_merged.fs | $(GEN)
+	$< boot $(VERSION) $(REVISION) $(GEN)/pico_ice_boot_merged.fs >$@
+
+$(GEN)/esp32_boot_merged.fs: \
+    tools/importation.py esp32/esp32_boot.fs | $(GEN)
+	$^ -I . -I $(GEN) \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION) >$@
+
+$(GEN)/esp32_boot.h: tools/source_to_string.js $(GEN)/esp32_boot_merged.fs | $(GEN)
+	$< boot $(VERSION) $(REVISION) $(GEN)/esp32_boot_merged.fs >$@
 
 $(GEN)/esp32_assembler.h: \
     tools/source_to_string.js \
