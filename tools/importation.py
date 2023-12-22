@@ -13,6 +13,7 @@ parser.add_argument('-I', action='append')
 parser.add_argument('--set-version')
 parser.add_argument('--set-revision')
 parser.add_argument('--depsout')
+parser.add_argument('--no-out', action='store_true')
 args = parser.parse_args()
 bases = args.I or []
 
@@ -58,7 +59,8 @@ def Process():
     with open(args.depsout, 'w') as fh:
       fh.write(args.output + ': ' +
                ' '.join([os.path.relpath(i) for i in imported]) + '\n')
-  with open(args.output, 'w') as fh:
-    fh.write('\n'.join(results) + '\n')
+  if not args.no_out:
+    with open(args.output, 'w') as fh:
+      fh.write('\n'.join(results) + '\n')
 
 Process()

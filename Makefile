@@ -477,19 +477,13 @@ win64_target: $(WINDOWS)/uEf64.exe
 $(WINDOWS):
 	mkdir -p $@
 
+-include $(WINDOWS)/uEf32.obj.dd
+
 $(WINDOWS)/uEf32.obj: \
     windows/main.c \
-    common/tier0_opcodes.h \
-    common/tier1_opcodes.h \
-    common/tier2_opcodes.h \
-    common/calls.h \
-    common/calling.h \
-    common/floats.h \
-    common/bits.h \
-    common/core.h \
-    windows/interp.h \
     $(GEN)/windows_boot_extra.h \
     $(GEN)/windows_boot.h | $(WINDOWS)
+	./tools/importation.py $< $@ --no-out -I . -I $(GEN) --depsout $@.dd
 	$(CL32) /c /Fo$@ $(WIN_CFLAGS) $<
 
 $(WINDOWS)/uEf32.exe: \
@@ -497,19 +491,13 @@ $(WINDOWS)/uEf32.exe: \
     $(RES)/ueforth_res32.res | $(WINDOWS)
 	$(LINK32) /OUT:$@ $(WIN_LFLAGS32) $^
 
+-include $(WINDOWS)/uEf64.obj.dd
+
 $(WINDOWS)/uEf64.obj: \
     windows/main.c \
-    common/tier0_opcodes.h \
-    common/tier1_opcodes.h \
-    common/tier2_opcodes.h \
-    common/calls.h \
-    common/calling.h \
-    common/floats.h \
-    common/bits.h \
-    common/core.h \
-    windows/interp.h \
     $(GEN)/windows_boot_extra.h \
     $(GEN)/windows_boot.h | $(WINDOWS)
+	./tools/importation.py $< $@ --no-out -I . -I $(GEN) --depsout $@.dd
 	$(CL64) /c /Fo$@ $(WIN_CFLAGS) $<
 
 $(WINDOWS)/uEf64.exe: \
