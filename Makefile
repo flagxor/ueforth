@@ -95,6 +95,7 @@ TARGETS = posix_target \
           web_target \
           esp32_target \
           esp32_sim_target \
+          pico_ice_target \
           pico_ice_sim_target
 TESTS = posix_tests web_tests esp32_sim_tests
 
@@ -233,73 +234,57 @@ sanity_test_web: $(WEB)/ueforth.js
 $(GEN):
 	mkdir -p $@
 
-COMMON_PHASE1 = common/comments.fs \
-                common/boot.fs \
-                common/io.fs \
-                common/conditionals.fs \
-                common/vocabulary.fs \
-                common/floats.fs \
-                common/structures.fs
+-include $(GEN)/posix_boot_merged.fs.dd
 
-COMMON_PHASE1e = common/comments.fs \
-                 common/tier2a_forth.fs \
-                 common/boot.fs \
-                 common/tier2b_forth.fs \
-                 common/io.fs \
-                 common/conditionals.fs \
-                 common/vocabulary.fs \
-                 common/floats.fs \
-                 common/structures.fs
-
-COMMON_PHASE2 = common/utils.fs common/code.fs common/locals.fs common/case.fs
-
-COMMON_FILETOOLS = common/tasks.fs common/streams.fs \
-                   common/filetools.fs common/including.fs \
-                   common/blocks.fs common/ansi.fs \
-                   common/visual.fs
-
-COMMON_DESKTOP = common/desktop.fs \
-                 common/graphics.fs common/graphics_utils.fs common/heart.fs
-
-$(GEN)/posix_boot_merged.fs: tools/importation.py posix/posix_boot.fs | $(GEN)
-	$^ -I . -I $(GEN) \
+$(GEN)/posix_boot_merged.fs: posix/posix_boot.fs | $(GEN)
+	./tools/importation.py $< $@ \
+    -I . -I $(GEN) --depsout $@.dd \
     --set-version $(VERSION) \
-    --set-revision $(REVISION) >$@
+    --set-revision $(REVISION)
 
 $(GEN)/posix_boot.h: tools/source_to_string.js $(GEN)/posix_boot_merged.fs | $(GEN)
 	$< boot $(VERSION) $(REVISION) $(GEN)/posix_boot_merged.fs >$@
 
-$(GEN)/windows_boot_extra_merged.fs: \
-    tools/importation.py windows/windows_boot_extra.fs | $(GEN)
-	$^ -I . -I $(GEN) \
+-include $(GEN)/windows_boot_extra_merged.fs.dd
+
+$(GEN)/windows_boot_extra_merged.fs: windows/windows_boot_extra.fs | $(GEN)
+	./tools/importation.py $< $@ \
+    -I . -I $(GEN) --depsout $@.dd \
     --set-version $(VERSION) \
-    --set-revision $(REVISION) >$@
+    --set-revision $(REVISION)
 
 $(GEN)/windows_boot_extra.h: tools/source_to_string.js $(GEN)/windows_boot_extra_merged.fs | $(GEN)
 	$< -win boot_extra $(VERSION) $(REVISION) $(GEN)/windows_boot_extra_merged.fs >$@
 
-$(GEN)/windows_boot_merged.fs: tools/importation.py windows/windows_boot.fs | $(GEN)
-	$^ -I . -I $(GEN) \
+-include $(GEN)/windows_boot_merged.fs.dd
+
+$(GEN)/windows_boot_merged.fs: windows/windows_boot.fs | $(GEN)
+	./tools/importation.py $^ $@ \
+    -I . -I $(GEN) --depsout $@.dd \
     --set-version $(VERSION) \
-    --set-revision $(REVISION) >$@
+    --set-revision $(REVISION)
 
 $(GEN)/windows_boot.h: tools/source_to_string.js $(GEN)/windows_boot_merged.fs | $(GEN)
 	$< -win boot $(VERSION) $(REVISION) $(GEN)/windows_boot_merged.fs >$@
 
-$(GEN)/pico_ice_boot_merged.fs: \
-    tools/importation.py pico-ice/pico_ice_boot.fs | $(GEN)
-	$^ -I . -I $(GEN) \
+-include $(GEN)/pico_ice_boot_merged.fs.dd
+
+$(GEN)/pico_ice_boot_merged.fs: pico-ice/pico_ice_boot.fs | $(GEN)
+	./tools/importation.py $^ $@ \
+    -I . -I $(GEN) --depsout $@.dd \
     --set-version $(VERSION) \
-    --set-revision $(REVISION) >$@
+    --set-revision $(REVISION)
 
 $(GEN)/pico_ice_boot.h: tools/source_to_string.js $(GEN)/pico_ice_boot_merged.fs | $(GEN)
 	$< boot $(VERSION) $(REVISION) $(GEN)/pico_ice_boot_merged.fs >$@
 
-$(GEN)/esp32_boot_merged.fs: \
-    tools/importation.py esp32/esp32_boot.fs | $(GEN)
-	$^ -I . -I $(GEN) \
+-include $(GEN)/esp32_boot_merged.fs.dd
+
+$(GEN)/esp32_boot_merged.fs: esp32/esp32_boot.fs | $(GEN)
+	./tools/importation.py $^ $@ \
+    -I . -I $(GEN) --depsout $@.dd \
     --set-version $(VERSION) \
-    --set-revision $(REVISION) >$@
+    --set-revision $(REVISION)
 
 $(GEN)/esp32_boot.h: tools/source_to_string.js $(GEN)/esp32_boot_merged.fs | $(GEN)
 	$< boot $(VERSION) $(REVISION) $(GEN)/esp32_boot_merged.fs >$@
@@ -390,15 +375,16 @@ $(GEN)/web_dict.js: $(GEN)/dump_web_opcodes | $(GEN)
 $(GEN)/web_sys.js: $(GEN)/dump_web_opcodes | $(GEN)
 	$< sys >$@
 
-WEB_BOOT =  $(COMMON_PHASE1e) \
-            web/platform.fs \
-            common/ansi.fs \
-            $(COMMON_PHASE2) \
-            common/tasks.fs \
-            web/utils.fs \
-            web/fini.fs
-$(GEN)/web_boot.js: tools/source_to_string.js $(WEB_BOOT) | $(GEN)
-	$< -web boot $(VERSION) $(REVISION) $(WEB_BOOT) >$@
+-include $(GEN)/web_boot_merged.fs.dd
+
+$(GEN)/web_boot_merged.fs: web/web_boot.fs | $(GEN)
+	./tools/importation.py $^ $@ \
+    -I . -I $(GEN) --depsout $@.dd \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
+
+$(GEN)/web_boot.js: tools/source_to_string.js $(GEN)/web_boot_merged.fs | $(GEN)
+	$< -web boot $(VERSION) $(REVISION) $(GEN)/web_boot_merged.fs >$@
 
 # ---- RESOURCES ----
 

@@ -7,15 +7,17 @@ import sys
 parser = argparse.ArgumentParser(
   prog='importation',
   description='Imports header / fs files')
-parser.add_argument('filename')
+parser.add_argument('input')
+parser.add_argument('output')
 parser.add_argument('-I', action='append')
 parser.add_argument('--set-version')
 parser.add_argument('--set-revision')
+parser.add_argument('--depsout')
 args = parser.parse_args()
 bases = args.I or []
 
 results = []
-imported = set()
+imported = set([__file__])
 
 def Import(filename):
   filename = os.path.abspath(filename)
@@ -46,12 +48,17 @@ def Import(filename):
         results.append(line)
 
 def Process():
-  Import(args.filename)
+  Import(args.input)
   for line in results:
     if args.set_version:
       line = line.replace('{{VERSION}}', args.set_version)
     if args.set_revision:
       line = line.replace('{{REVISION}}', args.set_revision)
-  print('\n'.join(results))
+  if args.depsout:
+    with open(args.depsout, 'w') as fh:
+      fh.write(args.output + ': ' +
+               ' '.join([os.path.relpath(i) for i in imported]) + '\n')
+  with open(args.output, 'w') as fh:
+    fh.write('\n'.join(results) + '\n')
 
 Process()
