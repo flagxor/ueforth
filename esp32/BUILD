@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Main .ino file.
 Mkdir('esp32/ESP32forth')
 Importation('esp32/ESP32forth/README.txt',
             '$src/esp32/README.txt')
@@ -20,6 +21,7 @@ Importation('esp32/ESP32forth/ESP32forth.ino',
             '$src/esp32/ESP32forth.ino',
             implicit=['gen/esp32_boot.h'], keep=True)
 
+# Optional Compontents.
 Mkdir('esp32/ESP32forth/optional')
 Importation('esp32/ESP32forth/optional/README-optional.txt',
             '$src/esp32/optional/README-optional.txt')
@@ -39,6 +41,7 @@ Esp32Optional('spi-flash', '$src/esp32/optional/spi-flash/spi-flash.h',
 Esp32Optional('serial-bluetooth', '$src/esp32/optional/serial-bluetooth/serial-bluetooth.h',
               [('serial-bluetooth', '$src/esp32/optional/serial-bluetooth/serial-bluetooth.fs')])
 
+# Simulator.
 Mkdir('esp32-sim')
 Compile('gen/print-esp32-builtins', '$src/esp32/print-builtins.cpp')
 Run('gen/esp32_sim_opcodes.h', 'gen/print-esp32-builtins')
