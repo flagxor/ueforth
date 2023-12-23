@@ -231,8 +231,8 @@ save_restore_test: $(POSIX)/ueforth
 sizes: $(ESP32_SIM)/Esp32forth-sim
 	echo internals size-all bye | $< | tools/memuse.py >$(ESP32_SIM)/sizes.txt
 
-sanity_test_web: $(WEB)/ueforth.js
-	echo '120 3 + . cr bye' | $(D8) $< | tools/check_web_sanity.js
+sanity_test_web: $(WEB)/ueforth.js tools/check_web_sanity.py
+	echo '120 3 + . cr bye' | $(D8) $< | ./tools/check_web_sanity.py
 
 # ---- GENERATED ----
 
