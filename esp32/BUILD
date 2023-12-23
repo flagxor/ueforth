@@ -12,12 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+Mkdir('esp32/ESP32forth')
+Importation('esp32/ESP32forth/README.txt',
+            '$src/esp32/README.txt')
+Importation('gen/esp32_boot.h', '$src/esp32/esp32_boot.fs', name='boot')
 Importation('esp32/ESP32forth/ESP32forth.ino',
             '$src/esp32/ESP32forth.ino',
             implicit=['gen/esp32_boot.h'], keep=True)
-Importation('gen/esp32_boot.h', '$src/esp32/esp32_boot.fs', name='boot')
-Importation('esp32/ESP32forth/README.txt',
-            '$src/esp32/README.txt')
+
+Mkdir('esp32/ESP32forth/optional')
 Importation('esp32/ESP32forth/optional/README-optional.txt',
             '$src/esp32/optional/README-optional.txt')
 Esp32Optional('rmt', '$src/esp32/optional/rmt.h', [])
@@ -35,3 +38,9 @@ Esp32Optional('spi-flash', '$src/esp32/optional/spi-flash/spi-flash.h',
               [('spi-flash', '$src/esp32/optional/spi-flash/spi-flash.fs')])
 Esp32Optional('serial-bluetooth', '$src/esp32/optional/serial-bluetooth/serial-bluetooth.h',
               [('serial-bluetooth', '$src/esp32/optional/serial-bluetooth/serial-bluetooth.fs')])
+
+Mkdir('esp32-sim')
+Compile('gen/print-esp32-builtins', '$src/esp32/print-builtins.cpp')
+Run('gen/esp32_sim_opcodes.h', 'gen/print-esp32-builtins')
+Compile('esp32-sim/esp32-sim', '$src/esp32/sim_main.cpp',
+        implicit=['gen/esp32_boot.h', 'gen/esp32_sim_opcodes.h'])

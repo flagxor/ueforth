@@ -109,12 +109,11 @@ rule compile
   depfile = $out.dd
   command = $cxx $cflags $in -o $out $libs -MD -MF $depfile && strip $strip_args $out
 
+rule run
+  description = RUN
+  command = $in >$out
+
 build gen: mkdir
-build posix: mkdir
-build windows: mkdir
-build esp32: mkdir
-build esp32/ESP32forth: mkdir
-build esp32/ESP32forth/optional: mkdir
 
 """ % {
   'version': VERSION,
@@ -123,6 +122,12 @@ build esp32/ESP32forth/optional: mkdir
   'strip_args': ' '.join(STRIP_ARGS),
   'libs': ' '.join(LIBS),
 }
+
+
+def Mkdir(path):
+  global output
+  output += 'build ' + path + ': mkdir\n'
+
 
 def Importation(target, source, header_mode='cpp', name=None, keep=False, deps=None, implicit=[]):
   global output
@@ -139,6 +144,7 @@ def Importation(target, source, header_mode='cpp', name=None, keep=False, deps=N
   if deps:
     output += f'  depfile = {deps}\n'
 
+
 def Esp32Optional(main_name, main_source, parts):
   for name, source in parts:
     Importation('gen/esp32_' + name + '.h',
@@ -151,6 +157,7 @@ def Esp32Optional(main_name, main_source, parts):
             deps='gen/esp32_optional_' + main_name + '.h.dd',
             implicit=['gen/esp32_' + i + '.h' for i, _ in parts])
 
+
 def Compile(target, source, implicit=[]):
   global output
   outdir = os.path.dirname(target)
@@ -158,10 +165,17 @@ def Compile(target, source, implicit=[]):
   output += f'build {target}: compile {source} | {outdir} {implicit}\n'
 
 
+def Run(target, source):
+  global output
+  output += f'build {target}: run {source}\n'
+
+
 def Include(path):
+  Mkdir(path)
   path = os.path.join(ROOT_DIR, path, 'BUILD')
   data = open(path).read()
   exec(data)
+
 
 Include('.')
 print(output)
