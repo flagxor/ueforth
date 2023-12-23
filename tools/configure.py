@@ -90,6 +90,7 @@ src = ../
 cflags = %(cflags)s
 strip_args = %(strip_args)s
 libs = %(libs)s
+cxx = g++
 
 rule mkdir
   description = mkdir
@@ -99,6 +100,11 @@ rule importation
   description = importation
   depfile = $out.dd
   command = ../tools/importation.py -i $in -o $out -I . -I $src $options --depsout $depfile -DVERSION=$version -DREVISION=$revision
+
+rule compile
+  description = CXX
+  depfile = $out.dd
+  command = $cxx $cflags $in -o $out $libs -MD -MF $depfile && strip $strip_args $out
 
 build gen: mkdir
 build posix: mkdir
@@ -116,6 +122,7 @@ build esp32/ESP32forth/optional: mkdir
 }
 
 def Importation(target, source, header_mode='cpp', name=None, keep=False, deps=None, implicit=[]):
+  global output
   options = ''
   if keep:
     options += '--keep-first-comment'
@@ -123,7 +130,6 @@ def Importation(target, source, header_mode='cpp', name=None, keep=False, deps=N
     options += ' --name ' + name + ' --header ' + header_mode
   outdir = os.path.dirname(target)
   implicit = ' '.join(implicit)
-  global output
   output += f'build {target}: importation {source} | {outdir} {implicit}\n'
   if options:
     output += f'  options = {options}\n'
@@ -142,6 +148,22 @@ def Esp32Optional(main_name, main_source, parts):
             deps='gen/esp32_optional_' + main_name + '.h.dd',
             implicit=['gen/esp32_' + i + '.h' for i, _ in parts])
 
+def Compile(target, source, implicit=[]):
+  global output
+  outdir = os.path.dirname(target)
+  implicit = ' '.join(implicit)
+  output += f'build {target}: compile {source} | {outdir} {implicit}\n'
+
+
+Importation('esp32/ESP32forth/ESP32forth.ino',
+            '$src/esp32/ESP32forth.ino',
+            implicit=['gen/esp32_boot.h'], keep=True)
+Importation('gen/esp32_boot.h', '$src/esp32/esp32_boot.fs', name='boot')
+Importation('esp32/ESP32forth/README.txt',
+            '$src/esp32/README.txt')
+Importation('esp32/ESP32forth/optional/README-optional.txt',
+            '$src/esp32/optional/README-optional.txt')
+Esp32Optional('rmt', '$src/esp32/optional/rmt.h', [])
 Esp32Optional('assemblers', '$src/esp32/optional/assemblers/assemblers.h',
               [('assembler', '$src/common/assembler.fs'),
                ('xtensa-assembler', '$src/esp32/optional/assemblers/xtensa-assembler.fs'),
@@ -158,10 +180,12 @@ Esp32Optional('serial-bluetooth', '$src/esp32/optional/serial-bluetooth/serial-b
               [('serial-bluetooth', '$src/esp32/optional/serial-bluetooth/serial-bluetooth.fs')])
 
 Importation('gen/posix_boot.h', '$src/posix/posix_boot.fs', name='boot')
+Compile('posix/ueforth', '$src/posix/main.c',
+        implicit=['gen/posix_boot.h'])
+
 Importation('gen/window_boot.h', '$src/windows/windows_boot.fs', header_mode='win', name='boot')
 Importation('gen/window_boot_extra.h', '$src/windows/windows_boot_extra.fs', header_mode='win', name='boot')
 Importation('gen/pico_ice_boot.h', '$src/pico-ice/pico_ice_boot.fs', name='boot')
-Importation('gen/esp32_boot.h', '$src/esp32/esp32_boot.fs', name='boot')
 Importation('gen/web_boot.js', '$src/web/web_boot.fs', header_mode='web', name='boot')
 
 print(output)
