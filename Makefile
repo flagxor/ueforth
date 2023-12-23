@@ -619,8 +619,11 @@ $(ESP32)/ESP32forth/optional/spi-flash.h: \
 
 # ---- ESP32 ARDUINO BUILD AND FLASH ----
 
-LOCALAPPDATA=$(subst C:/,/mnt/c/,$(subst \,/,$(shell cmd.exe /c echo %LOCALAPPDATA%)))
+LOCALAPPDATAR=$(subst \,/,$(shell cmd.exe 2>/dev/null /c echo %LOCALAPPDATA%))
+LOCALAPPDATA=$(subst C:/,/mnt/c/,${LOCALAPPDATAR})
 ARDUINO_CLI="${LOCALAPPDATA}/Programs/arduino-ide/resources/app/lib/backend/resources/arduino-cli.exe"
+WINTMP="${LOCALAPPDATA}/Temp"
+WINTMP2="${LOCALAPPDATAR}/Temp"
 
 ESP32_BOARD_esp32=--fqbn=esp32:esp32:esp32:PSRAM=disabled,PartitionScheme=no_ota,CPUFreq=240,FlashMode=qio,FlashFreq=80,FlashSize=4M,UploadSpeed=921600,LoopCore=1,EventsCore=1,DebugLevel=none,EraseFlash=none
 
@@ -640,11 +643,14 @@ $(ESP32)/%_cache:
 
 $(ESP32)/%_build/ESP32forth.ino.bin: $(ESP32)/ESP32forth/ESP32forth.ino | \
     $(ESP32)/%_build $(ESP32)/%_cache
-	${ARDUINO_CLI} compile \
+	mkdir -p ${WINTMP}/ueforth_esp32/
+	rm -rf ${WINTMP}/ueforth_esp32/ESP32forth/
+	cp -r $(ESP32)/ESP32forth ${WINTMP}/ueforth_esp32/
+	cd ${WINTMP} && ${ARDUINO_CLI} compile \
     ${ESP32_BOARD_$(subst _build,,$(notdir $(word 1,$|)))} \
     --build-path $(word 1,$|) \
     --build-cache-path $(word 2,$|) \
-    $(ESP32)/ESP32forth/ESP32forth.ino
+    ${WINTMP2}/ueforth_esp32/ESP32forth/ESP32forth.ino
 
 .PRECIOUS: $(ESP32)/%_build
 .PRECIOUS: $(ESP32)/%_cache
