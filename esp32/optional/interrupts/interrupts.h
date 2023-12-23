@@ -154,4 +154,4 @@ static cell_t TimerIsrCallbackAdd(cell_t group, cell_t timer, cell_t xt, cell_t 
   return timer_isr_callback_add((timer_group_t) group, (timer_idx_t) timer, HandleInterruptAndRet, args, flags);
 }
 
-#include "esp32_interrupts.h"
+#include "gen/esp32_interrupts.h"

@@ -47,4 +47,4 @@
   /* Bluetooth */ \
   YV(bluetooth, esp_bt_dev_get_address, PUSH esp_bt_dev_get_address())
 
-#include "esp32_serial-bluetooth.h"
+#include "gen/esp32_serial-bluetooth.h"

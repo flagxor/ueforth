@@ -31,4 +31,4 @@
   YV(camera, esp_camera_save_to_nvs, n0 = esp_camera_save_to_nvs(c0)) \
   YV(camera, esp_camera_load_from_nvs, n0 = esp_camera_load_from_nvs(c0))
 
-#include "esp32_camera.h"
+#include "gen/esp32_camera.h"

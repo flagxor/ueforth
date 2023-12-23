@@ -241,79 +241,79 @@ $(GEN):
 
 $(GEN)/posix_boot.h: posix/posix_boot.fs | $(GEN)
 	./tools/importation.py -i $< -o $@ \
-    -I . -I $(GEN) --name boot --header cpp --depsout $@.dd \
+    -I . -I $(OUT) --name boot --header cpp --depsout $@.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/posix_boot.h.dd
 
 $(GEN)/windows_boot_extra.h: windows/windows_boot_extra.fs | $(GEN)
 	./tools/importation.py -i $< -o $@ \
-    -I . -I $(GEN) --name boot_extra --header win --depsout $@.dd \
+    -I . -I $(OUT) --name boot_extra --header win --depsout $@.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/windows_boot_extra.h.dd
 
 $(GEN)/windows_boot.h: windows/windows_boot.fs | $(GEN)
 	./tools/importation.py -i $< -o $@ \
-    -I . -I $(GEN) --name boot --header win --depsout $@.dd \
+    -I . -I $(OUT) --name boot --header win --depsout $@.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/windows_boot.h.dd
 
 $(GEN)/pico_ice_boot.h: pico-ice/pico_ice_boot.fs | $(GEN)
 	./tools/importation.py -i $< -o $@ \
-    -I . -I $(GEN) --name boot --header cpp --depsout $@.dd \
+    -I . -I $(OUT) --name boot --header cpp --depsout $@.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/pico_ice_boot.h.dd
 
 $(GEN)/esp32_boot.h: esp32/esp32_boot.fs | $(GEN)
 	./tools/importation.py -i $< -o $@ \
-    -I . -I $(GEN) --name boot --header cpp --depsout $@.dd \
+    -I . -I $(OUT) --name boot --header cpp --depsout $@.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_boot.h.dd
 
 $(GEN)/esp32_assembler.h: common/assembler.fs | $(GEN)
 	./tools/importation.py -i $< -o $@ \
-    -I . -I $(GEN) --name assembler_source --header cpp --depsout $@.dd \
+    -I . -I $(OUT) --name assembler_source --header cpp --depsout $@.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_assembler.h.dd
 
 $(GEN)/esp32_xtensa-assembler.h: esp32/optional/assemblers/xtensa-assembler.fs | $(GEN)
 	./tools/importation.py -i $< -o $@ \
-    -I . -I $(GEN) --name xtensa_assembler_source --header cpp --depsout $@.dd \
+    -I . -I $(OUT) --name xtensa_assembler_source --header cpp --depsout $@.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_xtensa-assembler.h.dd
 
 $(GEN)/esp32_riscv-assembler.h: esp32/optional/assemblers/riscv-assembler.fs | $(GEN)
 	./tools/importation.py -i $< -o $@ \
-    -I . -I $(GEN) --name riscv_assembler_source --header cpp --depsout $@.dd \
+    -I . -I $(OUT) --name riscv_assembler_source --header cpp --depsout $@.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_riscv-assembler.h.dd
 
 $(GEN)/esp32_camera.h: esp32/optional/camera/camera_server.fs | $(GEN)
 	./tools/importation.py -i $< -o $@ \
-    -I . -I $(GEN) --name camera_source --header cpp --depsout $@.dd \
+    -I . -I $(OUT) --name camera_source --header cpp --depsout $@.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_camera.h.dd
 
 $(GEN)/esp32_interrupts.h: esp32/optional/interrupts/timers.fs | $(GEN)
 	./tools/importation.py -i $< -o $@ \
-    -I . -I $(GEN) --name interrupts_source --header cpp --depsout $@.dd \
+    -I . -I $(OUT) --name interrupts_source --header cpp --depsout $@.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_interrupts.h.dd
 
 $(GEN)/esp32_oled.h: esp32/optional/oled/oled.fs | $(GEN)
 	./tools/importation.py -i $< -o $@ \
-    -I . -I $(GEN) --name oled_source --header cpp --depsout $@.dd \
+    -I . -I $(OUT) --name oled_source --header cpp --depsout $@.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_oled.h.dd
 
 $(GEN)/esp32_spi-flash.h: esp32/optional/spi-flash/spi-flash.fs | $(GEN)
 	./tools/importation.py -i $< -o $@ \
-    -I . -I $(GEN) --name spi_flash_source --header cpp --depsout $@.dd \
+    -I . -I $(OUT) --name spi_flash_source --header cpp --depsout $@.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_spi-flash.h.dd
 
 $(GEN)/esp32_serial-bluetooth.h: esp32/optional/serial-bluetooth/serial-bluetooth.fs | $(GEN)
 	./tools/importation.py -i $< -o $@ \
-    -I . -I $(GEN) --name serial_bluetooth_source --header cpp --depsout $@.dd \
+    -I . -I $(OUT) --name serial_bluetooth_source --header cpp --depsout $@.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_serial-bluetooth.h.dd
 
@@ -349,7 +349,7 @@ $(GEN)/web_sys.js: $(GEN)/dump_web_opcodes | $(GEN)
 
 $(GEN)/web_boot.js: web/web_boot.fs | $(GEN)
 	./tools/importation.py -i $< -o $@ \
-    -I . -I $(GEN) --name boot --header web --depsout $@.dd \
+    -I . -I $(OUT) --name boot --header web --depsout $@.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/web_boot.js.dd
 
@@ -450,7 +450,7 @@ $(WINDOWS)/uEf32.obj: \
     windows/main.c \
     $(GEN)/windows_boot_extra.h \
     $(GEN)/windows_boot.h | $(WINDOWS)
-	./tools/importation.py -i $< -o $@ --no-out -I . -I $(GEN) --depsout $@.dd
+	./tools/importation.py -i $< -o $@ --no-out -I . -I $(OUT) --depsout $@.dd
 	$(CL32) /c /Fo$@ $(WIN_CFLAGS) $<
 -include $(WINDOWS)/uEf32.obj.dd
 
@@ -463,7 +463,7 @@ $(WINDOWS)/uEf64.obj: \
     windows/main.c \
     $(GEN)/windows_boot_extra.h \
     $(GEN)/windows_boot.h | $(WINDOWS)
-	./tools/importation.py -i $< -o $@ --no-out -I . -I $(GEN) --depsout $@.dd
+	./tools/importation.py -i $< -o $@ --no-out -I . -I $(OUT) --depsout $@.dd
 	$(CL64) /c /Fo$@ $(WIN_CFLAGS) $<
 -include $(WINDOWS)/uEf64.obj.dd
 
@@ -511,7 +511,7 @@ $(ESP32)/ESP32forth/ESP32forth.ino: \
     $(GEN)/esp32_boot.h | $(ESP32)/ESP32forth
 	./tools/importation.py -i $< -o $@ \
     --keep-first-comment \
-    -I . -I $(GEN) --depsout $(GEN)/esp32.dd \
+    -I . -I $(OUT) --depsout $(GEN)/esp32.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32.dd
 
@@ -531,7 +531,7 @@ $(ESP32)/ESP32forth/optional/assemblers.h: \
     $(GEN)/esp32_riscv-assembler.h | $(ESP32)/ESP32forth/optional
 	./tools/importation.py -i $< -o $@ \
     --keep-first-comment \
-    -I . -I $(GEN) --depsout $(GEN)/esp32_optional_assemblers.h.dd \
+    -I . -I $(OUT) --depsout $(GEN)/esp32_optional_assemblers.h.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_optional_assemblers.h.dd
 
@@ -540,7 +540,7 @@ $(ESP32)/ESP32forth/optional/camera.h: \
     $(GEN)/esp32_camera.h | $(ESP32)/ESP32forth/optional
 	./tools/importation.py -i $< -o $@ \
     --keep-first-comment \
-    -I . -I $(GEN) --depsout $(GEN)/esp32_optional_camera.h.dd \
+    -I . -I $(OUT) --depsout $(GEN)/esp32_optional_camera.h.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_optional_camera.h.dd
 
@@ -549,7 +549,7 @@ $(ESP32)/ESP32forth/optional/interrupts.h: \
     $(GEN)/esp32_interrupts.h | $(ESP32)/ESP32forth/optional
 	./tools/importation.py -i $< -o $@ \
     --keep-first-comment \
-    -I . -I $(GEN) --depsout $(GEN)/esp32_optional_interrupts.h.dd \
+    -I . -I $(OUT) --depsout $(GEN)/esp32_optional_interrupts.h.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_optional_interrupts.h.dd
 
@@ -558,7 +558,7 @@ $(ESP32)/ESP32forth/optional/oled.h: \
     $(GEN)/esp32_oled.h | $(ESP32)/ESP32forth/optional
 	./tools/importation.py -i $< -o $@ \
     --keep-first-comment \
-    -I . -I $(GEN) --depsout $(GEN)/esp32_optional_oled.h.dd \
+    -I . -I $(OUT) --depsout $(GEN)/esp32_optional_oled.h.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_optional_oled.h.dd
 
@@ -573,7 +573,7 @@ $(ESP32)/ESP32forth/optional/serial-bluetooth.h: \
     $(GEN)/esp32_serial-bluetooth.h | $(ESP32)/ESP32forth/optional
 	./tools/importation.py -i $< -o $@ \
     --keep-first-comment \
-    -I . -I $(GEN) --depsout $(GEN)/esp32_optional_serial-bluetooth.h.dd \
+    -I . -I $(OUT) --depsout $(GEN)/esp32_optional_serial-bluetooth.h.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_optional_serial-bluetooth.h.dd
 
@@ -582,7 +582,7 @@ $(ESP32)/ESP32forth/optional/spi-flash.h: \
     $(GEN)/esp32_spi-flash.h | $(ESP32)/ESP32forth/optional
 	./tools/importation.py -i $< -o $@ \
     --keep-first-comment \
-    -I . -I $(GEN) --depsout $(GEN)/esp32_optional_spi-flash.h.dd \
+    -I . -I $(OUT) --depsout $(GEN)/esp32_optional_spi-flash.h.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_optional_spi-flash.h.dd
 

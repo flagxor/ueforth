@@ -24,7 +24,7 @@
       PUSH assembler_source; PUSH sizeof(assembler_source) - 1) \
   PLATFORM_ASSEMBLER_SUPPORT
 
-#include "esp32_assembler.h"
+#include "gen/esp32_assembler.h"
 
 #if defined(__riscv)
 
@@ -32,7 +32,7 @@
    XV(internals, "riscv-assembler-source", RISCV_ASSEMBLER_SOURCE, \
        PUSH riscv_assembler_source; PUSH sizeof(riscv_assembler_source) - 1)
 
-#include "esp32_riscv-assembler.h"
+#include "gen/esp32_riscv-assembler.h"
 
 #else
 
@@ -40,6 +40,6 @@
    XV(internals, "xtensa-assembler-source", XTENSA_ASSEMBLER_SOURCE, \
        PUSH xtensa_assembler_source; PUSH sizeof(xtensa_assembler_source) - 1)
 
-#include "esp32_xtensa-assembler.h"
+#include "gen/esp32_xtensa-assembler.h"
 
 #endif
