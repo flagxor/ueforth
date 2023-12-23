@@ -275,7 +275,7 @@ $(GEN)/pico_ice_boot.h: tools/source_to_string.js $(GEN)/pico_ice_boot_merged.fs
 	$< boot $(VERSION) $(REVISION) $(GEN)/pico_ice_boot_merged.fs >$@
 
 $(GEN)/esp32_boot_merged.fs: esp32/esp32_boot.fs | $(GEN)
-	./tools/importation.py $^ $@ \
+	./tools/importation.py $< $@ \
     -I . -I $(GEN) --depsout $@.dd \
     --set-version $(VERSION) \
     --set-revision $(REVISION)

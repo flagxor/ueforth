@@ -36,6 +36,7 @@ def Import(filename):
       elif (filename.endswith('.h') or
             filename.endswith('.ino') or
             filename.endswith('.cc') or
+            filename.endswith('.cpp') or
             filename.endswith('.c')) and line.startswith('#include "'):
         sfilename = line.split('"')[1]
         done = False
