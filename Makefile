@@ -313,7 +313,7 @@ $(GEN)/esp32_spi-flash.h: esp32/optional/spi-flash/spi-flash.fs | $(GEN)
 
 $(GEN)/esp32_serial-bluetooth.h: esp32/optional/serial-bluetooth/serial-bluetooth.fs | $(GEN)
 	./tools/importation.py -i $< -o $@ \
-    -I . -I $(GEN) --name serial_blueooth_source --header cpp --depsout $@.dd \
+    -I . -I $(GEN) --name serial_bluetooth_source --header cpp --depsout $@.dd \
     -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_serial-bluetooth.h.dd
 

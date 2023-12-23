@@ -97,7 +97,7 @@ rule mkdir
 rule importation
   description = importation
   depfile = $out.dd
-  command = ../tools/importation.py -i $in -o $out -I . -I .. --name $name --header $header_mode --depsout $out.dd -DVERSION=$version -DREVSION=$revision
+  command = ../tools/importation.py -i $in -o $out -I . -I .. $options --depsout $out.dd -DVERSION=$version -DREVSION=$revision
 
 build gen: mkdir
 
@@ -109,20 +109,41 @@ build gen: mkdir
   'libs': ' '.join(LIBS),
 }
 
-def ForthHeader(target, name, source, header_mode='cpp'):
+def Importation(target, source, header_mode='cpp', name=None, keep=False):
   source = '../' + source
+  options = ''
+  if keep:
+    options += '--keep-first-comment'
+  if name:
+    options += ' --name ' + name + ' --header ' + header_mode
   global output
   output += f"""
 build {target}: importation {source} | gen
-  name = {name}
-  header_mode = {header_mode}
+  options = {options}
 """
 
-ForthHeader('gen/posix_boot.h', 'boot', 'posix/posix_boot.fs')
-ForthHeader('gen/window_boot.h', 'boot', 'windows/windows_boot.fs', header_mode='win')
-ForthHeader('gen/window_boot_extra.h', 'boot_extra', 'windows/windows_boot_extra.fs', header_mode='win')
-ForthHeader('gen/pico_ice_boot.h', 'boot', 'pico-ice/pico_ice_boot.fs')
-ForthHeader('gen/esp32_boot.h', 'boot', 'esp32/esp32_boot.fs')
-ForthHeader('gen/web_boot.js', 'boot', 'esp32/esp32_boot.fs', header_mode='web')
+def Esp32Optional(target, c_source, header, name, forth_source):
+  Importation(target, name, forth_source)
+  Importation('gen/' + header, name, forth_source)
+
+Importation('gen/esp32_assembler.h', 'common/assembler.fs', name='assembler_source')
+Importation('gen/esp32_xtensa-assembler.h',
+            'esp32/optional/assemblers/xtensa-assembler.fs', name='xtensa_assembler_source')
+Importation('gen/esp32_riscv-assembler.h',
+            'esp32/optional/assemblers/riscv-assembler.fs', name='riscv_assembler_source')
+
+Importation('gen/esp32_camera.h', 'esp32/optional/camera/camera_server.fs', name='camera_source')
+Importation('gen/esp32_interrupts.h', 'esp32/optional/interrupts/timers.fs', name='interrupts_source')
+Importation('gen/esp32_oled.h', 'esp32/optional/oled/oled.fs', name='oled_source')
+Importation('gen/esp32_spi-flash.h', 'esp32/optional/spi-flash/spi-flash.fs', name='spi_flash_source')
+Importation('gen/esp32_serial-bluetooth.h',
+            'esp32/optional/serial-bluetooth/serial-bluetooth.fs', name='serial_bluetooth_source')
+
+Importation('gen/posix_boot.h', 'posix/posix_boot.fs', name='boot')
+Importation('gen/window_boot.h', 'windows/windows_boot.fs', header_mode='win', name='boot')
+Importation('gen/window_boot_extra.h', 'windows/windows_boot_extra.fs', header_mode='win', name='boot')
+Importation('gen/pico_ice_boot.h', 'pico-ice/pico_ice_boot.fs', name='boot')
+Importation('gen/esp32_boot.h', 'esp32/esp32_boot.fs', name='boot')
+Importation('gen/web_boot.js', 'web/web_boot.fs', header_mode='web', name='boot')
 
 print(output)
