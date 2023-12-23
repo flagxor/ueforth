@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/*
+ * ESP32forth RMT v{{VERSION}}
+ * Revision: {{REVISION}}
+ */
+
 #include "driver/rmt.h"
 
 #define OPTIONAL_RMT_VOCABULARY V(rmt)

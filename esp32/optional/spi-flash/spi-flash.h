@@ -77,4 +77,4 @@
       n0 = esp_partition_check_identity((const esp_partition_t *) a1, \
                                         (const esp_partition_t *) a0); NIP)
 
-{{spi_flash}}
+#include "esp32_spi-flash.h"

@@ -55,4 +55,4 @@ static Adafruit_SSD1306 *oled_display = 0;
   YV(oled, OledRectR, oled_display->drawRoundRect(n5, n4, n3, n2, n1, n0); DROPn(5)) \
   YV(oled, OledRectRF, oled_display->fillRoundRect(n5, n4, n3, n2, n1, n0 ); DROPn(5))
 
-{{oled}}
+#include "esp32_oled.h"

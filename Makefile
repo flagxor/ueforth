@@ -531,82 +531,84 @@ $(ESP32)/ESP32forth/ESP32forth.ino: \
 -include $(GEN)/esp32.dd
 
 $(ESP32)/ESP32forth/README.txt: esp32/README.txt | $(ESP32)/ESP32forth
-	cat esp32/README.txt | tools/replace.js \
-     VERSION=$(VERSION) \
-     REVISION=$(REVISION) \
-     >$@
+	./tools/importation.py $< $@ \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
 
 $(ESP32)/ESP32forth/optional/README-optional.txt: \
     esp32/optional/README-optional.txt | $(ESP32)/ESP32forth/optional
-	cat esp32/optional/README-optional.txt | tools/replace.js \
-     VERSION=$(VERSION) \
-     REVISION=$(REVISION) \
-     >$@
+	./tools/importation.py $< $@ \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
 
 $(ESP32)/ESP32forth/optional/assemblers.h: \
     esp32/optional/assemblers/assemblers.h \
     $(GEN)/esp32_assembler.h \
     $(GEN)/esp32_xtensa-assembler.h \
     $(GEN)/esp32_riscv-assembler.h | $(ESP32)/ESP32forth/optional
-	cat esp32/optional/assemblers/assemblers.h | tools/replace.js \
-     VERSION=$(VERSION) \
-     REVISION=$(REVISION) \
-     assembler=@$(GEN)/esp32_assembler.h \
-     xtensa_assembler=@$(GEN)/esp32_xtensa-assembler.h \
-     riscv_assembler=@$(GEN)/esp32_riscv-assembler.h \
-     >$@
+	./tools/importation.py $< $@ \
+    --keep-first-comment \
+    -I . -I $(GEN) --depsout $(GEN)/esp32_optional_assemblers.h.dd \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
+-include $(GEN)/esp32_optional_assemblers.h.dd
 
 $(ESP32)/ESP32forth/optional/camera.h: \
     esp32/optional/camera/camera.h \
     $(GEN)/esp32_camera.h | $(ESP32)/ESP32forth/optional
-	cat esp32/optional/camera/camera.h | tools/replace.js \
-     VERSION=$(VERSION) \
-     REVISION=$(REVISION) \
-     camera=@$(GEN)/esp32_camera.h \
-     >$@
+	./tools/importation.py $< $@ \
+    --keep-first-comment \
+    -I . -I $(GEN) --depsout $(GEN)/esp32_optional_camera.h.dd \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
+-include $(GEN)/esp32_optional_camera.h.dd
 
 $(ESP32)/ESP32forth/optional/interrupts.h: \
     esp32/optional/interrupts/interrupts.h \
     $(GEN)/esp32_interrupts.h | $(ESP32)/ESP32forth/optional
-	cat esp32/optional/interrupts/interrupts.h | tools/replace.js \
-     VERSION=$(VERSION) \
-     REVISION=$(REVISION) \
-     interrupts=@$(GEN)/esp32_interrupts.h \
-     >$@
+	./tools/importation.py $< $@ \
+    --keep-first-comment \
+    -I . -I $(GEN) --depsout $(GEN)/esp32_optional_interrupts.h.dd \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
+-include $(GEN)/esp32_optional_interrupts.h.dd
 
 $(ESP32)/ESP32forth/optional/oled.h: \
     esp32/optional/oled/oled.h \
     $(GEN)/esp32_oled.h | $(ESP32)/ESP32forth/optional
-	cat esp32/optional/oled/oled.h | tools/replace.js \
-     VERSION=$(VERSION) \
-     REVISION=$(REVISION) \
-     oled=@$(GEN)/esp32_oled.h \
-     >$@
+	./tools/importation.py $< $@ \
+    --keep-first-comment \
+    -I . -I $(GEN) --depsout $(GEN)/esp32_optional_oled.h.dd \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
+-include $(GEN)/esp32_optional_oled.h.dd
 
 $(ESP32)/ESP32forth/optional/rmt.h: \
     esp32/optional/rmt.h | $(ESP32)/ESP32forth/optional
-	cat esp32/optional/rmt.h | tools/replace.js \
-     VERSION=$(VERSION) \
-     REVISION=$(REVISION) \
-     >$@
+	./tools/importation.py $< $@ \
+    --keep-first-comment \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
 
 $(ESP32)/ESP32forth/optional/serial-bluetooth.h: \
     esp32/optional/serial-bluetooth/serial-bluetooth.h \
     $(GEN)/esp32_serial-bluetooth.h | $(ESP32)/ESP32forth/optional
-	cat esp32/optional/serial-bluetooth/serial-bluetooth.h | tools/replace.js \
-     VERSION=$(VERSION) \
-     REVISION=$(REVISION) \
-     serial_bluetooth=@$(GEN)/esp32_serial-bluetooth.h \
-     >$@
+	./tools/importation.py $< $@ \
+    --keep-first-comment \
+    -I . -I $(GEN) --depsout $(GEN)/esp32_optional_serial-bluetooth.h.dd \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
+-include $(GEN)/esp32_optional_serial-bluetooth.h.dd
 
 $(ESP32)/ESP32forth/optional/spi-flash.h: \
     esp32/optional/spi-flash/spi-flash.h \
     $(GEN)/esp32_spi-flash.h | $(ESP32)/ESP32forth/optional
-	cat esp32/optional/spi-flash/spi-flash.h | tools/replace.js \
-     VERSION=$(VERSION) \
-     REVISION=$(REVISION) \
-     spi_flash=@$(GEN)/esp32_spi-flash.h \
-     >$@
+	./tools/importation.py $< $@ \
+    --keep-first-comment \
+    -I . -I $(GEN) --depsout $(GEN)/esp32_optional_spi-flash.h.dd \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
+-include $(GEN)/esp32_optional_spi-flash.h.dd
 
 # ---- ESP32 ARDUINO BUILD AND FLASH ----
 
@@ -710,10 +712,9 @@ pico-ice/pico-ice-sdk/README.md:
 	git submodule update --init pico-ice/pico-ice-sdk
 
 $(PICO_ICE)/ueforth-pico-ice/README.txt: pico-ice/README.txt | $(PICO_ICE)/ueforth-pico-ice
-	cat pico-ice/README.txt | tools/replace.js \
-     VERSION=$(VERSION) \
-     REVISION=$(REVISION) \
-     >$@
+		./tools/importation.py $< $@ \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
 
 $(PICO_ICE)/ueforth-pico-ice/LICENSE: LICENSE
 	cp $< $@

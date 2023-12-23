@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/*
+ * ESP32forth Interrupts v{{VERSION}}
+ * Revision: {{REVISION}}
+ */
+
 #define INTERRUPT_STACK_CELLS 64
 
 #include "esp_intr_alloc.h"
@@ -149,4 +154,4 @@ static cell_t TimerIsrCallbackAdd(cell_t group, cell_t timer, cell_t xt, cell_t 
   return timer_isr_callback_add((timer_group_t) group, (timer_idx_t) timer, HandleInterruptAndRet, args, flags);
 }
 
-{{interrupts}}
+#include "esp32_interrupts.h"
