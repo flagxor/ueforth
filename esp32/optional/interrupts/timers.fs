@@ -12,6 +12,8 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
+needs interrupts.fs
+
 internals definitions
 transfer timers-builtins
 forth definitions

@@ -12,6 +12,8 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
+needs bterm.fs
+
 DEFINED? SerialBT.new [IF]
   vocabulary bluetooth   bluetooth definitions
   transfer bluetooth-builtins

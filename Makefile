@@ -239,107 +239,96 @@ sanity_test_web: $(WEB)/ueforth.js
 $(GEN):
 	mkdir -p $@
 
-$(GEN)/posix_boot_merged.fs: posix/posix_boot.fs | $(GEN)
+$(GEN)/posix_boot.h: posix/posix_boot.fs | $(GEN)
 	./tools/importation.py $< $@ \
-    -I . -I $(GEN) --depsout $@.dd \
+    -I . -I $(GEN) --name boot --header cpp --depsout $@.dd \
     --set-version $(VERSION) \
     --set-revision $(REVISION)
--include $(GEN)/posix_boot_merged.fs.dd
+-include $(GEN)/posix_boot.h.dd
 
-$(GEN)/posix_boot.h: tools/source_to_string.js $(GEN)/posix_boot_merged.fs | $(GEN)
-	$< boot $(VERSION) $(REVISION) $(GEN)/posix_boot_merged.fs >$@
-
-$(GEN)/windows_boot_extra_merged.fs: windows/windows_boot_extra.fs | $(GEN)
+$(GEN)/windows_boot_extra.h: windows/windows_boot_extra.fs | $(GEN)
 	./tools/importation.py $< $@ \
-    -I . -I $(GEN) --depsout $@.dd \
+    -I . -I $(GEN) --name boot_extra --header win --depsout $@.dd \
     --set-version $(VERSION) \
     --set-revision $(REVISION)
--include $(GEN)/windows_boot_extra_merged.fs.dd
+-include $(GEN)/windows_boot_extra.h.dd
 
-$(GEN)/windows_boot_extra.h: tools/source_to_string.js $(GEN)/windows_boot_extra_merged.fs | $(GEN)
-	$< -win boot_extra $(VERSION) $(REVISION) $(GEN)/windows_boot_extra_merged.fs >$@
-
-$(GEN)/windows_boot_merged.fs: windows/windows_boot.fs | $(GEN)
-	./tools/importation.py $^ $@ \
-    -I . -I $(GEN) --depsout $@.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
--include $(GEN)/windows_boot_merged.fs.dd
-
-$(GEN)/windows_boot.h: tools/source_to_string.js $(GEN)/windows_boot_merged.fs | $(GEN)
-	$< -win boot $(VERSION) $(REVISION) $(GEN)/windows_boot_merged.fs >$@
-
-$(GEN)/pico_ice_boot_merged.fs: pico-ice/pico_ice_boot.fs | $(GEN)
-	./tools/importation.py $^ $@ \
-    -I . -I $(GEN) --depsout $@.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
--include $(GEN)/pico_ice_boot_merged.fs.dd
-
-$(GEN)/pico_ice_boot.h: tools/source_to_string.js $(GEN)/pico_ice_boot_merged.fs | $(GEN)
-	$< boot $(VERSION) $(REVISION) $(GEN)/pico_ice_boot_merged.fs >$@
-
-$(GEN)/esp32_boot_merged.fs: esp32/esp32_boot.fs | $(GEN)
+$(GEN)/windows_boot.h: windows/windows_boot.fs | $(GEN)
 	./tools/importation.py $< $@ \
-    -I . -I $(GEN) --depsout $@.dd \
+    -I . -I $(GEN) --name boot --header win --depsout $@.dd \
     --set-version $(VERSION) \
     --set-revision $(REVISION)
--include $(GEN)/esp32_boot_merged.fs.dd
+-include $(GEN)/windows_boot.h.dd
 
-$(GEN)/esp32_boot.h: tools/source_to_string.js $(GEN)/esp32_boot_merged.fs | $(GEN)
-	$< boot $(VERSION) $(REVISION) $(GEN)/esp32_boot_merged.fs >$@
+$(GEN)/pico_ice_boot.h: pico-ice/pico_ice_boot.fs | $(GEN)
+	./tools/importation.py $< $@ \
+    -I . -I $(GEN) --name boot --header cpp --depsout $@.dd \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
+-include $(GEN)/pico_ice_boot.h.dd
 
-$(GEN)/esp32_assembler.h: \
-    tools/source_to_string.js \
-    common/assembler.fs | $(GEN)
-	$< assembler_source $(VERSION) $(REVISION) \
-    common/assembler.fs >$@
+$(GEN)/esp32_boot.h: esp32/esp32_boot.fs | $(GEN)
+	./tools/importation.py $< $@ \
+    -I . -I $(GEN) --name boot --header cpp --depsout $@.dd \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
+-include $(GEN)/esp32_boot.h.dd
 
-$(GEN)/esp32_xtensa-assembler.h: \
-    tools/source_to_string.js \
-    esp32/optional/assemblers/xtensa-assembler.fs | $(GEN)
-	$< xtensa_assembler_source $(VERSION) $(REVISION) \
-    esp32/optional/assemblers/xtensa-assembler.fs >$@
+$(GEN)/esp32_assembler.h: common/assembler.fs | $(GEN)
+	./tools/importation.py $< $@ \
+    -I . -I $(GEN) --name assembler_source --header cpp --depsout $@.dd \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
+-include $(GEN)/esp32_assembler.h.dd
 
-$(GEN)/esp32_riscv-assembler.h: \
-    tools/source_to_string.js \
-    esp32/optional/assemblers/riscv-assembler.fs | $(GEN)
-	$< riscv_assembler_source $(VERSION) $(REVISION) \
-    esp32/optional/assemblers/riscv-assembler.fs >$@
+$(GEN)/esp32_xtensa-assembler.h: esp32/optional/assemblers/xtensa-assembler.fs | $(GEN)
+	./tools/importation.py $< $@ \
+    -I . -I $(GEN) --name xtensa_assembler_source --header cpp --depsout $@.dd \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
+-include $(GEN)/esp32_xtensa-assembler.h.dd
 
-$(GEN)/esp32_camera.h: \
-    tools/source_to_string.js \
-    esp32/optional/camera/camera_server.fs \
-    esp32/optional/camera/camera.fs | $(GEN)
-	$< camera_source $(VERSION) $(REVISION) \
-    esp32/optional/camera/camera.fs \
-    esp32/optional/camera/camera_server.fs >$@
+$(GEN)/esp32_riscv-assembler.h: esp32/optional/assemblers/riscv-assembler.fs | $(GEN)
+	./tools/importation.py $< $@ \
+    -I . -I $(GEN) --name riscv_assembler_source --header cpp --depsout $@.dd \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
+-include $(GEN)/esp32_riscv-assembler.h.dd
 
-$(GEN)/esp32_interrupts.h: \
-    tools/source_to_string.js \
-    esp32/optional/interrupts/interrupts.fs \
-    esp32/optional/interrupts/timers.fs | $(GEN)
-	$< interrupts_source $(VERSION) $(REVISION) \
-    esp32/optional/interrupts/interrupts.fs \
-    esp32/optional/interrupts/timers.fs >$@
+$(GEN)/esp32_camera.h: esp32/optional/camera/camera_server.fs | $(GEN)
+	./tools/importation.py $< $@ \
+    -I . -I $(GEN) --name camera_source --header cpp --depsout $@.dd \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
+-include $(GEN)/esp32_camera.h.dd
 
-$(GEN)/esp32_oled.h: \
-    tools/source_to_string.js esp32/optional/oled/oled.fs | $(GEN)
-	$< oled_source $(VERSION) $(REVISION) \
-    esp32/optional/oled/oled.fs >$@
+$(GEN)/esp32_interrupts.h: esp32/optional/interrupts/timers.fs | $(GEN)
+	./tools/importation.py $< $@ \
+    -I . -I $(GEN) --name interrupts_source --header cpp --depsout $@.dd \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
+-include $(GEN)/esp32_interrupts.h.dd
 
-$(GEN)/esp32_spi-flash.h: \
-    tools/source_to_string.js esp32/optional/spi-flash/spi-flash.fs | $(GEN)
-	$< spi_flash_source $(VERSION) $(REVISION) \
-    esp32/optional/spi-flash/spi-flash.fs >$@
+$(GEN)/esp32_oled.h: esp32/optional/oled/oled.fs | $(GEN)
+	./tools/importation.py $< $@ \
+    -I . -I $(GEN) --name oled_source --header cpp --depsout $@.dd \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
+-include $(GEN)/esp32_oled.h.dd
 
-$(GEN)/esp32_serial-bluetooth.h: \
-    tools/source_to_string.js \
-    esp32/optional/serial-bluetooth/bterm.fs \
-    esp32/optional/serial-bluetooth/serial-bluetooth.fs | $(GEN)
-	$< serial_bluetooth_source $(VERSION) $(REVISION) \
-    esp32/optional/serial-bluetooth/serial-bluetooth.fs \
-    esp32/optional/serial-bluetooth/bterm.fs >$@
+$(GEN)/esp32_spi-flash.h: esp32/optional/spi-flash/spi-flash.fs | $(GEN)
+	./tools/importation.py $< $@ \
+    -I . -I $(GEN) --name spi_flash_source --header cpp --depsout $@.dd \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
+-include $(GEN)/esp32_spi-flash.h.dd
+
+$(GEN)/esp32_serial-bluetooth.h: esp32/optional/serial-bluetooth/serial-bluetooth.fs | $(GEN)
+	./tools/importation.py $< $@ \
+    -I . -I $(GEN) --name serial_blueooth_source --header cpp --depsout $@.dd \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
+-include $(GEN)/esp32_serial-bluetooth.h.dd
 
 OPTIONAL_MODULES = \
   $(ESP32)/ESP32forth/assemblers.h \
@@ -371,15 +360,12 @@ $(GEN)/web_dict.js: $(GEN)/dump_web_opcodes | $(GEN)
 $(GEN)/web_sys.js: $(GEN)/dump_web_opcodes | $(GEN)
 	$< sys >$@
 
-$(GEN)/web_boot_merged.fs: web/web_boot.fs | $(GEN)
-	./tools/importation.py $^ $@ \
-    -I . -I $(GEN) --depsout $@.dd \
+$(GEN)/web_boot.js: web/web_boot.fs | $(GEN)
+	./tools/importation.py $< $@ \
+    -I . -I $(GEN) --name boot --header web --depsout $@.dd \
     --set-version $(VERSION) \
     --set-revision $(REVISION)
--include $(GEN)/web_boot_merged.fs.dd
-
-$(GEN)/web_boot.js: tools/source_to_string.js $(GEN)/web_boot_merged.fs | $(GEN)
-	$< -web boot $(VERSION) $(REVISION) $(GEN)/web_boot_merged.fs >$@
+-include $(GEN)/web_boot.js.dd
 
 # ---- RESOURCES ----
 

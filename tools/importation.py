@@ -15,6 +15,8 @@ parser.add_argument('--set-revision')
 parser.add_argument('--depsout')
 parser.add_argument('--no-out', action='store_true')
 parser.add_argument('--keep-first-comment', action='store_true')
+parser.add_argument('--name')
+parser.add_argument('--header')
 args = parser.parse_args()
 bases = args.I or []
 
@@ -88,6 +90,25 @@ def Process():
   # Emit expanded file.
   if not args.no_out:
     with open(args.output, 'w') as fh:
-      fh.write('\n'.join(output) + '\n')
+      if args.header == 'web':
+        fh.write('const ' + args.name + ' = `\n' +
+                 '\n'.join(output) + '\n`;\n')
+      elif args.header == 'cpp':
+        fh.write('const char ' + args.name + '[] = R"""(\n' +
+                 '\n'.join(output) + '\n)""";\n')
+      elif args.header == 'win':
+        fixed = []
+        for line in output:
+          line = line.replace('\\', '\\\\')
+          line = line.replace('"', '\\"')
+          line = '"' + line + '\\n"'
+          if line.startswith('"(') and line.endswith(')\\n"'):
+            line = '// ' + line
+          if line:
+            fixed.append(line)
+        fh.write('const char ' + args.name + '[] =\n' +
+                 '\n'.join(fixed) + '\n;\n')
+      else:
+        fh.write('\n'.join(output) + '\n')
 
 Process()

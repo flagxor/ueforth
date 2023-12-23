@@ -94,14 +94,10 @@ rule mkdir
   description = mkdir
   command = mkdir -p $out
 
-rule source_to_string
-  description = source_to_string
-  command = ../tools/source_to_string.js $name $version $revision $in >$out
-
 rule importation
-  description = import
+  description = importation
   depfile = $out.dd
-  command = ../tools/importation.py $in $out -I . -I .. --depsout $out.dd --set-version $version --set-revision $revision
+  command = ../tools/importation.py $in $out -I . -I .. --name $name --header $header_mode --depsout $out.dd --set-version $version --set-revision $revision
 
 build gen: mkdir
 
@@ -113,23 +109,20 @@ build gen: mkdir
   'libs': ' '.join(LIBS),
 }
 
-def ForthHeader(target, name, source):
+def ForthHeader(target, name, source, header_mode='cpp'):
+  source = '../' + source
   global output
-  output += """
-build %(target)s: source_to_string %(target)s.merged | gen
-  name = %(name)s
-
-build %(target)s.merged: importation %(source)s | gen
-""" % {
-    'target': target,
-    'source': os.path.join('..', source),
-    'name': name,
-  }
+  output += f"""
+build {target}: importation {source} | gen
+  name = {name}
+  header_mode = {header_mode}
+"""
 
 ForthHeader('gen/posix_boot.h', 'boot', 'posix/posix_boot.fs')
-ForthHeader('gen/window_boot.h', 'boot', 'windows/windows_boot.fs')
-ForthHeader('gen/window_boot_extra.h', 'boot_extra', 'windows/windows_boot_extra.fs')
+ForthHeader('gen/window_boot.h', 'boot', 'windows/windows_boot.fs', header_mode='win')
+ForthHeader('gen/window_boot_extra.h', 'boot_extra', 'windows/windows_boot_extra.fs', header_mode='win')
 ForthHeader('gen/pico_ice_boot.h', 'boot', 'pico-ice/pico_ice_boot.fs')
 ForthHeader('gen/esp32_boot.h', 'boot', 'esp32/esp32_boot.fs')
+ForthHeader('gen/web_boot.js', 'boot', 'esp32/esp32_boot.fs', header_mode='web')
 
 print(output)
