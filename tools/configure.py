@@ -28,7 +28,7 @@ REVISION = 'TODO'
 CFLAGS_COMMON = [
   '-O2',
   '-I', './',
-  '-I', '../',
+  '-I', '$src',
 ]
 
 CFLAGS_MINIMIZE = [
@@ -86,6 +86,7 @@ output = """
 
 version = %(version)s
 revision = %(revision)s
+src = ../
 cflags = %(cflags)s
 strip_args = %(strip_args)s
 libs = %(libs)s
@@ -97,7 +98,7 @@ rule mkdir
 rule importation
   description = importation
   depfile = $out.dd
-  command = ../tools/importation.py -i $in -o $out -I . -I .. $options --depsout $depfile -DVERSION=$version -DREVSION=$revision
+  command = ../tools/importation.py -i $in -o $out -I . -I $src $options --depsout $depfile -DVERSION=$version -DREVSION=$revision
 
 build gen: mkdir
 build posix: mkdir
@@ -114,15 +115,16 @@ build esp32/ESP32forth/optional: mkdir
   'libs': ' '.join(LIBS),
 }
 
-def Importation(target, source, header_mode='cpp', name=None, keep=False, deps=None):
+def Importation(target, source, header_mode='cpp', name=None, keep=False, deps=None, implicit=[]):
   options = ''
   if keep:
     options += '--keep-first-comment'
   if name:
     options += ' --name ' + name + ' --header ' + header_mode
   outdir = os.path.dirname(target)
+  implicit = ' '.join(implicit)
   global output
-  output += f'build {target}: importation {source} | {outdir}\n'
+  output += f'build {target}: importation {source} | {outdir} {implicit}\n'
   if options:
     output += f'  options = {options}\n'
   if deps:
@@ -132,33 +134,63 @@ def Esp32Optional(target, c_source, header, name, forth_source):
   Importation(target, name, forth_source)
   Importation('gen/' + header, name, forth_source)
 
-Importation('gen/esp32_assembler.h', '../common/assembler.fs', name='assembler_source')
+Importation('gen/esp32_assembler.h',
+            '$src/common/assembler.fs', name='assembler_source')
 Importation('gen/esp32_xtensa-assembler.h',
-            '../esp32/optional/assemblers/xtensa-assembler.fs', name='xtensa_assembler_source')
+            '$src/esp32/optional/assemblers/xtensa-assembler.fs', name='xtensa_assembler_source')
 Importation('gen/esp32_riscv-assembler.h',
-            '../esp32/optional/assemblers/riscv-assembler.fs', name='riscv_assembler_source')
+            '$src/esp32/optional/assemblers/riscv-assembler.fs', name='riscv_assembler_source')
+Importation('esp32/ESP32forth/optional/assemblers.h',
+            '$src/esp32/optional/assemblers/assemblers.h',
+            deps='gen/esp32_optional_assemblers.h.dd',
+            implicit=[
+              'gen/esp32_assembler.h',
+              'gen/esp32_xtensa-assembler.h',
+              'gen/esp32_riscv-assembler.h',
+            ])
 
 Importation('gen/esp32_camera.h',
-            '../esp32/optional/camera/camera_server.fs', name='camera_source')
+            '$src/esp32/optional/camera/camera_server.fs', name='camera_source')
 Importation('esp32/ESP32forth/optional/camera.h',
-            'gen/esp32_camera.h', deps='gen/esp32_optional_camera.h.dd')
+            'gen/esp32_camera.h',
+            deps='gen/esp32_optional_camera.h.dd',
+            implicit=['gen/esp32_camera.h'])
 
 Importation('gen/esp32_interrupts.h',
-            '../esp32/optional/interrupts/timers.fs', name='interrupts_source')
-Importation('gen/esp32_oled.h',
-            '../esp32/optional/oled/oled.fs', name='oled_source')
-Importation('gen/esp32_spi-flash.h',
-            '../esp32/optional/spi-flash/spi-flash.fs',
-            name='spi_flash_source')
-Importation('gen/esp32_serial-bluetooth.h',
-            '../esp32/optional/serial-bluetooth/serial-bluetooth.fs',
-            name='serial_bluetooth_source')
+            '$src/esp32/optional/interrupts/timers.fs', name='interrupts_source')
+Importation('esp32/ESP32forth/optional/interrupts.h',
+            'gen/esp32_interrupts.h',
+            deps='gen/esp32_optional_interrupts.h.dd',
+            implicit=['gen/esp32_interrupts.h'])
 
-Importation('gen/posix_boot.h', '../posix/posix_boot.fs', name='boot')
-Importation('gen/window_boot.h', '../windows/windows_boot.fs', header_mode='win', name='boot')
-Importation('gen/window_boot_extra.h', '../windows/windows_boot_extra.fs', header_mode='win', name='boot')
-Importation('gen/pico_ice_boot.h', '../pico-ice/pico_ice_boot.fs', name='boot')
-Importation('gen/esp32_boot.h', '../esp32/esp32_boot.fs', name='boot')
-Importation('gen/web_boot.js', '../web/web_boot.fs', header_mode='web', name='boot')
+Importation('gen/esp32_oled.h',
+            '$src/esp32/optional/oled/oled.fs', name='oled_source')
+Importation('esp32/ESP32forth/optional/oled.h',
+            'gen/esp32_oled.h',
+            deps='gen/esp32_optional_oled.h.dd',
+            implicit=['gen/esp32_oled.h'])
+
+Importation('gen/esp32_spi-flash.h',
+            '$src/esp32/optional/spi-flash/spi-flash.fs',
+            name='spi_flash_source')
+Importation('esp32/ESP32forth/optional/spi-flash.h',
+            'gen/esp32_spi-flash.h',
+            deps='gen/esp32_optional_spi-flash.h.dd',
+            implicit=['gen/esp32_spi-flash.h'])
+
+Importation('gen/esp32_serial-bluetooth.h',
+            '$src/esp32/optional/serial-bluetooth/serial-bluetooth.fs',
+            name='serial_bluetooth_source')
+Importation('esp32/ESP32forth/optional/serial-bluetooth.h',
+            'gen/esp32_serial-bluetooth.h',
+            deps='gen/esp32_optional_serial-bluetooth.h.dd',
+            implicit=['gen/esp32_serial-bluetooth.h'])
+
+Importation('gen/posix_boot.h', '$src/posix/posix_boot.fs', name='boot')
+Importation('gen/window_boot.h', '$src/windows/windows_boot.fs', header_mode='win', name='boot')
+Importation('gen/window_boot_extra.h', '$src/windows/windows_boot_extra.fs', header_mode='win', name='boot')
+Importation('gen/pico_ice_boot.h', '$src/pico-ice/pico_ice_boot.fs', name='boot')
+Importation('gen/esp32_boot.h', '$src/esp32/esp32_boot.fs', name='boot')
+Importation('gen/web_boot.js', '$src/web/web_boot.fs', header_mode='web', name='boot')
 
 print(output)
