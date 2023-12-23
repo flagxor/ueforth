@@ -19,14 +19,14 @@
  * Revision: {{REVISION}}
  */
 
-{{platform}}
-{{options}}
-{{tier0_opcodes}}
-{{tier1_opcodes}}
-{{tier2_opcodes}}
-{{floats}}
-{{calls}}
-{{bits}}
-{{builtins.h}}
-{{builtins.cpp}}
-{{main.cpp}}
+#include "esp32/platform.h"
+#include "esp32/options.h"
+#include "common/tier0_opcodes.h"
+#include "common/tier1_opcodes.h"
+#include "common/tier2_opcodes.h"
+#include "common/floats.h"
+#include "common/calls.h"
+#include "common/bits.h"
+#include "esp32/builtins.h"
+#include "esp32/builtins.cpp"
+#include "esp32/main.cpp"

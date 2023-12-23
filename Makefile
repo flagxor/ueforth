@@ -234,57 +234,52 @@ sanity_test_web: $(WEB)/ueforth.js
 $(GEN):
 	mkdir -p $@
 
--include $(GEN)/posix_boot_merged.fs.dd
-
 $(GEN)/posix_boot_merged.fs: posix/posix_boot.fs | $(GEN)
 	./tools/importation.py $< $@ \
     -I . -I $(GEN) --depsout $@.dd \
     --set-version $(VERSION) \
     --set-revision $(REVISION)
+-include $(GEN)/posix_boot_merged.fs.dd
 
 $(GEN)/posix_boot.h: tools/source_to_string.js $(GEN)/posix_boot_merged.fs | $(GEN)
 	$< boot $(VERSION) $(REVISION) $(GEN)/posix_boot_merged.fs >$@
-
--include $(GEN)/windows_boot_extra_merged.fs.dd
 
 $(GEN)/windows_boot_extra_merged.fs: windows/windows_boot_extra.fs | $(GEN)
 	./tools/importation.py $< $@ \
     -I . -I $(GEN) --depsout $@.dd \
     --set-version $(VERSION) \
     --set-revision $(REVISION)
+-include $(GEN)/windows_boot_extra_merged.fs.dd
 
 $(GEN)/windows_boot_extra.h: tools/source_to_string.js $(GEN)/windows_boot_extra_merged.fs | $(GEN)
 	$< -win boot_extra $(VERSION) $(REVISION) $(GEN)/windows_boot_extra_merged.fs >$@
-
--include $(GEN)/windows_boot_merged.fs.dd
 
 $(GEN)/windows_boot_merged.fs: windows/windows_boot.fs | $(GEN)
 	./tools/importation.py $^ $@ \
     -I . -I $(GEN) --depsout $@.dd \
     --set-version $(VERSION) \
     --set-revision $(REVISION)
+-include $(GEN)/windows_boot_merged.fs.dd
 
 $(GEN)/windows_boot.h: tools/source_to_string.js $(GEN)/windows_boot_merged.fs | $(GEN)
 	$< -win boot $(VERSION) $(REVISION) $(GEN)/windows_boot_merged.fs >$@
-
--include $(GEN)/pico_ice_boot_merged.fs.dd
 
 $(GEN)/pico_ice_boot_merged.fs: pico-ice/pico_ice_boot.fs | $(GEN)
 	./tools/importation.py $^ $@ \
     -I . -I $(GEN) --depsout $@.dd \
     --set-version $(VERSION) \
     --set-revision $(REVISION)
+-include $(GEN)/pico_ice_boot_merged.fs.dd
 
 $(GEN)/pico_ice_boot.h: tools/source_to_string.js $(GEN)/pico_ice_boot_merged.fs | $(GEN)
 	$< boot $(VERSION) $(REVISION) $(GEN)/pico_ice_boot_merged.fs >$@
-
--include $(GEN)/esp32_boot_merged.fs.dd
 
 $(GEN)/esp32_boot_merged.fs: esp32/esp32_boot.fs | $(GEN)
 	./tools/importation.py $^ $@ \
     -I . -I $(GEN) --depsout $@.dd \
     --set-version $(VERSION) \
     --set-revision $(REVISION)
+-include $(GEN)/esp32_boot_merged.fs.dd
 
 $(GEN)/esp32_boot.h: tools/source_to_string.js $(GEN)/esp32_boot_merged.fs | $(GEN)
 	$< boot $(VERSION) $(REVISION) $(GEN)/esp32_boot_merged.fs >$@
@@ -358,10 +353,9 @@ drop-optional:
 $(ESP32)/ESP32forth/%.h: $(ESP32)/ESP32forth/optional/%.h
 	cp $< $@
 
--include $(GEN)/dump_web_opcodes.dd
-
 $(GEN)/dump_web_opcodes: web/dump_web_opcodes.c | $(GEN)
 	$(CXX) $(CFLAGS) $< -o $@ -MD -MF $@.dd
+-include $(GEN)/dump_web_opcodes.dd
 
 $(GEN)/web_cases.js: $(GEN)/dump_web_opcodes | $(GEN)
 	$< cases >$@
@@ -372,13 +366,12 @@ $(GEN)/web_dict.js: $(GEN)/dump_web_opcodes | $(GEN)
 $(GEN)/web_sys.js: $(GEN)/dump_web_opcodes | $(GEN)
 	$< sys >$@
 
--include $(GEN)/web_boot_merged.fs.dd
-
 $(GEN)/web_boot_merged.fs: web/web_boot.fs | $(GEN)
 	./tools/importation.py $^ $@ \
     -I . -I $(GEN) --depsout $@.dd \
     --set-version $(VERSION) \
     --set-revision $(REVISION)
+-include $(GEN)/web_boot_merged.fs.dd
 
 $(GEN)/web_boot.js: tools/source_to_string.js $(GEN)/web_boot_merged.fs | $(GEN)
 	$< -web boot $(VERSION) $(REVISION) $(GEN)/web_boot_merged.fs >$@
@@ -460,12 +453,11 @@ posix_target: $(POSIX)/ueforth
 $(POSIX):
 	mkdir -p $@
 
--include $(GEN)/ueforth_posix.dd
-
 $(POSIX)/ueforth: \
     posix/main.c $(GEN)/posix_boot.h | $(POSIX)
 	$(CXX) $(CFLAGS) $< -o $@ $(LIBS) -MD -MF $(GEN)/ueforth_posix.dd
 	strip $(STRIP_ARGS) $@
+-include $(GEN)/ueforth_posix.dd
 
 # ---- WINDOWS ----
 
@@ -477,21 +469,18 @@ win64_target: $(WINDOWS)/uEf64.exe
 $(WINDOWS):
 	mkdir -p $@
 
--include $(WINDOWS)/uEf32.obj.dd
-
 $(WINDOWS)/uEf32.obj: \
     windows/main.c \
     $(GEN)/windows_boot_extra.h \
     $(GEN)/windows_boot.h | $(WINDOWS)
 	./tools/importation.py $< $@ --no-out -I . -I $(GEN) --depsout $@.dd
 	$(CL32) /c /Fo$@ $(WIN_CFLAGS) $<
+-include $(WINDOWS)/uEf32.obj.dd
 
 $(WINDOWS)/uEf32.exe: \
     $(WINDOWS)/uEf32.obj \
     $(RES)/ueforth_res32.res | $(WINDOWS)
 	$(LINK32) /OUT:$@ $(WIN_LFLAGS32) $^
-
--include $(WINDOWS)/uEf64.obj.dd
 
 $(WINDOWS)/uEf64.obj: \
     windows/main.c \
@@ -499,6 +488,7 @@ $(WINDOWS)/uEf64.obj: \
     $(GEN)/windows_boot.h | $(WINDOWS)
 	./tools/importation.py $< $@ --no-out -I . -I $(GEN) --depsout $@.dd
 	$(CL64) /c /Fo$@ $(WIN_CFLAGS) $<
+-include $(WINDOWS)/uEf64.obj.dd
 
 $(WINDOWS)/uEf64.exe: \
     $(WINDOWS)/uEf64.obj \
@@ -513,15 +503,12 @@ esp32_sim_target: $(ESP32_SIM)/Esp32forth-sim
 $(ESP32_SIM):
 	mkdir -p $@
 
--include $(GEN)/print-esp32-builtins.dd
-
 $(GEN)/print-esp32-builtins: esp32/print-builtins.cpp | $(GEN)
 	$(CXX) $(CFLAGS) $< -o $@ -MD -MF $@.dd
+-include $(GEN)/print-esp32-builtins.dd
 
 $(GEN)/esp32_sim_opcodes.h: $(GEN)/print-esp32-builtins | $(GEN)
 	$< >$@
-
--include $(GEN)/esp32_sim.dd
 
 $(ESP32_SIM)/Esp32forth-sim: \
     esp32/sim_main.cpp \
@@ -529,6 +516,7 @@ $(ESP32_SIM)/Esp32forth-sim: \
     $(GEN)/esp32_sim_opcodes.h | $(ESP32_SIM)
 	$(CXX) $(CFLAGS) $< -o $@ -MD -MF $(GEN)/esp32_sim.dd
 	strip $(STRIP_ARGS) $@
+-include $(GEN)/esp32_sim.dd
 
 # ---- ESP32 ----
 
@@ -541,46 +529,15 @@ $(ESP32)/ESP32forth:
 $(ESP32)/ESP32forth/optional:
 	mkdir -p $@
 
-ESP32_PARTS = tools/replace.js \
-              esp32/ESP32forth.ino \
-              common/tier0_opcodes.h \
-              common/tier1_opcodes.h \
-              common/tier2_opcodes.h \
-              common/floats.h \
-              common/calls.h \
-              common/calling.h \
-              common/bits.h \
-              common/core.h \
-              common/interp.h \
-              esp32/faults.h \
-              esp32/platform.h \
-              esp32/options.h \
-              esp32/builtins.h \
-              esp32/builtins.cpp \
-              esp32/main.cpp \
-              $(GEN)/esp32_boot.h
-
-$(ESP32)/ESP32forth/ESP32forth.ino: $(ESP32_PARTS) | $(ESP32)/ESP32forth
-	cat esp32/ESP32forth.ino | tools/replace.js \
-     VERSION=$(VERSION) \
-     REVISION=$(REVISION) \
-     tier0_opcodes=@common/tier0_opcodes.h \
-     tier1_opcodes=@common/tier1_opcodes.h \
-     tier2_opcodes=@common/tier2_opcodes.h \
-     calls=@common/calls.h \
-     calling=@common/calling.h \
-     floats=@common/floats.h \
-     bits=@common/bits.h \
-     core=@common/core.h \
-     interp=@common/interp.h \
-     faults=@esp32/faults.h \
-     platform=@esp32/platform.h \
-     options=@esp32/options.h \
-     builtins.h=@esp32/builtins.h \
-     builtins.cpp=@esp32/builtins.cpp \
-     main.cpp=@esp32/main.cpp \
-     boot=@$(GEN)/esp32_boot.h \
-     >$@
+$(ESP32)/ESP32forth/ESP32forth.ino: \
+    esp32/ESP32forth.ino \
+    $(GEN)/esp32_boot.h | $(ESP32)/ESP32forth
+	./tools/importation.py $< $@ \
+    --keep-first-comment \
+    -I . -I $(GEN) --depsout $(GEN)/esp32.dd \
+    --set-version $(VERSION) \
+    --set-revision $(REVISION)
+-include $(GEN)/esp32.dd
 
 $(ESP32)/ESP32forth/README.txt: esp32/README.txt | $(ESP32)/ESP32forth
 	cat esp32/README.txt | tools/replace.js \
@@ -733,21 +690,11 @@ $(PICO_ICE)/ueforth-pico-ice/ueforth-pico-ice.uf2: \
     $(PICO_ICE)/ueforth_pico_ice.uf2 | $(PICO_ICE)/ueforth-pico-ice
 	cp $< $@
 
+.FORCE:
 $(PICO_ICE)/ueforth_pico_ice.uf2: \
-    $(PICO_ICE)/build.ninja \
-    pico-ice/main.c \
-    pico-ice/builtins.h \
-    common/tier0_opcodes.h \
-    common/tier1_opcodes.h \
-    common/tier2_opcodes.h \
-    common/floats.h \
-    common/calls.h \
-    common/calling.h \
-    common/floats.h \
-    common/bits.h \
-    common/core.h \
-    common/interp.h \
-    $(GEN)/pico_ice_boot.h
+    .FORCE \
+    $(GEN)/pico_ice_boot.h \
+    $(PICO_ICE)/build.ninja
 	ninja -C $(PICO_ICE) ueforth_pico_ice
 
 $(PICO_ICE)/build.ninja: \
@@ -788,11 +735,10 @@ pico_ice_sim_target: $(PICO_ICE_SIM)/ueforth_pico_ice_sim
 $(PICO_ICE_SIM):
 	mkdir -p $@
 
--include $(GEN)/pico_ice_sim.dd
-
 $(PICO_ICE_SIM)/ueforth_pico_ice_sim: \
     pico-ice/main.c $(GEN)/pico_ice_boot.h | $(PICO_ICE_SIM) $(GEN)
 	$(CXX) $(CFLAGS) -DUEFORTH_SIM=1 $< -o $@ -MD -MF $(GEN)/pico_ice_sim.dd
+-include $(GEN)/pico_ice_sim.dd
 
 # ---- PACKAGE ESP32 ----
 
