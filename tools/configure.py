@@ -21,6 +21,9 @@ VERSION = '7.0.7.16'
 STABLE_VERSION = '7.0.6.19'
 OLD_STABLE_VERSION = '7.0.5.4'
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(SCRIPT_DIR)
+
 REVISION = 'TODO'
 #REVISION=$(shell git rev-parse HEAD | head -c 20)
 #REVSHORT=$(shell echo $(REVISION) | head -c 7)
@@ -155,37 +158,10 @@ def Compile(target, source, implicit=[]):
   output += f'build {target}: compile {source} | {outdir} {implicit}\n'
 
 
-Importation('esp32/ESP32forth/ESP32forth.ino',
-            '$src/esp32/ESP32forth.ino',
-            implicit=['gen/esp32_boot.h'], keep=True)
-Importation('gen/esp32_boot.h', '$src/esp32/esp32_boot.fs', name='boot')
-Importation('esp32/ESP32forth/README.txt',
-            '$src/esp32/README.txt')
-Importation('esp32/ESP32forth/optional/README-optional.txt',
-            '$src/esp32/optional/README-optional.txt')
-Esp32Optional('rmt', '$src/esp32/optional/rmt.h', [])
-Esp32Optional('assemblers', '$src/esp32/optional/assemblers/assemblers.h',
-              [('assembler', '$src/common/assembler.fs'),
-               ('xtensa-assembler', '$src/esp32/optional/assemblers/xtensa-assembler.fs'),
-               ('riscv-assembler', '$src/esp32/optional/assemblers/riscv-assembler.fs')])
-Esp32Optional('camera', '$src/esp32/optional/camera/camera.h',
-              [('camera', '$src/esp32/optional/camera/camera_server.fs')])
-Esp32Optional('interrupts', '$src/esp32/optional/interrupts/interrupts.h',
-              [('interrupts', '$src/esp32/optional/interrupts/timers.fs')])
-Esp32Optional('oled', '$src/esp32/optional/oled/oled.h',
-              [('oled', '$src/esp32/optional/oled/oled.fs')])
-Esp32Optional('spi-flash', '$src/esp32/optional/spi-flash/spi-flash.h',
-              [('spi-flash', '$src/esp32/optional/spi-flash/spi-flash.fs')])
-Esp32Optional('serial-bluetooth', '$src/esp32/optional/serial-bluetooth/serial-bluetooth.h',
-              [('serial-bluetooth', '$src/esp32/optional/serial-bluetooth/serial-bluetooth.fs')])
+def Include(path):
+  path = os.path.join(ROOT_DIR, path, 'BUILD')
+  data = open(path).read()
+  exec(data)
 
-Importation('gen/posix_boot.h', '$src/posix/posix_boot.fs', name='boot')
-Compile('posix/ueforth', '$src/posix/main.c',
-        implicit=['gen/posix_boot.h'])
-
-Importation('gen/window_boot.h', '$src/windows/windows_boot.fs', header_mode='win', name='boot')
-Importation('gen/window_boot_extra.h', '$src/windows/windows_boot_extra.fs', header_mode='win', name='boot')
-Importation('gen/pico_ice_boot.h', '$src/pico-ice/pico_ice_boot.fs', name='boot')
-Importation('gen/web_boot.js', '$src/web/web_boot.fs', header_mode='web', name='boot')
-
+Include('.')
 print(output)
