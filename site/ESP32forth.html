@@ -16,13 +16,13 @@ limitations under the License.
 -->
 
 <head>
-  {{HEAD}}
+#include "head.html"
   <title>ESP32forth</title>
 </head>
 
 <body>
 <h1>ESP32forth</h1>
-{{MENU}}
+#include "menu.html"
 <div class="wrapper">
 
 <h2>Download</h2>
@@ -322,9 +322,9 @@ On boot, ESP32forth configures PIN 2 (typically an LED) to be an output and brin
 
 <h3>ESP32forth Specific Words</h3>
 
-{{COMMON}}
-{{FILES_COMMON}}
-{{POSIX_COMMON}}
+#include "common.html"
+#include "files_common.html"
+#include "posix_common.html"
 
 <h3>ESP32forth Bindings</h3>
 

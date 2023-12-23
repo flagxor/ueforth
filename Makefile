@@ -240,94 +240,81 @@ $(GEN):
 	mkdir -p $@
 
 $(GEN)/posix_boot.h: posix/posix_boot.fs | $(GEN)
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     -I . -I $(GEN) --name boot --header cpp --depsout $@.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/posix_boot.h.dd
 
 $(GEN)/windows_boot_extra.h: windows/windows_boot_extra.fs | $(GEN)
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     -I . -I $(GEN) --name boot_extra --header win --depsout $@.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/windows_boot_extra.h.dd
 
 $(GEN)/windows_boot.h: windows/windows_boot.fs | $(GEN)
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     -I . -I $(GEN) --name boot --header win --depsout $@.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/windows_boot.h.dd
 
 $(GEN)/pico_ice_boot.h: pico-ice/pico_ice_boot.fs | $(GEN)
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     -I . -I $(GEN) --name boot --header cpp --depsout $@.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/pico_ice_boot.h.dd
 
 $(GEN)/esp32_boot.h: esp32/esp32_boot.fs | $(GEN)
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     -I . -I $(GEN) --name boot --header cpp --depsout $@.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_boot.h.dd
 
 $(GEN)/esp32_assembler.h: common/assembler.fs | $(GEN)
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     -I . -I $(GEN) --name assembler_source --header cpp --depsout $@.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_assembler.h.dd
 
 $(GEN)/esp32_xtensa-assembler.h: esp32/optional/assemblers/xtensa-assembler.fs | $(GEN)
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     -I . -I $(GEN) --name xtensa_assembler_source --header cpp --depsout $@.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_xtensa-assembler.h.dd
 
 $(GEN)/esp32_riscv-assembler.h: esp32/optional/assemblers/riscv-assembler.fs | $(GEN)
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     -I . -I $(GEN) --name riscv_assembler_source --header cpp --depsout $@.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_riscv-assembler.h.dd
 
 $(GEN)/esp32_camera.h: esp32/optional/camera/camera_server.fs | $(GEN)
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     -I . -I $(GEN) --name camera_source --header cpp --depsout $@.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_camera.h.dd
 
 $(GEN)/esp32_interrupts.h: esp32/optional/interrupts/timers.fs | $(GEN)
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     -I . -I $(GEN) --name interrupts_source --header cpp --depsout $@.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_interrupts.h.dd
 
 $(GEN)/esp32_oled.h: esp32/optional/oled/oled.fs | $(GEN)
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     -I . -I $(GEN) --name oled_source --header cpp --depsout $@.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_oled.h.dd
 
 $(GEN)/esp32_spi-flash.h: esp32/optional/spi-flash/spi-flash.fs | $(GEN)
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     -I . -I $(GEN) --name spi_flash_source --header cpp --depsout $@.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_spi-flash.h.dd
 
 $(GEN)/esp32_serial-bluetooth.h: esp32/optional/serial-bluetooth/serial-bluetooth.fs | $(GEN)
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     -I . -I $(GEN) --name serial_blueooth_source --header cpp --depsout $@.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_serial-bluetooth.h.dd
 
 OPTIONAL_MODULES = \
@@ -361,10 +348,9 @@ $(GEN)/web_sys.js: $(GEN)/dump_web_opcodes | $(GEN)
 	$< sys >$@
 
 $(GEN)/web_boot.js: web/web_boot.fs | $(GEN)
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     -I . -I $(GEN) --name boot --header web --depsout $@.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/web_boot.js.dd
 
 # ---- RESOURCES ----
@@ -464,7 +450,7 @@ $(WINDOWS)/uEf32.obj: \
     windows/main.c \
     $(GEN)/windows_boot_extra.h \
     $(GEN)/windows_boot.h | $(WINDOWS)
-	./tools/importation.py $< $@ --no-out -I . -I $(GEN) --depsout $@.dd
+	./tools/importation.py -i $< -o $@ --no-out -I . -I $(GEN) --depsout $@.dd
 	$(CL32) /c /Fo$@ $(WIN_CFLAGS) $<
 -include $(WINDOWS)/uEf32.obj.dd
 
@@ -477,7 +463,7 @@ $(WINDOWS)/uEf64.obj: \
     windows/main.c \
     $(GEN)/windows_boot_extra.h \
     $(GEN)/windows_boot.h | $(WINDOWS)
-	./tools/importation.py $< $@ --no-out -I . -I $(GEN) --depsout $@.dd
+	./tools/importation.py -i $< -o $@ --no-out -I . -I $(GEN) --depsout $@.dd
 	$(CL64) /c /Fo$@ $(WIN_CFLAGS) $<
 -include $(WINDOWS)/uEf64.obj.dd
 
@@ -523,91 +509,81 @@ $(ESP32)/ESP32forth/optional:
 $(ESP32)/ESP32forth/ESP32forth.ino: \
     esp32/ESP32forth.ino \
     $(GEN)/esp32_boot.h | $(ESP32)/ESP32forth
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     --keep-first-comment \
     -I . -I $(GEN) --depsout $(GEN)/esp32.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32.dd
 
 $(ESP32)/ESP32forth/README.txt: esp32/README.txt | $(ESP32)/ESP32forth
-	./tools/importation.py $< $@ \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+	./tools/importation.py -i $< -o $@ \
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 
 $(ESP32)/ESP32forth/optional/README-optional.txt: \
     esp32/optional/README-optional.txt | $(ESP32)/ESP32forth/optional
-	./tools/importation.py $< $@ \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+	./tools/importation.py -i $< -o $@ \
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 
 $(ESP32)/ESP32forth/optional/assemblers.h: \
     esp32/optional/assemblers/assemblers.h \
     $(GEN)/esp32_assembler.h \
     $(GEN)/esp32_xtensa-assembler.h \
     $(GEN)/esp32_riscv-assembler.h | $(ESP32)/ESP32forth/optional
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     --keep-first-comment \
     -I . -I $(GEN) --depsout $(GEN)/esp32_optional_assemblers.h.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_optional_assemblers.h.dd
 
 $(ESP32)/ESP32forth/optional/camera.h: \
     esp32/optional/camera/camera.h \
     $(GEN)/esp32_camera.h | $(ESP32)/ESP32forth/optional
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     --keep-first-comment \
     -I . -I $(GEN) --depsout $(GEN)/esp32_optional_camera.h.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_optional_camera.h.dd
 
 $(ESP32)/ESP32forth/optional/interrupts.h: \
     esp32/optional/interrupts/interrupts.h \
     $(GEN)/esp32_interrupts.h | $(ESP32)/ESP32forth/optional
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     --keep-first-comment \
     -I . -I $(GEN) --depsout $(GEN)/esp32_optional_interrupts.h.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_optional_interrupts.h.dd
 
 $(ESP32)/ESP32forth/optional/oled.h: \
     esp32/optional/oled/oled.h \
     $(GEN)/esp32_oled.h | $(ESP32)/ESP32forth/optional
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     --keep-first-comment \
     -I . -I $(GEN) --depsout $(GEN)/esp32_optional_oled.h.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_optional_oled.h.dd
 
 $(ESP32)/ESP32forth/optional/rmt.h: \
     esp32/optional/rmt.h | $(ESP32)/ESP32forth/optional
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     --keep-first-comment \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 
 $(ESP32)/ESP32forth/optional/serial-bluetooth.h: \
     esp32/optional/serial-bluetooth/serial-bluetooth.h \
     $(GEN)/esp32_serial-bluetooth.h | $(ESP32)/ESP32forth/optional
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     --keep-first-comment \
     -I . -I $(GEN) --depsout $(GEN)/esp32_optional_serial-bluetooth.h.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_optional_serial-bluetooth.h.dd
 
 $(ESP32)/ESP32forth/optional/spi-flash.h: \
     esp32/optional/spi-flash/spi-flash.h \
     $(GEN)/esp32_spi-flash.h | $(ESP32)/ESP32forth/optional
-	./tools/importation.py $< $@ \
+	./tools/importation.py -i $< -o $@ \
     --keep-first-comment \
     -I . -I $(GEN) --depsout $(GEN)/esp32_optional_spi-flash.h.dd \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 -include $(GEN)/esp32_optional_spi-flash.h.dd
 
 # ---- ESP32 ARDUINO BUILD AND FLASH ----
@@ -712,9 +688,8 @@ pico-ice/pico-ice-sdk/README.md:
 	git submodule update --init pico-ice/pico-ice-sdk
 
 $(PICO_ICE)/ueforth-pico-ice/README.txt: pico-ice/README.txt | $(PICO_ICE)/ueforth-pico-ice
-		./tools/importation.py $< $@ \
-    --set-version $(VERSION) \
-    --set-revision $(REVISION)
+	./tools/importation.py -i $< -o $@ \
+    -DVERSION=$(VERSION) -DREVISION=$(REVISION)
 
 $(PICO_ICE)/ueforth-pico-ice/LICENSE: LICENSE
 	cp $< $@
@@ -830,18 +805,12 @@ publish: publish-esp32 publish-pico-ice publish-linux publish-web publish-window
 $(DEPLOY):
 	mkdir -p $@
 
-REPLACE = tools/replace.js \
-          HEAD=@site/head.html \
-          COMMON=@site/common.html \
-          FILES_COMMON=@site/files_common.html \
-          POSIX_COMMON=@site/posix_common.html \
-          DESKTOP_COMMON=@site/desktop_common.html \
-          MENU=@site/menu.html \
-          VERSION=${VERSION} \
-          STABLE_VERSION=${STABLE_VERSION} \
-          OLD_STABLE_VERSION=${OLD_STABLE_VERSION}
-UE_REPLACE = $(REPLACE) FORTH=uEForth
-ESP_REPLACE = $(REPLACE) FORTH=ESP32forth
+REPLACE = ./tools/importation.py -I site \
+          -DVERSION=${VERSION} \
+          -DSTABLE_VERSION=${STABLE_VERSION} \
+          -DOLD_STABLE_VERSION=${OLD_STABLE_VERSION}
+UE_REPLACE = $(REPLACE) -DFORTH=uEForth
+ESP_REPLACE = $(REPLACE) -DFORTH=ESP32forth
 
 $(DEPLOY)/app.yaml: $(RES)/eforth.ico \
                     $(wildcard site/*.html) \
@@ -857,14 +826,14 @@ $(DEPLOY)/app.yaml: $(RES)/eforth.ico \
 	cp site/*.yaml $(DEPLOY)/
 	cp site/.gcloudignore $(DEPLOY)
 	cp out/web/ueforth.js $(DEPLOY)/
-	cat site/web.html | $(ESP_REPLACE) >$(DEPLOY)/web.html
-	cat site/ESP32forth.html | $(ESP_REPLACE) >$(DEPLOY)/ESP32forth.html
-	cat site/pico-ice.html | $(UE_REPLACE) >$(DEPLOY)/pico-ice.html
-	cat site/index.html | $(UE_REPLACE) >$(DEPLOY)/index.html
-	cat site/linux.html | $(UE_REPLACE) >$(DEPLOY)/linux.html
-	cat site/windows.html | $(UE_REPLACE) >$(DEPLOY)/windows.html
-	cat site/internals.html | $(UE_REPLACE) >$(DEPLOY)/internals.html
-	cat site/classic.html | $(UE_REPLACE) >$(DEPLOY)/classic.html
+	$(ESP_REPLACE) -i site/web.html -o $(DEPLOY)/web.html
+	$(ESP_REPLACE) -i site/ESP32forth.html -o $(DEPLOY)/ESP32forth.html
+	$(UE_REPLACE) -i site/pico-ice.html -o $(DEPLOY)/pico-ice.html
+	$(UE_REPLACE) -i site/index.html -o $(DEPLOY)/index.html
+	$(UE_REPLACE) -i site/linux.html -o $(DEPLOY)/linux.html
+	$(UE_REPLACE) -i site/windows.html -o $(DEPLOY)/windows.html
+	$(UE_REPLACE) -i site/internals.html -o $(DEPLOY)/internals.html
+	$(UE_REPLACE) -i site/classic.html -o $(DEPLOY)/classic.html
 
 deploy: all
 	cd out/deploy && gcloud app deploy -q --project esp32forth *.yaml

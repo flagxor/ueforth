@@ -97,7 +97,7 @@ rule mkdir
 rule importation
   description = importation
   depfile = $out.dd
-  command = ../tools/importation.py $in $out -I . -I .. --name $name --header $header_mode --depsout $out.dd --set-version $version --set-revision $revision
+  command = ../tools/importation.py -i $in -o $out -I . -I .. --name $name --header $header_mode --depsout $out.dd -DVERSION=$version -DREVSION=$revision
 
 build gen: mkdir
 

@@ -7,11 +7,10 @@ import sys
 parser = argparse.ArgumentParser(
   prog='importation',
   description='Imports header / fs files')
-parser.add_argument('input')
-parser.add_argument('output')
+parser.add_argument('-i', required=True)
+parser.add_argument('-o', required=True)
 parser.add_argument('-I', action='append')
-parser.add_argument('--set-version')
-parser.add_argument('--set-revision')
+parser.add_argument('-D', action='append')
 parser.add_argument('--depsout')
 parser.add_argument('--no-out', action='store_true')
 parser.add_argument('--keep-first-comment', action='store_true')
@@ -19,6 +18,7 @@ parser.add_argument('--name')
 parser.add_argument('--header')
 args = parser.parse_args()
 bases = args.I or []
+replacements = args.D or []
 
 results = []
 imported = set([__file__])
@@ -36,6 +36,7 @@ def Import(filename):
         sfilename = os.path.join(os.path.dirname(filename), sfilename)
         Import(sfilename)
       elif (filename.endswith('.h') or
+            filename.endswith('.html') or
             filename.endswith('.ino') or
             filename.endswith('.cc') or
             filename.endswith('.cpp') or
@@ -54,14 +55,13 @@ def Import(filename):
         results.append(line)
 
 def Process():
-  Import(args.input)
+  Import(args.i)
   # Conversion version tags.
   output = []
   for line in results:
-    if args.set_version:
-      line = line.replace('{{VERSION}}', args.set_version)
-    if args.set_revision:
-      line = line.replace('{{REVISION}}', args.set_revision)
+    for r in replacements:
+      name, value = r.split('=', 1)
+      line = line.replace('{{' + name + 'VERSION}}', value)
     output.append(line)
   # Drop comments.
   comment1 = False
@@ -85,11 +85,11 @@ def Process():
   # Emit deps.
   if args.depsout:
     with open(args.depsout, 'w') as fh:
-      fh.write(args.output + ': ' +
+      fh.write(args.o + ': ' +
                ' '.join([os.path.relpath(i) for i in imported]) + '\n')
   # Emit expanded file.
   if not args.no_out:
-    with open(args.output, 'w') as fh:
+    with open(args.o, 'w') as fh:
       if args.header == 'web':
         fh.write('const ' + args.name + ' = `\n' +
                  '\n'.join(output) + '\n`;\n')

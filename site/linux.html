@@ -16,13 +16,13 @@ limitations under the License.
 -->
 
 <head>
-  {{HEAD}}
+#include "head.html"
   <title>µEforth for Linux</title>
 </head>
 
 <body>
 <h1>µEforth for Linux</h1>
-{{MENU}}
+#include "menu.html"
 <div class="wrapper">
 
 <h2>Download</h2>
@@ -63,9 +63,9 @@ limitations under the License.
 
 <h3>µEforth Words</h3>
 
-{{COMMON}}
-{{FILES_COMMON}}
-{{POSIX_COMMON}}
+#include "common.html"
+#include "files_common.html"
+#include "posix_common.html"
 
 <h3>Linux</h3>
 
@@ -101,4 +101,4 @@ In addition, <code>TYPE</code> and <code>KEY</code> are connected to
 <code>stdin</code> and <code>stdout</code>.
 </p>
 
-{{DESKTOP_COMMON}}
+#include "desktop_common.html"
