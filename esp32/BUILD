@@ -27,7 +27,7 @@ Importation('gen/esp32_boot.h', '$src/esp32/esp32_boot.fs', name='boot')
 
 # Optional Compontents.
 Mkdir('esp32/ESP32forth/optional')
-ESP32_FILES = [
+ESP32_FILES += [
   Importation('esp32/ESP32forth/optional/README-optional.txt',
               '$src/esp32/optional/README-optional.txt'),
   Esp32Optional('rmt', '$src/esp32/optional/rmt.h', []),

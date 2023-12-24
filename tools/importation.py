@@ -99,7 +99,7 @@ def Process():
   if args.depsout:
     with open(args.depsout, 'w') as fh:
       fh.write(args.o + ': ' +
-               ' '.join([os.path.relpath(i) for i in imported]) + '\n')
+               ' '.join([os.path.relpath(i) for i in sorted(imported)]) + '\n')
   # Emit expanded file.
   if not args.no_out:
     with open(args.o, 'w') as fh:

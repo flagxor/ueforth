@@ -30,7 +30,7 @@ REVISION = 'TODO'
 
 CFLAGS_COMMON = [
   '-O2',
-  '-I', '$src',
+  '-I', '$src/',
   '-I', './',
 ]
 
@@ -127,7 +127,8 @@ D8 = LSQ('${HOME}/src/v8/v8/out/x64.release/d8')
 NODEJS = LSQ('/usr/bin/nodejs')
 
 output = f"""
-src = ../
+ninja_required_version = 1.1
+src = ..
 VERSION = {VERSION}
 REVISION = {REVISION}
 CFLAGS = {' '.join(CFLAGS)}
@@ -155,23 +156,25 @@ rule mkdir
 
 rule importation
   description = importation
-  depfile = $out.dd
+  depfile = $out.d
+  deps = gcc
   command = $src/tools/importation.py -i $in -o $out -I . -I $src $options --depsout $depfile -DVERSION=$VERSION -DREVISION=$REVERSION
 
 rule compile
   description = CXX
-  depfile = $out.dd
+  depfile = $out.d
+  deps = gcc
   command = $CXX $CFLAGS $in -o $out $LIBS -MD -MF $depfile && strip $STRIP_ARGS $out
 
 rule compile_win32
   description = WIN_CL32
-  depfile = $out.dd
-  command = $src/tools/importation.py -i $in -o $out --no-out -I . -I $src --depsout $out.dd && $WIN_CL32 /nologo /c /Fo$out $WIN_CFLAGS $in >/dev/null
+  deps = msvc
+  command = $WIN_CL32 /showIncludes /nologo /c /Fo$out $WIN_CFLAGS $in
 
 rule compile_win64
   description = WIN_CL64
-  depfile = $out.dd
-  command = $src/tools/importation.py -i $in -o $out --no-out -I . -I $src --depsout $out.dd && $WIN_CL64 /nologo /c /Fo$out $WIN_CFLAGS $in >/dev/null
+  deps = msvc
+  command = $WIN_CL64 /showIncludes /nologo /c /Fo$out $WIN_CFLAGS $in >/dev/null
 
 rule link_win32
   description = WIN_LINK32
@@ -237,7 +240,7 @@ def Esp32Optional(main_name, main_source, parts):
   return Importation('esp32/ESP32forth/optional/' + main_name + '.h',
               main_source,
             keep=True,
-            deps='gen/esp32_optional_' + main_name + '.h.dd',
+            deps='gen/esp32_optional_' + main_name + '.h.d',
             implicit=['gen/esp32_' + i + '.h' for i, _ in parts])
 
 
