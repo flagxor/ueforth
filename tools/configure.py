@@ -85,15 +85,67 @@ elif sys.platform == 'linux':
 
 LIBS = ['-ldl']
 
-output = """
+WIN_CFLAGS = CFLAGS_COMMON + [
+  '-I', '"c:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Include"',
+  '-I', '"c:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.28.29333/include"',
+  '-I', '"c:/Program Files (x86)/Windows Kits/10/Include/10.0.19041.0/ucrt"',
+]
 
-version = %(version)s
-revision = %(revision)s
+WIN_LIBS = [
+  'user32.lib',
+]
+
+WIN_LFLAGS32 = [
+  '/LIBPATH:"c:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib"',
+  '/LIBPATH:"c:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.28.29333/lib/x86"',
+  '/LIBPATH:"c:/Program Files (x86)/Windows Kits/10/Lib/10.0.19041.0/ucrt/x86"',
+] + WIN_LIBS
+
+WIN_LFLAGS64 = [
+  '/LIBPATH:"c:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64"',
+  '/LIBPATH:"c:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.28.29333/lib/x64"',
+  '/LIBPATH:"c:/Program Files (x86)/Windows Kits/10/Lib/10.0.19041.0/ucrt/x64"',
+] + WIN_LIBS
+
+def LSQ(path):
+  return subprocess.check_output(
+      ['ls', path], stderr=subprocess.DEVNULL, shell=True).splitlines()[0]
+
+PROGFILES = '/mnt/c/Program Files (x86)'
+MSVS = PROGFILES + '/Microsoft Visual Studio'
+MSKITS = PROGFILES + '/Windows Kits'
+CL32 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x86/cl.exe')
+CL64 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x64/cl.exe')
+LINK32 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x86/link.exe')
+LINK64 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x64/link.exe')
+RC32 = LSQ(MSKITS + '/*/bin/*/x86/rc.exe')
+RC64 = LSQ(MSKITS + '/*/bin/*/x64/rc.exe')
+
+D8 = LSQ('${HOME}/src/v8/v8/out/x64.release/d8')
+NODEJS = LSQ('/usr/bin/nodejs')
+
+output = f"""
+version = {VERSION}
+revision = {REVISION}
 src = ../
-cflags = %(cflags)s
-strip_args = %(strip_args)s
-libs = %(libs)s
+cflags = {' '.join(CFLAGS)}
+strip_args = {' '.join(STRIP_ARGS)}
+libs = {' '.join(LIBS)}
 cxx = g++
+
+CL32 = {CL32}
+CL64 = {CL64}
+LINK32 = {LINK32}
+LINK64 = {LINK64}
+RC32 = {RC32}
+RC64 = {RC64}
+
+D8 = {D8}
+NODEJS = {NODEJS}
+
+win_cflags = {' '.join(WIN_CFLAGS)}
+win_lflags32 = {' '.join(WIN_LFLAGS32)}
+win_lflags64 = {' '.join(WIN_LFLAGS64)}
 
 rule mkdir
   description = mkdir
@@ -115,13 +167,7 @@ rule run
 
 build gen: mkdir
 
-""" % {
-  'version': VERSION,
-  'revision': REVISION,
-  'cflags': ' '.join(CFLAGS),
-  'strip_args': ' '.join(STRIP_ARGS),
-  'libs': ' '.join(LIBS),
-}
+"""
 
 
 def Mkdir(path):
