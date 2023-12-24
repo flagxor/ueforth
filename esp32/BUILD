@@ -54,4 +54,4 @@ Compile('gen/print-esp32-builtins', '$src/esp32/print-builtins.cpp'),
 Run('gen/esp32_sim_opcodes.h', 'gen/print-esp32-builtins')
 
 # Main Alias.
-Alias('esp', ' '.join(ESP32_FILES))
+Alias('esp32', ' '.join(ESP32_FILES))

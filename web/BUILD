@@ -12,5 +12,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Alias('html', 'gen/web_boot.js')
+Alias('web', 'gen/web_boot.js')
 Importation('gen/web_boot.js', '$src/web/web_boot.fs', header_mode='web', name='boot')

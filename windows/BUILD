@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+Alias('windows', 'win32 win64')
+
 # Create boot.
 Importation('gen/windows_boot.h', '$src/windows/windows_boot.fs',
             header_mode='win', name='boot')
