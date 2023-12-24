@@ -12,5 +12,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Importation('gen/windows_boot.h', '$src/windows/windows_boot.fs', header_mode='win', name='boot')
-Importation('gen/windows_boot_extra.h', '$src/windows/windows_boot_extra.fs', header_mode='win', name='boot')
+# Create boot.
+Importation('gen/windows_boot.h', '$src/windows/windows_boot.fs',
+            header_mode='win', name='boot')
+Importation('gen/windows_boot_extra.h', '$src/windows/windows_boot_extra.fs',
+            header_mode='win', name='boot_extra')
+
+# Compile Win32.
+CompileW32('windows/uEf32.obj', '$src/windows/main.c',
+           implicit=['gen/windows_boot.h', 'gen/windows_boot_extra.h'])
+LinkW32('windows/uEf32.exe',
+        ' '.join(['windows/uEf32.obj', 'resources/ueforth_res32.res']))
+
+# Compile Win64.
+CompileW64('windows/uEf64.obj', '$src/windows/main.c',
+           implicit=['gen/windows_boot.h', 'gen/windows_boot_extra.h'])
+LinkW64('windows/uEf64.exe',
+        ' '.join(['windows/uEf64.obj', 'resources/ueforth_res64.res']))
+
+# Create icon.
+Mkdir('resources')
+ICON_SIZES = [
+  ResizeImage('resources/eforth16x16.png', '$src/images/eforth.png', '16x16'),
+  ResizeImage('resources/eforth32x32.png', '$src/images/eforth.png', '32x32'),
+  ResizeImage('resources/eforth48x48.png', '$src/images/eforth.png', '48x48'),
+  ResizeImage('resources/eforth256x256.png', '$src/images/eforth.png', '256x256'),
+]
+ConvertImage('resources/eforth.ico', ' '.join(ICON_SIZES))
+CompileResource32('resources/ueforth_res32.res', '$src/windows/ueforth.rc',
+                  implicit=['resources/eforth.ico'])
+CompileResource64('resources/ueforth_res64.res', '$src/windows/ueforth.rc',
+                  implicit=['resources/eforth.ico'])

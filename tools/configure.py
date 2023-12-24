@@ -107,45 +107,47 @@ WIN_LFLAGS64 = [
   '/LIBPATH:"c:/Program Files (x86)/Windows Kits/10/Lib/10.0.19041.0/ucrt/x64"',
 ] + WIN_LIBS
 
+def Escape(path):
+  return path.replace(' ', '\\ ').replace('(', '\\(').replace(')', '\\)')
+
 def LSQ(path):
-  return subprocess.check_output(
-      ['ls', path], stderr=subprocess.DEVNULL, shell=True).splitlines()[0]
+  return '"' + str(subprocess.check_output('ls ' + Escape(path), shell=True), 'ascii').splitlines()[0] + '"'
 
 PROGFILES = '/mnt/c/Program Files (x86)'
 MSVS = PROGFILES + '/Microsoft Visual Studio'
 MSKITS = PROGFILES + '/Windows Kits'
-CL32 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x86/cl.exe')
-CL64 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x64/cl.exe')
-LINK32 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x86/link.exe')
-LINK64 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x64/link.exe')
-RC32 = LSQ(MSKITS + '/*/bin/*/x86/rc.exe')
-RC64 = LSQ(MSKITS + '/*/bin/*/x64/rc.exe')
+WIN_CL32 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x86/cl.exe')
+WIN_CL64 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x64/cl.exe')
+WIN_LINK32 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x86/link.exe')
+WIN_LINK64 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x64/link.exe')
+WIN_RC32 = LSQ(MSKITS + '/*/bin/*/x86/rc.exe')
+WIN_RC64 = LSQ(MSKITS + '/*/bin/*/x64/rc.exe')
 
 D8 = LSQ('${HOME}/src/v8/v8/out/x64.release/d8')
 NODEJS = LSQ('/usr/bin/nodejs')
 
 output = f"""
-version = {VERSION}
-revision = {REVISION}
 src = ../
-cflags = {' '.join(CFLAGS)}
-strip_args = {' '.join(STRIP_ARGS)}
-libs = {' '.join(LIBS)}
-cxx = g++
+VERSION = {VERSION}
+REVISION = {REVISION}
+CFLAGS = {' '.join(CFLAGS)}
+STRIP_ARGS = {' '.join(STRIP_ARGS)}
+LIBS = {' '.join(LIBS)}
+CXX = g++
 
-CL32 = {CL32}
-CL64 = {CL64}
-LINK32 = {LINK32}
-LINK64 = {LINK64}
-RC32 = {RC32}
-RC64 = {RC64}
+WIN_CL32 = {WIN_CL32}
+WIN_CL64 = {WIN_CL64}
+WIN_LINK32 = {WIN_LINK32}
+WIN_LINK64 = {WIN_LINK64}
+WIN_RC32 = {WIN_RC32}
+WIN_RC64 = {WIN_RC64}
 
 D8 = {D8}
 NODEJS = {NODEJS}
 
-win_cflags = {' '.join(WIN_CFLAGS)}
-win_lflags32 = {' '.join(WIN_LFLAGS32)}
-win_lflags64 = {' '.join(WIN_LFLAGS64)}
+WIN_CFLAGS = {' '.join(WIN_CFLAGS)}
+WIN_LFLAGS32 = {' '.join(WIN_LFLAGS32)}
+WIN_LFLAGS64 = {' '.join(WIN_LFLAGS64)}
 
 rule mkdir
   description = mkdir
@@ -154,16 +156,50 @@ rule mkdir
 rule importation
   description = importation
   depfile = $out.dd
-  command = ../tools/importation.py -i $in -o $out -I . -I $src $options --depsout $depfile -DVERSION=$version -DREVISION=$revision
+  command = $src/tools/importation.py -i $in -o $out -I . -I $src $options --depsout $depfile -DVERSION=$VERSION -DREVISION=$REVERSION
 
 rule compile
   description = CXX
   depfile = $out.dd
-  command = $cxx $cflags $in -o $out $libs -MD -MF $depfile && strip $strip_args $out
+  command = $CXX $CFLAGS $in -o $out $LIBS -MD -MF $depfile && strip $STRIP_ARGS $out
+
+rule compile_win32
+  description = WIN_CL32
+  depfile = $out.dd
+  command = $src/tools/importation.py -i $in -o $out --no-out -I . -I $src --depsout $out.dd && $WIN_CL32 /nologo /c /Fo$out $WIN_CFLAGS $in >/dev/null
+
+rule compile_win64
+  description = WIN_CL64
+  depfile = $out.dd
+  command = $src/tools/importation.py -i $in -o $out --no-out -I . -I $src --depsout $out.dd && $WIN_CL64 /nologo /c /Fo$out $WIN_CFLAGS $in >/dev/null
+
+rule link_win32
+  description = WIN_LINK32
+  command = $WIN_LINK32 /nologo /OUT:$out $WIN_LFLAGS32 $in && chmod a+x $out
+
+rule link_win64
+  description = WIN_LINK64
+  command = $WIN_LINK64 /nologo /OUT:$out $WIN_LFLAGS64 $in && chmod a+x $out
+
+rule rc_win32
+  description = WIN_RC32
+  command = $WIN_RC32 /nologo /i $src /fo $out $in
+
+rule rc_win64
+  description = WIN_RC64
+  command = $WIN_RC64 /nologo /i $src /fo $out $in
 
 rule run
   description = RUN
   command = $in >$out
+
+rule resize
+  description = RESIZE
+  command = convert -resize $size $in $out
+
+rule convert_image
+  description = IMAGE_CONVERT
+  command = convert $in $out
 
 build gen: mkdir
 
@@ -189,6 +225,7 @@ def Importation(target, source, header_mode='cpp', name=None, keep=False, deps=N
     output += f'  options = {options}\n'
   if deps:
     output += f'  depfile = {deps}\n'
+  return target
 
 
 def Esp32Optional(main_name, main_source, parts):
@@ -204,16 +241,55 @@ def Esp32Optional(main_name, main_source, parts):
             implicit=['gen/esp32_' + i + '.h' for i, _ in parts])
 
 
-def Compile(target, source, implicit=[]):
+def Simple(op, target, source, implicit=[]):
   global output
   outdir = os.path.dirname(target)
   implicit = ' '.join(implicit)
-  output += f'build {target}: compile {source} | {outdir} {implicit}\n'
+  output += f'build {target}: {op} {source} | {outdir} {implicit}\n'
+  return target
 
 
-def Run(target, source):
+def Compile(target, source, implicit=[]):
+  return Simple('compile', target, source, implicit)
+
+
+def CompileW32(target, source, implicit=[]):
+  return Simple('compile_win32', target, source, implicit)
+
+
+def CompileW64(target, source, implicit=[]):
+  return Simple('compile_win64', target, source, implicit)
+
+
+def LinkW32(target, source, implicit=[]):
+  return Simple('link_win32', target, source, implicit)
+
+
+def LinkW64(target, source, implicit=[]):
+  return Simple('link_win64', target, source, implicit)
+
+
+def ResizeImage(target, source, size, implicit=[]):
   global output
-  output += f'build {target}: run {source}\n'
+  Simple('resize', target, source, implicit)
+  output += f'  size={size}\n'
+  return target
+
+
+def ConvertImage(target, source, implicit=[]):
+  return Simple('convert_image', target, source, implicit)
+
+
+def CompileResource32(target, source, implicit=[]):
+  return Simple('rc_win32', target, source, implicit)
+
+
+def CompileResource64(target, source, implicit=[]):
+  return Simple('rc_win64', target, source, implicit)
+
+
+def Run(target, source, implicit=[]):
+  return Simple('run', target, source, implicit)
 
 
 def Include(path):
