@@ -12,38 +12,49 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+ESP32_FILES = []
+
 # Main .ino file.
 Mkdir('esp32/ESP32forth')
-Importation('esp32/ESP32forth/README.txt',
-            '$src/esp32/README.txt')
+ESP32_FILES += [
+  Importation('esp32/ESP32forth/README.txt',
+              '$src/esp32/README.txt'),
+  Importation('esp32/ESP32forth/ESP32forth.ino',
+              '$src/esp32/ESP32forth.ino',
+              implicit=['gen/esp32_boot.h'], keep=True),
+]
 Importation('gen/esp32_boot.h', '$src/esp32/esp32_boot.fs', name='boot')
-Importation('esp32/ESP32forth/ESP32forth.ino',
-            '$src/esp32/ESP32forth.ino',
-            implicit=['gen/esp32_boot.h'], keep=True)
 
 # Optional Compontents.
 Mkdir('esp32/ESP32forth/optional')
-Importation('esp32/ESP32forth/optional/README-optional.txt',
-            '$src/esp32/optional/README-optional.txt')
-Esp32Optional('rmt', '$src/esp32/optional/rmt.h', [])
-Esp32Optional('assemblers', '$src/esp32/optional/assemblers/assemblers.h',
-              [('assembler', '$src/common/assembler.fs'),
-               ('xtensa-assembler', '$src/esp32/optional/assemblers/xtensa-assembler.fs'),
-               ('riscv-assembler', '$src/esp32/optional/assemblers/riscv-assembler.fs')])
-Esp32Optional('camera', '$src/esp32/optional/camera/camera.h',
-              [('camera', '$src/esp32/optional/camera/camera_server.fs')])
-Esp32Optional('interrupts', '$src/esp32/optional/interrupts/interrupts.h',
-              [('interrupts', '$src/esp32/optional/interrupts/timers.fs')])
-Esp32Optional('oled', '$src/esp32/optional/oled/oled.h',
-              [('oled', '$src/esp32/optional/oled/oled.fs')])
-Esp32Optional('spi-flash', '$src/esp32/optional/spi-flash/spi-flash.h',
-              [('spi-flash', '$src/esp32/optional/spi-flash/spi-flash.fs')])
-Esp32Optional('serial-bluetooth', '$src/esp32/optional/serial-bluetooth/serial-bluetooth.h',
-              [('serial-bluetooth', '$src/esp32/optional/serial-bluetooth/serial-bluetooth.fs')])
+ESP32_FILES = [
+  Importation('esp32/ESP32forth/optional/README-optional.txt',
+              '$src/esp32/optional/README-optional.txt'),
+  Esp32Optional('rmt', '$src/esp32/optional/rmt.h', []),
+  Esp32Optional('assemblers', '$src/esp32/optional/assemblers/assemblers.h',
+                [('assembler', '$src/common/assembler.fs'),
+                 ('xtensa-assembler', '$src/esp32/optional/assemblers/xtensa-assembler.fs'),
+                 ('riscv-assembler', '$src/esp32/optional/assemblers/riscv-assembler.fs')]),
+  Esp32Optional('camera', '$src/esp32/optional/camera/camera.h',
+                [('camera', '$src/esp32/optional/camera/camera_server.fs')]),
+  Esp32Optional('interrupts', '$src/esp32/optional/interrupts/interrupts.h',
+                [('interrupts', '$src/esp32/optional/interrupts/timers.fs')]),
+  Esp32Optional('oled', '$src/esp32/optional/oled/oled.h',
+                [('oled', '$src/esp32/optional/oled/oled.fs')]),
+  Esp32Optional('spi-flash', '$src/esp32/optional/spi-flash/spi-flash.h',
+                [('spi-flash', '$src/esp32/optional/spi-flash/spi-flash.fs')]),
+  Esp32Optional('serial-bluetooth', '$src/esp32/optional/serial-bluetooth/serial-bluetooth.h',
+                [('serial-bluetooth', '$src/esp32/optional/serial-bluetooth/serial-bluetooth.fs')]),
+]
 
 # Simulator.
 Mkdir('esp32-sim')
-Compile('gen/print-esp32-builtins', '$src/esp32/print-builtins.cpp')
+ESP32_FILES += [
+  Compile('esp32-sim/esp32-sim', '$src/esp32/sim_main.cpp',
+          implicit=['gen/esp32_boot.h', 'gen/esp32_sim_opcodes.h'])
+]
+Compile('gen/print-esp32-builtins', '$src/esp32/print-builtins.cpp'),
 Run('gen/esp32_sim_opcodes.h', 'gen/print-esp32-builtins')
-Compile('esp32-sim/esp32-sim', '$src/esp32/sim_main.cpp',
-        implicit=['gen/esp32_boot.h', 'gen/esp32_sim_opcodes.h'])
+
+# Main Alias.
+Alias('esp', ' '.join(ESP32_FILES))

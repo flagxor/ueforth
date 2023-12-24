@@ -234,7 +234,7 @@ def Esp32Optional(main_name, main_source, parts):
                 source, name=name.replace('-', '_') + '_source')
   if not main_source:
     main_source = 'gen/esp32_' + main_name + '.h'
-  Importation('esp32/ESP32forth/optional/' + main_name + '.h',
+  return Importation('esp32/ESP32forth/optional/' + main_name + '.h',
               main_source,
             keep=True,
             deps='gen/esp32_optional_' + main_name + '.h.dd',
@@ -290,6 +290,18 @@ def CompileResource64(target, source, implicit=[]):
 
 def Run(target, source, implicit=[]):
   return Simple('run', target, source, implicit)
+
+
+def Alias(target, source):
+  global output
+  output += f'build {target}: phony {source}\n'
+  return target
+
+
+def Default(target):
+  global output
+  output += f'default {target}\n'
+  return target
 
 
 def Include(path):

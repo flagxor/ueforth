@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+Alias('unix', 'posix/ueforth')
 Importation('gen/posix_boot.h', '$src/posix/posix_boot.fs', name='boot')
 Compile('posix/ueforth', '$src/posix/main.c',
         implicit=['gen/posix_boot.h'])

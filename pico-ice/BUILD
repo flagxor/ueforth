@@ -12,4 +12,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+Alias('pico', 'gen/pico_ice_boot.h')
 Importation('gen/pico_ice_boot.h', '$src/pico-ice/pico_ice_boot.fs', name='boot')
