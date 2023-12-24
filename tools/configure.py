@@ -150,10 +150,6 @@ WIN_CFLAGS = {' '.join(WIN_CFLAGS)}
 WIN_LFLAGS32 = {' '.join(WIN_LFLAGS32)}
 WIN_LFLAGS64 = {' '.join(WIN_LFLAGS64)}
 
-rule mkdir
-  description = mkdir
-  command = mkdir -p $out
-
 rule importation
   description = importation
   depfile = $out.d
@@ -169,28 +165,28 @@ rule compile
 rule compile_win32
   description = WIN_CL32
   deps = msvc
-  command = $WIN_CL32 /showIncludes /nologo /c /Fo$out $WIN_CFLAGS $in
+  command = $WIN_CL32 /showIncludes /nologo /c /Fo$out $WIN_CFLAGS $in && touch $out
 
 rule compile_win64
   description = WIN_CL64
   deps = msvc
-  command = $WIN_CL64 /showIncludes /nologo /c /Fo$out $WIN_CFLAGS $in >/dev/null
+  command = $WIN_CL64 /showIncludes /nologo /c /Fo$out $WIN_CFLAGS $in && touch $out
 
 rule link_win32
   description = WIN_LINK32
-  command = $WIN_LINK32 /nologo /OUT:$out $WIN_LFLAGS32 $in && chmod a+x $out
+  command = $WIN_LINK32 /nologo /OUT:$out $WIN_LFLAGS32 $in && touch $out && chmod a+x $out
 
 rule link_win64
   description = WIN_LINK64
-  command = $WIN_LINK64 /nologo /OUT:$out $WIN_LFLAGS64 $in && chmod a+x $out
+  command = $WIN_LINK64 /nologo /OUT:$out $WIN_LFLAGS64 $in && touch $out && chmod a+x $out
 
 rule rc_win32
   description = WIN_RC32
-  command = $WIN_RC32 /nologo /i $src /fo $out $in
+  command = $WIN_RC32 /nologo /i $src /fo $out $in && touch $out
 
 rule rc_win64
   description = WIN_RC64
-  command = $WIN_RC64 /nologo /i $src /fo $out $in
+  command = $WIN_RC64 /nologo /i $src /fo $out $in && touch $out
 
 rule run
   description = RUN
@@ -204,14 +200,7 @@ rule convert_image
   description = IMAGE_CONVERT
   command = convert $in $out
 
-build gen: mkdir
-
 """
-
-
-def Mkdir(path):
-  global output
-  output += 'build ' + path + ': mkdir\n'
 
 
 def Importation(target, source, header_mode='cpp', name=None, keep=False, deps=None, implicit=[]):
@@ -221,9 +210,8 @@ def Importation(target, source, header_mode='cpp', name=None, keep=False, deps=N
     options += '--keep-first-comment'
   if name:
     options += ' --name ' + name + ' --header ' + header_mode
-  outdir = os.path.dirname(target)
   implicit = ' '.join(implicit)
-  output += f'build {target}: importation {source} | {outdir} {implicit}\n'
+  output += f'build {target}: importation {source} | {implicit}\n'
   if options:
     output += f'  options = {options}\n'
   if deps:
@@ -232,23 +220,21 @@ def Importation(target, source, header_mode='cpp', name=None, keep=False, deps=N
 
 
 def Esp32Optional(main_name, main_source, parts):
+  parts = []
   for name, source in parts:
-    Importation('gen/esp32_' + name + '.h',
-                source, name=name.replace('-', '_') + '_source')
-  if not main_source:
-    main_source = 'gen/esp32_' + main_name + '.h'
+    parts.append(Importation('gen/esp32_' + name + '.h',
+                             source, name=name.replace('-', '_') + '_source'))
   return Importation('esp32/ESP32forth/optional/' + main_name + '.h',
-              main_source,
-            keep=True,
-            deps='gen/esp32_optional_' + main_name + '.h.d',
-            implicit=['gen/esp32_' + i + '.h' for i, _ in parts])
+                     main_source,
+                     keep=True,
+                     deps='gen/esp32_optional_' + main_name + '.h.d',
+                     implicit=parts)
 
 
 def Simple(op, target, source, implicit=[]):
   global output
-  outdir = os.path.dirname(target)
   implicit = ' '.join(implicit)
-  output += f'build {target}: {op} {source} | {outdir} {implicit}\n'
+  output += f'build {target}: {op} {source} | {implicit}\n'
   return target
 
 
@@ -308,7 +294,6 @@ def Default(target):
 
 
 def Include(path):
-  Mkdir(path)
   path = os.path.join(ROOT_DIR, path, 'BUILD')
   data = open(path).read()
   exec(data)

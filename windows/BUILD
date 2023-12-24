@@ -33,7 +33,6 @@ LinkW64('windows/uEf64.exe',
         ' '.join(['windows/uEf64.obj', 'resources/ueforth_res64.res']))
 
 # Create icon.
-Mkdir('resources')
 ICON_SIZES = [
   ResizeImage('resources/eforth16x16.png', '$src/images/eforth.png', '16x16'),
   ResizeImage('resources/eforth32x32.png', '$src/images/eforth.png', '32x32'),

@@ -15,7 +15,6 @@
 ESP32_FILES = []
 
 # Main .ino file.
-Mkdir('esp32/ESP32forth')
 ESP32_FILES += [
   Importation('esp32/ESP32forth/README.txt',
               '$src/esp32/README.txt'),
@@ -26,7 +25,6 @@ ESP32_FILES += [
 Importation('gen/esp32_boot.h', '$src/esp32/esp32_boot.fs', name='boot')
 
 # Optional Compontents.
-Mkdir('esp32/ESP32forth/optional')
 ESP32_FILES += [
   Importation('esp32/ESP32forth/optional/README-optional.txt',
               '$src/esp32/optional/README-optional.txt'),
@@ -48,7 +46,6 @@ ESP32_FILES += [
 ]
 
 # Simulator.
-Mkdir('esp32-sim')
 ESP32_FILES += [
   Compile('esp32-sim/esp32-sim', '$src/esp32/sim_main.cpp',
           implicit=['gen/esp32_boot.h', 'gen/esp32_sim_opcodes.h'])
