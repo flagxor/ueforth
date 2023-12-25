@@ -200,6 +200,10 @@ rule convert_image
   description = IMAGE_CONVERT
   command = convert $in $out
 
+rule zip
+  description = ZIP
+  command = rm -f $out && cd $base && zip $relout $relin >/dev/null
+
 """
 
 
@@ -279,6 +283,17 @@ def CompileResource64(target, source, implicit=[]):
 
 def Run(target, source, implicit=[]):
   return Simple('run', target, source, implicit)
+
+
+def Zip(target, sources, base):
+  global output
+  ret = Simple('zip', target, ' '.join(sources))
+  relin = ' '.join([os.path.relpath(i, base) for i in sources])
+  relout = os.path.relpath(target, base)
+  output += f'  base = {base}\n'
+  output += f'  relout = {relout}\n'
+  output += f'  relin = {relin}\n'
+  return ret
 
 
 def Alias(target, source):

@@ -13,9 +13,10 @@
 # limitations under the License.
 
 ESP32_FILES = []
+ESP32_ZIP_FILES = []
 
 # Main .ino file.
-ESP32_FILES += [
+ESP32_ZIP_FILES += [
   Importation('esp32/ESP32forth/README.txt',
               '$src/esp32/README.txt'),
   Importation('esp32/ESP32forth/ESP32forth.ino',
@@ -25,7 +26,7 @@ ESP32_FILES += [
 Importation('gen/esp32_boot.h', '$src/esp32/esp32_boot.fs', name='boot')
 
 # Optional Compontents.
-ESP32_FILES += [
+ESP32_ZIP_FILES += [
   Importation('esp32/ESP32forth/optional/README-optional.txt',
               '$src/esp32/optional/README-optional.txt'),
   Esp32Optional('rmt', '$src/esp32/optional/rmt.h', []),
@@ -43,6 +44,11 @@ ESP32_FILES += [
                 [('spi-flash', '$src/esp32/optional/spi-flash/spi-flash.fs')]),
   Esp32Optional('serial-bluetooth', '$src/esp32/optional/serial-bluetooth/serial-bluetooth.h',
                 [('serial-bluetooth', '$src/esp32/optional/serial-bluetooth/serial-bluetooth.fs')]),
+]
+
+# Zip it.
+ESP32_FILES += [
+  Zip('esp32/ESP32forth.zip', ESP32_ZIP_FILES, base='esp32/ESP32forth'),
 ]
 
 # Simulator.
