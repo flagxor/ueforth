@@ -162,6 +162,12 @@ rule compile
   deps = gcc
   command = $CXX $CFLAGS $in -o $out $LIBS -MD -MF $depfile && strip $STRIP_ARGS $out
 
+rule compile_sim
+  description = CXX_SIM
+  depfile = $out.d
+  deps = gcc
+  command = $CXX -DUEFORTH_SIM=1 $CFLAGS $in -o $out $LIBS -MD -MF $depfile && strip $STRIP_ARGS $out
+
 rule compile_win32
   description = WIN_CL32
   deps = msvc
@@ -262,6 +268,10 @@ def Simple(op, target, source, implicit=[]):
 
 def Compile(target, source, implicit=[]):
   return Simple('compile', target, source, implicit)
+
+
+def CompileSim(target, source, implicit=[]):
+  return Simple('compile_sim', target, source, implicit)
 
 
 def CompileW32(target, source, implicit=[]):

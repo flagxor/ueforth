@@ -12,5 +12,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Alias('pico', 'gen/pico_ice_boot.h')
+PICO_ICE_FILES = []
+PICO_ICE_ZIP_FILES = []
+
+# Main .ino file.
+PICO_ICE_ZIP_FILES += [
+  Importation('pico-ice/ueforth-pico-ice/README.txt',
+              '$src/pico-ice/README.txt'),
+  # TODO: .uf2
+  Copy('pico-ice/ueforth-pice-ice/LICENSE', '$src/LICENSE'),
+  Copy('pico-ice/ueforth-pice-ice/pico-ice-sdk-LICENSE.md',
+       '$src/pico-ice/pico-ice-sdk/LICENSE.md'),
+  Copy('pico-ice/ueforth-pice-ice/pico-sdk-LICENSE.TXT',
+       '$src/pico-ice/pico-sdk/LICENSE.TXT'),
+]
+
+# Zip it.
+PICO_ICE_FILES += [
+  Zip('pico-ice/ueforth-pico-ice.zip', PICO_ICE_ZIP_FILES, base='pico-ice/ueforth-pico-ice'),
+]
+
+# Simulator.
+PICO_ICE_FILES += [
+  CompileSim('pico-ice-sim/ueforth_pico_ice_sim', '$src/pico-ice/main.c',
+             implicit=['gen/pico_ice_boot.h'])
+]
 Importation('gen/pico_ice_boot.h', '$src/pico-ice/pico_ice_boot.fs', name='boot')
+
+# Main Alias.
+Alias('pico', ' '.join(PICO_ICE_FILES))
