@@ -204,6 +204,10 @@ rule zip
   description = ZIP
   command = rm -f $out && cd $base && zip $relout $relin >/dev/null
 
+rule copy
+  description = COPY
+  command = cp $in $out
+
 """
 
 
@@ -299,6 +303,12 @@ def Zip(target, sources, base):
 def Alias(target, source):
   global output
   output += f'build {target}: phony {source}\n'
+  return target
+
+
+def Copy(target, source):
+  global output
+  output += f'build {target}: copy {source}\n'
   return target
 
 
