@@ -21,14 +21,20 @@ Importation('gen/windows_boot_extra.h', '$src/windows/windows_boot_extra.fs',
             header_mode='win', name='boot_extra')
 
 # Compile Win32.
-Alias('win32', 'windows/uEf32.exe')
+Alias('win32', ' '.join([
+  ForthTest('tests/win32_all_tests.out', 'windows/uEf32.exe', '$src/common/all_tests.fs',
+            interp='wine', pool='console'),
+]))
 CompileW32('windows/uEf32.obj', '$src/windows/main.c',
            implicit=['gen/windows_boot.h', 'gen/windows_boot_extra.h'])
 LinkW32('windows/uEf32.exe',
         ' '.join(['windows/uEf32.obj', 'resources/ueforth_res32.res']))
 
 # Compile Win64.
-Alias('win64', 'windows/uEf64.exe')
+Alias('win64', ' '.join([
+  ForthTest('tests/win64_all_tests.out', 'windows/uEf64.exe', '$src/common/all_tests.fs',
+            interp='wine', pool='console'),
+]))
 CompileW64('windows/uEf64.obj', '$src/windows/main.c',
            implicit=['gen/windows_boot.h', 'gen/windows_boot_extra.h'])
 LinkW64('windows/uEf64.exe',

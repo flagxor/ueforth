@@ -222,6 +222,12 @@ rule oneshot
   description = ONESHOT
   command = echo oneshot
 
+rule forth_test
+  description = FORTH_TEST
+  depfile = $out.d
+  deps = gcc
+  command = $src/tools/importation.py -i $test -o $out --depsout $depfile --no-out && $interp $forth $test >$out
+
 rule clean
   description = CLEAN
   command = ninja -t clean
@@ -350,6 +356,17 @@ def OneShot(target, command, source, pool=None):
   global output
   output += f'build {target}: oneshot {source}\n'
   output += f'  command = {command}\n'
+  if pool:
+    output += f'  pool = {pool}\n'
+  return target
+
+
+def ForthTest(target, forth, test, interp='', pool=None):
+  global output
+  output += f'build {target}: forth_test {forth} {test}\n'
+  output += f'  forth = {forth}\n'
+  output += f'  test = {test}\n'
+  output += f'  interp = {interp}\n'
   if pool:
     output += f'  pool = {pool}\n'
   return target
