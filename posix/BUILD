@@ -12,13 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Importation('gen/posix_boot.h', '$src/posix/posix_boot.fs', name='boot')
-Compile('posix/ueforth', '$src/posix/main.c',
-        implicit=['gen/posix_boot.h'])
+Importation('$dst/gen/posix_boot.h', '$src/posix/posix_boot.fs', name='boot')
+Compile('$dst/posix/ueforth', '$src/posix/main.c',
+        implicit=['$dst/gen/posix_boot.h'])
 
 Alias('posix', ' '.join([
-  ForthTest('tests/posix_all_tests.out', 'posix/ueforth', '$src/common/all_tests.fs'),
+  ForthTest('$dst/tests/posix_all_tests.out',
+            '$dst/posix/ueforth', '$src/common/all_tests.fs'),
 ]))
 
-OneShot('install', 'sudo cp posix/ueforth /usr/bin/ueforth',
-        'posix/ueforth', pool='console')
+OneShot('install', 'sudo cp $dst/posix/ueforth /usr/bin/ueforth',
+        '$dst/posix/ueforth', pool='console')

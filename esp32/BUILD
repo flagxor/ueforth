@@ -17,17 +17,17 @@ ESP32_ZIP_FILES = []
 
 # Main .ino file.
 ESP32_ZIP_FILES += [
-  Importation('esp32/ESP32forth/README.txt',
+  Importation('$dst/esp32/ESP32forth/README.txt',
               '$src/esp32/README.txt'),
-  Importation('esp32/ESP32forth/ESP32forth.ino',
+  Importation('$dst/esp32/ESP32forth/ESP32forth.ino',
               '$src/esp32/ESP32forth.ino',
-              implicit=['gen/esp32_boot.h'], keep=True),
+              implicit=['$dst/gen/esp32_boot.h'], keep=True),
 ]
-Importation('gen/esp32_boot.h', '$src/esp32/esp32_boot.fs', name='boot')
+Importation('$dst/gen/esp32_boot.h', '$src/esp32/esp32_boot.fs', name='boot')
 
 # Optional Compontents.
 ESP32_ZIP_FILES += [
-  Importation('esp32/ESP32forth/optional/README-optional.txt',
+  Importation('$dst/esp32/ESP32forth/optional/README-optional.txt',
               '$src/esp32/optional/README-optional.txt'),
   Esp32Optional('rmt', '$src/esp32/optional/rmt.h', []),
   Esp32Optional('assemblers', '$src/esp32/optional/assemblers/assemblers.h',
@@ -48,16 +48,16 @@ ESP32_ZIP_FILES += [
 
 # Zip it.
 ESP32_FILES += [
-  Zip('esp32/ESP32forth.zip', ESP32_ZIP_FILES, base='esp32/ESP32forth'),
+  Zip('$dst/esp32/ESP32forth.zip', ESP32_ZIP_FILES, base='$dst/esp32/ESP32forth'),
 ]
 
 # Simulator.
 ESP32_FILES += [
-  Compile('esp32-sim/esp32-sim', '$src/esp32/sim_main.cpp',
-          implicit=['gen/esp32_boot.h', 'gen/esp32_sim_opcodes.h'])
+  Compile('$dst/esp32-sim/esp32-sim', '$src/esp32/sim_main.cpp',
+          implicit=['$dst/gen/esp32_boot.h', '$dst/gen/esp32_sim_opcodes.h'])
 ]
-Compile('gen/print-esp32-builtins', '$src/esp32/print-builtins.cpp'),
-Run('gen/esp32_sim_opcodes.h', 'gen/print-esp32-builtins')
+Compile('$dst/gen/print-esp32-builtins', '$src/esp32/print-builtins.cpp'),
+Run('$dst/gen/esp32_sim_opcodes.h', '$dst/gen/print-esp32-builtins')
 
 # Main Alias.
 Alias('esp32', ' '.join(ESP32_FILES))

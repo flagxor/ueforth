@@ -26,22 +26,22 @@ ESP_REPLACE = REPLACE + ['-DFORTH=ESP32forth']
 DEPLOY_ITEMS = []
 
 DEPLOY_ITEMS += [
-  Copy('deploy/.gcloudignore', '$src/site/.gcloudignore'),
-  Copy('deploy/ueforth.js', 'web/ueforth.js'),
-  Importation('deploy/index.html', '$src/site/index.html'),
-  Importation('deploy/linux.html', '$src/site/linux.html'),
-  Importation('deploy/windows.html', '$src/site/windows.html'),
-  Importation('deploy/web.html', '$src/site/web.html'),
-  Importation('deploy/ESP32forth.html', '$src/site/ESP32forth.html'),
-  Importation('deploy/pico-ice.html', '$src/site/pico-ice.html'),
-  Importation('deploy/internals.html', '$src/site/internals.html'),
-  Importation('deploy/classic.html', '$src/site/classic.html'),
-  Copy('deploy/eforth.go', '$src/site/eforth.go'),
-  Copy('deploy/app.yaml', '$src/site/app.yaml'),
+  Copy('$dst/deploy/.gcloudignore', '$src/site/.gcloudignore'),
+  Copy('$dst/deploy/ueforth.js', '$dst/web/ueforth.js'),
+  Importation('$dst/deploy/index.html', '$src/site/index.html'),
+  Importation('$dst/deploy/linux.html', '$src/site/linux.html'),
+  Importation('$dst/deploy/windows.html', '$src/site/windows.html'),
+  Importation('$dst/deploy/web.html', '$src/site/web.html'),
+  Importation('$dst/deploy/ESP32forth.html', '$src/site/ESP32forth.html'),
+  Importation('$dst/deploy/pico-ice.html', '$src/site/pico-ice.html'),
+  Importation('$dst/deploy/internals.html', '$src/site/internals.html'),
+  Importation('$dst/deploy/classic.html', '$src/site/classic.html'),
+  Copy('$dst/deploy/eforth.go', '$src/site/eforth.go'),
+  Copy('$dst/deploy/app.yaml', '$src/site/app.yaml'),
 ]
 
 DEPLOY_ITEMS += [
-  Copy('deploy/static/' + i, '$src/site/static/' + i) for i in [
+  Copy('$dst/deploy/static/' + i, '$src/site/static/' + i) for i in [
     'eforth.css',
     'robots.txt',
     'esp32-c3-wroom-02.jpg',

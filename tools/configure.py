@@ -30,8 +30,8 @@ REVISION = 'TODO'
 
 CFLAGS_COMMON = [
   '-O2',
-  '-I', '$src/',
-  '-I', './',
+  '-I', '$src',
+  '-I', '$dst',
 ]
 
 CFLAGS_MINIMIZE = [
@@ -128,7 +128,8 @@ NODEJS = LSQ('/usr/bin/nodejs')
 
 output = f"""
 ninja_required_version = 1.1
-src = ..
+src = .
+dst = out
 VERSION = {VERSION}
 REVISION = {REVISION}
 CFLAGS = {' '.join(CFLAGS)}
@@ -154,7 +155,7 @@ rule importation
   description = importation
   depfile = $out.d
   deps = gcc
-  command = $src/tools/importation.py -i $in -o $out -I . -I $src $options --depsout $depfile -DVERSION=$VERSION -DREVISION=$REVERSION
+  command = $src/tools/importation.py -i $in -o $out -I $dst -I $src $options --depsout $depfile -DVERSION=$VERSION -DREVISION=$REVERSION
 
 rule compile
   description = CXX
@@ -256,12 +257,12 @@ def Importation(target, source, header_mode='cpp', name=None, keep=False, deps=N
 def Esp32Optional(main_name, main_source, parts):
   parts = []
   for name, source in parts:
-    parts.append(Importation('gen/esp32_' + name + '.h',
+    parts.append(Importation('$dst/gen/esp32_' + name + '.h',
                              source, name=name.replace('-', '_') + '_source'))
-  return Importation('esp32/ESP32forth/optional/' + main_name + '.h',
+  return Importation('$dst/esp32/ESP32forth/optional/' + main_name + '.h',
                      main_source,
                      keep=True,
-                     deps='gen/esp32_optional_' + main_name + '.h.d',
+                     deps='$dst/gen/esp32_optional_' + main_name + '.h.d',
                      implicit=parts)
 
 

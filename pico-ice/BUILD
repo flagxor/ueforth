@@ -17,27 +17,28 @@ PICO_ICE_ZIP_FILES = []
 
 # Main .ino file.
 PICO_ICE_ZIP_FILES += [
-  Importation('pico-ice/ueforth-pico-ice/README.txt',
+  Importation('$dst/pico-ice/ueforth-pico-ice/README.txt',
               '$src/pico-ice/README.txt'),
   # TODO: .uf2
-  Copy('pico-ice/ueforth-pice-ice/LICENSE', '$src/LICENSE'),
-  Copy('pico-ice/ueforth-pice-ice/pico-ice-sdk-LICENSE.md',
+  Copy('$dst/pico-ice/ueforth-pice-ice/LICENSE', '$src/LICENSE'),
+  Copy('$dst/pico-ice/ueforth-pice-ice/pico-ice-sdk-LICENSE.md',
        '$src/pico-ice/pico-ice-sdk/LICENSE.md'),
-  Copy('pico-ice/ueforth-pice-ice/pico-sdk-LICENSE.TXT',
+  Copy('$dst/pico-ice/ueforth-pice-ice/pico-sdk-LICENSE.TXT',
        '$src/pico-ice/pico-sdk/LICENSE.TXT'),
 ]
 
 # Zip it.
 PICO_ICE_FILES += [
-  Zip('pico-ice/ueforth-pico-ice.zip', PICO_ICE_ZIP_FILES, base='pico-ice/ueforth-pico-ice'),
+  Zip('$dst/pico-ice/ueforth-pico-ice.zip', PICO_ICE_ZIP_FILES,
+      base='$dst/pico-ice/ueforth-pico-ice'),
 ]
 
 # Simulator.
 PICO_ICE_FILES += [
-  CompileSim('pico-ice-sim/ueforth_pico_ice_sim', '$src/pico-ice/main.c',
-             implicit=['gen/pico_ice_boot.h'])
+  CompileSim('$dst/pico-ice-sim/ueforth_pico_ice_sim', '$src/pico-ice/main.c',
+             implicit=['$dst/gen/pico_ice_boot.h'])
 ]
-Importation('gen/pico_ice_boot.h', '$src/pico-ice/pico_ice_boot.fs', name='boot')
+Importation('$dst/gen/pico_ice_boot.h', '$src/pico-ice/pico_ice_boot.fs', name='boot')
 
 # Main Alias.
 Alias('pico', ' '.join(PICO_ICE_FILES))
