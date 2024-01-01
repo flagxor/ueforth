@@ -212,6 +212,11 @@ rule gen_run
   description = GEN_RUN
   command = $script $options $infiles >$out
 
+rule oneshot
+  description = ONESHOT
+  command = $command
+  pool = console
+
 rule clean
   description = CLEAN
   command = ninja -t clean
@@ -329,6 +334,13 @@ def GenRun(target, script, options, sources):
   output += f'  options = {options}\n'
   output += f'  script = {script}\n'
   output += f'  infiles = {sources}\n'
+  return target
+
+
+def OneShot(target, command, source):
+  global output
+  output += f'build {target}: oneshot {source}\n'
+  output += f'  command = {command}\n'
   return target
 
 
