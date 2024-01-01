@@ -212,6 +212,12 @@ rule gen_run
   description = GEN_RUN
   command = $script $options $infiles >$out
 
+rule clean
+  description = CLEAN
+  command = ninja -t clean
+
+build clean: clean
+
 """
 
 
