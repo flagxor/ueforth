@@ -23,7 +23,7 @@ Importation('gen/windows_boot_extra.h', '$src/windows/windows_boot_extra.fs',
 # Compile Win32.
 Alias('win32', ' '.join([
   ForthTest('tests/win32_all_tests.out', 'windows/uEf32.exe', '$src/common/all_tests.fs',
-            interp='wine', pool='console'),
+            interp='wine'),
 ]))
 CompileW32('windows/uEf32.obj', '$src/windows/main.c',
            implicit=['gen/windows_boot.h', 'gen/windows_boot_extra.h'])
@@ -33,7 +33,7 @@ LinkW32('windows/uEf32.exe',
 # Compile Win64.
 Alias('win64', ' '.join([
   ForthTest('tests/win64_all_tests.out', 'windows/uEf64.exe', '$src/common/all_tests.fs',
-            interp='wine', pool='console'),
+            interp='wine'),
 ]))
 CompileW64('windows/uEf64.obj', '$src/windows/main.c',
            implicit=['gen/windows_boot.h', 'gen/windows_boot_extra.h'])

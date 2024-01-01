@@ -53,6 +53,7 @@ z" free" 1 sysfunc sysfree
 z" realloc" 2 sysfunc realloc
 z" usleep" 1 sysfunc usleep
 z" signal" 2 sysfunc signal
+z" isatty" 1 sysfunc isatty
 
 ( Processes )
 z" fork" 0 sysfunc fork

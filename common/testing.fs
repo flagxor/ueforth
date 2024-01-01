@@ -87,8 +87,20 @@ variable tests-found   variable tests-run    variable tests-passed
 : check-fresh   depth if }confirm ."  DEPTH LEAK! " depth . 1 throw then
                 fdepth if }confirm ."  FDEPTH LEAK! " fdepth . 1 throw then ;
 : wrap-test ( xt -- ) expect-reset >r check-fresh r> execute check-fresh expect-finish ;
-: red   1 fg ;   : green   2 fg ;   : hr   40 for [char] - emit next cr ;
-: replace-line   13 emit clear-to-eol ;
+: red ;   : green ;   : replace-line cr ;   : old-normal normal ;   : normal ;
+DEFINED? posix [IF]
+  also posix stdout isatty previous [IF]
+    : red   1 fg ;   : green   2 fg ;
+    : replace-line   13 emit clear-to-eol ;
+    : normal old-normal ;
+  [THEN]
+[THEN]
+DEFINED? windows [IF]
+  : red   1 fg ;   : green   2 fg ;
+  : replace-line   13 emit clear-to-eol ;
+  : normal old-normal ;
+[THEN]
+: hr   40 for [char] - emit next cr ;
 : label-test ( xt -- ) replace-line >name type ;
 : run-test ( xt -- ) dup label-test only forth confirm{ ['] wrap-test catch }confirm
    if drop ( cause xt restored on throw ) red ."  FAILED" normal cr
