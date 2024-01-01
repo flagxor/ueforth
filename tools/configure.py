@@ -214,8 +214,7 @@ rule gen_run
 
 rule oneshot
   description = ONESHOT
-  command = $command
-  pool = console
+  command = echo oneshot
 
 rule clean
   description = CLEAN
@@ -337,10 +336,12 @@ def GenRun(target, script, options, sources):
   return target
 
 
-def OneShot(target, command, source):
+def OneShot(target, command, source, pool=None):
   global output
   output += f'build {target}: oneshot {source}\n'
   output += f'  command = {command}\n'
+  if pool:
+    output += f'  pool = {pool}\n'
   return target
 
 

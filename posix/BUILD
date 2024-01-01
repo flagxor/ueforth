@@ -17,4 +17,5 @@ Importation('gen/posix_boot.h', '$src/posix/posix_boot.fs', name='boot')
 Compile('posix/ueforth', '$src/posix/main.c',
         implicit=['gen/posix_boot.h'])
 
-OneShot('install', 'sudo cp posix/ueforth /usr/bin/ueforth', 'posix/ueforth')
+OneShot('install', 'sudo cp posix/ueforth /usr/bin/ueforth',
+        'posix/ueforth', pool='console')
