@@ -208,6 +208,10 @@ rule copy
   description = COPY
   command = cp $in $out
 
+rule gen_run
+  description = GEN_RUN
+  command = $script $options $infiles >$out
+
 """
 
 
@@ -309,6 +313,16 @@ def Alias(target, source):
 def Copy(target, source):
   global output
   output += f'build {target}: copy {source}\n'
+  return target
+
+
+def GenRun(target, script, options, sources):
+  sources = ' '.join(sources)
+  global output
+  output += f'build {target}: gen_run {script} {sources}\n'
+  output += f'  options = {options}\n'
+  output += f'  script = {script}\n'
+  output += f'  infiles = {sources}\n'
   return target
 
 

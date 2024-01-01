@@ -27,7 +27,7 @@ DEPLOY_ITEMS = []
 
 DEPLOY_ITEMS += [
   Copy('deploy/.gcloudignore', '$src/site/.gcloudignore'),
-  #Copy('deploy/ueforth.js', 'web/ueforth.js'),
+  Copy('deploy/ueforth.js', 'web/ueforth.js'),
   Importation('deploy/index.html', '$src/site/index.html'),
   Importation('deploy/linux.html', '$src/site/linux.html'),
   Importation('deploy/windows.html', '$src/site/windows.html'),
