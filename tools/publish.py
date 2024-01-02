@@ -28,6 +28,8 @@ parser.add_argument('--dst', required=True)
 parser.add_argument('-D', action='append')
 parser.add_argument('-F', action='append')
 args = parser.parse_args()
+replacements = args.D or []
+file_replacements = args.F or []
 
 dst = args.dst
 for r in replacements:
@@ -35,7 +37,6 @@ for r in replacements:
   dst = dst.replace('{{' + name + '}}', value)
 for r in file_replacements:
   name, filename = r.split('=', 1)
-  imported.add(os.path.abspath(filename))
-  line = line.replace('{{' + name + '}}', open(filename).read())
+  dst = dst.replace('{{' + name + '}}', open(filename).read())
 
-subprocess.run(f'{GSUTIL_CP} {args.src} {args.dst}', shell=True, check=True)
+subprocess.run(f'{GSUTIL_CP} {args.src} {ARCHIVE}/{dst}', shell=True, check=True)

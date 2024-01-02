@@ -268,7 +268,7 @@ rule forth_test
 
 rule publish
   description = PUBLISH $pubpath
-  command = $src/tools/publish.py --src $in --dst $pubpath \
+  command = $src/tools/publish.py --src $in --dst "$pubpath" \
   -DVERSION=$VERSION \
   -DSTABLE_VERSION=$STABLE_VERSION \
   -DOLD_STABLE_VERSION=$OLD_STABLE_VERSION \
