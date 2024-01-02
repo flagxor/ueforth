@@ -273,7 +273,7 @@ rule publish
   -DSTABLE_VERSION=$STABLE_VERSION \
   -DOLD_STABLE_VERSION=$OLD_STABLE_VERSION \
   -FREVISION=$dst/gen/REVISION \
-  -FREVSHORT=$dst/gen/REVSHORT
+  -FREVSHORT=$dst/gen/REVSHORT 2>&1 | cat >/dev/null
 
 rule clean
   description = CLEAN
