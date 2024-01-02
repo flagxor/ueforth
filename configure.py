@@ -26,10 +26,6 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = SCRIPT_DIR
 NINJA_BUILD = os.path.join(ROOT_DIR, 'build.ninja')
 
-REVISION = 'TODO'
-#REVISION=$(shell git rev-parse HEAD | head -c 20)
-#REVSHORT=$(shell echo $(REVISION) | head -c 7)
-
 CFLAGS_COMMON = [
   '-O2',
   '-I', '$src',
@@ -144,7 +140,8 @@ dst = {DST_DIR}
 ninjadir = {NINJA_DIR}
 builddir = $dst
 VERSION = {VERSION}
-REVISION = {REVISION}
+STABLE_VERSION = {STABLE_VERSION}
+OLD_STABLE_VERSION = {OLD_STABLE_VERSION}
 CFLAGS = {' '.join(CFLAGS)}
 STRIP_ARGS = {' '.join(STRIP_ARGS)}
 LIBS = {' '.join(LIBS)}
@@ -168,11 +165,23 @@ rule config
   description = CONFIG
   command = $src/configure.py -q
 
+rule revstamp
+  description = REVSTAMP
+  command = $in $src $out
+
+build $dst/gen/REVISION $dst/gen/REVSHORT: revstamp $src/tools/revstamp.py
+
 rule importation
   description = IMPORTATION $in
   depfile = $out.d
   deps = gcc
-  command = $src/tools/importation.py -i $in -o $out -I $dst -I $src $options --depsout $depfile -DVERSION=$VERSION -DREVISION=$REVERSION
+  command = $src/tools/importation.py -i $in -o $out -I $dst -I $src $options \
+  --depsout $depfile \
+  -DVERSION=$VERSION \
+  -DSTABLE_VERSION=$STABLE_VERSION \
+  -DOLD_STABLE_VERSION=$OLD_STABLE_VERSION \
+  -FREVISION=$dst/gen/REVISION \
+  -FREVSHORT=$dst/gen/REVSHORT
 
 rule compile
   description = CXX $in
@@ -261,15 +270,14 @@ build allclean: all_clean
 """
 
 
-def Importation(target, source, header_mode='cpp', name=None, keep=False, deps=None, implicit=[]):
+def Importation(target, source, header_mode='cpp', name=None, keep=False, deps=None, implicit=[], options=''):
   global output
-  options = ''
   if keep:
-    options += '--keep-first-comment'
+    options += ' --keep-first-comment'
   if name:
     options += ' --name ' + name + ' --header ' + header_mode
   implicit = ' '.join(implicit)
-  output += f'build {target}: importation {source} | {implicit}\n'
+  output += f'build {target}: importation {source} | $dst/gen/REVISION $dst/gen/REVSHORT {implicit}\n'
   if options:
     output += f'  options = {options}\n'
   if deps:

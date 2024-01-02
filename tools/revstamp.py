@@ -13,6 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+import subprocess
 import sys
 
-sys.stdout.write(sys.stdin.read().replace('\\', '/'))
+base_path = sys.argv[1]
+revision_file = sys.argv[2]
+revshort_file = sys.argv[3]
+
+revision = subprocess.check_output('git rev-parse HEAD ' + base_path, shell=True).splitlines()[0]
+revshort = revision[:7]
+
+if not os.path.exists(revision_file) or open(revision_file).read() != revision:
+  with open(revision_file, 'wb') as fh:
+    fh.write(revision)
+if not os.path.exists(revshort_file) or open(revshort_file).read() != revshort:
+  with open(revshort_file, 'wb') as fh:
+    fh.write(revshort)

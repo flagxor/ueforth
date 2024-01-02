@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+OPTIONS = '-I $src/esp32'
 ESP32_FILES = []
 ESP32_ZIP_FILES = []
 
@@ -21,7 +22,7 @@ ESP32_ZIP_FILES += [
               '$src/esp32/README.txt'),
   Importation('$dst/esp32/ESP32forth/ESP32forth.ino',
               '$src/esp32/ESP32forth.ino',
-              implicit=['$dst/gen/esp32_boot.h'], keep=True),
+              implicit=['$dst/gen/esp32_boot.h'], keep=True, options=OPTIONS),
 ]
 Importation('$dst/gen/esp32_boot.h', '$src/esp32/esp32_boot.fs', name='boot')
 

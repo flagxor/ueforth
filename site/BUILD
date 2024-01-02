@@ -20,22 +20,23 @@ REPLACE = [
   '-DOLD_STABLE_VERSION=' + OLD_STABLE_VERSION,
 ]
 
-UE_REPLACE = REPLACE + ['-DFORTH=uEForth']
-ESP_REPLACE = REPLACE + ['-DFORTH=ESP32forth']
+OPTIONS = '-I $src/site'
+UE_OPTIONS = OPTIONS + ' -DFORTH=uEForth'
+ESP_OPTIONS = OPTIONS + ' -DFORTH=ESP32forth'
 
 DEPLOY_ITEMS = []
 
 DEPLOY_ITEMS += [
   Copy('$dst/deploy/.gcloudignore', '$src/site/.gcloudignore'),
   Copy('$dst/deploy/ueforth.js', '$dst/web/ueforth.js'),
-  Importation('$dst/deploy/index.html', '$src/site/index.html'),
-  Importation('$dst/deploy/linux.html', '$src/site/linux.html'),
-  Importation('$dst/deploy/windows.html', '$src/site/windows.html'),
-  Importation('$dst/deploy/web.html', '$src/site/web.html'),
-  Importation('$dst/deploy/ESP32forth.html', '$src/site/ESP32forth.html'),
-  Importation('$dst/deploy/pico-ice.html', '$src/site/pico-ice.html'),
-  Importation('$dst/deploy/internals.html', '$src/site/internals.html'),
-  Importation('$dst/deploy/classic.html', '$src/site/classic.html'),
+  Importation('$dst/deploy/index.html', '$src/site/index.html', options=ESP_OPTIONS),
+  Importation('$dst/deploy/linux.html', '$src/site/linux.html', options=UE_OPTIONS),
+  Importation('$dst/deploy/windows.html', '$src/site/windows.html', options=UE_OPTIONS),
+  Importation('$dst/deploy/web.html', '$src/site/web.html', options=UE_OPTIONS),
+  Importation('$dst/deploy/ESP32forth.html', '$src/site/ESP32forth.html', options=ESP_OPTIONS),
+  Importation('$dst/deploy/pico-ice.html', '$src/site/pico-ice.html', options=UE_OPTIONS),
+  Importation('$dst/deploy/internals.html', '$src/site/internals.html', options=UE_OPTIONS),
+  Importation('$dst/deploy/classic.html', '$src/site/classic.html', options=ESP_OPTIONS),
   Copy('$dst/deploy/eforth.go', '$src/site/eforth.go'),
   Copy('$dst/deploy/app.yaml', '$src/site/app.yaml'),
 ]

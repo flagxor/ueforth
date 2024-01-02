@@ -24,6 +24,7 @@ parser.add_argument('-i', required=True)
 parser.add_argument('-o', required=True)
 parser.add_argument('-I', action='append')
 parser.add_argument('-D', action='append')
+parser.add_argument('-F', action='append')
 parser.add_argument('--depsout')
 parser.add_argument('--no-out', action='store_true')
 parser.add_argument('--keep-first-comment', action='store_true')
@@ -32,6 +33,7 @@ parser.add_argument('--header')
 args = parser.parse_args()
 bases = args.I or []
 replacements = args.D or []
+file_replacements = args.F or []
 
 results = []
 imported = set([__file__])
@@ -57,9 +59,9 @@ def Import(filename):
         sfilename = line.split('"')[1]
         done = False
         for base in bases:
-          sfilename = os.path.join(base, sfilename)
-          if os.path.exists(sfilename):
-            Import(sfilename)
+          bfilename = os.path.join(base, sfilename)
+          if os.path.exists(bfilename):
+            Import(bfilename)
             done = True
             break
         if not done:
@@ -75,6 +77,10 @@ def Process():
     for r in replacements:
       name, value = r.split('=', 1)
       line = line.replace('{{' + name + '}}', value)
+    for r in file_replacements:
+      name, filename = r.split('=', 1)
+      imported.add(os.path.abspath(filename))
+      line = line.replace('{{' + name + '}}', open(filename).read())
     output.append(line)
   # Drop comments.
   comment1 = False
