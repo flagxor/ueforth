@@ -52,7 +52,7 @@ DEPLOY_ITEMS += [
   Copy('$dst/deploy/static/favicon.ico', '$dst/resources/eforth.ico'),
 ]
 
-Alias('deploy', ' '.join(DEPLOY_ITEMS))
+Alias('site', ' '.join(DEPLOY_ITEMS))
 
 Alias('publish', ' '.join([
   Alias('publish-esp32', ' '.join([
