@@ -225,6 +225,10 @@ rule run
   description = RUN $in
   command = $in >$out
 
+rule cmd
+  description = CMD
+  command = $cmd
+
 rule resize
   description = RESIZE $size
   command = convert -resize $size $in $out
@@ -286,15 +290,15 @@ def Importation(target, source, header_mode='cpp', name=None, keep=False, deps=N
 
 
 def Esp32Optional(main_name, main_source, parts):
-  parts = []
+  implicit = []
   for name, source in parts:
-    parts.append(Importation('$dst/gen/esp32_' + name + '.h',
-                             source, name=name.replace('-', '_') + '_source'))
+    implicit.append(Importation('$dst/gen/esp32_' + name + '.h',
+                                source, name=name.replace('-', '_') + '_source'))
   return Importation('$dst/esp32/ESP32forth/optional/' + main_name + '.h',
                      main_source,
                      keep=True,
                      deps='$dst/gen/esp32_optional_' + main_name + '.h.d',
-                     implicit=parts)
+                     implicit=implicit)
 
 
 def Simple(op, target, source, implicit=[]):
@@ -401,6 +405,14 @@ def ForthTest(target, forth, test, interp='', pool=None):
   output += f'  interp = {interp}\n'
   if pool:
     output += f'  pool = {pool}\n'
+  return target
+
+
+def Command(target, source, command, implicit=[]):
+  global output
+  implicit = ' '.join(implicit)
+  output += f'build {target}: cmd {source} | {implicit}\n'
+  output += f'  cmd = {command}\n'
   return target
 
 

@@ -29,6 +29,7 @@ WEB_ITEMS = [
   Copy('$dst/web/terminal.html', '$src/web/terminal.html'),
   Copy('$dst/web/lazy_terminal.html', '$src/web/lazy_terminal.html'),
   Copy('$dst/web/script_lite_test.html', '$src/web/script_lite_test.html'),
+  Copy('$dst/web/script_test.html', '$src/web/script_test.html'),
   Copy('$dst/web/script_test.fs', '$src/web/script_test.fs'),
 ]
 

@@ -56,6 +56,8 @@ DEPLOY_ITEMS += [
     'esp-cam-wiring.jpg',
     'serial_bridge.jpg',
   ]
+] + [
+  Copy('$dst/deploy/static/favicon.ico', '$dst/resources/eforth.ico'),
 ]
 
 Alias('site', ' '.join(DEPLOY_ITEMS))

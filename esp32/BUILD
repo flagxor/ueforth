@@ -54,8 +54,12 @@ ESP32_FILES += [
 
 # Simulator.
 ESP32_FILES += [
-  Compile('$dst/esp32-sim/esp32-sim', '$src/esp32/sim_main.cpp',
-          implicit=['$dst/gen/esp32_boot.h', '$dst/gen/esp32_sim_opcodes.h'])
+  Compile('$dst/esp32-sim/Esp32forth-sim', '$src/esp32/sim_main.cpp',
+          implicit=['$dst/gen/esp32_boot.h', '$dst/gen/esp32_sim_opcodes.h']),
+  Command('$dst/esp32-sim/sizes.txt',
+          ' '.join(['$dst/esp32-sim/Esp32forth-sim', '$src/tools/memuse.py']),
+	        'echo internals size-all bye | $dst/esp32-sim/Esp32forth-sim | '
+          '$src/tools/memuse.py >$dst/esp32-sim/sizes.txt'),
 ]
 Compile('$dst/gen/print-esp32-builtins', '$src/esp32/print-builtins.cpp'),
 Run('$dst/gen/esp32_sim_opcodes.h', '$dst/gen/print-esp32-builtins')

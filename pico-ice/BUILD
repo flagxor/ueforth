@@ -20,10 +20,10 @@ PICO_ICE_ZIP_FILES += [
   Importation('$dst/pico-ice/ueforth-pico-ice/README.txt',
               '$src/pico-ice/README.txt'),
   # TODO: .uf2
-  Copy('$dst/pico-ice/ueforth-pice-ice/LICENSE', '$src/LICENSE'),
-  Copy('$dst/pico-ice/ueforth-pice-ice/pico-ice-sdk-LICENSE.md',
+  Copy('$dst/pico-ice/ueforth-pico-ice/LICENSE', '$src/LICENSE'),
+  Copy('$dst/pico-ice/ueforth-pico-ice/pico-ice-sdk-LICENSE.md',
        '$src/pico-ice/pico-ice-sdk/LICENSE.md'),
-  Copy('$dst/pico-ice/ueforth-pice-ice/pico-sdk-LICENSE.TXT',
+  Copy('$dst/pico-ice/ueforth-pico-ice/pico-sdk-LICENSE.TXT',
        '$src/pico-ice/pico-sdk/LICENSE.TXT'),
 ]
 
