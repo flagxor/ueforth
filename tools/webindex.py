@@ -14,6 +14,9 @@
 # limitations under the License.
 
 import sys
+import subprocess
+
+index = str(subprocess.check_output('gsutil ls -l gs://eforth/releases', shell=True), 'ascii')
 
 sys.stdout.write("""<!DOCTYPE html>
 <head>
@@ -24,7 +27,7 @@ sys.stdout.write("""<!DOCTYPE html>
 """)
 
 output = []
-for line in sys.stdin.read().splitlines():
+for line in index.splitlines():
   parts = line.split()
   if len(parts) != 3:
     continue

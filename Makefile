@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VERSION=7.0.7.16
+VERSION=7.0.7.17
 STABLE_VERSION=7.0.6.19
 OLD_STABLE_VERSION=7.0.5.4
 REVISION=$(shell git rev-parse HEAD | head -c 20)
@@ -794,7 +794,7 @@ publish-windows: $(WINDOWS)/uEf32.exe $(WINDOWS)/uEf64.exe
     $(ARCHIVE)/uEf64-$(VERSION).exe
 
 publish-index: | $(GEN)
-	$(GSUTIL) ls -l gs://eforth/releases | tools/webindex.py >$(GEN)/archive.html
+	./tools/webindex.py >$(GEN)/archive.html
 	$(GSUTIL_CP) \
     $(GEN)/archive.html \
     gs://eforth/releases/archive.html

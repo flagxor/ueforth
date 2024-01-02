@@ -61,7 +61,7 @@ Alias('deploy', ' '.join([
 	        'cd $dst/deploy && gcloud app deploy -q --project eforth *.yaml', pool='console'),
 ]))
 
-Alias('publish', ' '.join([
+PUBLISH_PARTS = [
   Alias('publish-esp32', ' '.join([
     Publish('publish-esp32-rev',
            '$dst/esp32/ESP32forth.zip',
@@ -112,4 +112,13 @@ Alias('publish', ' '.join([
                'uEf64-{{VERSION}}.exe'),
     ])),
   ])),
+]
+
+Alias('publish', ' '.join([
+  Command('publish-index', ' '.join([
+      '$src/tools/webindex.py',
+      '$src/tools/publish.py',
+    ] + PUBLISH_PARTS),
+    '$src/tools/webindex.py >$dst/gen/archive.html && ' +
+    '$src/tools/publish.py --src $dst/gen/archive.html --dst archive.html'),
 ]))
