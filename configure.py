@@ -24,6 +24,7 @@ OLD_STABLE_VERSION = '7.0.5.4'
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = SCRIPT_DIR
+NINJA_BUILD = os.path.join(ROOT_DIR, 'build.ninja')
 
 REVISION = 'TODO'
 #REVISION=$(shell git rev-parse HEAD | head -c 20)
@@ -127,12 +128,20 @@ WIN_RC64 = LSQ(MSKITS + '/*/bin/*/x64/rc.exe')
 D8 = LSQ('${HOME}/src/v8/v8/out/x64.release/d8')
 NODEJS = LSQ('/usr/bin/nodejs')
 
-build_files = []
+SRC_DIR = os.path.relpath(ROOT_DIR, os.getcwd())
+if SRC_DIR == '.':
+  DST_DIR = 'out'
+  NINJA_DIR = '.'
+else:
+  DST_DIR = '.'
+  NINJA_DIR = '.'
 
+build_files = []
 output = f"""
 ninja_required_version = 1.1
-src = .
-dst = out
+src = {SRC_DIR}
+dst = {DST_DIR}
+ninjadir = {NINJA_DIR}
 builddir = $dst
 VERSION = {VERSION}
 REVISION = {REVISION}
@@ -394,7 +403,7 @@ def Default(target):
 
 
 def Include(path):
-  build_files.append(os.path.join(path, 'BUILD'))
+  build_files.append(os.path.join('$src', path, 'BUILD'))
   path = os.path.join(ROOT_DIR, path, 'BUILD')
   data = open(path).read()
   exec(data)
@@ -404,13 +413,12 @@ def Main():
   parser = argparse.ArgumentParser(
     prog='configure',
     description='Generate ninja.build')
-  parser.add_argument('-o', default='build.ninja')
   parser.add_argument('-q', '--quiet', action='store_true')
   args = parser.parse_args()
   Include('.')
-  with open(args.o, 'w') as fh:
+  with open('build.ninja', 'w') as fh:
     fh.write(output)
-    fh.write(f'build {args.o}: config ./configure.py ' + ' '.join(build_files) + '\n')
+    fh.write(f'build $ninjadir/build.ninja: config $src/configure.py ' + ' '.join(build_files) + '\n')
   if not args.quiet:
     print('TO BUILD RUN: ninja')
 
