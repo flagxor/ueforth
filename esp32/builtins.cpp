@@ -19,7 +19,7 @@ static char filename2[PATH_MAX];
 #include "esp32/faults.h"
 #include "common/calling.h"
 #include "common/interp.h"
-#include "esp32_boot.h"
+#include "gen/esp32_boot.h"
 
 // Work around lack of ftruncate
 static cell_t ResizeFile(cell_t fd, cell_t size) {

@@ -21,5 +21,7 @@ Alias('posix', ' '.join([
             '$dst/posix/ueforth', '$src/common/all_tests.fs'),
 ]))
 
-OneShot('install', 'sudo cp $dst/posix/ueforth /usr/bin/ueforth',
-        '$dst/posix/ueforth', pool='console')
+OneShot('install',
+        '$dst/posix/ueforth',
+        'sudo cp $dst/posix/ueforth /usr/bin/ueforth',
+        pool='console')

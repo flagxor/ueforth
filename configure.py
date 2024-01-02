@@ -105,6 +105,13 @@ WIN_LFLAGS64 = [
   '/LIBPATH:"c:/Program Files (x86)/Windows Kits/10/Lib/10.0.19041.0/ucrt/x64"',
 ] + WIN_LIBS
 
+LOCALAPPDATAR = str(subprocess.check_output('cmd.exe /c echo "%LOCALAPPDATA%"',
+                                            shell=True, stderr=subprocess.DEVNULL).splitlines()[0], 'ascii').replace('\\', '/')
+LOCALAPPDATA = LOCALAPPDATAR.replace('C:/', '/mnt/c/')
+ARDUINO_CLI = LOCALAPPDATA + '/Programs/arduino-ide/resources/app/lib/backend/resources/arduino-cli.exe'
+WINTMP = LOCALAPPDATA + '/Temp'
+WINTMPR = LOCALAPPDATAR + '/Temp'
+
 def Escape(path):
   return path.replace(' ', '\\ ').replace('(', '\\(').replace(')', '\\)')
 
@@ -388,7 +395,7 @@ def GenRun(target, script, options, sources):
   return target
 
 
-def OneShot(target, command, source, pool=None):
+def OneShot(target, source, command, pool=None):
   global output
   output += f'build {target}: oneshot {source}\n'
   output += f'  command = {command}\n'

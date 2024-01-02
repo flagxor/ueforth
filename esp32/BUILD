@@ -66,3 +66,45 @@ Run('$dst/gen/esp32_sim_opcodes.h', '$dst/gen/print-esp32-builtins')
 
 # Main Alias.
 Alias('esp32', ' '.join(ESP32_FILES))
+
+# Automate building / flashing.
+BOARDS = {
+  'esp32': '--fqbn=esp32:esp32:esp32:PSRAM=disabled,PartitionScheme=no_ota,CPUFreq=240,FlashMode=qio,FlashFreq=80,FlashSize=4M,UploadSpeed=921600,LoopCore=1,EventsCore=1,DebugLevel=none,EraseFlash=none',
+  'esp32s2': '--fqbn=esp32:esp32:esp32s2:CDCOnBoot=default,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,PSRAM=disabled,PartitionScheme=default,CPUFreq=240,FlashMode=qio,FlashFreq=80,FlashSize=4M,UploadSpeed=921600,DebugLevel=none,EraseFlash=none',
+  'esp32s3': '--fqbn=esp32:esp32:esp32s3:PSRAM=disabled,FlashMode=qio,FlashSize=4M,LoopCore=1,EventsCore=1,USBMode=hwcdc,CDCOnBoot=default,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,PartitionScheme=default,CPUFreq=240,UploadSpeed=921600,DebugLevel=none,EraseFlash=none',
+  'esp32c3': '--fqbn=esp32:esp32:esp32c3:CDCOnBoot=default,PartitionScheme=default,CPUFreq=160,FlashMode=qio,FlashFreq=80,FlashSize=4M,UploadSpeed=921600,DebugLevel=none,EraseFlash=none',
+  'esp32cam': '--fqbn=esp32:esp32:esp32cam:CPUFreq=240,FlashMode=qio,PartitionScheme=huge_app,FlashFreq=80,DebugLevel=none,EraseFlash=none',
+}
+for board in BOARDS:
+  options = BOARDS[board]
+  Command(f'$dst/esp32/{board}_build/flash.not',
+          '$dst/esp32/ESP32forth/ESP32forth.ino',
+	        f"""\
+          rm -rf {WINTMP}/ueforth_esp32/ESP32forth/ && \
+          cp -r $dst/esp32/ESP32forth {WINTMP}/ueforth_esp32/ && \
+          cd {WINTMP} && \
+          {ARDUINO_CLI} compile """ + """\
+          --port $${PORT:-com3} --upload """ + f"""\
+          {options} \
+          --build-path ueforth_esp32/{board}_build \
+          --build-cache-path ueforth_esp32/{board}_cache \
+          ueforth_esp32/ESP32forth/ESP32forth.ino""")
+  Alias(f'{board}-flash', f'$dst/esp32/{board}_build/flash.not')
+  Command(f'$dst/esp32/{board}_build/ESP32forth.ino.bin',
+          '$dst/esp32/ESP32forth/ESP32forth.ino',
+	        f"""\
+          rm -rf {WINTMP}/ueforth_esp32/ESP32forth/ && \
+          cp -r $dst/esp32/ESP32forth {WINTMP}/ueforth_esp32/ && \
+          cd {WINTMP} && \
+          {ARDUINO_CLI} compile {options} \
+          --build-path ueforth_esp32/{board}_build \
+          --build-cache-path ueforth_esp32/{board}_cache \
+          ueforth_esp32/ESP32forth/ESP32forth.ino && \
+          cd - && \
+          cp {WINTMP}/ueforth_esp32/{board}_build/*.bin \
+          $dst/esp32/{board}_build/ESP32forth.ino.bin""")
+  Alias(f'{board}-build', f'$dst/esp32/{board}_build/ESP32forth.ino.bin')
+Alias('esp32all', ' '.join([i + '-build' for i in BOARDS.keys()]))
+
+Alias('putty', OneShot('$dst/gen/putty.not', '',
+                       '$${HOME}/Desktop/putty.exe -serial $${PORT:-com3} -sercfg 115200'))
