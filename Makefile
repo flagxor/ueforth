@@ -166,9 +166,10 @@ fast: posix esp32_sim esp32
 targets: $(TARGETS)
 tests: $(TESTS)
 
-n:
-	mkdir -p out
-	tools/configure.py >out/build.ninja
+build.ninja: ./configure.py
+	$<
+
+n: build.ninja
 	ninja
 
 clean-esp32:

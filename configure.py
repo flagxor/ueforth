@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import argparse
 import os
 import sys
 import subprocess
@@ -22,7 +23,7 @@ STABLE_VERSION = '7.0.6.19'
 OLD_STABLE_VERSION = '7.0.5.4'
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR = os.path.dirname(SCRIPT_DIR)
+ROOT_DIR = SCRIPT_DIR
 
 REVISION = 'TODO'
 #REVISION=$(shell git rev-parse HEAD | head -c 20)
@@ -130,6 +131,7 @@ output = f"""
 ninja_required_version = 1.1
 src = .
 dst = out
+builddir = $dst
 VERSION = {VERSION}
 REVISION = {REVISION}
 CFLAGS = {' '.join(CFLAGS)}
@@ -172,12 +174,12 @@ rule compile_sim
 rule compile_win32
   description = WIN_CL32
   deps = msvc
-  command = $WIN_CL32 /showIncludes /nologo /c /Fo$out $WIN_CFLAGS $in && touch $out
+  command = $WIN_CL32 /showIncludes /nologo /c /Fo$out $WIN_CFLAGS $in | $src/tools/posixify.py && touch $out
 
 rule compile_win64
   description = WIN_CL64
   deps = msvc
-  command = $WIN_CL64 /showIncludes /nologo /c /Fo$out $WIN_CFLAGS $in && touch $out
+  command = $WIN_CL64 /showIncludes /nologo /c /Fo$out $WIN_CFLAGS $in | $src/tools/posixify.py && touch $out
 
 rule link_win32
   description = WIN_LINK32
@@ -385,5 +387,16 @@ def Include(path):
   exec(data)
 
 
-Include('.')
-print(output)
+def Main():
+  parser = argparse.ArgumentParser(
+    prog='configure',
+    description='Generate ninja.build')
+  parser.add_argument('-o', default='build.ninja')
+  args = parser.parse_args()
+  Include('.')
+  with open(args.o, 'w') as fh:
+    fh.write(output)
+
+
+if __name__ == '__main__':
+  Main()

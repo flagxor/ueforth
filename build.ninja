@@ -1,2 +1,0 @@
-builddir = out
-include out/build.ninja
