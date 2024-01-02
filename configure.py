@@ -233,7 +233,7 @@ rule run
   command = $in >$out
 
 rule cmd
-  description = CMD
+  description = CMD $out
   command = $cmd
 
 rule resize
@@ -264,7 +264,7 @@ rule forth_test
   description = FORTH_TEST $test
   depfile = $out.d
   deps = gcc
-  command = $src/tools/importation.py -i $test -o $out --depsout $depfile --no-out && $interp $forth $test >$out
+  command = $src/tools/importation.py -i $test -o $out --depsout $depfile --no-out && $interp $forth $test 2>&1 | cat >$out
 
 rule clean
   description = CLEAN

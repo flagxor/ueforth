@@ -16,7 +16,7 @@ OPTIONS = '-I $src/esp32'
 ESP32_FILES = []
 ESP32_ZIP_FILES = []
 
-# Main .ino file.
+# Main files.
 ESP32_ZIP_FILES += [
   Importation('$dst/esp32/ESP32forth/README.txt',
               '$src/esp32/README.txt'),

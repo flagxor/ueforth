@@ -15,17 +15,40 @@
 PICO_ICE_FILES = []
 PICO_ICE_ZIP_FILES = []
 
-# Main .ino file.
+# Main files.
 PICO_ICE_ZIP_FILES += [
   Importation('$dst/pico-ice/ueforth-pico-ice/README.txt',
               '$src/pico-ice/README.txt'),
-  # TODO: .uf2
+  Copy('$dst/pico-ice/ueforth-pico-ice/ueforth-pico-ice.uf2',
+       '$dst/pico-ice/ueforth_pico_ice.uf2'),
   Copy('$dst/pico-ice/ueforth-pico-ice/LICENSE', '$src/LICENSE'),
   Copy('$dst/pico-ice/ueforth-pico-ice/pico-ice-sdk-LICENSE.md',
        '$src/pico-ice/pico-ice-sdk/LICENSE.md'),
   Copy('$dst/pico-ice/ueforth-pico-ice/pico-sdk-LICENSE.TXT',
        '$src/pico-ice/pico-sdk/LICENSE.TXT'),
 ]
+
+# Build the uf2.
+Command(' '.join(['$dst/pico-ice/ueforth_pico_ice.uf2',
+                  '$dst/pico-ice/ueforth_pico_ice.err']),
+        ' '.join(['$dst/pico-ice/build.ninja',
+                  '$dst/gen/pico_ice_boot.h']),
+        'ninja -C $dst/pico-ice ueforth_pico_ice 2>&1 | cat >$dst/pico-ice/ueforth_pico_ice.err')
+Command(' '.join(['$dst/pico-ice/build.ninja',
+                  '$dst/pico-ice/cmake.err']),
+        ' '.join(['$src/pico-ice/pico-sdk/README.md',
+                  '$src/pico-ice/pico-ice-sdk/README.md',
+                  '$src/pico-ice/pico-sdk/lib/tinyusb/README.rst']),
+        'cmake $dst/pico-ice -G Ninja -S pico-ice -B $dst/pico-ice 2>&1 | cat >$dst/pico-ice/cmake.err')
+
+# Check out submodules if needed.
+Command('$src/pico-ice/pico-sdk/README.md',
+        '', 'git submodule update --init pico-ice/pico-sdk')
+Command('$src/pico-ice/pico-sdk/lib/tinyusb/README.rst',
+        '$src/pico-ice/pico-sdk/README.md',
+	      'cd $src/pico-ice/pico-sdk && git submodule update --init lib/tinyusb')
+Command('pico-ice/pico-ice-sdk/README.md',
+	      '', 'git submodule update --init pico-ice/pico-ice-sdk')
 
 # Zip it.
 PICO_ICE_FILES += [
