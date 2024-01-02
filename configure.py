@@ -428,11 +428,13 @@ def ForthTest(target, forth, test, interp='', pool=None):
   return target
 
 
-def Command(target, source, command, implicit=[]):
+def Command(target, source, command, implicit=[], pool=None):
   global output
   implicit = ' '.join(implicit)
   output += f'build {target}: cmd {source} | {implicit}\n'
   output += f'  cmd = {command}\n'
+  if pool:
+    output += f'  pool = {pool}\n'
   return target
 
 

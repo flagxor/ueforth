@@ -54,6 +54,13 @@ DEPLOY_ITEMS += [
 
 Alias('site', ' '.join(DEPLOY_ITEMS))
 
+Alias('deploy', ' '.join([
+  Command('deploy-esp32', 'site',
+	        'cd $dst/deploy && gcloud app deploy -q --project esp32forth *.yaml', pool='console'),
+  Command('deploy-eforth', 'site',
+	        'cd $dst/deploy && gcloud app deploy -q --project eforth *.yaml', pool='console'),
+]))
+
 Alias('publish', ' '.join([
   Alias('publish-esp32', ' '.join([
     Publish('publish-esp32-rev',
