@@ -12,14 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-REPLACE = [
-  './tools/importation.py',
-  '-I', 'site',
-  '-DVERSION=' + VERSION,
-  '-DSTABLE_VERSION' + STABLE_VERSION,
-  '-DOLD_STABLE_VERSION=' + OLD_STABLE_VERSION,
-]
-
 OPTIONS = '-I $src/site'
 UE_OPTIONS = OPTIONS + ' -DFORTH=uEForth'
 ESP_OPTIONS = OPTIONS + ' -DFORTH=ESP32forth'
@@ -60,4 +52,57 @@ DEPLOY_ITEMS += [
   Copy('$dst/deploy/static/favicon.ico', '$dst/resources/eforth.ico'),
 ]
 
-Alias('site', ' '.join(DEPLOY_ITEMS))
+Alias('deploy', ' '.join(DEPLOY_ITEMS))
+
+Alias('publish', ' '.join([
+  Alias('publish-esp32', ' '.join([
+    Publish('publish-esp32-rev',
+           '$dst/esp32/ESP32forth.zip',
+            'ESP32forth-{{VERSION}}-{{REVSHORT}}.zip'),
+    Shortcut('publish-esp32-ver',
+             '$dst/esp32/ESP32forth.zip',
+             'ESP32forth-{{VERSION}}.zip'),
+  ])),
+  Alias('publish-pico-ice', ' '.join([
+    Shortcut('publish-pico-ice-rev',
+             '$dst/pico-ice/ueforth-pico-ice.zip',
+             'ueforth-pico-ice-{{VERSION}}-{{REVSHORT}}.zip'),
+    Shortcut('publish-pico-ice-ver',
+             '$dst/pico-ice/ueforth-pico-ice.zip',
+             'ueforth-pico-ice-{{VERSION}}.zip'),
+  ])),
+  Alias('publish-linux', ' '.join([
+    Shortcut('publish-linux-rev',
+             '$dst/posix/ueforth',
+             'ueforth-{{VERSION}}-{{REVSHORT}}.linux'),
+    Shortcut('publish-linux-ver',
+             '$dst/posix/ueforth',
+             'ueforth-{{VERSION}}.linux'),
+  ])),
+  Alias('publish-web', ' '.join([
+    Shortcut('publish-web-rev',
+             '$dst/web/ueforth.js',
+             'ueforth-{{VERSION}}-{{REVSHORT}}.js'),
+    Shortcut('publish-web-ver',
+             '$dst/web/ueforth.js',
+             'ueforth-{{VERSION}}.js'),
+  ])),
+  Alias('publish-win', ' '.join([
+    Alias('publish-win32', ' '.join([
+      Shortcut('publish-win32-rev',
+               '$dst/windows/uEf32.exe',
+               'uEf32-{{VERSION}}-{{REVSHORT}}.exe'),
+      Shortcut('publish-win32-ver',
+               '$dst/windows/uEf32.exe',
+               'uEf32-{{VERSION}}.exe'),
+    ])),
+    Alias('publish-win64', ' '.join([
+      Shortcut('publish-win64-rev',
+               '$dst/windows/uEf64.exe',
+               'uEf64-{{VERSION}}-{{REVSHORT}}.exe'),
+      Shortcut('publish-win64-ver',
+               '$dst/windows/uEf64.exe',
+               'uEf64-{{VERSION}}.exe'),
+    ])),
+  ])),
+]))

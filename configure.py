@@ -18,7 +18,7 @@ import os
 import sys
 import subprocess
 
-VERSION = '7.0.7.16'
+VERSION = '7.0.7.17'
 STABLE_VERSION = '7.0.6.19'
 OLD_STABLE_VERSION = '7.0.5.4'
 
@@ -266,6 +266,15 @@ rule forth_test
   deps = gcc
   command = $src/tools/importation.py -i $test -o $out --depsout $depfile --no-out && $interp $forth $test 2>&1 | cat >$out
 
+rule publish
+  description = PUBLISH $pubpath
+  command = $src/tools/publish.py --src $in --dst $pubpath \
+  -DVERSION=$VERSION \
+  -DSTABLE_VERSION=$STABLE_VERSION \
+  -DOLD_STABLE_VERSION=$OLD_STABLE_VERSION \
+  -FREVISION=$dst/gen/REVISION \
+  -FREVSHORT=$dst/gen/REVSHORT
+
 rule clean
   description = CLEAN
   command = rm -rf $dst/
@@ -379,6 +388,10 @@ def Alias(target, source):
   return target
 
 
+def Shortcut(target, source, command):
+  return Alias(target, Command('$dst/gen/' + target + '.not', source, command))
+
+
 def Copy(target, source):
   global output
   output += f'build {target}: copy {source}\n'
@@ -420,6 +433,18 @@ def Command(target, source, command, implicit=[]):
   implicit = ' '.join(implicit)
   output += f'build {target}: cmd {source} | {implicit}\n'
   output += f'  cmd = {command}\n'
+  return target
+
+
+def Publish(target, source, pubpath):
+  global output
+  implicit = ' '.join([
+    '$src/tools/publish.py',
+    '$dst/gen/REVISION',
+    '$dst/gen/REVSHORT',
+  ])
+  output += f'build {target}: publish {source} | {implicit}\n'
+  output += f'  pubpath = {pubpath}\n'
   return target
 
 

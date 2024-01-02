@@ -77,7 +77,7 @@ BOARDS = {
 }
 for board in BOARDS:
   options = BOARDS[board]
-  Command(f'$dst/esp32/{board}_build/flash.not',
+  Shortcut(f'{board}-flash',
           '$dst/esp32/ESP32forth/ESP32forth.ino',
 	        f"""\
           rm -rf {WINTMP}/ueforth_esp32/ESP32forth/ && \
@@ -89,7 +89,6 @@ for board in BOARDS:
           --build-path ueforth_esp32/{board}_build \
           --build-cache-path ueforth_esp32/{board}_cache \
           ueforth_esp32/ESP32forth/ESP32forth.ino""")
-  Alias(f'{board}-flash', f'$dst/esp32/{board}_build/flash.not')
   Command(f'$dst/esp32/{board}_build/ESP32forth.ino.bin',
           '$dst/esp32/ESP32forth/ESP32forth.ino',
 	        f"""\
