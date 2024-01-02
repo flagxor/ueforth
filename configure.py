@@ -127,6 +127,8 @@ WIN_RC64 = LSQ(MSKITS + '/*/bin/*/x64/rc.exe')
 D8 = LSQ('${HOME}/src/v8/v8/out/x64.release/d8')
 NODEJS = LSQ('/usr/bin/nodejs')
 
+build_files = []
+
 output = f"""
 ninja_required_version = 1.1
 src = .
@@ -152,6 +154,10 @@ NODEJS = {NODEJS}
 WIN_CFLAGS = {' '.join(WIN_CFLAGS)}
 WIN_LFLAGS32 = {' '.join(WIN_LFLAGS32)}
 WIN_LFLAGS64 = {' '.join(WIN_LFLAGS64)}
+
+rule config
+  description = CONFIG
+  command = $src/configure.py -q
 
 rule importation
   description = importation
@@ -233,9 +239,15 @@ rule forth_test
 
 rule clean
   description = CLEAN
-  command = ninja -t clean
+  command = rm -rf $dst/
 
 build clean: clean
+
+rule all_clean
+  description = ALL_CLEAN
+  command = rm -rf $dst/ && rm build.ninja
+
+build allclean: all_clean
 
 """
 
@@ -382,6 +394,7 @@ def Default(target):
 
 
 def Include(path):
+  build_files.append(os.path.join(path, 'BUILD'))
   path = os.path.join(ROOT_DIR, path, 'BUILD')
   data = open(path).read()
   exec(data)
@@ -392,10 +405,14 @@ def Main():
     prog='configure',
     description='Generate ninja.build')
   parser.add_argument('-o', default='build.ninja')
+  parser.add_argument('-q', '--quiet', action='store_true')
   args = parser.parse_args()
   Include('.')
   with open(args.o, 'w') as fh:
     fh.write(output)
+    fh.write(f'build {args.o}: config ./configure.py ' + ' '.join(build_files) + '\n')
+  if not args.quiet:
+    print('TO BUILD RUN: ninja')
 
 
 if __name__ == '__main__':
