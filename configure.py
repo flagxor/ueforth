@@ -160,59 +160,59 @@ rule config
   command = $src/configure.py -q
 
 rule importation
-  description = importation
+  description = IMPORTATION $in
   depfile = $out.d
   deps = gcc
   command = $src/tools/importation.py -i $in -o $out -I $dst -I $src $options --depsout $depfile -DVERSION=$VERSION -DREVISION=$REVERSION
 
 rule compile
-  description = CXX
+  description = CXX $in
   depfile = $out.d
   deps = gcc
   command = $CXX $CFLAGS $in -o $out $LIBS -MD -MF $depfile && strip $STRIP_ARGS $out
 
 rule compile_sim
-  description = CXX_SIM
+  description = CXX_SIM $in
   depfile = $out.d
   deps = gcc
   command = $CXX -DUEFORTH_SIM=1 $CFLAGS $in -o $out $LIBS -MD -MF $depfile && strip $STRIP_ARGS $out
 
 rule compile_win32
-  description = WIN_CL32
+  description = WIN_CL32 $in
   deps = msvc
   command = $WIN_CL32 /showIncludes /nologo /c /Fo$out $WIN_CFLAGS $in | $src/tools/posixify.py && touch $out
 
 rule compile_win64
-  description = WIN_CL64
+  description = WIN_CL64 $in
   deps = msvc
   command = $WIN_CL64 /showIncludes /nologo /c /Fo$out $WIN_CFLAGS $in | $src/tools/posixify.py && touch $out
 
 rule link_win32
-  description = WIN_LINK32
+  description = WIN_LINK32 $in
   command = $WIN_LINK32 /nologo /OUT:$out $WIN_LFLAGS32 $in && touch $out && chmod a+x $out
 
 rule link_win64
-  description = WIN_LINK64
+  description = WIN_LINK64 $in
   command = $WIN_LINK64 /nologo /OUT:$out $WIN_LFLAGS64 $in && touch $out && chmod a+x $out
 
 rule rc_win32
-  description = WIN_RC32
+  description = WIN_RC32 $in
   command = $WIN_RC32 /nologo /i $src /fo $out $in && touch $out
 
 rule rc_win64
-  description = WIN_RC64
+  description = WIN_RC64 $in
   command = $WIN_RC64 /nologo /i $src /fo $out $in && touch $out
 
 rule run
-  description = RUN
+  description = RUN $in
   command = $in >$out
 
 rule resize
-  description = RESIZE
+  description = RESIZE $size
   command = convert -resize $size $in $out
 
 rule convert_image
-  description = IMAGE_CONVERT
+  description = IMAGE_CONVERT $in
   command = convert $in $out
 
 rule zip
@@ -220,11 +220,11 @@ rule zip
   command = rm -f $out && cd $base && zip $relout $relin >/dev/null
 
 rule copy
-  description = COPY
+  description = COPY $in
   command = cp $in $out
 
 rule gen_run
-  description = GEN_RUN
+  description = GEN_RUN $script
   command = $script $options $infiles >$out
 
 rule oneshot
@@ -232,7 +232,7 @@ rule oneshot
   command = echo oneshot
 
 rule forth_test
-  description = FORTH_TEST
+  description = FORTH_TEST $test
   depfile = $out.d
   deps = gcc
   command = $src/tools/importation.py -i $test -o $out --depsout $depfile --no-out && $interp $forth $test >$out
