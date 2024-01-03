@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+if not PICO_ICE_ENABLED:
+  Return()
+
 PICO_ICE_FILES = []
 PICO_ICE_ZIP_FILES = []
 
@@ -42,12 +45,18 @@ Command(' '.join(['$dst/pico-ice/build.ninja',
         'cmake $dst/pico-ice -G Ninja -S pico-ice -B $dst/pico-ice 2>&1 | cat >$dst/pico-ice/cmake.err')
 
 # Check out submodules if needed.
-Command('$src/pico-ice/pico-sdk/README.md',
+Command(' '.join([
+          '$src/pico-ice/pico-sdk/README.md',
+          '$src/pico-ice/pico-sdk/LICENSE.TXT',
+        ]),
         '', 'git submodule update --init pico-ice/pico-sdk')
 Command('$src/pico-ice/pico-sdk/lib/tinyusb/README.rst',
         '$src/pico-ice/pico-sdk/README.md',
 	      'cd $src/pico-ice/pico-sdk && git submodule update --init lib/tinyusb')
-Command('pico-ice/pico-ice-sdk/README.md',
+Command(' '.join([
+          '$src/pico-ice/pico-ice-sdk/README.md',
+          '$src/pico-ice/pico-ice-sdk/LICENSE.md',
+        ]),
 	      '', 'git submodule update --init pico-ice/pico-ice-sdk')
 
 # Zip it.
@@ -65,3 +74,4 @@ Importation('$dst/gen/pico_ice_boot.h', '$src/pico-ice/pico_ice_boot.fs', name='
 
 # Main Alias.
 Alias('pico', ' '.join(PICO_ICE_FILES))
+Default('pico')

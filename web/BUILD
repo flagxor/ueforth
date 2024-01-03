@@ -34,3 +34,4 @@ WEB_ITEMS = [
 ]
 
 Alias('web', ' '.join(WEB_ITEMS))
+Default('web')

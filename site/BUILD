@@ -48,11 +48,15 @@ DEPLOY_ITEMS += [
     'esp-cam-wiring.jpg',
     'serial_bridge.jpg',
   ]
-] + [
-  Copy('$dst/deploy/static/favicon.ico', '$dst/resources/eforth.ico'),
 ]
 
+if WINDOWS_ENABLED:
+  DEPLOY_ITEM += [
+    Copy('$dst/deploy/static/favicon.ico', '$dst/resources/eforth.ico'),
+  ]
+
 Alias('site', ' '.join(DEPLOY_ITEMS))
+Default('site')
 
 Alias('deploy', ' '.join([
   Command('deploy-esp32', 'site',
@@ -61,7 +65,9 @@ Alias('deploy', ' '.join([
 	        'cd $dst/deploy && gcloud app deploy -q --project eforth *.yaml', pool='console'),
 ]))
 
-PUBLISH_PARTS = [
+PUBLISH_PARTS = []
+
+PUBLISH_PARTS += [
   Alias('publish-esp32', ' '.join([
     Publish('publish-esp32-rev',
            '$dst/esp32/ESP32forth.zip',
@@ -69,14 +75,6 @@ PUBLISH_PARTS = [
     Publish('publish-esp32-ver',
              '$dst/esp32/ESP32forth.zip',
              'ESP32forth-{{VERSION}}.zip'),
-  ])),
-  Alias('publish-pico-ice', ' '.join([
-    Publish('publish-pico-ice-rev',
-             '$dst/pico-ice/ueforth-pico-ice.zip',
-             'ueforth-pico-ice-{{VERSION}}-{{REVSHORT}}.zip'),
-    Publish('publish-pico-ice-ver',
-             '$dst/pico-ice/ueforth-pico-ice.zip',
-             'ueforth-pico-ice-{{VERSION}}.zip'),
   ])),
   Alias('publish-linux', ' '.join([
     Publish('publish-linux-rev',
@@ -94,25 +92,41 @@ PUBLISH_PARTS = [
              '$dst/web/ueforth.js',
              'ueforth-{{VERSION}}.js'),
   ])),
-  Alias('publish-win', ' '.join([
-    Alias('publish-win32', ' '.join([
-      Publish('publish-win32-rev',
-               '$dst/windows/uEf32.exe',
-               'uEf32-{{VERSION}}-{{REVSHORT}}.exe'),
-      Publish('publish-win32-ver',
-               '$dst/windows/uEf32.exe',
-               'uEf32-{{VERSION}}.exe'),
-    ])),
-    Alias('publish-win64', ' '.join([
-      Publish('publish-win64-rev',
-               '$dst/windows/uEf64.exe',
-               'uEf64-{{VERSION}}-{{REVSHORT}}.exe'),
-      Publish('publish-win64-ver',
-               '$dst/windows/uEf64.exe',
-               'uEf64-{{VERSION}}.exe'),
-    ])),
-  ])),
 ]
+
+if PICO_ICE_ENABLED:
+  PUBLISH_PARTS += [
+    Alias('publish-pico-ice', ' '.join([
+      Publish('publish-pico-ice-rev',
+               '$dst/pico-ice/ueforth-pico-ice.zip',
+               'ueforth-pico-ice-{{VERSION}}-{{REVSHORT}}.zip'),
+      Publish('publish-pico-ice-ver',
+               '$dst/pico-ice/ueforth-pico-ice.zip',
+               'ueforth-pico-ice-{{VERSION}}.zip'),
+    ])),
+  ]
+
+if WINDOWS_ENABLED:
+  PUBLISH_PARTS += [
+    Alias('publish-win', ' '.join([
+      Alias('publish-win32', ' '.join([
+        Publish('publish-win32-rev',
+                 '$dst/windows/uEf32.exe',
+                 'uEf32-{{VERSION}}-{{REVSHORT}}.exe'),
+        Publish('publish-win32-ver',
+                 '$dst/windows/uEf32.exe',
+                 'uEf32-{{VERSION}}.exe'),
+      ])),
+      Alias('publish-win64', ' '.join([
+        Publish('publish-win64-rev',
+                 '$dst/windows/uEf64.exe',
+                 'uEf64-{{VERSION}}-{{REVSHORT}}.exe'),
+        Publish('publish-win64-ver',
+                 '$dst/windows/uEf64.exe',
+                 'uEf64-{{VERSION}}.exe'),
+      ])),
+    ])),
+  ]
 
 Alias('publish', ' '.join([
   Command('publish-index', ' '.join([

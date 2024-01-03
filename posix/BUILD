@@ -25,3 +25,5 @@ OneShot('install',
         '$dst/posix/ueforth',
         'sudo cp $dst/posix/ueforth /usr/bin/ueforth',
         pool='console')
+
+Default('posix')

@@ -12,7 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+if not WINDOWS_ENABLED:
+  Return()
+
 Alias('windows', 'win32 win64')
+Default('windows')
 
 # Create boot.
 Importation('$dst/gen/windows_boot.h', '$src/windows/windows_boot.fs',

@@ -66,6 +66,7 @@ Run('$dst/gen/esp32_sim_opcodes.h', '$dst/gen/print-esp32-builtins')
 
 # Main Alias.
 Alias('esp32', ' '.join(ESP32_FILES))
+Default('esp32')
 
 # Automate building / flashing.
 BOARDS = {

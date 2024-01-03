@@ -26,6 +26,14 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = SCRIPT_DIR
 NINJA_BUILD = os.path.join(ROOT_DIR, 'build.ninja')
 
+SRC_DIR = os.path.relpath(ROOT_DIR, os.getcwd())
+if SRC_DIR == '.':
+  DST_DIR = 'out'
+  NINJA_DIR = '.'
+else:
+  DST_DIR = '.'
+  NINJA_DIR = '.'
+
 CFLAGS_COMMON = [
   '-O2',
   '-I', '$src',
@@ -105,42 +113,85 @@ WIN_LFLAGS64 = [
   '/LIBPATH:"c:/Program Files (x86)/Windows Kits/10/Lib/10.0.19041.0/ucrt/x64"',
 ] + WIN_LIBS
 
-LOCALAPPDATAR = str(subprocess.check_output('cmd.exe /c echo "%LOCALAPPDATA%"',
-                                            shell=True, stderr=subprocess.DEVNULL).splitlines()[0], 'ascii').replace('\\', '/')
-LOCALAPPDATA = LOCALAPPDATAR.replace('C:/', '/mnt/c/')
-ARDUINO_CLI = LOCALAPPDATA + '/Programs/arduino-ide/resources/app/lib/backend/resources/arduino-cli.exe'
-WINTMP = LOCALAPPDATA + '/Temp'
-WINTMPR = LOCALAPPDATAR + '/Temp'
+PICO_ICE_ENABLED = False
+WINDOWS_ENABLED = False
+
+WINTMP = '/UNSUPPORTED'
+ARDUINO_CLI = 'UNSUPPORTED'
+WIN_CL32 = 'UNSUPPORTED'
+WIN_CL64 = 'UNSUPPORTED'
+WIN_LINK32 = 'UNSUPPORTED'
+WIN_LINK64 = 'UNSUPPORTED'
+WIN_RC32 = 'UNSUPPORTED'
+WIN_RC64 = 'UNSUPPORTED'
+
+# Mutable global state.
+build_files = []
+output = ''
 
 def Escape(path):
   return path.replace(' ', '\\ ').replace('(', '\\(').replace(')', '\\)')
 
 def LSQ(path):
-  return '"' + str(subprocess.check_output('ls ' + Escape(path), shell=True), 'ascii').splitlines()[0] + '"'
+  return '"' + str(subprocess.check_output('ls ' + Escape(path), shell=True,
+                                           stderr=subprocess.DEVNULL), 'ascii').splitlines()[0] + '"'
 
-PROGFILES = '/mnt/c/Program Files (x86)'
-MSVS = PROGFILES + '/Microsoft Visual Studio'
-MSKITS = PROGFILES + '/Windows Kits'
-WIN_CL32 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x86/cl.exe')
-WIN_CL64 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x64/cl.exe')
-WIN_LINK32 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x86/link.exe')
-WIN_LINK64 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x64/link.exe')
-WIN_RC32 = LSQ(MSKITS + '/*/bin/*/x86/rc.exe')
-WIN_RC64 = LSQ(MSKITS + '/*/bin/*/x64/rc.exe')
+def DetectWindowsTools(args):
+  global WINDOWS_ENABLED
+  global WINTMP, ARDUINO_CLI
+  global WIN_CL32, WIN_CL64, WIN_LINK32, WIN_LINK64, WIN_RC32, WIN_RC64
+  try:
+    LOCALAPPDATAR = str(subprocess.check_output('cmd.exe /c echo "%LOCALAPPDATA%"', shell=True,
+                                                stderr=subprocess.DEVNULL).splitlines()[0], 'ascii').replace('\\', '/')
+  except:
+    if not args.quiet:
+      sys.stderr.write('Windows %LOCALAPPDATA% not available, Windows support disabled.\n')
+    return
+  LOCALAPPDATA = LOCALAPPDATAR.replace('C:/', '/mnt/c/')
+  ARDUINO_CLI = LOCALAPPDATA + '/Programs/arduino-ide/resources/app/lib/backend/resources/arduino-cli.exe'
+  WINTMP = LOCALAPPDATA + '/Temp'
+  WINTMPR = LOCALAPPDATAR + '/Temp'
+  PROGFILES = '/mnt/c/Program Files (x86)'
+  MSVS = PROGFILES + '/Microsoft Visual Studio'
+  MSKITS = PROGFILES + '/Windows Kits'
+  try:
+    WIN_CL32 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x86/cl.exe')
+    WIN_CL64 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x64/cl.exe')
+    WIN_LINK32 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x86/link.exe')
+    WIN_LINK64 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x64/link.exe')
+    WIN_RC32 = LSQ(MSKITS + '/*/bin/*/x86/rc.exe')
+    WIN_RC64 = LSQ(MSKITS + '/*/bin/*/x64/rc.exe')
+  except:
+    if not args.quiet:
+      sys.stderr.write('Windows tools not available, Windows support disabled.\n')
+    return
+  WINDOWS_ENABLED = True
 
-D8 = LSQ('${HOME}/src/v8/v8/out/x64.release/d8')
-NODEJS = LSQ('/usr/bin/nodejs')
 
-SRC_DIR = os.path.relpath(ROOT_DIR, os.getcwd())
-if SRC_DIR == '.':
-  DST_DIR = 'out'
-  NINJA_DIR = '.'
-else:
-  DST_DIR = '.'
-  NINJA_DIR = '.'
+def DetectGenericTools(args):
+  global D8, NODEJS, PICO_ICE_ENABLED
+  try:
+    D8 = LSQ('${HOME}/src/v8/v8/out/x64.release/d8')
+  except:
+    if not args.quiet:
+      sys.stderr.write('V8 checkout in $HOME/src/v8 not found, ignoring.\n')
+  try:
+    NODEJS = LSQ('/usr/bin/nodejs')
+  except:
+    if not args.quiet:
+      sys.stderr.write('/usr/bin/nodejs not found, required!\n')
+      sys.exit(1)
+  try:
+    LSQ('/usr/bin/arm-none-eabi-gcc')
+    PICO_ICE_ENABLED = True
+  except:
+    if not args.quiet:
+      sys.stderr.write('Missing package gcc-arm-none-eabi, pico-ice diabled!\n')
 
-build_files = []
-output = f"""
+
+def InitOutput():
+  global output
+  output = f"""
 ninja_required_version = 1.1
 src = {SRC_DIR}
 dst = {DST_DIR}
@@ -456,11 +507,22 @@ def Default(target):
   return target
 
 
+class SkipFileException(Exception):
+  pass
+
+
+def Return():
+  raise SkipFileException()
+
+
 def Include(path):
   build_files.append(os.path.join('$src', path, 'BUILD'))
   path = os.path.join(ROOT_DIR, path, 'BUILD')
   data = open(path).read()
-  exec(data)
+  try:
+    exec(data)
+  except SkipFileException:
+    pass
 
 
 def Main():
@@ -469,6 +531,9 @@ def Main():
     description='Generate ninja.build')
   parser.add_argument('-q', '--quiet', action='store_true')
   args = parser.parse_args()
+  DetectGenericTools(args)
+  DetectWindowsTools(args)
+  InitOutput()
   Include('.')
   with open('build.ninja', 'w') as fh:
     fh.write(output)
