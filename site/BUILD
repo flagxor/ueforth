@@ -51,7 +51,7 @@ DEPLOY_ITEMS += [
 ]
 
 if WINDOWS_ENABLED:
-  DEPLOY_ITEM += [
+  DEPLOY_ITEMS += [
     Copy('$dst/deploy/static/favicon.ico', '$dst/resources/eforth.ico'),
   ]
 
