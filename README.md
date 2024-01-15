@@ -7,17 +7,20 @@ This EForth inspired implementation of Forth is bootstraped from a minimalist C 
 To build from source:
 
 ```
+sudo apt install ninja-build gcc-arm-none-eabi
 git clone https://github.com/flagxor/ueforth
 cd ueforth
-make
+./configure.py
+ninja
 ```
 
 The resulting output will have this structure:
 
 * out/deploy - A copy of the eforth.appspot.com / esp32forth.appspot.com ready to deploy.
 * out/esp32 - A source build for ESP32.
-* out/esp32 - A source build for ESP32.
-* out/esp32-sim - A POSIX build approximating ESP32.
+* out/esp32-sim - A POSIX build approximating ESP32 for testing.
+* out/pico-ice - A build for pico-ice.
+* out/pico-ice-sim - A POSIX build approximating pico-ice for testing.
 * out/gen - Intermediate / generated files.
 * out/posix - A build for Linux / POSIX.
 * out/resources - Intermediate / generated resources.
@@ -27,27 +30,34 @@ The resulting output will have this structure:
 Individual platforms can be built as follows:
 
 ```
-make posix
-make esp32
-make win32
-make win64
-make web
+ninja posix
+ninja esp32
+ninja pico-ice
+ninja win32
+ninja win64
+ninja web
+```
+
+A build that excludes the slower components can be configured with:
+
+```
+./configure.py -f
 ```
 
 To install to /usr/bin on Linux / POSIX do:
 
 ```
-make install
+ninja install
 ```
 
 ESP32 boards can be compiled and flashed with:
 
 ```
-make esp32-flash
-make esp32s2-flash
-make esp32s3-flash
-make esp32c3-flash
-make esp32cam-flash
+ninja esp32-flash
+ninja esp32s2-flash
+ninja esp32s3-flash
+ninja esp32c3-flash
+ninja esp32cam-flash
 ```
 
 Set PORT=com3 etc. to select board.

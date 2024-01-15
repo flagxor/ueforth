@@ -15,7 +15,7 @@
 OPTIONS = '-I $src/esp32'
 ESP32_FILES = []
 ESP32_ZIP_FILES = []
-ESP32_OPTIONAL_INSTALL = []
+ESP32_OPTIONAL = []
 
 # Main files.
 ESP32_ZIP_FILES += [
@@ -28,10 +28,16 @@ ESP32_ZIP_FILES += [
 Importation('$dst/gen/esp32_boot.h', '$src/esp32/esp32_boot.fs', name='boot')
 
 
+# Create a second copy of ESP32 where options will all be installed.
+ESP32_OPTIONAL.append(
+  Copy('$dst/esp32/with_optional/ESP32forth/ESP32forth.ino',
+       '$dst/esp32/ESP32forth/ESP32forth.ino'))
+
+
 def Esp32Optional(main_name, main_source, parts):
-  global ESP32_OPTIONAL_INSTALL
-  ESP32_OPTIONAL_INSTALL.append(
-      Copy('$dst/esp32/ESP32forth/' + main_name + '.h',
+  global ESP32_OPTIONAL
+  ESP32_OPTIONAL.append(
+      Copy('$dst/esp32/with_optional/ESP32forth/' + main_name + '.h',
            '$dst/esp32/ESP32forth/optional/' + main_name + '.h'))
   implicit = []
   for name, source in parts:
@@ -91,7 +97,7 @@ Compile('$dst/gen/print-esp32-builtins', '$src/esp32/print-builtins.cpp'),
 Run('$dst/gen/esp32_sim_opcodes.h', '$dst/gen/print-esp32-builtins')
 
 # Main Alias.
-Alias('esp32', ' '.join(ESP32_FILES))
+Alias('esp32', ' '.join(ESP32_FILES + ESP32_OPTIONAL))
 Default('esp32')
 
 # Automate building / flashing.
@@ -102,39 +108,45 @@ BOARDS = {
   'esp32c3': '--fqbn=esp32:esp32:esp32c3:CDCOnBoot=default,PartitionScheme=default,CPUFreq=160,FlashMode=qio,FlashFreq=80,FlashSize=4M,UploadSpeed=921600,DebugLevel=none,EraseFlash=none',
   'esp32cam': '--fqbn=esp32:esp32:esp32cam:CPUFreq=240,FlashMode=qio,PartitionScheme=huge_app,FlashFreq=80,DebugLevel=none,EraseFlash=none',
 }
-for board in BOARDS:
-  options = BOARDS[board]
-  Shortcut(f'{board}-flash',
-          '$dst/esp32/ESP32forth/ESP32forth.ino',
-	        f"""\
-          rm -rf {WINTMP}/ueforth_esp32/ESP32forth/ && \
-          cp -r $dst/esp32/ESP32forth {WINTMP}/ueforth_esp32/ && \
-          cd {WINTMP} && \
-          {ARDUINO_CLI} compile """ + """\
-          --port $${PORT:-com3} --upload """ + f"""\
-          {options} \
-          --build-path ueforth_esp32/{board}_build \
-          --build-cache-path ueforth_esp32/{board}_cache \
-          ueforth_esp32/ESP32forth/ESP32forth.ino""")
-  Command(f'$dst/esp32/{board}_build/ESP32forth.ino.bin',
-          '$dst/esp32/ESP32forth/ESP32forth.ino',
-	        f"""\
-          rm -rf {WINTMP}/ueforth_esp32/ESP32forth/ && \
-          cp -r $dst/esp32/ESP32forth {WINTMP}/ueforth_esp32/ && \
-          cd {WINTMP} && \
-          {ARDUINO_CLI} compile {options} \
-          --build-path ueforth_esp32/{board}_build \
-          --build-cache-path ueforth_esp32/{board}_cache \
-          ueforth_esp32/ESP32forth/ESP32forth.ino && \
-          cd - && \
-          cp {WINTMP}/ueforth_esp32/{board}_build/*.bin \
-          $dst/esp32/{board}_build/ESP32forth.ino.bin""")
-  Alias(f'{board}-build', f'$dst/esp32/{board}_build/ESP32forth.ino.bin')
+for board_base in BOARDS:
+  options = BOARDS[board_base]
+  for opt, optdir, deps in (('', '', ESP32_FILES),
+                            ('opt', 'with_optional/', ESP32_OPTIONAL)):
+    board = board_base + opt
+    clobber = f'rm -rf {WINTMP}/ueforth_esp32/{board}_dir/ && '
+    setup = (f'mkdir -p {WINTMP}/ueforth_esp32/{board}_dir/build && '
+             f'mkdir -p {WINTMP}/ueforth_esp32/{board}_dir/cache && '
+             f'cp -r $dst/esp32/ESP32forth {WINTMP}/ueforth_esp32/{board}_dir/ && '
+             f'cd {WINTMP} && ')
+    cmd = f' {ARDUINO_CLI} compile '
+    upload = '--port $${PORT:-com3} --upload '
+    args = (f'{options} '
+            f'--build-path ueforth_esp32/{board}_dir/build '
+            f'--build-cache-path ueforth_esp32/{board}_dir/cache '
+            f'ueforth_esp32/{board}_dir/ESP32forth/ESP32forth.ino ')
+    pipe = f' 2>&1 | cat > ueforth_esp32/{board}_dir/build/build.out && '
+    copyout = (f'cd - && '
+               f'cp {WINTMP}/ueforth_esp32/{board}_dir/build/*.bin '
+               f'$dst/esp32/{board}_build/ && '
+               f'cp {WINTMP}/ueforth_esp32/{board}_dir/build/build.out '
+               f'$dst/esp32/{board}_build/build.out')
+    Shortcut(f'{board}-flash',
+             ' '.join(deps),
+             setup + cmd + upload + args, pool='console')
+    Command(' '.join([f'$dst/esp32/{board}_build/ESP32forth.ino.bin',
+                      f'$dst/esp32/{board}_build/build.out']),
+            ' '.join(deps),
+            clobber + setup + cmd + args + pipe + copyout, pool='serial')
+    Alias(f'{board}-build', f'$dst/esp32/{board}_build/ESP32forth.ino.bin')
+
 Alias('esp32all', ' '.join([i + '-build' for i in BOARDS.keys()]))
 
-Alias('putty', OneShot('$dst/gen/putty.not', '',
-                       '$${HOME}/Desktop/putty.exe -serial $${PORT:-com3} -sercfg 115200'))
+Alias('vet', ' '.join([
+  'all',
+  'esp32all',
+  'esp32opt-build',
+]))
 
-Alias('add-optional', ' '.join(ESP32_OPTIONAL_INSTALL))
-Alias('drop-optional', OneShot('$dst/gen/drop.not', '',
-                               'rm -f ' + ' '.join(ESP32_OPTIONAL_INSTALL)))
+Shortcut('clobber-esp32', '', f'rm -rf {WINTMP}/ueforth_esp32/')
+
+Shortcut('putty', '', '$${HOME}/Desktop/putty.exe -serial $${PORT:-com3} -sercfg 115200')

@@ -126,6 +126,7 @@ WIN_RC64 = 'UNSUPPORTED'
 # Mutable global state.
 build_files = []
 output = ''
+defaults = []
 versions = {}
 
 def Escape(path):
@@ -356,6 +357,8 @@ rule all_clean
 
 build allclean: all_clean
 
+pool serial
+  depth = 1
 """
 
 
@@ -445,8 +448,8 @@ def Alias(target, source):
   return target
 
 
-def Shortcut(target, source, command):
-  return Alias(target, Command('$dst/gen/' + target + '.not', source, command))
+def Shortcut(target, source, command, **kwargs):
+  return Alias(target, Command('$dst/gen/' + target + '.not', source, command, **kwargs))
 
 
 def Copy(target, source):
@@ -512,8 +515,8 @@ def Publish(target, source, pubpath):
 
 
 def Default(target):
-  global output
-  output += f'default {target}\n'
+  global defaults
+  defaults.append(target)
   return target
 
 
@@ -533,6 +536,9 @@ def Include(path):
     exec(data)
   except SkipFileException:
     pass
+  except Exception as e:
+    sys.stderr.write('Failure in: ' + path + '\n')
+    raise e
 
 
 def Main():
@@ -552,6 +558,8 @@ def Main():
   with open('build.ninja', 'w') as fh:
     fh.write(header)
     fh.write(output)
+    fh.write(f'build all: phony ' + ' '.join(defaults) + '\n')
+    fh.write('default all\n')
     fh.write(f'build $ninjadir/build.ninja: config $src/configure.py ' + ' '.join(build_files) + '\n')
   if not args.quiet:
     print('TO BUILD RUN: ninja')
