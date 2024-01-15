@@ -18,10 +18,6 @@ import os
 import sys
 import subprocess
 
-VERSION = '7.0.7.17'
-STABLE_VERSION = '7.0.6.19'
-OLD_STABLE_VERSION = '7.0.5.4'
-
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = SCRIPT_DIR
 NINJA_BUILD = os.path.join(ROOT_DIR, 'build.ninja')
@@ -130,6 +126,7 @@ WIN_RC64 = 'UNSUPPORTED'
 # Mutable global state.
 build_files = []
 output = ''
+versions = {}
 
 def Escape(path):
   return path.replace(' ', '\\ ').replace('(', '\\(').replace(')', '\\)')
@@ -198,17 +195,29 @@ def FastOption():
     return ''
 
 
+def SetVersions(**kwargs):
+  versions.update(kwargs)
+
+
+def SelectHeader():
+  version = versions['version']
+  stable = versions['stable']
+  old_stable = versions['old_stable']
+  return f"""
+ninja_required_version = 1.1
+VERSION = {version}
+STABLE_VERSION = {stable}
+OLD_STABLE_VERSION = {old_stable}
+"""
+
+
 def InitOutput():
   global output
   output = f"""
-ninja_required_version = 1.1
 src = {SRC_DIR}
 dst = {DST_DIR}
 ninjadir = {NINJA_DIR}
 builddir = $dst
-VERSION = {VERSION}
-STABLE_VERSION = {STABLE_VERSION}
-OLD_STABLE_VERSION = {OLD_STABLE_VERSION}
 CFLAGS = {' '.join(CFLAGS)}
 STRIP_ARGS = {' '.join(STRIP_ARGS)}
 LIBS = {' '.join(LIBS)}
@@ -551,7 +560,9 @@ def Main():
   DetectWindowsTools(args)
   InitOutput()
   Include('.')
+  header = SelectHeader()
   with open('build.ninja', 'w') as fh:
+    fh.write(header)
     fh.write(output)
     fh.write(f'build $ninjadir/build.ninja: config $src/configure.py ' + ' '.join(build_files) + '\n')
   if not args.quiet:

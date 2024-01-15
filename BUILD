@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+SetVersions(
+    version='7.0.7.17',
+    stable='7.0.6.19',
+    old_stable='7.0.5.4')
+
 Include('posix')
 Include('windows')
 Include('web')
