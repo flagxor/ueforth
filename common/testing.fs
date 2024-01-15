@@ -95,11 +95,14 @@ DEFINED? posix [IF]
     : normal old-normal ;
   [THEN]
 [THEN]
+( TODO: Figure out how to detect console in windows. )
+(
 DEFINED? windows [IF]
   : red   1 fg ;   : green   2 fg ;
   : replace-line   13 emit clear-to-eol ;
   : normal old-normal ;
 [THEN]
+)
 : hr   40 for [char] - emit next cr ;
 : label-test ( xt -- ) replace-line >name type ;
 : run-test ( xt -- ) dup label-test only forth confirm{ ['] wrap-test catch }confirm
