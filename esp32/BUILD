@@ -15,6 +15,7 @@
 OPTIONS = '-I $src/esp32'
 ESP32_FILES = []
 ESP32_ZIP_FILES = []
+ESP32_OPTIONAL_INSTALL = []
 
 # Main files.
 ESP32_ZIP_FILES += [
@@ -25,6 +26,23 @@ ESP32_ZIP_FILES += [
               implicit=['$dst/gen/esp32_boot.h'], keep=True, options=OPTIONS),
 ]
 Importation('$dst/gen/esp32_boot.h', '$src/esp32/esp32_boot.fs', name='boot')
+
+
+def Esp32Optional(main_name, main_source, parts):
+  global ESP32_OPTIONAL_INSTALL
+  ESP32_OPTIONAL_INSTALL.append(
+      Copy('$dst/esp32/ESP32forth/' + main_name + '.h',
+           '$dst/esp32/ESP32forth/optional/' + main_name + '.h'))
+  implicit = []
+  for name, source in parts:
+    implicit.append(Importation('$dst/gen/esp32_' + name + '.h',
+                                source, name=name.replace('-', '_') + '_source'))
+  return Importation('$dst/esp32/ESP32forth/optional/' + main_name + '.h',
+                     main_source,
+                     keep=True,
+                     deps='$dst/gen/esp32_optional_' + main_name + '.h.d',
+                     implicit=implicit)
+
 
 # Optional Compontents.
 ESP32_ZIP_FILES += [
@@ -66,7 +84,8 @@ ESP32_FILES += [
                     '$dst/esp32-sim/Esp32forth-sim')),
   TestCommand('$dst/tests/esp32_sim_see_all_test.out',
               '$dst/esp32-sim/Esp32forth-sim',
-              'echo internals see-all bye | $dst/esp32-sim/Esp32forth-sim 2>&1 | cat >$dst/tests/esp32_sim_see_all_test.out'),
+              'echo internals see-all bye | $dst/esp32-sim/Esp32forth-sim 2>&1 | '
+              'cat >$dst/tests/esp32_sim_see_all_test.out'),
 ]
 Compile('$dst/gen/print-esp32-builtins', '$src/esp32/print-builtins.cpp'),
 Run('$dst/gen/esp32_sim_opcodes.h', '$dst/gen/print-esp32-builtins')
@@ -115,3 +134,7 @@ Alias('esp32all', ' '.join([i + '-build' for i in BOARDS.keys()]))
 
 Alias('putty', OneShot('$dst/gen/putty.not', '',
                        '$${HOME}/Desktop/putty.exe -serial $${PORT:-com3} -sercfg 115200'))
+
+Alias('add-optional', ' '.join(ESP32_OPTIONAL_INSTALL))
+Alias('drop-optional', OneShot('$dst/gen/drop.not', '',
+                               'rm -f ' + ' '.join(ESP32_OPTIONAL_INSTALL)))

@@ -374,18 +374,6 @@ def Importation(target, source, header_mode='cpp', name=None, keep=False, deps=N
   return target
 
 
-def Esp32Optional(main_name, main_source, parts):
-  implicit = []
-  for name, source in parts:
-    implicit.append(Importation('$dst/gen/esp32_' + name + '.h',
-                                source, name=name.replace('-', '_') + '_source'))
-  return Importation('$dst/esp32/ESP32forth/optional/' + main_name + '.h',
-                     main_source,
-                     keep=True,
-                     deps='$dst/gen/esp32_optional_' + main_name + '.h.d',
-                     implicit=implicit)
-
-
 def Simple(op, target, source, implicit=[]):
   global output
   implicit = ' '.join(implicit)
