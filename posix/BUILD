@@ -19,6 +19,17 @@ Compile('$dst/posix/ueforth', '$src/posix/main.c',
 Alias('posix', ' '.join([
   ForthTest('$dst/tests/posix_all_tests.out',
             '$dst/posix/ueforth', '$src/common/all_tests.fs'),
+  TestCommand('$dst/tests/posix_see_all_test.out',
+              '$dst/posix/ueforth',
+              'echo internals see-all bye | $dst/posix/ueforth 2>&1 | '
+              'cat >$dst/tests/posix_see_all_test.out'),
+  TestCommand(' '.join(['$dst/tests/posix_save_restore_test.out',
+                        '$dst/tests/posix_save_restore.bin']),
+              '$dst/posix/ueforth',
+              'echo ": foosquare dup * ; save $dst/tests/posix_save_restore.bin bye" | '
+              '$dst/posix/ueforth > $dst/tests/posix_save_restore_test.out && '
+              'echo "restore $dst/tests/posix_save_restore.bin 4 foosquare 16 <> posix sysexit" | '
+              '$dst/posix/ueforth >> $dst/tests/posix_save_restore_test.out'),
 ]))
 
 OneShot('install',

@@ -31,6 +31,13 @@ WEB_ITEMS = [
   Copy('$dst/web/script_lite_test.html', '$src/web/script_lite_test.html'),
   Copy('$dst/web/script_test.html', '$src/web/script_test.html'),
   Copy('$dst/web/script_test.fs', '$src/web/script_test.fs'),
+  TestCommand('$dst/tests/web_sanity_test.out',
+              ' '.join([
+                  '$dst/web/ueforth.js',
+                  '$src/tools/check_web_sanity.py',
+              ]),
+              'echo "120 3 + . cr bye" | ' + D8 + ' $dst/web/ueforth.js | '
+              '$src/tools/check_web_sanity.py $dst/tests/web_sanity_test.out'),
 ]
 
 Alias('web', ' '.join(WEB_ITEMS))

@@ -498,6 +498,10 @@ def Command(target, source, command, implicit=[], pool=None):
   return target
 
 
+def TestCommand(*args, **kwargs):
+  return Command(*args, **kwargs)
+
+
 def Publish(target, source, pubpath):
   global output
   implicit = ' '.join([

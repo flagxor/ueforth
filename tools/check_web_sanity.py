@@ -27,3 +27,7 @@ if not source.strip().endswith('--> 123'):
   print('MISSING EXPECTED OUTPUT')
   print(source)
   sys.exit(1)
+
+if len(sys.argv) > 1:
+  with open(sys.argv[1], 'w') as fh:
+    fh.write(source)

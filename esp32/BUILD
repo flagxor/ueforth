@@ -56,14 +56,17 @@ ESP32_FILES += [
 ESP32_FILES += [
   Compile('$dst/esp32-sim/Esp32forth-sim', '$src/esp32/sim_main.cpp',
           implicit=['$dst/gen/esp32_boot.h', '$dst/gen/esp32_sim_opcodes.h']),
-  Command('$dst/esp32-sim/sizes.txt',
-          ' '.join(['$dst/esp32-sim/Esp32forth-sim', '$src/tools/memuse.py']),
-	        'echo internals size-all bye | $dst/esp32-sim/Esp32forth-sim | '
-          '$src/tools/memuse.py >$dst/esp32-sim/sizes.txt'),
+  TestCommand('$dst/esp32-sim/sizes.txt',
+              ' '.join(['$dst/esp32-sim/Esp32forth-sim', '$src/tools/memuse.py']),
+	            'echo internals size-all bye | $dst/esp32-sim/Esp32forth-sim | '
+              '$src/tools/memuse.py >$dst/esp32-sim/sizes.txt'),
   ForthTest('$dst/tests/esp32_sim_all_tests.out',
             '$dst/esp32-sim/Esp32forth-sim', '$src/esp32/esp32_all_tests.fs',
             interp=('echo "include $src/esp32/esp32_all_tests.fs \\n1 terminate" | '
                     '$dst/esp32-sim/Esp32forth-sim')),
+  TestCommand('$dst/tests/esp32_sim_see_all_test.out',
+              '$dst/esp32-sim/Esp32forth-sim',
+              'echo internals see-all bye | $dst/esp32-sim/Esp32forth-sim 2>&1 | cat >$dst/tests/esp32_sim_see_all_test.out'),
 ]
 Compile('$dst/gen/print-esp32-builtins', '$src/esp32/print-builtins.cpp'),
 Run('$dst/gen/esp32_sim_opcodes.h', '$dst/gen/print-esp32-builtins')
