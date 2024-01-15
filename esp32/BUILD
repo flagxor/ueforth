@@ -60,6 +60,10 @@ ESP32_FILES += [
           ' '.join(['$dst/esp32-sim/Esp32forth-sim', '$src/tools/memuse.py']),
 	        'echo internals size-all bye | $dst/esp32-sim/Esp32forth-sim | '
           '$src/tools/memuse.py >$dst/esp32-sim/sizes.txt'),
+  ForthTest('$dst/tests/esp32_sim_all_tests.out',
+            '$dst/esp32-sim/Esp32forth-sim', '$src/esp32/esp32_all_tests.fs',
+            interp=('echo "include $src/esp32/esp32_all_tests.fs \\n1 terminate" | '
+                    '$dst/esp32-sim/Esp32forth-sim')),
 ]
 Compile('$dst/gen/print-esp32-builtins', '$src/esp32/print-builtins.cpp'),
 Run('$dst/gen/esp32_sim_opcodes.h', '$dst/gen/print-esp32-builtins')
