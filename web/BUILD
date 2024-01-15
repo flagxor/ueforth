@@ -35,3 +35,10 @@ WEB_ITEMS = [
 
 Alias('web', ' '.join(WEB_ITEMS))
 Default('web')
+
+D8 = '~/src/v8/v8/out/x64.release/d8 $dst/web/ueforth.js'
+
+OneShot('d8',
+        '$dst/web/ueforth.js',
+        D8 + ' $in',
+        pool='console')
