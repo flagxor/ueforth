@@ -16,7 +16,8 @@ if not WINDOWS_ENABLED:
   Return()
 
 Alias('windows', 'win32 win64')
-Default('windows')
+if not FAST:
+  Default('windows')
 
 # Create boot.
 Importation('$dst/gen/windows_boot.h', '$src/windows/windows_boot.fs',

@@ -74,4 +74,5 @@ Importation('$dst/gen/pico_ice_boot.h', '$src/pico-ice/pico_ice_boot.fs', name='
 
 # Main Alias.
 Alias('pico', ' '.join(PICO_ICE_FILES))
-Default('pico')
+if not FAST:
+  Default('pico')

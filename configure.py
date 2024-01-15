@@ -26,6 +26,8 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = SCRIPT_DIR
 NINJA_BUILD = os.path.join(ROOT_DIR, 'build.ninja')
 
+FAST = False
+
 SRC_DIR = os.path.relpath(ROOT_DIR, os.getcwd())
 if SRC_DIR == '.':
   DST_DIR = 'out'
@@ -189,6 +191,13 @@ def DetectGenericTools(args):
       sys.stderr.write('Missing package gcc-arm-none-eabi, pico-ice diabled!\n')
 
 
+def FastOption():
+  if FAST:
+    return '-f'
+  else:
+    return ''
+
+
 def InitOutput():
   global output
   output = f"""
@@ -221,7 +230,7 @@ WIN_LFLAGS64 = {' '.join(WIN_LFLAGS64)}
 
 rule config
   description = CONFIG
-  command = $src/configure.py -q
+  command = $src/configure.py -q {FastOption()}
 
 rule revstamp
   description = REVSTAMP
@@ -530,7 +539,10 @@ def Main():
     prog='configure',
     description='Generate ninja.build')
   parser.add_argument('-q', '--quiet', action='store_true')
+  parser.add_argument('-f', '--fast', action='store_true')
   args = parser.parse_args()
+  global FAST
+  FAST = args.fast
   DetectGenericTools(args)
   DetectWindowsTools(args)
   InitOutput()
