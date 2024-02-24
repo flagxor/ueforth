@@ -170,6 +170,13 @@ def DetectWindowsTools(args):
     if not args.quiet:
       sys.stderr.write('Windows tools not available, Windows support disabled.\n')
     return
+  try:
+    LSQ('/usr/bin/convert')
+  except:
+    if not args.quiet:
+      sys.stderr.write('Windows build requires ImageMagick (/usr/bin/convert).\n')
+      sys.stderr.write('Windows support disabled.\n')
+    return
   WINDOWS_ENABLED = True
 
 
