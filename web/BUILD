@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+if not WEB_ENABLED:
+  Return()
+
 Importation('$dst/gen/web_boot.js', '$src/web/web_boot.fs', header_mode='web', name='boot')
 Compile('$dst/gen/dump_web_opcodes', '$src/web/dump_web_opcodes.c')
 GenRun('$dst/gen/web_cases.js', '$dst/gen/dump_web_opcodes', 'cases', [])
@@ -31,21 +34,25 @@ WEB_ITEMS = [
   Copy('$dst/web/script_lite_test.html', '$src/web/script_lite_test.html'),
   Copy('$dst/web/script_test.html', '$src/web/script_test.html'),
   Copy('$dst/web/script_test.fs', '$src/web/script_test.fs'),
-  TestCommand('$dst/tests/web_sanity_test.out',
-              ' '.join([
-                  '$dst/web/ueforth.js',
-                  '$src/tools/check_web_sanity.py',
-              ]),
-              'echo "120 3 + . cr bye" | ' + D8 + ' $dst/web/ueforth.js | '
-              '$src/tools/check_web_sanity.py $dst/tests/web_sanity_test.out'),
 ]
+
+if D8_AVAILABLE:
+  WEB_ITEMS += [
+    TestCommand('$dst/tests/web_sanity_test.out',
+                ' '.join([
+                    '$dst/web/ueforth.js',
+                    '$src/tools/check_web_sanity.py',
+                ]),
+                'echo "120 3 + . cr bye" | ' + D8 + ' $dst/web/ueforth.js | '
+                '$src/tools/check_web_sanity.py ' +
+                '$dst/tests/web_sanity_test.out'),
+  ]
 
 Alias('web', ' '.join(WEB_ITEMS))
 Default('web')
 
-D8 = '~/src/v8/v8/out/x64.release/d8 $dst/web/ueforth.js'
-
-OneShot('d8',
-        '$dst/web/ueforth.js',
-        D8 + ' $in',
-        pool='console')
+if D8_AVAILABLE:
+  OneShot('d8',
+          '$dst/web/ueforth.js',
+          D8 + ' $dst/web/ueforth.js $in',
+          pool='console')

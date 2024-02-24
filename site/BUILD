@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+if not WEB_ENABLED:
+  Return()
+
 OPTIONS = '-I $src/site'
 UE_OPTIONS = OPTIONS + ' -DFORTH=uEForth'
 ESP_OPTIONS = OPTIONS + ' -DFORTH=ESP32forth'

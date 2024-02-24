@@ -111,17 +111,22 @@ WIN_LFLAGS64 = [
   '/LIBPATH:"c:/Program Files (x86)/Windows Kits/10/Lib/10.0.19041.0/ucrt/x64"',
 ] + WIN_LIBS
 
+WEB_ENABLED = False
 PICO_ICE_ENABLED = False
-WINDOWS_ENABLED = False
 
+D8_AVAILABLE = False
+D8 = 'UNSUPPORTED'
+
+WINDOWS_ENABLED = False
 WINTMP = '/UNSUPPORTED'
-ARDUINO_CLI = 'UNSUPPORTED'
 WIN_CL32 = 'UNSUPPORTED'
 WIN_CL64 = 'UNSUPPORTED'
 WIN_LINK32 = 'UNSUPPORTED'
 WIN_LINK64 = 'UNSUPPORTED'
 WIN_RC32 = 'UNSUPPORTED'
 WIN_RC64 = 'UNSUPPORTED'
+
+ARDUINO_CLI = 'UNSUPPORTED'
 
 # Mutable global state.
 build_files = []
@@ -169,24 +174,26 @@ def DetectWindowsTools(args):
 
 
 def DetectGenericTools(args):
-  global D8, NODEJS, PICO_ICE_ENABLED
+  global D8, D8_AVAILABLE, WEB_ENABLED, PICO_ICE_ENABLED
   try:
     D8 = LSQ('${HOME}/src/v8/v8/out/x64.release/d8')
+    D8_AVAILABLE = True
   except:
     if not args.quiet:
-      sys.stderr.write('V8 checkout in $HOME/src/v8 not found, ignoring.\n')
+      sys.stderr.write('V8 checkout in $HOME/src/v8 not found, '
+                       'disabling asm.js tests.\n')
   try:
-    NODEJS = LSQ('/usr/bin/nodejs')
+    LSQ('/usr/bin/nodejs')
+    WEB_ENABLED = True
   except:
     if not args.quiet:
-      sys.stderr.write('/usr/bin/nodejs not found, required!\n')
-      sys.exit(1)
+      sys.stderr.write('/usr/bin/nodejs not found, disabling web.\n')
   try:
     LSQ('/usr/bin/arm-none-eabi-gcc')
     PICO_ICE_ENABLED = True
   except:
     if not args.quiet:
-      sys.stderr.write('Missing package gcc-arm-none-eabi, pico-ice diabled!\n')
+      sys.stderr.write('Missing package gcc-arm-none-eabi, pico-ice disabled.\n')
 
 
 def FastOption():
@@ -232,7 +239,6 @@ WIN_RC32 = {WIN_RC32}
 WIN_RC64 = {WIN_RC64}
 
 D8 = {D8}
-NODEJS = {NODEJS}
 
 WIN_CFLAGS = {' '.join(WIN_CFLAGS)}
 WIN_LFLAGS32 = {' '.join(WIN_LFLAGS32)}
