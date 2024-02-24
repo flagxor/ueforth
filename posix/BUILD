@@ -21,8 +21,8 @@ Alias('posix', ' '.join([
             '$dst/posix/ueforth', '$src/common/all_tests.fs'),
   TestCommand('$dst/tests/posix_see_all_test.out',
               '$dst/posix/ueforth',
-              'echo internals see-all bye | $dst/posix/ueforth 2>&1 | '
-              'cat >$dst/tests/posix_see_all_test.out'),
+              'echo internals see-all bye | $dst/posix/ueforth '
+              '>$dst/tests/posix_see_all_test.out 2>&1'),
   TestCommand(' '.join(['$dst/tests/posix_save_restore_test.out',
                         '$dst/tests/posix_save_restore.bin']),
               '$dst/posix/ueforth',

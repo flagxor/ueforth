@@ -13,6 +13,7 @@
 \ limitations under the License.
 
 ( Tests of utils.fs )
+
 e: test-.s0
   .s
   out: <0> 
@@ -254,4 +255,10 @@ e: test-see-immediate
   out: : foo 
   out:     123 
   out: ; IMMEDIATE 
+;e
+
+e: test-negative-spaces
+  : foo -10 spaces ." hi" cr ;
+  foo
+  out: hi
 ;e

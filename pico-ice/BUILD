@@ -36,13 +36,13 @@ Command(' '.join(['$dst/pico-ice/ueforth_pico_ice.uf2',
                   '$dst/pico-ice/ueforth_pico_ice.err']),
         ' '.join(['$dst/pico-ice/build.ninja',
                   '$dst/gen/pico_ice_boot.h']),
-        'ninja -C $dst/pico-ice ueforth_pico_ice 2>&1 | cat >$dst/pico-ice/ueforth_pico_ice.err')
+        'ninja -C $dst/pico-ice ueforth_pico_ice >$dst/pico-ice/ueforth_pico_ice.err 2>&1')
 Command(' '.join(['$dst/pico-ice/build.ninja',
                   '$dst/pico-ice/cmake.err']),
         ' '.join(['$src/pico-ice/pico-sdk/README.md',
                   '$src/pico-ice/pico-ice-sdk/README.md',
                   '$src/pico-ice/pico-sdk/lib/tinyusb/README.rst']),
-        'cmake $dst/pico-ice -G Ninja -S pico-ice -B $dst/pico-ice 2>&1 | cat >$dst/pico-ice/cmake.err')
+        'cmake $dst/pico-ice -G Ninja -S pico-ice -B $dst/pico-ice >$dst/pico-ice/cmake.err 2>&1')
 
 # Check out submodules if needed.
 Command(' '.join([

@@ -347,7 +347,7 @@ rule forth_test
   description = FORTH_TEST $test
   depfile = $out.d
   deps = gcc
-  command = $src/tools/importation.py -i $test -o $out --depsout $depfile --no-out && $interp $forth $test 2>&1 | cat >$out
+  command = $src/tools/importation.py -i $test -o $out --depsout $depfile --no-out && $interp $forth $test >$out 2>&1
 
 rule publish
   description = PUBLISH $pubpath
@@ -356,7 +356,7 @@ rule publish
   -DSTABLE_VERSION=$STABLE_VERSION \
   -DOLD_STABLE_VERSION=$OLD_STABLE_VERSION \
   -FREVISION=$dst/gen/REVISION \
-  -FREVSHORT=$dst/gen/REVSHORT 2>&1 | cat >/dev/null
+  -FREVSHORT=$dst/gen/REVSHORT >/dev/null 2>&1
 
 rule clean
   description = CLEAN

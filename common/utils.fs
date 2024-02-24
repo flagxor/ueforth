@@ -18,7 +18,7 @@
 : assert ( f -- ) 0= throw ;
 
 ( Print spaces )
-: spaces ( n -- ) for aft space then next ;
+: spaces ( n -- ) 0 max for aft space then next ;
 
 internals definitions
 

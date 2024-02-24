@@ -137,5 +137,5 @@ Alias('publish', ' '.join([
       '$src/tools/publish.py',
     ] + PUBLISH_PARTS),
     '$src/tools/webindex.py >$dst/gen/archive.html && ' +
-    '$src/tools/publish.py --src $dst/gen/archive.html --dst archive.html 2>&1 | cat >/dev/null'),
+    '$src/tools/publish.py --src $dst/gen/archive.html --dst archive.html >/dev/null 2>&1'),
 ]))

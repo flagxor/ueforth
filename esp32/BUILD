@@ -90,8 +90,8 @@ ESP32_FILES += [
                     '$dst/esp32-sim/Esp32forth-sim')),
   TestCommand('$dst/tests/esp32_sim_see_all_test.out',
               '$dst/esp32-sim/Esp32forth-sim',
-              'echo internals see-all bye | $dst/esp32-sim/Esp32forth-sim 2>&1 | '
-              'cat >$dst/tests/esp32_sim_see_all_test.out'),
+              'echo internals see-all bye | $dst/esp32-sim/Esp32forth-sim '
+              '>$dst/tests/esp32_sim_see_all_test.out 2>&1'),
 ]
 Compile('$dst/gen/print-esp32-builtins', '$src/esp32/print-builtins.cpp'),
 Run('$dst/gen/esp32_sim_opcodes.h', '$dst/gen/print-esp32-builtins')
@@ -124,7 +124,7 @@ for board_base in BOARDS:
             f'--build-path ueforth_esp32/{board}_dir/build '
             f'--build-cache-path ueforth_esp32/{board}_dir/cache '
             f'ueforth_esp32/{board}_dir/ESP32forth/ESP32forth.ino ')
-    pipe = f' 2>&1 | cat > ueforth_esp32/{board}_dir/build/build.out && '
+    pipe = f' > ueforth_esp32/{board}_dir/build/build.out 2>&1 && '
     copyout = (f'cd - && '
                f'cp {WINTMP}/ueforth_esp32/{board}_dir/build/*.bin '
                f'$dst/esp32/{board}_build/ && '
