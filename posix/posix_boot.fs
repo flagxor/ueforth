@@ -15,10 +15,10 @@
 needs ../common/phase1.fs
 needs posix.fs
 needs allocation.fs
-needs termios.fs
 needs ../common/phase2.fs
 needs ../common/phase_filetools.fs
 needs ../common/phase_desktop.fs
+needs termios.fs
 needs x11.fs
 needs graphics.fs
 needs sockets.fs

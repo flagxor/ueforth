@@ -38,12 +38,14 @@ create new-termios sizeof(termios) allot
 : termios@ ( a -- ) stdin swap tcgetattr drop ;
 : termios! ( a -- ) stdin TCSAFLUSH rot tcsetattr throw ;
 old-termios termios@
-: raw-mode   new-termios termios@
+: raw-mode   stdin isatty 0= if exit then
+             new-termios termios@
              _ECHO ICANON or invert new-termios .c_lflag sl@ and new-termios .c_lflag l!
              0 VTIME new-termios .c_cc[] c!
              0 VMIN new-termios .c_cc[] c!
              new-termios termios! ;
-: normal-mode   old-termios termios! ;
+: normal-mode   stdin isatty 0= if exit then
+                old-termios termios! ;
 
 ( Screen Size )
 $5413 constant TIOCGWINSZ
@@ -53,12 +55,36 @@ create winsize sizeof(winsize) allot
                   winsize sl@ dup $ffff and swap $10000 / ;
 
 0 value pending
-: termios-key? ( -- f ) pending if -1 else stdin-key to pending pending 0<> then ;
-: termios-key ( -- n ) begin termios-key? 0= while repeat pending 0 to pending ;
+: termios-key? ( -- f )
+  pending if
+    -1
+  else
+    nodelay-mode
+    stdin-key to pending
+    pending 0<>
+  then
+;
+: termios-key ( -- n )
+  begin termios-key? 0= while
+    pause? if
+      pause
+    else
+      delay-mode
+      stdin-key to pending
+    then
+  repeat
+  pending 0 to pending
+;
 
-nodelay-mode
+raw-mode
+: termios-terminate ( n -- )
+  normal-mode
+  sysexit
+;
+
 ' termios-key is key
 ' termios-key? is key?
+' termios-terminate is terminate
 
 forth definitions
 

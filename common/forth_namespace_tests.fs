@@ -458,6 +458,7 @@ e: check-ansi
 e: check-tasks
   out: start-task 
   out: task 
+  out: pause? 
   out: pause 
   out: tasks 
 ;e
@@ -566,13 +567,13 @@ e: test-windows-forth-namespace
 e: test-posix-forth-voclist
   internals ' sockets voclist-from
   out: sockets 
+  out: termios 
   out: internals 
   out: graphics 
   out: ansi 
   out: editor 
   out: streams 
   out: tasks 
-  out: termios 
   out: posix 
   out: structures 
   out: internalized 
@@ -589,11 +590,11 @@ e: test-posix-forth-namespace
   out: telnetd 
   out: sockets 
   out: x11 
+  out: form 
+  out: termios 
   check-desktop
   check-filetools
   check-phase2
-  out: form 
-  out: termios 
   check-allocation
   out: ok 
   out: pwd 

@@ -28,6 +28,9 @@ forth definitions tasks also internals
   task-list @ cell+ @ sp! rp!
 ;
 
+( Check if there are other tasks. )
+: pause? ( -- f ) task-list @ dup @ <> ;
+
 : task ( xt dsz rsz "name" )
    create here >r 0 , 0 , ( link, sp )
    swap here cell+ r@ cell+ ! cells allot
