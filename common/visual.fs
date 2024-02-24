@@ -132,7 +132,10 @@ start-size value capacity
     dup [char] D [char] @ - = if delete exit then
     dup [char] H [char] @ - = over 127 = or if drop backspace exit then
     dup [char] L [char] @ - = if drop update exit then
-    dup [char] S [char] @ - = if drop save update exit then
+    ( Support either Ctrl-S or Ctrl-P )
+    dup [char] S [char] @ - =
+      over [char] P [char] @ - = or
+      if drop save update ." saved" exit then
     dup [char] X [char] @ - = if drop quit-edit then
     dup [char] Q [char] @ - = if drop quit-edit then
     dup 13 = if drop nl insert exit then
