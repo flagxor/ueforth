@@ -1,0 +1,1477 @@
+out:
+total 0
+drwxr-xr-x. 1 znmeb znmeb 280 Feb 24 22:16 deploy
+drwxr-xr-x. 1 znmeb znmeb  74 Feb 24 22:16 esp32
+drwxr-xr-x. 1 znmeb znmeb  46 Feb 24 22:16 esp32-sim
+drwxr-xr-x. 1 znmeb znmeb 606 Feb 24 22:16 gen
+drwxr-xr-x. 1 znmeb znmeb 650 Feb 24 22:16 pico-ice
+drwxr-xr-x. 1 znmeb znmeb  40 Feb 24 22:16 pico-ice-sim
+drwxr-xr-x. 1 znmeb znmeb  14 Feb 24 22:16 posix
+drwxr-xr-x. 1 znmeb znmeb 278 Feb 24 22:16 tests
+drwxr-xr-x. 1 znmeb znmeb 184 Feb 24 22:16 web
+
+out/deploy:
+total 228
+-rw-r--r--. 1 znmeb znmeb   1157 Feb 24 22:16 app.yaml
+-rw-r--r--. 1 znmeb znmeb   3057 Feb 24 22:16 classic.html
+-rw-r--r--. 1 znmeb znmeb   1088 Feb 24 22:16 eforth.go
+-rw-r--r--. 1 znmeb znmeb  48660 Feb 24 22:16 ESP32forth.html
+-rw-r--r--. 1 znmeb znmeb   1982 Feb 24 22:16 index.html
+-rw-r--r--. 1 znmeb znmeb   4381 Feb 24 22:16 internals.html
+-rw-r--r--. 1 znmeb znmeb  15811 Feb 24 22:16 linux.html
+-rw-r--r--. 1 znmeb znmeb  13592 Feb 24 22:16 pico-ice.html
+drwxr-xr-x. 1 znmeb znmeb    392 Feb 24 22:16 static
+-rw-r--r--. 1 znmeb znmeb 104629 Feb 24 22:16 ueforth.js
+-rw-r--r--. 1 znmeb znmeb   1964 Feb 24 22:16 web.html
+-rw-r--r--. 1 znmeb znmeb  15504 Feb 24 22:16 windows.html
+
+out/deploy/static:
+total 784
+-rw-r--r--. 1 znmeb znmeb   1938 Feb 24 22:16 eforth.css
+-rw-r--r--. 1 znmeb znmeb  61233 Feb 24 22:16 esp32-c3-mini-1.jpg
+-rw-r--r--. 1 znmeb znmeb  64789 Feb 24 22:16 esp32-c3-wroom-02.jpg
+-rw-r--r--. 1 znmeb znmeb  70427 Feb 24 22:16 esp32-mini-1.jpg
+-rw-r--r--. 1 znmeb znmeb  79329 Feb 24 22:16 esp32-s2-wroom.jpg
+-rw-r--r--. 1 znmeb znmeb  83173 Feb 24 22:16 esp32-s2-wrover.jpg
+-rw-r--r--. 1 znmeb znmeb  74645 Feb 24 22:16 esp32-wroom.jpg
+-rw-r--r--. 1 znmeb znmeb  53058 Feb 24 22:16 esp-cam-back.jpg
+-rw-r--r--. 1 znmeb znmeb  59552 Feb 24 22:16 esp-cam-front.jpg
+-rw-r--r--. 1 znmeb znmeb 143675 Feb 24 22:16 esp-cam-wiring.jpg
+-rw-r--r--. 1 znmeb znmeb     34 Feb 24 22:16 robots.txt
+-rw-r--r--. 1 znmeb znmeb  81938 Feb 24 22:16 serial_bridge.jpg
+
+out/esp32:
+total 48
+drwxr-xr-x. 1 znmeb znmeb    64 Feb 24 22:16 ESP32forth
+-rw-r--r--. 1 znmeb znmeb 46854 Feb 24 22:16 ESP32forth.zip
+drwxr-xr-x. 1 znmeb znmeb    20 Feb 24 22:15 with_optional
+
+out/esp32/ESP32forth:
+total 104
+-rw-r--r--. 1 znmeb znmeb 98736 Feb 24 22:16 ESP32forth.ino
+drwxr-xr-x. 1 znmeb znmeb   182 Feb 24 22:16 optional
+-rw-r--r--. 1 znmeb znmeb   744 Feb 24 22:15 README.txt
+
+out/esp32/ESP32forth/optional:
+total 72
+-rw-r--r--. 1 znmeb znmeb 23613 Feb 24 22:16 assemblers.h
+-rw-r--r--. 1 znmeb znmeb  6041 Feb 24 22:16 camera.h
+-rw-r--r--. 1 znmeb znmeb 10505 Feb 24 22:16 interrupts.h
+-rw-r--r--. 1 znmeb znmeb  3182 Feb 24 22:16 oled.h
+-rw-r--r--. 1 znmeb znmeb  1228 Feb 24 22:15 README-optional.txt
+-rw-r--r--. 1 znmeb znmeb  5109 Feb 24 22:15 rmt.h
+-rw-r--r--. 1 znmeb znmeb  3771 Feb 24 22:16 serial-bluetooth.h
+-rw-r--r--. 1 znmeb znmeb  5443 Feb 24 22:16 spi-flash.h
+
+out/esp32/with_optional:
+total 0
+drwxr-xr-x. 1 znmeb znmeb 172 Feb 24 22:16 ESP32forth
+
+out/esp32/with_optional/ESP32forth:
+total 168
+-rw-r--r--. 1 znmeb znmeb 23613 Feb 24 22:16 assemblers.h
+-rw-r--r--. 1 znmeb znmeb  6041 Feb 24 22:16 camera.h
+-rw-r--r--. 1 znmeb znmeb 98736 Feb 24 22:16 ESP32forth.ino
+-rw-r--r--. 1 znmeb znmeb 10505 Feb 24 22:16 interrupts.h
+-rw-r--r--. 1 znmeb znmeb  3182 Feb 24 22:16 oled.h
+-rw-r--r--. 1 znmeb znmeb  5109 Feb 24 22:15 rmt.h
+-rw-r--r--. 1 znmeb znmeb  3771 Feb 24 22:16 serial-bluetooth.h
+-rw-r--r--. 1 znmeb znmeb  5443 Feb 24 22:16 spi-flash.h
+
+out/esp32-sim:
+total 152
+-rwxr-xr-x. 1 znmeb znmeb 92240 Feb 24 22:16 Esp32forth-sim
+-rw-r--r--. 1 znmeb znmeb 57721 Feb 24 22:16 sizes.txt
+
+out/gen:
+total 364
+-rwxr-xr-x. 1 znmeb znmeb 38736 Feb 24 22:15 dump_web_opcodes
+-rw-r--r--. 1 znmeb znmeb  3375 Feb 24 22:15 esp32_assembler.h
+-rw-r--r--. 1 znmeb znmeb 49522 Feb 24 22:15 esp32_boot.h
+-rw-r--r--. 1 znmeb znmeb  4667 Feb 24 22:15 esp32_camera.h
+-rw-r--r--. 1 znmeb znmeb  2776 Feb 24 22:15 esp32_interrupts.h
+-rw-r--r--. 1 znmeb znmeb   602 Feb 24 22:16 esp32_oled.h
+-rw-r--r--. 1 znmeb znmeb  4936 Feb 24 22:15 esp32_riscv-assembler.h
+-rw-r--r--. 1 znmeb znmeb  1232 Feb 24 22:16 esp32_serial-bluetooth.h
+-rw-r--r--. 1 znmeb znmeb 13661 Feb 24 22:16 esp32_sim_opcodes.h
+-rw-r--r--. 1 znmeb znmeb  1024 Feb 24 22:16 esp32_spi-flash.h
+-rw-r--r--. 1 znmeb znmeb 14037 Feb 24 22:15 esp32_xtensa-assembler.h
+-rw-r--r--. 1 znmeb znmeb 25217 Feb 24 22:15 pico_ice_boot.h
+-rw-r--r--. 1 znmeb znmeb 65911 Feb 24 22:15 posix_boot.h
+-rwxr-xr-x. 1 znmeb znmeb 18240 Feb 24 22:16 print-esp32-builtins
+-rw-r--r--. 1 znmeb znmeb    40 Feb 24 22:14 REVISION
+-rw-r--r--. 1 znmeb znmeb     7 Feb 24 22:14 REVSHORT
+-rw-r--r--. 1 znmeb znmeb 52615 Feb 24 22:15 web_boot.js
+-rw-r--r--. 1 znmeb znmeb 15952 Feb 24 22:16 web_cases.js
+-rw-r--r--. 1 znmeb znmeb  5451 Feb 24 22:16 web_dict.js
+-rw-r--r--. 1 znmeb znmeb   895 Feb 24 22:16 web_sys.js
+
+out/pico-ice:
+total 2836
+-rw-r--r--. 1 znmeb znmeb   2872 Feb 24 22:16 bs2_default.elf.map
+-rw-r--r--. 1 znmeb znmeb 763680 Feb 24 22:16 build.ninja
+-rw-r--r--. 1 znmeb znmeb  19759 Feb 24 22:16 CMakeCache.txt
+-rw-r--r--. 1 znmeb znmeb   1898 Feb 24 22:16 cmake.err
+drwxr-xr-x. 1 znmeb znmeb    298 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb   1838 Feb 24 22:16 cmake_install.cmake
+drwxr-xr-x. 1 znmeb znmeb    208 Feb 24 22:16 elf2uf2
+drwxr-xr-x. 1 znmeb znmeb     18 Feb 24 22:16 generated
+drwxr-xr-x. 1 znmeb znmeb     86 Feb 24 22:16 pico-ice-sdk
+drwxr-xr-x. 1 znmeb znmeb     82 Feb 24 22:16 pico-sdk
+drwxr-xr-x. 1 znmeb znmeb    162 Feb 24 22:16 pioasm
+drwxr-xr-x. 1 znmeb znmeb    160 Feb 24 22:16 ueforth-pico-ice
+-rwxr-xr-x. 1 znmeb znmeb  84104 Feb 24 22:16 ueforth_pico_ice.bin
+-rw-r--r--. 1 znmeb znmeb 943479 Feb 24 22:16 ueforth_pico_ice.dis
+-rwxr-xr-x. 1 znmeb znmeb 263156 Feb 24 22:16 ueforth_pico_ice.elf
+-rw-r--r--. 1 znmeb znmeb 319878 Feb 24 22:16 ueforth_pico_ice.elf.map
+-rw-r--r--. 1 znmeb znmeb  11995 Feb 24 22:16 ueforth_pico_ice.err
+-rw-r--r--. 1 znmeb znmeb 236617 Feb 24 22:16 ueforth_pico_ice.hex
+-rw-r--r--. 1 znmeb znmeb 168448 Feb 24 22:16 ueforth_pico_ice.uf2
+-rw-r--r--. 1 znmeb znmeb  59162 Feb 24 22:16 ueforth-pico-ice.zip
+
+out/pico-ice/CMakeFiles:
+total 84
+drwxr-xr-x. 1 znmeb znmeb   364 Feb 24 22:16 3.22.1
+-rw-r--r--. 1 znmeb znmeb    85 Feb 24 22:16 cmake.check_cache
+-rw-r--r--. 1 znmeb znmeb  1196 Feb 24 22:16 CMakeError.log
+-rw-r--r--. 1 znmeb znmeb 50745 Feb 24 22:16 CMakeOutput.log
+drwxr-xr-x. 1 znmeb znmeb     0 Feb 24 22:16 CMakeTmp
+-rw-r--r--. 1 znmeb znmeb     0 Feb 24 22:16 ELF2UF2Build-complete
+drwxr-xr-x. 1 znmeb znmeb    42 Feb 24 22:16 ELF2UF2Build.dir
+-rw-r--r--. 1 znmeb znmeb  3310 Feb 24 22:16 rules.ninja
+-rw-r--r--. 1 znmeb znmeb 20005 Feb 24 22:16 TargetDirectories.txt
+drwxr-xr-x. 1 znmeb znmeb    60 Feb 24 22:16 ueforth_pico_ice.dir
+
+out/pico-ice/CMakeFiles/3.22.1:
+total 36
+-rw-r--r--. 1 znmeb znmeb   609 Feb 24 22:16 CMakeASMCompiler.cmake
+-rw-r--r--. 1 znmeb znmeb  2539 Feb 24 22:16 CMakeCCompiler.cmake
+-rw-r--r--. 1 znmeb znmeb  5585 Feb 24 22:16 CMakeCXXCompiler.cmake
+-rwxr-xr-x. 1 znmeb znmeb 34168 Feb 24 22:16 CMakeDetermineCompilerABI_C.bin
+-rwxr-xr-x. 1 znmeb znmeb 34284 Feb 24 22:16 CMakeDetermineCompilerABI_CXX.bin
+-rw-r--r--. 1 znmeb znmeb   490 Feb 24 22:16 CMakeSystem.cmake
+drwxr-xr-x. 1 znmeb znmeb     0 Feb 24 22:16 CompilerIdASM
+drwxr-xr-x. 1 znmeb znmeb    78 Feb 24 22:16 CompilerIdC
+drwxr-xr-x. 1 znmeb znmeb    90 Feb 24 22:16 CompilerIdCXX
+
+out/pico-ice/CMakeFiles/3.22.1/CompilerIdASM:
+total 0
+
+out/pico-ice/CMakeFiles/3.22.1/CompilerIdC:
+total 32
+-rw-r--r--. 1 znmeb znmeb 24853 Feb 24 22:16 CMakeCCompilerId.c
+-rw-r--r--. 1 znmeb znmeb  1588 Feb 24 22:16 CMakeCCompilerId.o
+drwxr-xr-x. 1 znmeb znmeb     0 Feb 24 22:16 tmp
+
+out/pico-ice/CMakeFiles/3.22.1/CompilerIdC/tmp:
+total 0
+
+out/pico-ice/CMakeFiles/3.22.1/CompilerIdCXX:
+total 32
+-rw-r--r--. 1 znmeb znmeb 24597 Feb 24 22:16 CMakeCXXCompilerId.cpp
+-rw-r--r--. 1 znmeb znmeb  1772 Feb 24 22:16 CMakeCXXCompilerId.o
+drwxr-xr-x. 1 znmeb znmeb     0 Feb 24 22:16 tmp
+
+out/pico-ice/CMakeFiles/3.22.1/CompilerIdCXX/tmp:
+total 0
+
+out/pico-ice/CMakeFiles/CMakeTmp:
+total 0
+
+out/pico-ice/CMakeFiles/ELF2UF2Build.dir:
+total 8
+-rw-r--r--. 1 znmeb znmeb 1345 Feb 24 22:16 Labels.json
+-rw-r--r--. 1 znmeb znmeb 1068 Feb 24 22:16 Labels.txt
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir:
+total 52
+-rw-r--r--. 1 znmeb znmeb 51516 Feb 24 22:16 main.c.obj
+drwxr-xr-x. 1 znmeb znmeb     6 Feb 24 22:16 pico-ice-sdk
+drwxr-xr-x. 1 znmeb znmeb    12 Feb 24 22:16 pico-sdk
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-ice-sdk:
+total 0
+drwxr-xr-x. 1 znmeb znmeb 202 Feb 24 22:16 src
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-ice-sdk/src:
+total 36
+-rw-r--r--. 1 znmeb znmeb 3448 Feb 24 22:16 ice_cram.c.obj
+-rw-r--r--. 1 znmeb znmeb 4304 Feb 24 22:16 ice_flash.c.obj
+-rw-r--r--. 1 znmeb znmeb 2592 Feb 24 22:16 ice_fpga.c.obj
+-rw-r--r--. 1 znmeb znmeb 1476 Feb 24 22:16 ice_led.c.obj
+-rw-r--r--. 1 znmeb znmeb 5212 Feb 24 22:16 ice_spi.c.obj
+-rw-r--r--. 1 znmeb znmeb 3036 Feb 24 22:16 ice_sram.c.obj
+-rw-r--r--. 1 znmeb znmeb 2740 Feb 24 22:16 ice_wishbone.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk:
+total 0
+drwxr-xr-x. 1 znmeb znmeb 14 Feb 24 22:16 lib
+drwxr-xr-x. 1 znmeb znmeb 32 Feb 24 22:16 src
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/lib:
+total 0
+drwxr-xr-x. 1 znmeb znmeb 6 Feb 24 22:16 tinyusb
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/lib/tinyusb:
+total 0
+drwxr-xr-x. 1 znmeb znmeb 70 Feb 24 22:16 src
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/lib/tinyusb/src:
+total 8
+drwxr-xr-x. 1 znmeb znmeb   82 Feb 24 22:16 class
+drwxr-xr-x. 1 znmeb znmeb   30 Feb 24 22:16 common
+drwxr-xr-x. 1 znmeb znmeb   56 Feb 24 22:16 device
+drwxr-xr-x. 1 znmeb znmeb   22 Feb 24 22:16 portable
+-rw-r--r--. 1 znmeb znmeb 5008 Feb 24 22:16 tusb.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/lib/tinyusb/src/class:
+total 0
+drwxr-xr-x. 1 znmeb znmeb 36 Feb 24 22:16 audio
+drwxr-xr-x. 1 znmeb znmeb 32 Feb 24 22:16 cdc
+drwxr-xr-x. 1 znmeb znmeb 70 Feb 24 22:16 dfu
+drwxr-xr-x. 1 znmeb znmeb 32 Feb 24 22:16 hid
+drwxr-xr-x. 1 znmeb znmeb 34 Feb 24 22:16 midi
+drwxr-xr-x. 1 znmeb znmeb 32 Feb 24 22:16 msc
+drwxr-xr-x. 1 znmeb znmeb 76 Feb 24 22:16 net
+drwxr-xr-x. 1 znmeb znmeb 38 Feb 24 22:16 usbtmc
+drwxr-xr-x. 1 znmeb znmeb 38 Feb 24 22:16 vendor
+drwxr-xr-x. 1 znmeb znmeb 36 Feb 24 22:16 video
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/lib/tinyusb/src/class/audio:
+total 4
+-rw-r--r--. 1 znmeb znmeb 716 Feb 24 22:16 audio_device.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/lib/tinyusb/src/class/cdc:
+total 8
+-rw-r--r--. 1 znmeb znmeb 7248 Feb 24 22:16 cdc_device.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/lib/tinyusb/src/class/dfu:
+total 8
+-rw-r--r--. 1 znmeb znmeb 712 Feb 24 22:16 dfu_device.c.obj
+-rw-r--r--. 1 znmeb znmeb 716 Feb 24 22:16 dfu_rt_device.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/lib/tinyusb/src/class/hid:
+total 4
+-rw-r--r--. 1 znmeb znmeb 712 Feb 24 22:16 hid_device.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/lib/tinyusb/src/class/midi:
+total 4
+-rw-r--r--. 1 znmeb znmeb 712 Feb 24 22:16 midi_device.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/lib/tinyusb/src/class/msc:
+total 4
+-rw-r--r--. 1 znmeb znmeb 712 Feb 24 22:16 msc_device.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/lib/tinyusb/src/class/net:
+total 8
+-rw-r--r--. 1 znmeb znmeb 720 Feb 24 22:16 ecm_rndis_device.c.obj
+-rw-r--r--. 1 znmeb znmeb 712 Feb 24 22:16 ncm_device.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/lib/tinyusb/src/class/usbtmc:
+total 4
+-rw-r--r--. 1 znmeb znmeb 716 Feb 24 22:16 usbtmc_device.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/lib/tinyusb/src/class/vendor:
+total 4
+-rw-r--r--. 1 znmeb znmeb 716 Feb 24 22:16 vendor_device.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/lib/tinyusb/src/class/video:
+total 4
+-rw-r--r--. 1 znmeb znmeb 716 Feb 24 22:16 video_device.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/lib/tinyusb/src/common:
+total 8
+-rw-r--r--. 1 znmeb znmeb 7944 Feb 24 22:16 tusb_fifo.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/lib/tinyusb/src/device:
+total 20
+-rw-r--r--. 1 znmeb znmeb 14288 Feb 24 22:16 usbd.c.obj
+-rw-r--r--. 1 znmeb znmeb  3040 Feb 24 22:16 usbd_control.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/lib/tinyusb/src/portable:
+total 0
+drwxr-xr-x. 1 znmeb znmeb 26 Feb 24 22:16 raspberrypi
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/lib/tinyusb/src/portable/raspberrypi:
+total 0
+drwxr-xr-x. 1 znmeb znmeb 34 Feb 24 22:16 pio_usb
+drwxr-xr-x. 1 znmeb znmeb 64 Feb 24 22:16 rp2040
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/lib/tinyusb/src/portable/raspberrypi/pio_usb:
+total 4
+-rw-r--r--. 1 znmeb znmeb 712 Feb 24 22:16 dcd_pio_usb.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/lib/tinyusb/src/portable/raspberrypi/rp2040:
+total 20
+-rw-r--r--. 1 znmeb znmeb 8236 Feb 24 22:16 dcd_rp2040.c.obj
+-rw-r--r--. 1 znmeb znmeb 4360 Feb 24 22:16 rp2040_usb.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src:
+total 0
+drwxr-xr-x. 1 znmeb znmeb  54 Feb 24 22:16 common
+drwxr-xr-x. 1 znmeb znmeb 864 Feb 24 22:16 rp2_common
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/common:
+total 0
+drwxr-xr-x. 1 znmeb znmeb 114 Feb 24 22:16 pico_sync
+drwxr-xr-x. 1 znmeb znmeb  60 Feb 24 22:16 pico_time
+drwxr-xr-x. 1 znmeb znmeb  72 Feb 24 22:16 pico_util
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/common/pico_sync:
+total 20
+-rw-r--r--. 1 znmeb znmeb 1472 Feb 24 22:16 critical_section.c.obj
+-rw-r--r--. 1 znmeb znmeb  856 Feb 24 22:16 lock_core.c.obj
+-rw-r--r--. 1 znmeb znmeb 5024 Feb 24 22:16 mutex.c.obj
+-rw-r--r--. 1 znmeb znmeb 3032 Feb 24 22:16 sem.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/common/pico_time:
+total 16
+-rw-r--r--. 1 znmeb znmeb 11272 Feb 24 22:16 time.c.obj
+-rw-r--r--. 1 znmeb znmeb  1740 Feb 24 22:16 timeout_helper.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/common/pico_util:
+total 16
+-rw-r--r--. 1 znmeb znmeb 1996 Feb 24 22:16 datetime.c.obj
+-rw-r--r--. 1 znmeb znmeb 5416 Feb 24 22:16 pheap.c.obj
+-rw-r--r--. 1 znmeb znmeb 2944 Feb 24 22:16 queue.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common:
+total 0
+drwxr-xr-x. 1 znmeb znmeb  18 Feb 24 22:16 hardware_adc
+drwxr-xr-x. 1 znmeb znmeb  22 Feb 24 22:16 hardware_claim
+drwxr-xr-x. 1 znmeb znmeb  24 Feb 24 22:16 hardware_clocks
+drwxr-xr-x. 1 znmeb znmeb  26 Feb 24 22:16 hardware_divider
+drwxr-xr-x. 1 znmeb znmeb  18 Feb 24 22:16 hardware_dma
+drwxr-xr-x. 1 znmeb znmeb  22 Feb 24 22:16 hardware_flash
+drwxr-xr-x. 1 znmeb znmeb  20 Feb 24 22:16 hardware_gpio
+drwxr-xr-x. 1 znmeb znmeb  64 Feb 24 22:16 hardware_irq
+drwxr-xr-x. 1 znmeb znmeb  18 Feb 24 22:16 hardware_pio
+drwxr-xr-x. 1 znmeb znmeb  18 Feb 24 22:16 hardware_pll
+drwxr-xr-x. 1 znmeb znmeb  18 Feb 24 22:16 hardware_spi
+drwxr-xr-x. 1 znmeb znmeb  20 Feb 24 22:16 hardware_sync
+drwxr-xr-x. 1 znmeb znmeb  22 Feb 24 22:16 hardware_timer
+drwxr-xr-x. 1 znmeb znmeb  20 Feb 24 22:16 hardware_uart
+drwxr-xr-x. 1 znmeb znmeb  20 Feb 24 22:16 hardware_vreg
+drwxr-xr-x. 1 znmeb znmeb  28 Feb 24 22:16 hardware_watchdog
+drwxr-xr-x. 1 znmeb znmeb  20 Feb 24 22:16 hardware_xosc
+drwxr-xr-x. 1 znmeb znmeb  38 Feb 24 22:16 pico_bit_ops
+drwxr-xr-x. 1 znmeb znmeb  26 Feb 24 22:16 pico_bootrom
+drwxr-xr-x. 1 znmeb znmeb  26 Feb 24 22:16 pico_divider
+drwxr-xr-x. 1 znmeb znmeb 160 Feb 24 22:16 pico_double
+drwxr-xr-x. 1 znmeb znmeb  58 Feb 24 22:16 pico_fix
+drwxr-xr-x. 1 znmeb znmeb 152 Feb 24 22:16 pico_float
+drwxr-xr-x. 1 znmeb znmeb  52 Feb 24 22:16 pico_int64_ops
+drwxr-xr-x. 1 znmeb znmeb  34 Feb 24 22:16 pico_malloc
+drwxr-xr-x. 1 znmeb znmeb  38 Feb 24 22:16 pico_mem_ops
+drwxr-xr-x. 1 znmeb znmeb  28 Feb 24 22:16 pico_platform
+drwxr-xr-x. 1 znmeb znmeb  24 Feb 24 22:16 pico_printf
+drwxr-xr-x. 1 znmeb znmeb  26 Feb 24 22:16 pico_runtime
+drwxr-xr-x. 1 znmeb znmeb  90 Feb 24 22:16 pico_standard_link
+drwxr-xr-x. 1 znmeb znmeb  22 Feb 24 22:16 pico_stdio
+drwxr-xr-x. 1 znmeb znmeb 126 Feb 24 22:16 pico_stdio_usb
+drwxr-xr-x. 1 znmeb znmeb  24 Feb 24 22:16 pico_stdlib
+drwxr-xr-x. 1 znmeb znmeb  30 Feb 24 22:16 pico_unique_id
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/hardware_adc:
+total 4
+-rw-r--r--. 1 znmeb znmeb 888 Feb 24 22:16 adc.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/hardware_claim:
+total 4
+-rw-r--r--. 1 znmeb znmeb 2036 Feb 24 22:16 claim.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/hardware_clocks:
+total 8
+-rw-r--r--. 1 znmeb znmeb 5328 Feb 24 22:16 clocks.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/hardware_divider:
+total 4
+-rw-r--r--. 1 znmeb znmeb 1504 Feb 24 22:16 divider.S.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/hardware_dma:
+total 8
+-rw-r--r--. 1 znmeb znmeb 4288 Feb 24 22:16 dma.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/hardware_flash:
+total 4
+-rw-r--r--. 1 znmeb znmeb 3240 Feb 24 22:16 flash.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/hardware_gpio:
+total 8
+-rw-r--r--. 1 znmeb znmeb 7848 Feb 24 22:16 gpio.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/hardware_irq:
+total 12
+-rw-r--r--. 1 znmeb znmeb 6624 Feb 24 22:16 irq.c.obj
+-rw-r--r--. 1 znmeb znmeb  936 Feb 24 22:16 irq_handler_chain.S.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/hardware_pio:
+total 8
+-rw-r--r--. 1 znmeb znmeb 6892 Feb 24 22:16 pio.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/hardware_pll:
+total 4
+-rw-r--r--. 1 znmeb znmeb 1208 Feb 24 22:16 pll.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/hardware_spi:
+total 4
+-rw-r--r--. 1 znmeb znmeb 3564 Feb 24 22:16 spi.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/hardware_sync:
+total 4
+-rw-r--r--. 1 znmeb znmeb 3144 Feb 24 22:16 sync.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/hardware_timer:
+total 8
+-rw-r--r--. 1 znmeb znmeb 5684 Feb 24 22:16 timer.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/hardware_uart:
+total 4
+-rw-r--r--. 1 znmeb znmeb 3656 Feb 24 22:16 uart.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/hardware_vreg:
+total 4
+-rw-r--r--. 1 znmeb znmeb 876 Feb 24 22:16 vreg.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/hardware_watchdog:
+total 4
+-rw-r--r--. 1 znmeb znmeb 2720 Feb 24 22:16 watchdog.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/hardware_xosc:
+total 4
+-rw-r--r--. 1 znmeb znmeb 1208 Feb 24 22:16 xosc.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/pico_bit_ops:
+total 4
+-rw-r--r--. 1 znmeb znmeb 3204 Feb 24 22:16 bit_ops_aeabi.S.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/pico_bootrom:
+total 4
+-rw-r--r--. 1 znmeb znmeb 1184 Feb 24 22:16 bootrom.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/pico_divider:
+total 8
+-rw-r--r--. 1 znmeb znmeb 4144 Feb 24 22:16 divider.S.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/pico_double:
+total 44
+-rw-r--r--. 1 znmeb znmeb 11600 Feb 24 22:16 double_aeabi.S.obj
+-rw-r--r--. 1 znmeb znmeb  1472 Feb 24 22:16 double_init_rom.c.obj
+-rw-r--r--. 1 znmeb znmeb 14584 Feb 24 22:16 double_math.c.obj
+-rw-r--r--. 1 znmeb znmeb 10632 Feb 24 22:16 double_v1_rom_shim.S.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/pico_fix:
+total 0
+drwxr-xr-x. 1 znmeb znmeb 70 Feb 24 22:16 rp2040_usb_device_enumeration
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/pico_fix/rp2040_usb_device_enumeration:
+total 4
+-rw-r--r--. 1 znmeb znmeb 2840 Feb 24 22:16 rp2040_usb_device_enumeration.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/pico_float:
+total 32
+-rw-r--r--. 1 znmeb znmeb 10004 Feb 24 22:16 float_aeabi.S.obj
+-rw-r--r--. 1 znmeb znmeb  1428 Feb 24 22:16 float_init_rom.c.obj
+-rw-r--r--. 1 znmeb znmeb 11400 Feb 24 22:16 float_math.c.obj
+-rw-r--r--. 1 znmeb znmeb  2536 Feb 24 22:16 float_v1_rom_shim.S.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/pico_int64_ops:
+total 4
+-rw-r--r--. 1 znmeb znmeb 728 Feb 24 22:16 pico_int64_ops_aeabi.S.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/pico_malloc:
+total 4
+-rw-r--r--. 1 znmeb znmeb 1932 Feb 24 22:16 pico_malloc.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/pico_mem_ops:
+total 4
+-rw-r--r--. 1 znmeb znmeb 2056 Feb 24 22:16 mem_ops_aeabi.S.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/pico_platform:
+total 4
+-rw-r--r--. 1 znmeb znmeb 1012 Feb 24 22:16 platform.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/pico_printf:
+total 16
+-rw-r--r--. 1 znmeb znmeb 12428 Feb 24 22:16 printf.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/pico_runtime:
+total 8
+-rw-r--r--. 1 znmeb znmeb 5708 Feb 24 22:16 runtime.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/pico_standard_link:
+total 20
+-rw-r--r--. 1 znmeb znmeb 3028 Feb 24 22:16 binary_info.c.obj
+-rw-r--r--. 1 znmeb znmeb 8304 Feb 24 22:16 crt0.S.obj
+-rw-r--r--. 1 znmeb znmeb 1764 Feb 24 22:16 new_delete.cpp.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/pico_stdio:
+total 12
+-rw-r--r--. 1 znmeb znmeb 8652 Feb 24 22:16 stdio.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/pico_stdio_usb:
+total 16
+-rw-r--r--. 1 znmeb znmeb 2604 Feb 24 22:16 reset_interface.c.obj
+-rw-r--r--. 1 znmeb znmeb 6516 Feb 24 22:16 stdio_usb.c.obj
+-rw-r--r--. 1 znmeb znmeb 2540 Feb 24 22:16 stdio_usb_descriptors.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/pico_stdlib:
+total 4
+-rw-r--r--. 1 znmeb znmeb 2820 Feb 24 22:16 stdlib.c.obj
+
+out/pico-ice/CMakeFiles/ueforth_pico_ice.dir/pico-sdk/src/rp2_common/pico_unique_id:
+total 4
+-rw-r--r--. 1 znmeb znmeb 2164 Feb 24 22:16 unique_id.c.obj
+
+out/pico-ice/elf2uf2:
+total 168
+drwxr-xr-x. 1 znmeb znmeb     58 Feb 24 22:16 boot_uf2_headers
+-rw-r--r--. 1 znmeb znmeb  17997 Feb 24 22:16 build.ninja
+-rw-r--r--. 1 znmeb znmeb  13697 Feb 24 22:16 CMakeCache.txt
+drwxr-xr-x. 1 znmeb znmeb    178 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb   1906 Feb 24 22:16 cmake_install.cmake
+-rwxr-xr-x. 1 znmeb znmeb 129376 Feb 24 22:16 elf2uf2
+drwxr-xr-x. 1 znmeb znmeb     36 Feb 24 22:16 src
+drwxr-xr-x. 1 znmeb znmeb     98 Feb 24 22:16 tmp
+
+out/pico-ice/elf2uf2/boot_uf2_headers:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1290 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/elf2uf2/boot_uf2_headers/CMakeFiles:
+total 0
+
+out/pico-ice/elf2uf2/CMakeFiles:
+total 60
+drwxr-xr-x. 1 znmeb znmeb   294 Feb 24 22:16 3.22.1
+-rw-r--r--. 1 znmeb znmeb    85 Feb 24 22:16 cmake.check_cache
+-rw-r--r--. 1 znmeb znmeb 45265 Feb 24 22:16 CMakeOutput.log
+drwxr-xr-x. 1 znmeb znmeb     0 Feb 24 22:16 CMakeTmp
+drwxr-xr-x. 1 znmeb znmeb    20 Feb 24 22:16 elf2uf2.dir
+-rw-r--r--. 1 znmeb znmeb  1972 Feb 24 22:16 rules.ninja
+-rw-r--r--. 1 znmeb znmeb   467 Feb 24 22:16 TargetDirectories.txt
+
+out/pico-ice/elf2uf2/CMakeFiles/3.22.1:
+total 48
+-rw-r--r--. 1 znmeb znmeb  2441 Feb 24 22:16 CMakeCCompiler.cmake
+-rw-r--r--. 1 znmeb znmeb  5439 Feb 24 22:16 CMakeCXXCompiler.cmake
+-rwxr-xr-x. 1 znmeb znmeb 15968 Feb 24 22:16 CMakeDetermineCompilerABI_C.bin
+-rwxr-xr-x. 1 znmeb znmeb 15992 Feb 24 22:16 CMakeDetermineCompilerABI_CXX.bin
+-rw-r--r--. 1 znmeb znmeb   418 Feb 24 22:16 CMakeSystem.cmake
+drwxr-xr-x. 1 znmeb znmeb    52 Feb 24 22:16 CompilerIdC
+drwxr-xr-x. 1 znmeb znmeb    60 Feb 24 22:16 CompilerIdCXX
+
+out/pico-ice/elf2uf2/CMakeFiles/3.22.1/CompilerIdC:
+total 44
+-rwxr-xr-x. 1 znmeb znmeb 16088 Feb 24 22:16 a.out
+-rw-r--r--. 1 znmeb znmeb 24853 Feb 24 22:16 CMakeCCompilerId.c
+drwxr-xr-x. 1 znmeb znmeb     0 Feb 24 22:16 tmp
+
+out/pico-ice/elf2uf2/CMakeFiles/3.22.1/CompilerIdC/tmp:
+total 0
+
+out/pico-ice/elf2uf2/CMakeFiles/3.22.1/CompilerIdCXX:
+total 44
+-rwxr-xr-x. 1 znmeb znmeb 16096 Feb 24 22:16 a.out
+-rw-r--r--. 1 znmeb znmeb 24597 Feb 24 22:16 CMakeCXXCompilerId.cpp
+drwxr-xr-x. 1 znmeb znmeb     0 Feb 24 22:16 tmp
+
+out/pico-ice/elf2uf2/CMakeFiles/3.22.1/CompilerIdCXX/tmp:
+total 0
+
+out/pico-ice/elf2uf2/CMakeFiles/CMakeTmp:
+total 0
+
+out/pico-ice/elf2uf2/CMakeFiles/elf2uf2.dir:
+total 284
+-rw-r--r--. 1 znmeb znmeb 287336 Feb 24 22:16 main.cpp.o
+
+out/pico-ice/elf2uf2/src:
+total 0
+drwxr-xr-x. 1 znmeb znmeb 270 Feb 24 22:16 ELF2UF2Build-stamp
+
+out/pico-ice/elf2uf2/src/ELF2UF2Build-stamp:
+total 0
+-rw-r--r--. 1 znmeb znmeb 0 Feb 24 22:16 ELF2UF2Build-configure
+-rw-r--r--. 1 znmeb znmeb 0 Feb 24 22:16 ELF2UF2Build-done
+-rw-r--r--. 1 znmeb znmeb 0 Feb 24 22:16 ELF2UF2Build-download
+-rw-r--r--. 1 znmeb znmeb 0 Feb 24 22:16 ELF2UF2Build-install
+-rw-r--r--. 1 znmeb znmeb 0 Feb 24 22:16 ELF2UF2Build-mkdir
+-rw-r--r--. 1 znmeb znmeb 0 Feb 24 22:16 ELF2UF2Build-patch
+-rw-r--r--. 1 znmeb znmeb 0 Feb 24 22:16 ELF2UF2Build-update
+
+out/pico-ice/elf2uf2/tmp:
+total 8
+-rw-r--r--. 1 znmeb znmeb 102 Feb 24 22:16 ELF2UF2Build-cfgcmd.txt
+-rw-r--r--. 1 znmeb znmeb  12 Feb 24 22:16 ELF2UF2Build-cfgcmd.txt.in
+
+out/pico-ice/generated:
+total 0
+drwxr-xr-x. 1 znmeb znmeb 8 Feb 24 22:16 pico_base
+
+out/pico-ice/generated/pico_base:
+total 0
+drwxr-xr-x. 1 znmeb znmeb 50 Feb 24 22:16 pico
+
+out/pico-ice/generated/pico_base/pico:
+total 8
+-rw-r--r--. 1 znmeb znmeb 419 Feb 24 22:16 config_autogen.h
+-rw-r--r--. 1 znmeb znmeb 439 Feb 24 22:16 version.h
+
+out/pico-ice/pico-ice-sdk:
+total 8
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1155 Feb 24 22:16 cmake_install.cmake
+-rw-r--r--. 1 znmeb znmeb 1074 Feb 24 22:16 ice_cram.pio.h
+
+out/pico-ice/pico-ice-sdk/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1545 Feb 24 22:16 cmake_install.cmake
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 docs
+drwxr-xr-x. 1 znmeb znmeb  102 Feb 24 22:16 src
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 tools
+
+out/pico-ice/pico-sdk/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/docs:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1156 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/docs/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1571 Feb 24 22:16 cmake_install.cmake
+drwxr-xr-x. 1 znmeb znmeb  322 Feb 24 22:16 common
+drwxr-xr-x. 1 znmeb znmeb  116 Feb 24 22:16 rp2040
+drwxr-xr-x. 1 znmeb znmeb 1586 Feb 24 22:16 rp2_common
+
+out/pico-ice/pico-sdk/src/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/common:
+total 4
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 boot_picoboot
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 boot_uf2
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 2557 Feb 24 22:16 cmake_install.cmake
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_base
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_binary_info
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_bit_ops
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_divider
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_stdlib
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_sync
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_time
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_usb_reset_interface
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_util
+
+out/pico-ice/pico-sdk/src/common/boot_picoboot:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1176 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/common/boot_picoboot/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/common/boot_uf2:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1171 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/common/boot_uf2/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/common/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/common/pico_base:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1172 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/common/pico_base/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/common/pico_binary_info:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1179 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/common/pico_binary_info/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/common/pico_bit_ops:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1175 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/common/pico_bit_ops/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/common/pico_divider:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1175 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/common/pico_divider/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/common/pico_stdlib:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1174 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/common/pico_stdlib/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/common/pico_sync:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1172 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/common/pico_sync/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/common/pico_time:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1172 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/common/pico_time/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/common/pico_usb_reset_interface:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1187 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/common/pico_usb_reset_interface/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/common/pico_util:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1172 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/common/pico_util/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2040:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1500 Feb 24 22:16 cmake_install.cmake
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_regs
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_structs
+
+out/pico-ice/pico-sdk/src/rp2040/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2040/hardware_regs:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1176 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2040/hardware_regs/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2040/hardware_structs:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1179 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2040/hardware_structs/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common:
+total 12
+drwxr-xr-x. 1 znmeb znmeb  212 Feb 24 22:16 boot_stage2
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 8407 Feb 24 22:16 cmake_install.cmake
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 cmsis
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_adc
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_base
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_claim
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_clocks
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_divider
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_dma
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_exception
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_flash
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_gpio
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_i2c
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_interp
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_irq
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_pio
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_pll
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_pwm
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_resets
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_rtc
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_spi
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_sync
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_timer
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_uart
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_vreg
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_watchdog
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 hardware_xosc
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_async_context
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_bit_ops
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_bootrom
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_bootsel_via_double_reset
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_btstack
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_cxx_options
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_cyw43_arch
+drwxr-xr-x. 1 znmeb znmeb   88 Feb 24 22:16 pico_cyw43_driver
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_divider
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_double
+drwxr-xr-x. 1 znmeb znmeb  116 Feb 24 22:16 pico_fix
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_flash
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_float
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_i2c_slave
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_int64_ops
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_lwip
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_malloc
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_mbedtls
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_mem_ops
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_multicore
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_platform
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_printf
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_rand
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_runtime
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_standard_link
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_stdio
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_stdio_semihosting
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_stdio_uart
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_stdio_usb
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_stdlib
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 pico_unique_id
+drwxr-xr-x. 1 znmeb znmeb   70 Feb 24 22:16 tinyusb
+
+out/pico-ice/pico-sdk/src/rp2_common/boot_stage2:
+total 32
+-rwxr-xr-x. 1 znmeb znmeb  240 Feb 24 22:16 bs2_default.bin
+-rw-r--r--. 1 znmeb znmeb 5261 Feb 24 22:16 bs2_default.dis
+-rwxr-xr-x. 1 znmeb znmeb 8936 Feb 24 22:16 bs2_default.elf
+-rw-r--r--. 1 znmeb znmeb 1809 Feb 24 22:16 bs2_default_padded_checksummed.S
+drwxr-xr-x. 1 znmeb znmeb   30 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1178 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/boot_stage2/CMakeFiles:
+total 0
+drwxr-xr-x. 1 znmeb znmeb 50 Feb 24 22:16 bs2_default.dir
+
+out/pico-ice/pico-sdk/src/rp2_common/boot_stage2/CMakeFiles/bs2_default.dir:
+total 4
+-rw-r--r--. 1 znmeb znmeb 1192 Feb 24 22:16 compile_time_choice.S.obj
+
+out/pico-ice/pico-sdk/src/rp2_common/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/cmsis:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1172 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/cmsis/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_adc:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1179 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_adc/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_base:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1180 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_base/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_claim:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1181 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_claim/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_clocks:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1182 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_clocks/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_divider:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1183 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_divider/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_dma:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1179 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_dma/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_exception:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1185 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_exception/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_flash:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1181 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_flash/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_gpio:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1180 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_gpio/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_i2c:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1179 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_i2c/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_interp:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1182 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_interp/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_irq:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1179 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_irq/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_pio:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1179 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_pio/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_pll:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1179 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_pll/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_pwm:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1179 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_pwm/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_resets:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1182 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_resets/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_rtc:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1179 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_rtc/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_spi:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1179 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_spi/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_sync:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1180 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_sync/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_timer:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1181 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_timer/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_uart:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1180 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_uart/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_vreg:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1180 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_vreg/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_watchdog:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1184 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_watchdog/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_xosc:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1180 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/hardware_xosc/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_async_context:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1185 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_async_context/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_bit_ops:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1179 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_bit_ops/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_bootrom:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1179 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_bootrom/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_bootsel_via_double_reset:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1196 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_bootsel_via_double_reset/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_btstack:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1179 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_btstack/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_cxx_options:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1183 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_cxx_options/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_cyw43_arch:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1182 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_cyw43_arch/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_cyw43_driver:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1424 Feb 24 22:16 cmake_install.cmake
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 cybt_shared_bus
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_cyw43_driver/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_cyw43_driver/cybt_shared_bus:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1200 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_cyw43_driver/cybt_shared_bus/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_divider:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1179 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_divider/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_double:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1178 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_double/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_fix:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1420 Feb 24 22:16 cmake_install.cmake
+drwxr-xr-x. 1 znmeb znmeb   58 Feb 24 22:16 rp2040_usb_device_enumeration
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_fix/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_fix/rp2040_usb_device_enumeration:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1205 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_fix/rp2040_usb_device_enumeration/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_flash:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1177 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_flash/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_float:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1177 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_float/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_i2c_slave:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1181 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_i2c_slave/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_int64_ops:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1181 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_int64_ops/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_lwip:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1176 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_lwip/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_malloc:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1178 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_malloc/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_mbedtls:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1179 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_mbedtls/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_mem_ops:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1179 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_mem_ops/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_multicore:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1181 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_multicore/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_platform:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1180 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_platform/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_printf:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1178 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_printf/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_rand:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1176 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_rand/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_runtime:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1179 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_runtime/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_standard_link:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1185 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_standard_link/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_stdio:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1177 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_stdio/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_stdio_semihosting:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1189 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_stdio_semihosting/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_stdio_uart:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1182 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_stdio_uart/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_stdio_usb:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1181 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_stdio_usb/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_stdlib:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1178 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_stdlib/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_unique_id:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1181 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/src/rp2_common/pico_unique_id/CMakeFiles:
+total 0
+
+out/pico-ice/pico-sdk/src/rp2_common/tinyusb:
+total 4
+drwxr-xr-x. 1 znmeb znmeb   70 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1174 Feb 24 22:16 cmake_install.cmake
+drwxr-xr-x. 1 znmeb znmeb   12 Feb 24 22:16 pioasm
+
+out/pico-ice/pico-sdk/src/rp2_common/tinyusb/CMakeFiles:
+total 0
+-rw-r--r--. 1 znmeb znmeb  0 Feb 24 22:16 PioasmBuild-complete
+drwxr-xr-x. 1 znmeb znmeb 42 Feb 24 22:16 PioasmBuild.dir
+
+out/pico-ice/pico-sdk/src/rp2_common/tinyusb/CMakeFiles/PioasmBuild.dir:
+total 8
+-rw-r--r--. 1 znmeb znmeb 1639 Feb 24 22:16 Labels.json
+-rw-r--r--. 1 znmeb znmeb 1363 Feb 24 22:16 Labels.txt
+
+out/pico-ice/pico-sdk/src/rp2_common/tinyusb/pioasm:
+total 0
+drwxr-xr-x. 1 znmeb znmeb  34 Feb 24 22:16 src
+drwxr-xr-x. 1 znmeb znmeb 156 Feb 24 22:16 tmp
+
+out/pico-ice/pico-sdk/src/rp2_common/tinyusb/pioasm/src:
+total 0
+drwxr-xr-x. 1 znmeb znmeb 256 Feb 24 22:16 PioasmBuild-stamp
+
+out/pico-ice/pico-sdk/src/rp2_common/tinyusb/pioasm/src/PioasmBuild-stamp:
+total 0
+-rw-r--r--. 1 znmeb znmeb 0 Feb 24 22:16 PioasmBuild-configure
+-rw-r--r--. 1 znmeb znmeb 0 Feb 24 22:16 PioasmBuild-done
+-rw-r--r--. 1 znmeb znmeb 0 Feb 24 22:16 PioasmBuild-download
+-rw-r--r--. 1 znmeb znmeb 0 Feb 24 22:16 PioasmBuild-install
+-rw-r--r--. 1 znmeb znmeb 0 Feb 24 22:16 PioasmBuild-mkdir
+-rw-r--r--. 1 znmeb znmeb 0 Feb 24 22:16 PioasmBuild-patch
+-rw-r--r--. 1 znmeb znmeb 0 Feb 24 22:16 PioasmBuild-update
+
+out/pico-ice/pico-sdk/src/rp2_common/tinyusb/pioasm/tmp:
+total 12
+-rw-r--r--. 1 znmeb znmeb  69 Feb 24 22:16 PioasmBuild-cache-Release.cmake
+-rw-r--r--. 1 znmeb znmeb 148 Feb 24 22:16 PioasmBuild-cfgcmd.txt
+-rw-r--r--. 1 znmeb znmeb  12 Feb 24 22:16 PioasmBuild-cfgcmd.txt.in
+
+out/pico-ice/pico-sdk/tools:
+total 4
+drwxr-xr-x. 1 znmeb znmeb    0 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb 1157 Feb 24 22:16 cmake_install.cmake
+
+out/pico-ice/pico-sdk/tools/CMakeFiles:
+total 0
+
+out/pico-ice/pioasm:
+total 832
+-rw-r--r--. 1 znmeb znmeb  18729 Feb 24 22:16 build.ninja
+-rw-r--r--. 1 znmeb znmeb  12150 Feb 24 22:16 CMakeCache.txt
+drwxr-xr-x. 1 znmeb znmeb    176 Feb 24 22:16 CMakeFiles
+-rw-r--r--. 1 znmeb znmeb   1697 Feb 24 22:16 cmake_install.cmake
+-rwxr-xr-x. 1 znmeb znmeb 813656 Feb 24 22:16 pioasm
+
+out/pico-ice/pioasm/CMakeFiles:
+total 36
+drwxr-xr-x. 1 znmeb znmeb   170 Feb 24 22:16 3.22.1
+-rw-r--r--. 1 znmeb znmeb    85 Feb 24 22:16 cmake.check_cache
+-rw-r--r--. 1 znmeb znmeb 23115 Feb 24 22:16 CMakeOutput.log
+drwxr-xr-x. 1 znmeb znmeb     0 Feb 24 22:16 CMakeTmp
+drwxr-xr-x. 1 znmeb znmeb   246 Feb 24 22:16 pioasm.dir
+-rw-r--r--. 1 znmeb znmeb  1967 Feb 24 22:16 rules.ninja
+-rw-r--r--. 1 znmeb znmeb   254 Feb 24 22:16 TargetDirectories.txt
+
+out/pico-ice/pioasm/CMakeFiles/3.22.1:
+total 28
+-rw-r--r--. 1 znmeb znmeb  5439 Feb 24 22:16 CMakeCXXCompiler.cmake
+-rwxr-xr-x. 1 znmeb znmeb 15992 Feb 24 22:16 CMakeDetermineCompilerABI_CXX.bin
+-rw-r--r--. 1 znmeb znmeb   418 Feb 24 22:16 CMakeSystem.cmake
+drwxr-xr-x. 1 znmeb znmeb    60 Feb 24 22:16 CompilerIdCXX
+
+out/pico-ice/pioasm/CMakeFiles/3.22.1/CompilerIdCXX:
+total 44
+-rwxr-xr-x. 1 znmeb znmeb 16096 Feb 24 22:16 a.out
+-rw-r--r--. 1 znmeb znmeb 24597 Feb 24 22:16 CMakeCXXCompilerId.cpp
+drwxr-xr-x. 1 znmeb znmeb     0 Feb 24 22:16 tmp
+
+out/pico-ice/pioasm/CMakeFiles/3.22.1/CompilerIdCXX/tmp:
+total 0
+
+out/pico-ice/pioasm/CMakeFiles/CMakeTmp:
+total 0
+
+out/pico-ice/pioasm/CMakeFiles/pioasm.dir:
+total 1780
+-rw-r--r--. 1 znmeb znmeb  103920 Feb 24 22:16 ada_output.cpp.o
+-rw-r--r--. 1 znmeb znmeb  118120 Feb 24 22:16 c_sdk_output.cpp.o
+drwxr-xr-x. 1 znmeb znmeb      46 Feb 24 22:16 gen
+-rw-r--r--. 1 znmeb znmeb   80968 Feb 24 22:16 hex_output.cpp.o
+-rw-r--r--. 1 znmeb znmeb  193048 Feb 24 22:16 main.cpp.o
+-rw-r--r--. 1 znmeb znmeb 1021584 Feb 24 22:16 pio_assembler.cpp.o
+-rw-r--r--. 1 znmeb znmeb   50768 Feb 24 22:16 pio_disassembler.cpp.o
+-rw-r--r--. 1 znmeb znmeb  240096 Feb 24 22:16 python_output.cpp.o
+
+out/pico-ice/pioasm/CMakeFiles/pioasm.dir/gen:
+total 836
+-rw-r--r--. 1 znmeb znmeb 123256 Feb 24 22:16 lexer.cpp.o
+-rw-r--r--. 1 znmeb znmeb 728952 Feb 24 22:16 parser.cpp.o
+
+out/pico-ice/ueforth-pico-ice:
+total 192
+-rw-r--r--. 1 znmeb znmeb  11358 Feb 24 22:14 LICENSE
+-rw-r--r--. 1 znmeb znmeb   1070 Feb 24 22:15 pico-ice-sdk-LICENSE.md
+-rw-r--r--. 1 znmeb znmeb   1489 Feb 24 22:15 pico-sdk-LICENSE.TXT
+-rw-r--r--. 1 znmeb znmeb    657 Feb 24 22:15 README.txt
+-rw-r--r--. 1 znmeb znmeb 168448 Feb 24 22:16 ueforth-pico-ice.uf2
+
+out/pico-ice-sim:
+total 60
+-rwxr-xr-x. 1 znmeb znmeb 59528 Feb 24 22:16 ueforth_pico_ice_sim
+
+out/posix:
+total 100
+-rwxr-xr-x. 1 znmeb znmeb 100464 Feb 24 22:16 ueforth
+
+out/tests:
+total 96
+-rw-r--r--. 1 znmeb znmeb  3219 Feb 24 22:16 esp32_sim_all_tests.out
+-rw-r--r--. 1 znmeb znmeb 36455 Feb 24 22:16 esp32_sim_see_all_test.out
+-rw-r--r--. 1 znmeb znmeb  3129 Feb 24 22:16 posix_all_tests.out
+-rwxr-xr-x. 1 znmeb znmeb   240 Feb 24 22:16 posix_save_restore.bin
+-rw-r--r--. 1 znmeb znmeb   531 Feb 24 22:16 posix_save_restore_test.out
+-rw-r--r--. 1 znmeb znmeb 44221 Feb 24 22:16 posix_see_all_test.out
+
+out/web:
+total 124
+-rw-r--r--. 1 znmeb znmeb    791 Feb 24 22:14 lazy_terminal.html
+-rw-r--r--. 1 znmeb znmeb    996 Feb 24 22:14 script_lite_test.html
+-rw-r--r--. 1 znmeb znmeb    650 Feb 24 22:14 script_test.fs
+-rw-r--r--. 1 znmeb znmeb    948 Feb 24 22:14 script_test.html
+-rw-r--r--. 1 znmeb znmeb    619 Feb 24 22:14 terminal.html
+-rw-r--r--. 1 znmeb znmeb 104629 Feb 24 22:16 ueforth.js

@@ -1,0 +1,60 @@
+[1/60] GEN_RUN out/gen/dump_web_opcodes
+[2/60] GEN_RUN out/gen/dump_web_opcodes
+[3/60] GEN_RUN out/gen/dump_web_opcodes
+[4/60] IMPORTATION esp32/optional/spi-flash/spi-flash.fs
+[5/60] IMPORTATION esp32/optional/oled/oled.fs
+[6/60] IMPORTATION esp32/optional/interrupts/interrupts.h
+[7/60] COPY out/esp32/ESP32forth/optional/interrupts.h
+[8/60] IMPORTATION esp32/optional/assemblers/assemblers.h
+[9/60] IMPORTATION esp32/optional/oled/oled.h
+[10/60] COPY out/esp32/ESP32forth/optional/assemblers.h
+[11/60] COPY out/esp32/ESP32forth/optional/oled.h
+[12/60] IMPORTATION esp32/optional/camera/camera.h
+[13/60] COPY site/eforth.go
+[14/60] COPY out/esp32/ESP32forth/optional/camera.h
+[15/60] IMPORTATION esp32/optional/spi-flash/spi-flash.h
+[16/60] IMPORTATION esp32/optional/serial-bluetooth/serial-bluetooth.fs
+[17/60] COPY out/esp32/ESP32forth/optional/spi-flash.h
+[18/60] GEN_RUN ./web/fuse_web.js
+[19/60] COPY out/web/ueforth.js
+[20/60] IMPORTATION esp32/optional/serial-bluetooth/serial-bluetooth.h
+[21/60] COPY out/esp32/ESP32forth/optional/serial-bluetooth.h
+[22/60] IMPORTATION site/index.html
+[23/60] IMPORTATION site/windows.html
+[24/60] IMPORTATION site/web.html
+[25/60] CXX esp32/print-builtins.cpp
+[26/60] RUN out/gen/print-esp32-builtins
+[27/60] IMPORTATION site/linux.html
+[28/60] IMPORTATION site/internals.html
+[29/60] COPY site/app.yaml
+[30/60] COPY site/static/eforth.css
+[31/60] COPY site/static/robots.txt
+[32/60] COPY site/static/esp32-c3-wroom-02.jpg
+[33/60] IMPORTATION site/classic.html
+[34/60] COPY site/static/esp32-s2-wroom.jpg
+[35/60] COPY site/static/esp32-wroom.jpg
+[36/60] COPY site/static/esp-cam-front.jpg
+[37/60] COPY site/static/esp32-c3-mini-1.jpg
+[38/60] COPY site/static/esp32-mini-1.jpg
+[39/60] COPY site/static/esp32-s2-wrover.jpg
+[40/60] IMPORTATION site/pico-ice.html
+[41/60] COPY site/static/esp-cam-back.jpg
+[42/60] COPY site/static/serial_bridge.jpg
+[43/60] COPY site/static/esp-cam-wiring.jpg
+[44/60] IMPORTATION esp32/ESP32forth.ino
+[45/60] COPY out/esp32/ESP32forth/ESP32forth.ino
+[46/60] ZIP
+[47/60] IMPORTATION site/ESP32forth.html
+[48/60] CXX posix/main.c
+[49/60] CMD out/tests/posix_save_restore_test.out out/tests/posix_save_restore.bin
+[50/60] CMD out/tests/posix_see_all_test.out
+[51/60] CMD out/pico-ice/build.ninja out/pico-ice/cmake.err
+[52/60] CXX_SIM pico-ice/main.c
+[53/60] FORTH_TEST ./common/all_tests.fs
+[54/60] CXX esp32/sim_main.cpp
+[55/60] CMD out/esp32-sim/sizes.txt
+[56/60] CMD out/tests/esp32_sim_see_all_test.out
+[57/60] FORTH_TEST ./esp32/esp32_all_tests.fs
+[58/60] CMD out/pico-ice/ueforth_pico_ice.uf2 out/pico-ice/ueforth_pico_ice.err
+[59/60] COPY out/pico-ice/ueforth_pico_ice.uf2
+[60/60] ZIP
