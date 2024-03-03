@@ -104,7 +104,8 @@ octal
 1 constant O_WRONLY
 2 constant O_RDWR
 100 constant O_CREAT
-200 constant O_TRUNC
+200 constant O_EXCL
+1000 constant O_TRUNC
 2000 constant O_APPEND
 4000 constant O_NONBLOCK
 decimal
@@ -179,7 +180,7 @@ O_RDWR constant R/W
 : FLUSH-FILE ( fh -- ior ) fsync 0<ior ;
 : OPEN-FILE ( a n fam -- fh ior ) >r s>z r> 0777 open sign-extend d0<ior ;
 : CREATE-FILE ( a n fam -- fh ior )
-   >r s>z r> O_CREAT or 0777 open sign-extend d0<ior ;
+   >r s>z r> O_CREAT O_TRUNC or or 0777 open sign-extend d0<ior ;
 : DELETE-FILE ( a n -- ior ) s>z unlink 0<ior ;
 : RENAME-FILE ( a n a n -- ior ) s>z -rot s>z swap rename 0<ior ;
 : WRITE-FILE ( a n fh -- ior ) -rot dup >r write r> = 0=ior ;
