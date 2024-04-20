@@ -61,9 +61,10 @@ transfer{
   tib-setup input-limit sp-limit ?stack
   [SKIP] [SKIP]' raw-ok boot-prompt free.
   $place zplace BUILTIN_MARK
+  nest-depth handler +evaluate1 do-notfound
 }transfer
 
-( Move branching opcodes to separate vocabulary )
+( Move branching opcodes to separate vocabulary. )
 vocabulary internalized  internalized definitions
 : cleave   ' >link xt-transfer ;
 cleave begin   cleave again   cleave until
@@ -72,7 +73,17 @@ cleave else    cleave while   cleave repeat
 cleave aft     cleave for     cleave next
 cleave do      cleave ?do     cleave +loop
 cleave loop    cleave leave
+forth definitions
 
+( Move recognizers to separate vocabulary )
+vocabulary recognizers  recognizers definitions
+transfer{
+  REC-FIND REC-NUM
+  RECTYPE: RECTYPE-NONE RECTYPE-WORD RECTYPE-IMM RECTYPE-NUM
+  SET-RECOGNIZERS GET-RECOGNIZERS
+  -RECOGNIZER +RECOGNIZER RECSTACK
+  RECOGNIZE
+}transfer
 forth definitions
 
 ( Make DOES> switch to compile mode when interpreted )

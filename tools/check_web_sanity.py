@@ -23,7 +23,7 @@ if 'Invalid' in source:
   print(source)
   sys.exit(1)
 
-if not source.strip().endswith('--> 123'):
+if not source.strip().endswith('\n--> 123'):
   print('MISSING EXPECTED OUTPUT')
   print(source)
   sys.exit(1)

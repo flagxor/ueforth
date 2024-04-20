@@ -226,3 +226,12 @@ e: test-u<
   0 0 u< 0= assert
   -1 -1 u< 0= assert
 ;e
+
+e: test-postpone
+  : test postpone if postpone + postpone then ; immediate
+  : test2 test ;
+  3 4 1 test2 . cr
+  3 4 0 test2 . . cr
+  out: 7 
+  out: 4 3 
+;e

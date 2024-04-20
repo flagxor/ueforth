@@ -44,9 +44,9 @@ create AFT ' branch @ ' aft !         : aft   drop ['] aft , here 0 , here swap 
 ( Recursion )
 : recurse   current @ @ aliteral ['] execute , ; immediate
 
-( Postpone - done here so we have ['] and IF )
+( Tools to build postpone later out of recognizers )
 : immediate? ( xt -- f ) >flags 1 and 0= 0= ;
-: postpone ' dup immediate? if , else aliteral ['] , , then ; immediate
+: postpone, ( xt -- ) aliteral ['] , , ;
 
 ( Rstack nest depth )
 variable nest-depth
@@ -54,6 +54,59 @@ variable nest-depth
 ( FOR..NEXT )
 create FOR ' >r @ ' for !         : for   1 nest-depth +! ['] for , here ; immediate
 create NEXT ' donext @ ' next !   : next   -1 nest-depth +! ['] next , , ; immediate
+
+( Define a data type for Recognizers. )
+: RECTYPE: ( xt1 xt2 xt3 "name" -- ) CREATE , , , ;
+: do-notfound ( a n -- ) -1 'notfound @ execute ;
+' do-notfound ' do-notfound ' do-notfound  RECTYPE: RECTYPE-NONE
+' execute     ' ,           ' postpone,    RECTYPE: RECTYPE-WORD
+' execute     ' execute     ' ,            RECTYPE: RECTYPE-IMM
+' drop        ' execute     ' execute      RECTYPE: RECTYPE-NUM
+
+: RECOGNIZE ( c-addr len addr1 -- i*x addr2 )
+  dup @ for aft
+    cell+ 3dup >r >r >r @ execute
+    dup RECTYPE-NONE <> if rdrop rdrop rdrop rdrop exit then
+    drop r> r> r>
+  then next
+  drop 2drop RECTYPE-NONE
+;
+
+( Define a recognizer stack. )
+create RECSTACK 0 , 10 cells allot
+: +RECOGNIZER ( xt -- ) 1 RECSTACK +! RECSTACK dup @ cells + ! ;
+: -RECOGNIZER ( -- ) -1 RECSTACK +! ;
+: GET-RECOGNIZERS ( -- xtn..xt1 n )
+   RECSTACK @ for RECSTACK r@ cells + @ next ;
+: SET-RECOGNIZERS ( xtn..xt1 n -- )
+   0 RECSTACK ! for aft +RECOGNIZER then next ;
+
+( Create recognizer based words. )
+: postpone ( "name" -- ) bl parse RECSTACK RECOGNIZE @ execute ; immediate
+: +evaluate1
+  bl parse dup 0= if 2drop exit then
+  RECSTACK RECOGNIZE state @ 2 + cells + @ execute
+;
+
+( Setup recognizing words. )
+: REC-FIND ( c-addr len -- xt addr1 | addr2 )
+  find dup if
+    dup immediate? if RECTYPE-IMM else RECTYPE-WORD then
+  else
+    drop RECTYPE-NONE
+  then
+;
+' REC-FIND +RECOGNIZER
+
+( Setup recognizing integers. )
+: REC-NUM ( c-addr len -- n addr1 | addr2 )
+  s>number? if
+    ['] aliteral RECTYPE-NUM
+  else
+    RECTYPE-NONE
+  then
+;
+' REC-NUM +RECOGNIZER
 
 ( DO..LOOP )
 variable leaving

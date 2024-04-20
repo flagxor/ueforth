@@ -86,12 +86,16 @@ cases = ReplaceAll(cases, 'fp[-2]', 'fround(f32[(fp - 8)>>2])');
 
 cases = ReplaceAll(cases, /[*](.)p = /, 'i32[$1p>>2] = ');
 cases = ReplaceAll(cases, 'sp[-1] = ', 'i32[(sp - 4)>>2] = ');
+cases = ReplaceAll(cases, 'sp[-2] = ', 'i32[(sp - 8)>>2] = ');
 cases = ReplaceAll(cases, /[*](.)p/, '(i32[$1p>>2]|0)');
 cases = ReplaceAll(cases, 'sp[-1]', '(i32[(sp - 4)>>2]|0)');
+cases = ReplaceAll(cases, 'sp[-3]', '(i32[(sp - 12)>>2]|0)');
+cases = ReplaceAll(cases, 'sp[-4]', '(i32[(sp - 16)>>2]|0)');
 
 cases = ReplaceAll(cases, /([+-]).(.)p/, '$2p = ($2p $1 4) | 0');
 cases = ReplaceAll(cases, 'sp -= (2-1)', 'sp = (sp - 4) | 0');
 cases = ReplaceAll(cases, 'sp -= 2', 'sp = (sp - 8) | 0');
+cases = ReplaceAll(cases, 'sp += 3', 'sp = (sp + 12) | 0');
 cases = ReplaceAll(cases, 'fp -= 2', 'fp = (fp - 8) | 0');
 cases = ReplaceAll(cases, 'sizeof(cell_t)', '4');
 cases = ReplaceAll(cases, 'sizeof(float)', '4');

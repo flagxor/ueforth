@@ -105,7 +105,7 @@ sp0 'stack-cells @ 2 3 */ cells + constant sp-limit
 
 ( REPL )
 : prompt   ."  ok" cr ;
-: evaluate-buffer   begin >in @ #tib @ < while evaluate1 ?stack repeat ;
+: evaluate-buffer   begin >in @ #tib @ < while ?stack +evaluate1 repeat ?stack ;
 : evaluate ( a n -- ) 'tib @ >r #tib @ >r >in @ >r
                       #tib ! 'tib ! 0 >in ! evaluate-buffer
                       r> >in ! r> #tib ! r> 'tib ! ;

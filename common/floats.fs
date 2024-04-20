@@ -23,6 +23,18 @@
 6 value precision
 : set-precision ( n -- ) to precision ;
 
+( Add recognizer for floats. )
+also recognizers definitions
+: REC-FNUM ( c-addr len -- f addr1 | addr2 )
+  s>float? if
+    ['] afliteral RECTYPE-NUM
+  else
+    RECTYPE-NONE
+  then
+;
+' REC-FNUM +RECOGNIZER
+previous definitions
+
 internals definitions
 : #f+s ( r -- ) fdup precision for aft 10e f* then next
                 precision for aft fdup f>s 10 mod [char] 0 + hold 0.1e f* then next

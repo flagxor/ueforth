@@ -42,7 +42,8 @@
   X("1/F", FINVERSE, *fp = 1.0f / *fp) \
   X("S>F", STOF, *++fp = (float) tos; DROP) \
   X("F>S", FTOS, DUP; tos = (cell_t) *fp--) \
-  XV(internals, "S>FLOAT?", FCONVERT, tos = fconvert((const char *) *sp, tos, fp)|0; --sp) \
+  XV(internals, "S>FLOAT?", FCONVERT, \
+      ++fp; tos = fconvert((const char *) *sp, tos, fp)|0; if (!tos) --fp; --sp) \
   Y(SFLOAT, DUP; tos = sizeof(float)) \
   Y(SFLOATS, tos *= sizeof(float)) \
   X("SFLOAT+", SFLOATPLUS, tos += sizeof(float)) \

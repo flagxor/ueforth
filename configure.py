@@ -89,27 +89,10 @@ elif sys.platform == 'linux':
 
 LIBS = ['-ldl']
 
-WIN_CFLAGS = CFLAGS_COMMON + [
-  '-I', '"c:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Include"',
-  '-I', '"c:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.28.29333/include"',
-  '-I', '"c:/Program Files (x86)/Windows Kits/10/Include/10.0.19041.0/ucrt"',
-]
-
-WIN_LIBS = [
-  'user32.lib',
-]
-
-WIN_LFLAGS32 = [
-  '/LIBPATH:"c:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib"',
-  '/LIBPATH:"c:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.28.29333/lib/x86"',
-  '/LIBPATH:"c:/Program Files (x86)/Windows Kits/10/Lib/10.0.19041.0/ucrt/x86"',
-] + WIN_LIBS
-
-WIN_LFLAGS64 = [
-  '/LIBPATH:"c:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64"',
-  '/LIBPATH:"c:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.28.29333/lib/x64"',
-  '/LIBPATH:"c:/Program Files (x86)/Windows Kits/10/Lib/10.0.19041.0/ucrt/x64"',
-] + WIN_LIBS
+WIN_CFLAGS = CFLAGS_COMMON
+WIN_LIBS = ['user32.lib']
+WIN_LFLAGS32 = []
+WIN_LFLAGS64 = []
 
 WEB_ENABLED = False
 PICO_ICE_ENABLED = False
@@ -156,9 +139,10 @@ def DetectWindowsTools(args):
   ARDUINO_CLI = LOCALAPPDATA + '/Programs/arduino-ide/resources/app/lib/backend/resources/arduino-cli.exe'
   WINTMP = LOCALAPPDATA + '/Temp'
   WINTMPR = LOCALAPPDATAR + '/Temp'
-  PROGFILES = '/mnt/c/Program Files (x86)'
+  PROGFILES = '/mnt/c/Program Files'
+  PROGFILES_X86 = '/mnt/c/Program Files (x86)'
   MSVS = PROGFILES + '/Microsoft Visual Studio'
-  MSKITS = PROGFILES + '/Windows Kits'
+  MSKITS = PROGFILES_X86 + '/Windows Kits'
   try:
     WIN_CL32 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x86/cl.exe')
     WIN_CL64 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x64/cl.exe')
@@ -166,6 +150,26 @@ def DetectWindowsTools(args):
     WIN_LINK64 = LSQ(MSVS + '/*/*/VC/Tools/MSVC/*/bin/Hostx86/x64/link.exe')
     WIN_RC32 = LSQ(MSKITS + '/*/bin/*/x86/rc.exe')
     WIN_RC64 = LSQ(MSKITS + '/*/bin/*/x64/rc.exe')
+    WIN_TOOL_ROOT = WIN_CL32.replace('/mnt/c/', 'c:/').replace('/bin/Hostx86/x86/cl.exe', '').replace('"', '')
+    WINDOWS_H = LSQ(MSKITS + '/*/Include/*/um/windows.h')
+    WINKIT_HEADERS = WINDOWS_H.replace('/mnt/c/', 'c:/').replace('/um/windows.h', '').replace('"', '')
+    WINKIT_LIBS = WINKIT_HEADERS.replace('/Include/', '/Lib/')
+    WIN_CFLAGS.extend([
+      '-I', '"%s/include"' % WIN_TOOL_ROOT,
+      '-I', '"%s/um"' % WINKIT_HEADERS,
+      '-I', '"%s/ucrt"' % WINKIT_HEADERS,
+      '-I', '"%s/shared"' % WINKIT_HEADERS,
+    ])
+    WIN_LFLAGS32.extend([
+      '/LIBPATH:"%s/lib/x86"' % WIN_TOOL_ROOT,
+      '/LIBPATH:"%s/ucrt/x86"' % WINKIT_LIBS,
+      '/LIBPATH:"%s/um/x86"' % WINKIT_LIBS,
+    ])
+    WIN_LFLAGS64.extend([
+      '/LIBPATH:"%s/lib/x64"' % WIN_TOOL_ROOT,
+      '/LIBPATH:"%s/ucrt/x64"' % WINKIT_LIBS,
+      '/LIBPATH:"%s/um/x64"' % WINKIT_LIBS,
+    ])
   except:
     if not args.quiet:
       sys.stderr.write('Windows tools not available, Windows support disabled.\n')
@@ -250,6 +254,7 @@ D8 = {D8}
 WIN_CFLAGS = {' '.join(WIN_CFLAGS)}
 WIN_LFLAGS32 = {' '.join(WIN_LFLAGS32)}
 WIN_LFLAGS64 = {' '.join(WIN_LFLAGS64)}
+WIN_LIBS = {' '.join(WIN_LIBS)}
 
 rule config
   description = CONFIG
@@ -297,11 +302,11 @@ rule compile_win64
 
 rule link_win32
   description = WIN_LINK32 $in
-  command = $WIN_LINK32 /nologo /OUT:$out $WIN_LFLAGS32 $in && touch $out && chmod a+x $out
+  command = $WIN_LINK32 /nologo /OUT:$out $WIN_LFLAGS32 $WIN_LIBS $in && touch $out && chmod a+x $out
 
 rule link_win64
   description = WIN_LINK64 $in
-  command = $WIN_LINK64 /nologo /OUT:$out $WIN_LFLAGS64 $in && touch $out && chmod a+x $out
+  command = $WIN_LINK64 /nologo /OUT:$out $WIN_LFLAGS64 $WIN_LIBS $in && touch $out && chmod a+x $out
 
 rule rc_win32
   description = WIN_RC32 $in

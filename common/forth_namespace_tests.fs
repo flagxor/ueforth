@@ -106,7 +106,6 @@ e: check-boot
   out: value 
   out: throw 
   out: catch 
-  out: handler 
   out: K 
   out: J 
   out: I 
@@ -116,10 +115,10 @@ e: check-boot
   out: UNLOOP 
   out: ?do 
   out: do 
+  out: postpone 
   out: next 
   out: for 
-  out: nest-depth 
-  out: postpone 
+  out: postpone, 
   out: recurse 
   out: aft 
   out: repeat 
@@ -194,6 +193,7 @@ e: check-tier1-opcodes
   out: cell/ 
   out: 2drop 
   out: 2dup 
+  out: 3dup 
   out: 2@ 
   out: 2! 
 
@@ -390,6 +390,7 @@ e: check-blocks
 ;e
 
 e: check-vocabulary
+  out: recognizers 
   out: internals 
   out: sealed 
   out: previous 
@@ -537,6 +538,7 @@ e: test-windows-forth-voclist
   out: tasks 
   out: windows 
   out: structures 
+  out: recognizers 
   out: internalized 
   out: internals 
   out: FORTH 
@@ -576,6 +578,7 @@ e: test-posix-forth-voclist
   out: tasks 
   out: posix 
   out: structures 
+  out: recognizers 
   out: internalized 
   out: internals 
   out: FORTH 
@@ -635,6 +638,7 @@ e: test-esp32-forth-voclist
   out: Wire 
   out: ESP 
   out: structures 
+  out: recognizers 
   out: internalized 
   out: internals 
   out: FORTH 

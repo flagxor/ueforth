@@ -47,6 +47,7 @@
   X("cell/", CELLSLASH, CELLSLASH_FUNC) \
   X("2drop", TWODROP, NIP; DROP) \
   X("2dup", TWODUP, DUP; tos = sp[-1]; DUP; tos = sp[-1]) \
+  X("3dup", THREEDUP, sp += 3; sp[-2] = tos; sp[-1] = sp[-4]; *sp = sp[-3]) \
   X("2@", TWOAT, DUP; *sp = *(cell_t *) tos; tos = ((cell_t *) tos)[1]) \
   X("2!", TWOSTORE, *(cell_t *) tos = sp[-1]; \
       ((cell_t *) tos)[1] = *sp; sp -= 2; DROP) \

@@ -1,4 +1,4 @@
-\ Copyright 2021 Bradley D. Nelson
+\ Copyright 2024 Bradley D. Nelson
 \
 \ Licensed under the Apache License, Version 2.0 (the "License");
 \ you may not use this file except in compliance with the License.
@@ -12,23 +12,21 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-needs testing.fs
-needs utils.fs
-needs base_tests.fs
-needs utils_tests.fs
-needs throw_values_tests.fs
-needs vocabulary_tests.fs
-needs locals_tests.fs
-needs case_tests.fs
-needs doloop_tests.fs
-needs conditionals_tests.fs
-needs float_tests.fs
-needs recognizer_tests.fs
-needs forth_namespace_tests.fs
-needs structures_tests.fs
-needs fault_tests.fs
-needs including_tests/including_tests.fs
-needs modules_tests.fs
-needs ../lib/hashing/sha1_tests.fs
-needs ../lib/hashing/sha256_tests.fs
-run-tests
+e: test-recognizers
+  also recognizers
+  also internals
+  : rec-blah ( a n -- rec )
+    s" blah" str= if
+      123 ['] aliteral rectype-num
+    else
+      rectype-none
+    then
+  ;
+  ' rec-blah +recognizer
+  : test blah . cr ;
+  -recognizer
+  previous
+  previous
+  test
+  out: 123 
+;e
