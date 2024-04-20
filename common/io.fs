@@ -57,7 +57,7 @@ variable hld
 
 ( Better Errors )
 : notfound ( a n n -- )
-   if cr ." ERROR: " type ."  NOT FOUND!" cr -1 throw then ;
+   dup if cr ." ERROR: " >r type r> ."  NOT FOUND!" cr throw else drop then ;
 ' notfound 'notfound !
 
 ( Abort )

@@ -69,7 +69,7 @@ create NEXT ' donext @ ' next !   : next   -1 nest-depth +! ['] next , , ; immed
     dup RECTYPE-NONE <> if rdrop rdrop rdrop rdrop exit then
     drop r> r> r>
   then next
-  drop 2drop RECTYPE-NONE
+  drop RECTYPE-NONE
 ;
 
 ( Define a recognizer stack. )
