@@ -16,12 +16,6 @@
 sp@ constant sp0
 rp@ constant rp0
 fp@ constant fp0
-: depth ( -- n ) sp@ sp0 - cell/ ;
-: fdepth ( -- n ) fp@ fp0 - 4 / ;
-
-( Useful heap size words )
-: remaining ( -- n ) 'heap-start @ 'heap-size @ + 'heap @ - ;
-: used ( -- n ) 'heap @ sp@ 'stack-cells @ cells + - 28 + ;
 
 ( Quoting Words )
 : ' bl parse 2dup find dup >r -rot r> 0= 'notfound @ execute 2drop ;
@@ -85,7 +79,7 @@ create RECSTACK 0 , 10 cells allot
 : postpone ( "name" -- ) bl parse RECSTACK RECOGNIZE @ execute ; immediate
 : +evaluate1
   bl parse dup 0= if 2drop exit then
-  RECSTACK RECOGNIZE state @ 2 + cells + @ execute
+  RECSTACK RECOGNIZE state @ 1+ 1+ cells + @ execute
 ;
 
 ( Setup recognizing words. )
@@ -107,6 +101,14 @@ create RECSTACK 0 , 10 cells allot
   then
 ;
 ' REC-NUM +RECOGNIZER
+
+: interpret0 begin +evaluate1 again ; interpret0
+
+( Useful stack/heap words )
+: depth ( -- n ) sp@ sp0 - cell/ ;
+: fdepth ( -- n ) fp@ fp0 - 4 / ;
+: remaining ( -- n ) 'heap-start @ 'heap-size @ + 'heap @ - ;
+: used ( -- n ) 'heap @ sp@ 'stack-cells @ cells + - 28 + ;
 
 ( DO..LOOP )
 variable leaving

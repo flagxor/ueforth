@@ -115,6 +115,10 @@ e: check-boot
   out: UNLOOP 
   out: ?do 
   out: do 
+  out: used 
+  out: remaining 
+  out: fdepth 
+  out: depth 
   out: postpone 
   out: next 
   out: for 
@@ -134,10 +138,6 @@ e: check-boot
   out: char 
   out: ['] 
   out: ' 
-  out: used 
-  out: remaining 
-  out: fdepth 
-  out: depth 
   out: fp0 
   out: rp0 
   out: sp0 
@@ -159,6 +159,11 @@ e: check-tier2-opcodes
 ;e
 
 e: check-tier1-opcodes
+  out: 0 
+  out: 1 
+  out: -1 
+  out: 10 
+  out: 41 
   out: nip 
   out: rdrop 
   out: */ 

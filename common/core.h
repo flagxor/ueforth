@@ -188,35 +188,12 @@ static cell_t *evaluate1(cell_t *rp) {
       call = xt;
     }
   } else {
-    cell_t n;
-    if (convert((const char *) name, len, g_sys->base, &n)) {
-      if (g_sys->state) {
-        COMMA(g_sys->DOLIT_XT);
-        COMMA(n);
-      } else {
-        PUSH n;
-      }
-    } else {
-      float f;
-      if (fconvert((const char *) name, len, &f)) {
-        if (g_sys->state) {
-          COMMA(g_sys->DOFLIT_XT);
-          *(float *) g_sys->heap++ = f;
-        } else {
-          *++fp = f;
-        }
-      } else {
 #if PRINT_ERRORS
-        fprintf(stderr, "CANT FIND: ");
-        fwrite((void *) name, 1, len, stderr);
-        fprintf(stderr, "\n");
+    fprintf(stderr, "CANT FIND: ");
+    fwrite((void *) name, 1, len, stderr);
+    fprintf(stderr, "\n");
 #endif
-        PUSH name;
-        PUSH len;
-        PUSH -1;
-        call = g_sys->notfound;
-      }
-    }
+    return 0;
   }
   PUSH call;
   PARK;
