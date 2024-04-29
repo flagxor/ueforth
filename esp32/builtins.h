@@ -425,8 +425,8 @@ static cell_t FromIP(IPAddress ip) {
 # endif
 # define OPTIONAL_MDNS_SUPPORT \
   /* mDNS */ \
-  X("MDNS.begin", MDNS_BEGIN, n0 = MDNS.begin(c0)) \
-  X("MDNS.addService", MDNS_ADD_SERVICE, n0 = MDNS.addService(c2, c1, n0); NIPn(2)) \
+  X("MDNS.begin", MDNS_BEGIN, n0 = MDNS.begin(c0) ? -1 : 0) \
+  X("MDNS.addService", MDNS_ADD_SERVICE, n0 = MDNS.addService(c2, c1, n0) ? -1 : 0; NIPn(2)) \
   X("MDNS.setInstanceName", MDNS_SET_INSTANCE_NAME, MDNS.setInstanceName(c0); DROP) \
   X("MDNS.addServiceTxt", MDNS_ADD_SERVICE_TXT, MDNS.addServiceTxt(c3, c2, c1, c0); DROPn(4))
   /* alx */
