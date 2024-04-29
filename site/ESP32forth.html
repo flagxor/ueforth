@@ -472,7 +472,10 @@ WiFi.softAPgetStationNum ( -- num )
 
 <h5>mDNS</h5>
 <pre>
-MDNS.begin ( name-z -- )   Start multicast dns
+MDNS.begin ( hostname-z -- f )   Start multicast dns
+MDNS.setInstanceName ( name-z -- )   Set the instance (friendly) name
+MDNS.addService ( service-z protocol-z port-n -- f )   Advertise a service (such as "http") using a protocol ("tcp" or "udp") and a port number.
+MDNS.addServiceTxt ( service-z protocol-z key-z value-z -- )   Add a service key/value pair
 </pre>
 
 <h5>SPIFFS</h5>
