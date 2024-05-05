@@ -25,35 +25,20 @@ limitations under the License.
 #include "menu.html"
 <div class="wrapper">
 
-<h2>Download</h2>
+<h2>Building</h2>
 
-<h3>STABLE RELEASE</h3>
+<p>Linux builds of µEforth are no longer published as this isn't really ideal for Linux anyway.</p>
 <p>
-<a href="https://eforth.storage.googleapis.com/releases/ueforth-{{STABLE_VERSION}}.linux">ueforth-{{STABLE_VERSION}}.linux</a>
-  - Linux 64-bit Executable µEforth<br/>
-  <i>Version: {{STABLE_VERSION}} (Stable)</i>
+Instead build as follows:
+<pre>
+sudo apt install ninja-build
+git clone https://github.com/flagxor/ueforth
+cd ueforth
+./configure.py
+ninja
+</pre>
 </p>
 
-<h3>LONG TERM STABLE RELEASE</h3>
-<p>
-<a href="https://eforth.storage.googleapis.com/releases/ueforth-{{OLD_STABLE_VERSION}}.linux">ueforth-{{OLD_STABLE_VERSION}}.linux</a>
-  - Linux 64-bit Executable µEforth<br/>
-  <i>Version: {{OLD_STABLE_VERSION}} (Long-term Stable)</i>
-</p>
-
-<h3>Beta Release</h3>
-<p>
-<a href="https://eforth.storage.googleapis.com/releases/ueforth-{{VERSION}}.linux">ueforth-{{VERSION}}.linux</a>
-  - Linux 64-bit Executable µEforth<br/>
-  <i>Version: {{VERSION}} (Beta)</i>
-</p>
-
-<hr/>
-
-<p>
-<a href="https://eforth.storage.googleapis.com/releases/archive.html" target="_blank">Release Archive</a>
-  - Prior Releases
-</p>
 <p>
 <a href="https://github.com/flagxor/ueforth" target="_blank">http://github.com/flagxor/ueforth</a>
   - Complete Unprocessed Source Code

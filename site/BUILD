@@ -78,14 +78,6 @@ PUBLISH_PARTS += [
              '$dst/esp32/ESP32forth.zip',
              'ESP32forth-{{VERSION}}.zip'),
   ])),
-  Alias('publish-linux', ' '.join([
-    Publish('publish-linux-rev',
-             '$dst/posix/ueforth',
-             'ueforth-{{VERSION}}-{{REVSHORT}}.linux'),
-    Publish('publish-linux-ver',
-             '$dst/posix/ueforth',
-             'ueforth-{{VERSION}}.linux'),
-  ])),
   Alias('publish-web', ' '.join([
     Publish('publish-web-rev',
              '$dst/web/ueforth.js',
@@ -109,26 +101,28 @@ if PICO_ICE_ENABLED:
   ]
 
 if WINDOWS_ENABLED:
+  Alias('publish-win32', ' '.join([
+    Publish('publish-win32-rev',
+            '$dst/windows/uEf32.exe',
+            'uEf32-{{VERSION}}-{{REVSHORT}}.exe'),
+    Publish('publish-win32-ver',
+            '$dst/windows/uEf32.exe',
+            'uEf32-{{VERSION}}.exe'),
+  ]))
   PUBLISH_PARTS += [
-    Alias('publish-win', ' '.join([
-      Alias('publish-win32', ' '.join([
-        Publish('publish-win32-rev',
-                 '$dst/windows/uEf32.exe',
-                 'uEf32-{{VERSION}}-{{REVSHORT}}.exe'),
-        Publish('publish-win32-ver',
-                 '$dst/windows/uEf32.exe',
-                 'uEf32-{{VERSION}}.exe'),
-      ])),
-      Alias('publish-win64', ' '.join([
-        Publish('publish-win64-rev',
-                 '$dst/windows/uEf64.exe',
-                 'uEf64-{{VERSION}}-{{REVSHORT}}.exe'),
-        Publish('publish-win64-ver',
-                 '$dst/windows/uEf64.exe',
-                 'uEf64-{{VERSION}}.exe'),
-      ])),
+    Alias('publish-win64', ' '.join([
+      Publish('publish-win64-rev',
+              '$dst/windows/uEf64.exe',
+              'uEf64-{{VERSION}}-{{REVSHORT}}.exe'),
+      Publish('publish-win64-ver',
+              '$dst/windows/uEf64.exe',
+              'uEf64-{{VERSION}}.exe'),
     ])),
   ]
+  Alias('publish-win', ' '.join([
+    'publish-win32',
+    'publish-win64',
+  ]))
 
 Alias('publish', ' '.join([
   Command('publish-index', ' '.join([
