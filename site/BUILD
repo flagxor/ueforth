@@ -53,10 +53,9 @@ DEPLOY_ITEMS += [
   ]
 ]
 
-if WINDOWS_ENABLED:
-  DEPLOY_ITEMS += [
-    Copy('$dst/deploy/static/favicon.ico', 'images/eforth.ico'),
-  ]
+DEPLOY_ITEMS += [
+  Copy('$dst/deploy/static/favicon.ico', 'images/eforth.ico'),
+]
 
 Alias('site', ' '.join(DEPLOY_ITEMS))
 Default('site')
