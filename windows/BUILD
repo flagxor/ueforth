@@ -52,13 +52,7 @@ LinkW64('$dst/windows/uEf64.exe',
                   '$dst/resources/ueforth_res64.res']))
 
 # Create icon.
-ICON_SIZES = [
-  ResizeImage('$dst/resources/eforth16x16.png', '$src/images/eforth.png', '16x16'),
-  ResizeImage('$dst/resources/eforth32x32.png', '$src/images/eforth.png', '32x32'),
-  ResizeImage('$dst/resources/eforth48x48.png', '$src/images/eforth.png', '48x48'),
-  ResizeImage('$dst/resources/eforth256x256.png', '$src/images/eforth.png', '256x256'),
-]
-ConvertImage('$dst/resources/eforth.ico', ' '.join(ICON_SIZES))
+Copy('$dst/resources/eforth.ico', 'images/eforth.ico')
 CompileResource32('$dst/resources/ueforth_res32.res', '$src/windows/ueforth.rc',
                   implicit=['$dst/resources/eforth.ico'])
 CompileResource64('$dst/resources/ueforth_res64.res', '$src/windows/ueforth.rc',
