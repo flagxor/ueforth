@@ -323,9 +323,9 @@ function Convert(pos, n, base, ret) {
   if (u8[pos] == '-'.charCodeAt(0)) { negate = -1; ++pos; --n; }
   if (u8[pos] == '$'.charCodeAt(0)) { base = 16; ++pos; --n; }
   for (; n; --n) {
-    var d = UPPER(u8[pos]) - 48;
+    var d = (UPPER(u8[pos]) - 48) >>> 0;
     if (d > 9) {
-      d -= 7;
+      d = (d - 7) >>> 0;
       if (d < 10) { return 0; }
     }
     if (d >= base) { return 0; }
