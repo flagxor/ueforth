@@ -60,8 +60,7 @@ CompileResource64('$dst/resources/ueforth_res64.res', '$src/windows/ueforth.rc',
 
 OneShot('win-install',
         ' '.join([
-          '$dst/windows/uEf32.exe',
           '$dst/windows/uEf64.exe',
         ]),
-        'sudo cp $dst/windows/uEf32.exe $dst/windows/uEf64.exe ~/Desktop',
+        'sudo cp $dst/windows/uEf64.exe ~/Desktop',
         pool='console')
