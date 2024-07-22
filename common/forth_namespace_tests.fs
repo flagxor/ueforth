@@ -656,9 +656,6 @@ e: check-esp32-platform
   out: INPUT 
   out: HIGH 
   out: LOW 
-  out: tone 
-  out: freq 
-  out: duty 
   out: adc 
   out: pin 
   out: default-key? 

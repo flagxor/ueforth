@@ -99,7 +99,8 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   REQUIRED_ARDUINO_GPIO_SUPPORT \
   REQUIRED_SYSTEM_SUPPORT \
   REQUIRED_FILES_SUPPORT \
-  OPTIONAL_LEDC_SUPPORT \
+  OPTIONAL_LEDC_V2_SUPPORT \
+  OPTIONAL_LEDC_V3_SUPPORT \
   OPTIONAL_DAC_SUPPORT \
   OPTIONAL_SPIFFS_SUPPORT \
   OPTIONAL_WIFI_SUPPORT \
@@ -231,10 +232,10 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   YV(internals, READDIR, \
     struct dirent *ent = readdir((DIR *) n0); SET (ent ? ent->d_name: 0))
 
-#ifndef ENABLE_LEDC_SUPPORT
-# define OPTIONAL_LEDC_SUPPORT
+#ifndef ENABLE_LEDC_V2_SUPPORT
+# define OPTIONAL_LEDC_V2_SUPPORT
 #else
-# define OPTIONAL_LEDC_SUPPORT \
+# define OPTIONAL_LEDC_V2_SUPPORT \
   YV(ledc, ledcSetup, \
       n0 = (cell_t) (1000000 * ledcSetup(n2, n1 / 1000.0, n0)); NIPn(2)) \
   YV(ledc, ledcAttachPin, ledcAttachPin(n1, n0); DROPn(2)) \
@@ -246,6 +247,21 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
       n0 = (cell_t) (1000000 * ledcWriteTone(n1, n0 / 1000.0)); NIP) \
   YV(ledc, ledcWriteNote, \
       tos = (cell_t) (1000000 * ledcWriteNote(n2, (note_t) n1, n0)); NIPn(2))
+#endif
+
+#ifndef ENABLE_LEDC_V3_SUPPORT
+# define OPTIONAL_LEDC_V3_SUPPORT
+#else
+# define OPTIONAL_LEDC_V3_SUPPORT \
+  YV(ledc, ledcAttach, n0 = ledcAttach(n2, n1, n0); NIPn(2)) \
+  YV(ledc, ledcAttachChannel, n0 = ledcAttachChannel(n3, n2, n1, n0); NIPn(3)) \
+  YV(ledc, ledcDetach, n0 = ledcDetach(n0)) \
+  YV(ledc, ledcRead, n0 = ledcRead(n0)) \
+  YV(ledc, ledcReadFreq, n0 = ledcReadFreq(n0)) \
+  YV(ledc, ledcWrite, ledcWrite(n1, n0); DROPn(2)) \
+  YV(ledc, ledcWriteTone, n0 = ledcWriteTone(n1, n0); NIP) \
+  YV(ledc, ledcWriteNote, n0 = ledcWriteNote(n2, (note_t) n1, n0); NIPn(2)) \
+  YV(ledc, ledcChangeFrequency, n0 = ledcChangeFrequency(n2, n1, n0); NIPn(2))
 #endif
 
 #ifndef ENABLE_DAC_SUPPORT
