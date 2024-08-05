@@ -72,4 +72,12 @@ web definitions
 ' yielding 10 10 task yielding-task
 yielding-task start-task
 
+: serial
+  begin
+    pause
+    begin serial-key-raw dup 0< 0= while emit repeat drop
+    begin key? while key >r rp@ 1 serial-type rdrop repeat
+  again
+;
+
 forth definitions

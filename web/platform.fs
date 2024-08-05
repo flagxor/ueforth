@@ -984,6 +984,87 @@ JSWORD: random { n -- n }
   return Math.floor(Math.random() * n);
 ~
 
+r~
+context.serial_buffer = [];
+context.ports = [];
+context.port = null;
+context.serial_writer = null;
+async function RouteSerial(port) {
+  await port.open({
+    baudRate: 115200,
+  });
+  if (port.writable) {
+    context.serial_writer = port.writable.getWriter();
+  }
+  while (port.readable) {
+    const reader = port.readable.getReader();
+    try {
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+          reader.releaseLock();
+          break;
+        }
+        for (var i = 0; i < value.length; ++i) {
+          context.serial_buffer.push(value[i]);
+        }
+      }
+    } catch (error) {
+    }
+  }
+}
+context.UpdateSerial = function() {
+  navigator.serial.getPorts().then((ports) => {
+    context.ports = ports;
+    if (context.ports.length > 0) {
+      context.port = context.ports[0];
+    } else {
+      context.port = null;
+    }
+    context.serial_writer = null;
+    if (context.port) {
+      RouteSerial(context.port);
+    }
+  });
+};
+if (!globalObj.write && navigator && navigator.serial) {
+  navigator.serial.addEventListener("connect", (e) => {
+    context.UpdateSerial();
+  });
+  navigator.serial.addEventListener("disconnect", (e) => {
+    context.UpdateSerial();
+  });
+  context.UpdateSerial();
+}
+~ jseval
+
+JSWORD: pairserial { -- }
+  navigator.serial
+    .requestPort()
+    .then((port) => {
+      context.UpdateSerial();
+    })
+    .catch((e) => {
+      console.log('No serial port selected.');
+      context.UpdateSerial();
+    });
+~
+
+JSWORD: serial-key-raw { -- n }
+  if (context.serial_buffer.length) {
+    return context.serial_buffer.shift();
+  } else {
+    return -1;
+  }
+~
+
+JSWORD: serial-type { a n -- }
+  if (!context.port || !context.serial_writer) {
+    return;
+  }
+  context.serial_writer.write(u8.slice(a, a + n));
+~
+
 0 0 importScripts constant scripts#
 create scripts   scripts# allot
 scripts scripts# importScripts drop
