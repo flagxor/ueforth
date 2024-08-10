@@ -283,6 +283,8 @@ if (!globalObj.write) {
     if (ch === 8) {
       context.cx = Math.max(0, context.cx - 1);
     } else if (ch === 13) {
+      context.lines[context.cy][1].splice(
+          context.cx++, 1, [context.attrib[0], context.attrib[1]]);
       context.cx = 0;
     } else {
       context.lines[context.cy][1].splice(
@@ -309,7 +311,9 @@ if (!globalObj.write) {
             p[0] |= 0x1000000;
           }
         }
-        p[2].push(line[x][2]);
+        if (line[x].length >= 2) {
+          p[2].push(line[x][2]);
+        }
       }
       if (x == context.cx && y == context.cy) {
         if (parts.length > 0) {
@@ -539,12 +543,24 @@ if (!globalObj.write) {
   }
   window.onkeypress = KeyPress;
   function KeyDown(e) {
+    const mappings = {
+      'ArrowUp': [27, 91, 65],
+      'ArrowDown': [27, 91, 66],
+      'ArrowRight': [27, 91, 67],
+      'ArrowLeft': [27, 91, 68],
+      'PageUp': [27, 91, 53, 92],
+      'PageDown': [27, 91, 54, 92],
+    };
     if (e.ctrlKey) {
       if (e.keyCode == 50) {
         context.inbuffer.push(0);
       } else if (e.keyCode >= 65 && e.keyCode <= 90) {
         context.inbuffer.push(e.keyCode - 64);
       }
+      e.preventDefault();
+      return false;
+    } else if (mappings[e.key]) {
+      context.inbuffer = context.inbuffer.concat(mappings[e.key]);
       e.preventDefault();
       return false;
     } else if (e.keyCode == 8 || e.keyCode == 9 || e.keyCode == 27) {
