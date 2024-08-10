@@ -539,7 +539,15 @@ if (!globalObj.write) {
   }
   window.onkeypress = KeyPress;
   function KeyDown(e) {
-    if (e.keyCode == 8) {
+    if (e.ctrlKey) {
+      if (e.keyCode == 50) {
+        context.inbuffer.push(0);
+      } else if (e.keyCode >= 65 && e.keyCode <= 90) {
+        context.inbuffer.push(e.keyCode - 64);
+      }
+      e.preventDefault();
+      return false;
+    } else if (e.keyCode == 8 || e.keyCode == 9 || e.keyCode == 27) {
       context.cursor_time = new Date().getTime();
       context.inbuffer.push(e.keyCode);
       e.preventDefault();
@@ -586,7 +594,7 @@ JSWORD: web-key-raw { -- n }
   if (context.inbuffer.length) {
     return context.inbuffer.shift();
   } else {
-    return 0;
+    return -1;
   }
 ~
 
