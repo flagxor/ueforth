@@ -366,7 +366,8 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   XV(SD_MMC, "SD_MMC.end", SD_MMC_END, SD_MMC.end()) \
   XV(SD_MMC, "SD_MMC.cardType", SD_MMC_CARD_TYPE, PUSH SD_MMC.cardType()) \
   XV(SD_MMC, "SD_MMC.totalBytes", SD_MMC_TOTAL_BYTES, PUSH SD_MMC.totalBytes()) \
-  XV(SD_MMC, "SD_MMC.usedBytes", SD_MMC_USED_BYTES, PUSH SD_MMC.usedBytes())
+  XV(SD_MMC, "SD_MMC.usedBytes", SD_MMC_USED_BYTES, PUSH SD_MMC.usedBytes()) \
+  XV(SD_MMC, "SD_MMC.setPins", SD_MMC_SET_PINS, n0 = SD_MMC.setPins(n5, n4, n3, n2, n1, n0); NIPn(5))
 #endif
 
 #ifndef ENABLE_I2C_SUPPORT
