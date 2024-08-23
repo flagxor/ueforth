@@ -24,6 +24,7 @@ DEPLOY_ITEMS = []
 DEPLOY_ITEMS += [
   Copy('$dst/deploy/.gcloudignore', '$src/site/.gcloudignore'),
   Copy('$dst/deploy/ueforth.js', '$dst/web/ueforth.js'),
+  Copy('$dst/deploy/serial.html', '$dst/web/serial.html'),
   Importation('$dst/deploy/index.html', '$src/site/index.html', options=ESP_OPTIONS),
   Importation('$dst/deploy/linux.html', '$src/site/linux.html', options=UE_OPTIONS),
   Importation('$dst/deploy/windows.html', '$src/site/windows.html', options=UE_OPTIONS),

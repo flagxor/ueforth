@@ -37,6 +37,11 @@ handlers:
   upload: (.*).html
   secure: always
 
+- url: /serial
+  static_files: serial.html
+  upload: serial.html
+  secure: always
+
 - url: /(.*).js
   static_files: \1.js
   upload: (.*).js

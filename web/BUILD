@@ -34,6 +34,7 @@ WEB_ITEMS = [
   Copy('$dst/web/script_lite_test.html', '$src/web/script_lite_test.html'),
   Copy('$dst/web/script_test.html', '$src/web/script_test.html'),
   Copy('$dst/web/script_test.fs', '$src/web/script_test.fs'),
+  Copy('$dst/web/serial.html', '$src/web/serial.html'),
 ]
 
 if D8_AVAILABLE:
