@@ -721,6 +721,10 @@ These words are inside the <code>spi_flash</code> vocabulary.
   NOTE: Starting in v7.0.7.13 the optional module spi-flash.h must be
   placed next to ESP32forth.ino to include this capability.
 </b></p>
+<p><b>
+  NOTE: Recent versions of Arduino tools seem to be incompatible
+  with this interface, this module is now deprecated.
+</b></p>
 <pre>
 spi_flash_init ( -- ) Init driver access.
 spi_flash_get_chip_size ( -- n ) Get flash size.
@@ -996,6 +1000,40 @@ rmt_memory_rw_rst --- DEPRECATED USE rmt_tx_memory_reset or rmt_rx_memory_reset
 rmt_set_intr_enable_mask --- DEPRECATED interrupt handled by driver
 rmt_clr_intr_enable_mask --- DEPRECATED interrupt handled by driver
 rmt_set_pin --- DEPRECATED use rmt_set_gpio instead
+</pre>
+
+<h5 id="HTTPClient">HTTPClient</h5>
+These words are inside the optional <code>HTTPClient</code> vocabulary.
+<p><b>
+  NOTE: This vocabulary is optional, available by placing
+  http-client.h next to ESP32forth.ino to include this capability.
+</b></p>
+<pre>
+NetworkClientSecure.new ( -- a ) Create a new secure client (for HTTPS)
+NetworkClientSecure.delete ( a -- ) Delete a secure client
+NetworkClientSecure.setCACert ( cacertz nc -- ) Set a CACert (cstring) for a secure client
+
+HTTPClient.new ( -- a ) Create a new HTTPClient session
+HTTPClient.delete ( a -- ) Delete an HTTPClient
+HTTPClient.begin ( urlz hc -- f ) Begin an HTTP session with a url
+HTTPClient.beginNC ( urlz nc hc -- f ) Begin an HTTPS session with a url and secure client
+HTTPClient.end ( hc -- ) End an HTTP/S session
+HTTPClient.connected ( hc -- f ) Check if a session is connected
+HTTPClient.setReuse ( f hc -- ) Set if session keep-alive is enabled
+HTTPClient.setUserAgent ( agentz hc -- ) Set user-agent string
+HTTPClient.setAuthorization ( username password hc -- ) Set an authorization
+HTTPClient.setFolowRedirects ( f hc -- ) Set if redirects can be followed
+HTTPClient.setRedirectLimit ( n hc -- ) Set number of allowed redirects
+HTTPClient.GET ( hc -- n ) Start a GET, return http code
+HTTPClient.POST ( a n hc -- n ) Start a POST, with a data payload, return http code
+HTTPClient.addHeader ( key value hc -- ) Set an HTTP header
+HTTPClient.sendRequest ( methodz a n hc -- n ) Send a request with arbitrary method, payload
+HTTPClient.getSize ( hc -- n ) Get size of response
+HTTPClient.getString ( a n hc -- n ) Read result into a buffer
+HTTPClient.getStreamPtr ( hc -- stream ) Get the result as a stream
+
+NetworkClient.available ( stream -- n ) Get number of bytes available
+NetworkClient.readBytes ( a n stream -- n ) Read into a buffer
 </pre>
 
 <h5 id="timers">Timers</h5>

@@ -34,11 +34,12 @@ ESP32_OPTIONAL.append(
        '$dst/esp32/ESP32forth/ESP32forth.ino'))
 
 
-def Esp32Optional(main_name, main_source, parts):
+def Esp32Optional(main_name, main_source, parts, very_optional=False):
   global ESP32_OPTIONAL
-  ESP32_OPTIONAL.append(
-      Copy('$dst/esp32/with_optional/ESP32forth/' + main_name + '.h',
-           '$dst/esp32/ESP32forth/optional/' + main_name + '.h'))
+  if not very_optional:
+    ESP32_OPTIONAL.append(
+        Copy('$dst/esp32/with_optional/ESP32forth/' + main_name + '.h',
+             '$dst/esp32/ESP32forth/optional/' + main_name + '.h'))
   implicit = []
   for name, source in parts:
     implicit.append(Importation('$dst/gen/esp32_' + name + '.h',
@@ -65,10 +66,12 @@ ESP32_ZIP_FILES += [
                 [('interrupts', '$src/esp32/optional/interrupts/timers.fs')]),
   Esp32Optional('oled', '$src/esp32/optional/oled/oled.h',
                 [('oled', '$src/esp32/optional/oled/oled.fs')]),
-  Esp32Optional('spi-flash', '$src/esp32/optional/spi-flash/spi-flash.h',
-                [('spi-flash', '$src/esp32/optional/spi-flash/spi-flash.fs')]),
   Esp32Optional('serial-bluetooth', '$src/esp32/optional/serial-bluetooth/serial-bluetooth.h',
-                [('serial-bluetooth', '$src/esp32/optional/serial-bluetooth/serial-bluetooth.fs')]),
+                [('serial-bluetooth', '$src/esp32/optional/serial-bluetooth/serial-bluetooth.fs')],
+                very_optional=True),
+  Esp32Optional('http-client', '$src/esp32/optional/http-client/http-client.h', []),
+  Esp32Optional('spi-flash', '$src/esp32/optional/spi-flash/spi-flash.h',
+                [('spi-flash', '$src/esp32/optional/spi-flash/spi-flash.fs')], very_optional=True),
 ]
 
 # Zip it.
@@ -110,14 +113,17 @@ BOARDS = {
   'tdongles3': '--fqbn=esp32:esp32:esp32s3:CDCOnBoot=cdc,FlashSize=16M,PartitionScheme=huge_app',
 }
 for board_base in BOARDS:
-  options = BOARDS[board_base]
-  for opt, optdir, deps in (('', '', ESP32_FILES),
-                            ('opt', 'with_optional/', ESP32_OPTIONAL)):
-    board = board_base + opt
+  for optional, optional_dir, deps in (('', '', ESP32_FILES),
+                                       ('opt', 'with_optional/', ESP32_OPTIONAL)):
+    options = BOARDS[board_base]
+    if optional:
+      options = options.replace('PartitionScheme=default', 'PartitionScheme=huge_app')
+      options = options.replace('PartitionScheme=no_ota', 'PartitionScheme=huge_app')
+    board = board_base + optional
     clobber = f'rm -rf {WINTMP}/ueforth_esp32/{board}_dir/ && '
     setup = (f'mkdir -p {WINTMP}/ueforth_esp32/{board}_dir/build && '
              f'mkdir -p {WINTMP}/ueforth_esp32/{board}_dir/cache && '
-             f'cp -r $dst/esp32/ESP32forth {WINTMP}/ueforth_esp32/{board}_dir/ && '
+             f'cp -r $dst/esp32/' + optional_dir + f'ESP32forth/ {WINTMP}/ueforth_esp32/{board}_dir/ && '
              f'cd {WINTMP} && ')
     cmd = f' {ARDUINO_CLI} compile '
     upload = '--port $${PORT:-com3} --upload '

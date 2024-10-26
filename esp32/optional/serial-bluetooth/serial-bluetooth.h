@@ -21,6 +21,11 @@
 #include "BluetoothSerial.h"
 
 #define bt0 ((BluetoothSerial *) a0)
+#if defined(CONFIG_IDF_TARGET_ESP32S3)
+# define BT0_ENABLE_SSP
+#else
+# define BT0_ENABLE_SSP bt0->enableSSP()
+#endif
 
 #define OPTIONAL_BLUETOOTH_VOCABULARY V(bluetooth)
 #define OPTIONAL_SERIAL_BLUETOOTH_SUPPORT \
@@ -35,7 +40,7 @@
   XV(bluetooth, "SerialBT.write", SERIALBT_WRITE, n0 = bt0->write(b2, n1); NIPn(2)) \
   XV(bluetooth, "SerialBT.flush", SERIALBT_FLUSH, bt0->flush(); DROP) \
   XV(bluetooth, "SerialBT.hasClient", SERIALBT_HAS_CLIENT, n0 = bt0->hasClient()) \
-  XV(bluetooth, "SerialBT.enableSSP", SERIALBT_ENABLE_SSP, bt0->enableSSP(); DROP) \
+  XV(bluetooth, "SerialBT.enableSSP", SERIALBT_ENABLE_SSP, BT0_ENABLE_SSP; DROP) \
   XV(bluetooth, "SerialBT.setPin", SERIALBT_SET_PIN, n0 = bt0->setPin(c1); NIP) \
   XV(bluetooth, "SerialBT.unpairDevice", SERIALBT_UNPAIR_DEVICE, \
       n0 = bt0->unpairDevice(b1); NIP) \

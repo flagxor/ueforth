@@ -47,3 +47,9 @@ internals DEFINED? serial-bluetooth-source [IF]
 internals DEFINED? spi-flash-source [IF]
   spi-flash-source evaluate
 [THEN] forth
+
+internals DEFINED? HTTPClient [IF]
+  vocabulary HTTPClient   HTTPClient definitions
+  transfer HTTPClient-buildtins
+  forth definitions
+[THEN] forth
