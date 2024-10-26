@@ -48,8 +48,8 @@ internals DEFINED? spi-flash-source [IF]
   spi-flash-source evaluate
 [THEN] forth
 
-internals DEFINED? HTTPClient [IF]
+internals DEFINED? HTTPClient-builtins [IF]
   vocabulary HTTPClient   HTTPClient definitions
-  transfer HTTPClient-buildtins
+  transfer HTTPClient-builtins
   forth definitions
 [THEN] forth
