@@ -35,7 +35,7 @@
   XV(HTTPClient, "HTTPClient.setReuse", HTTPClient_setReuse, ((HTTPClient *) a0)->setReuse(n1); DROPn(2)) \
   XV(HTTPClient, "HTTPClient.setUserAgent", HTTPClient_setUserAgent, ((HTTPClient *) a0)->setUserAgent(c1); DROPn(2)) \
   XV(HTTPClient, "HTTPClient.setAuthorization", HTTPClient_setAuthorization, \
-      ((HTTPClient *) a0)->setAuthorization(c2, cc1); DROPn(3)) \
+      ((HTTPClient *) a0)->setAuthorization(c2, c1); DROPn(3)) \
   XV(HTTPClient, "HTTPClient.setFollowRedirects", HTTPClient_setFollowRedirects, \
       ((HTTPClient *) a0)->setFollowRedirects((followRedirects_t) n1); DROPn(2)) \
   XV(HTTPClient, "HTTPClient.setRedirectLimit", HTTPClient_setRedirectLimit, \
