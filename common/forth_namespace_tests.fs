@@ -162,8 +162,6 @@ e: check-tier1-opcodes
   out: 0 
   out: 1 
   out: -1 
-  out: 10 
-  out: 41 
   out: nip 
   out: rdrop 
   out: */ 

@@ -67,7 +67,7 @@ create NEXT ' donext @ ' next !   : next   -1 nest-depth +! ['] next , , ; immed
 ;
 
 ( Define a recognizer stack. )
-create RECSTACK 0 , 10 cells allot
+create RECSTACK 0 , bl 2/ ( 16 no numbers yet ) cells allot
 : +RECOGNIZER ( xt -- ) 1 RECSTACK +! RECSTACK dup @ cells + ! ;
 : -RECOGNIZER ( -- ) -1 RECSTACK +! ;
 : GET-RECOGNIZERS ( -- xtn..xt1 n )

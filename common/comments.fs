@@ -12,7 +12,7 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-: (   41 parse drop drop ; immediate
-: \   10 parse drop drop ; immediate
-: #!   10 parse drop drop ; immediate  ( shebang for scripts )
-( Now can do comments! )
+: (   bl nl + 1- parse drop drop ; immediate ( Now can do comments! )
+( bl=32 nl=10 so nl+32-1=41, right paren )
+: \   nl parse drop drop ; immediate
+: #!   nl parse drop drop ; immediate  ( shebang for scripts )

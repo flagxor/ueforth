@@ -16,8 +16,6 @@
   X("0", ZERO, PUSH 0) \
   X("1", ONE, PUSH 1) \
   X("-1", NEGATIVEONE, PUSH -1) \
-  X("10", TEN, PUSH 10) \
-  X("41", FOURTYONE, PUSH 41) \
   Y(nip, NIP) \
   Y(rdrop, --rp) \
   XV(forth, "*/", STARSLASH, SSMOD_FUNC; NIP) \
