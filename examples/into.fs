@@ -27,16 +27,16 @@ also recognizers also internals
   a m + n m - -1
 ;
 
-: rec-to ( a n -- )
+: rec-> ( a n -- )
   s" ->" prefix? 0= if rectype-none exit then
   find dup 0= if drop rectype-none exit then
   >body ['] ! rectype-to
-; ' rec-to +recognizer
+; ' rec-> +recognizer
 
-: rec-+to ( a n -- )
+: rec+-> ( a n -- )
   s" +->" prefix? 0= if rectype-none exit then
   find dup 0= if drop rectype-none exit then
   >body ['] +! rectype-to
-; ' rec-+to +recognizer
+; ' rec+-> +recognizer
 
 previous previous
