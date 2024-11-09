@@ -36,8 +36,9 @@ also recognizers also internals
 
 : z@ ( a -- z ) dup sf@ sfloat+ sf@ ;
 : z! ( a -- z ) dup sfloat+ sf! sf! ;
-: zconstant   create fswap sf, sf, does> dup sf@ sfloat+ sf@ ;
-: zvariable   create 0i0 fswap sf, sf, ;
+: z, ( z -- ) fswap sf, sf, ;
+: zconstant   create z, does> z@ ;
+: zvariable   create 0i0 z, ;
 
 : f>r   r> fp@ ul@ fdrop >r >r ;
 : r>f   r> r> fdup fp@ l! >r ;
