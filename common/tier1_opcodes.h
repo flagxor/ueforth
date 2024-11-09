@@ -13,9 +13,9 @@
 // limitations under the License.
 
 #define TIER1_OPCODE_LIST \
-  X("0", ZERO, PUSH 0) \
-  X("1", ONE, PUSH 1) \
-  X("-1", NEGATIVEONE, PUSH -1) \
+  XV(internals, "0", ZERO, PUSH 0) \
+  XV(internals, "1", ONE, PUSH 1) \
+  XV(internals, "-1", NEGATIVEONE, PUSH -1) \
   Y(nip, NIP) \
   Y(rdrop, --rp) \
   XV(forth, "*/", STARSLASH, SSMOD_FUNC; NIP) \

@@ -159,9 +159,6 @@ e: check-tier2-opcodes
 ;e
 
 e: check-tier1-opcodes
-  out: 0 
-  out: 1 
-  out: -1 
   out: nip 
   out: rdrop 
   out: */ 
