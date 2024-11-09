@@ -50,7 +50,7 @@ create FOR ' >r @ ' for !         : for   1 nest-depth +! ['] for , here ; immed
 create NEXT ' donext @ ' next !   : next   -1 nest-depth +! ['] next , , ; immediate
 
 ( Define a data type for Recognizers. )
-: RECTYPE: ( xt1 xt2 xt3 "name" -- ) CREATE , , , ;
+: RECTYPE: ( xt-interpret xt-compile xt-postpone "name" -- ) CREATE , , , ;
 : do-notfound ( a n -- ) -1 'notfound @ execute ;
 ' do-notfound ' do-notfound ' do-notfound  RECTYPE: RECTYPE-NONE
 ' execute     ' ,           ' postpone,    RECTYPE: RECTYPE-WORD
