@@ -61,6 +61,7 @@ s" DICTIONARY" _s aconstant DICT
      [char] \ of [char] \ _c catenate endof
      [char] / of [char] / _c catenate endof
      [char] b of 8 _c catenate endof
+     [char] f of 12 _c catenate endof
      [char] n of nl _c catenate endof
      [char] r of 13 _c catenate endof
      [char] t of 9 _c catenate endof
@@ -158,6 +159,7 @@ defer <value>
       [char] / of _s" \/" ,c endof
       [char] \ of _s" \\" ,c endof
       8 of _s" \b" ,c endof
+      12 of _s" \f" ,c endof
       nl of _s" \n" ,c endof
       13 of _s" \r" ,c endof
       9 of _s" \t" ,c endof
