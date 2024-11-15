@@ -12,11 +12,16 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-: slurp-file ( a n -- a n )
-  r/o open-file throw >r
+needs arrays.fs
+
+also arrays
+
+: slurp ( a: filename -- a: content )
+  top range r/o open-file throw >r adrop
   r@ file-size throw ( sz )
-  dup 1+ allocate throw swap ( data sz )
-  2dup r@ read-file throw drop
+  STRING array
+  top range r@ read-file throw drop
   r> close-file throw
-  2dup + 0 swap c!
 ;
+
+previous

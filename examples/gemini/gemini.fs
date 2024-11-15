@@ -36,6 +36,8 @@ r| What's the "time"?| askit >json a. cr cr
 r| What's the "time"?| askit _s" contents" dict@ 0 a@ _s" parts" dict@ 0 a@ _s" text" dict@ >json a. cr
 
 0 [IF]
+_s" sample.txt" slurp json> _s" candidates" dict@ 0 a@ _s" content" dict@ _s" parts" dict@ 0 a@ _s" text" dict@ a.
+
 HTTPClient
 NetworkClientSecure.new constant nclient
 
