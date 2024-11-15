@@ -32,6 +32,21 @@ s" DICTIONARY" _s aconstant DICT
 : {{   [[ DICT ;
 : }}   ]] ;
 
+( Dictionary lookup )
+: as= ( a: a a -- f )
+  top >type @ STRING <> if a2drop 0 exit then
+  under >type @ STRING <> if a2drop 0 exit then
+  top range under range str= a2drop
+;
+: dict@ ( a: a key -- value )
+  aswap
+  top >count @ 1 ?do
+    a2dup i a@ 0 a@ as= if i a@ 1 a@ anip unloop exit then
+  loop
+  a2drop
+  _s" "
+;
+
 : space? ( ch -- f ) dup 8 = over 10 = or over 13 = or swap 32 = or ;
 : <whitespace>    begin token space? while skip repeat ;
 
@@ -130,7 +145,7 @@ defer <value>
    <whitespace>
 ; is <value>
 
-: json> ( a -- a ) top top >count @ in <value> anip ;
+: json> ( a -- a ) top range in <value> anip ;
 
 : butlast? ( n -- f ) top >count @ 1- <> ;
 
@@ -168,7 +183,7 @@ defer <value>
         loop a> _s" ]" ,c
       then
     endof
-    STRING of [char] " _c >a top top >count @ a> escaped ,c [char] " _c ,c endof
+    STRING of [char] " _c >a top range a> escaped ,c [char] " _c ,c endof
     INTEGER of
       _s" " >a
       top >count @ 0 ?do

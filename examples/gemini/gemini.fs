@@ -32,7 +32,8 @@ vocabulary gemini also json also arrays also gemini definitions
    }}
 ;
 
-r| What's the "time"?| askit adup a. cr cr >json a. cr cr
+r| What's the "time"?| askit >json a. cr cr
+r| What's the "time"?| askit _s" contents" dict@ 0 a@ _s" parts" dict@ 0 a@ _s" text" dict@ >json a. cr
 
 0 [IF]
 HTTPClient

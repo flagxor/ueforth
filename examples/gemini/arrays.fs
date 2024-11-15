@@ -46,6 +46,8 @@ create array-sizes   cell , 1 , cell , 4 ,
 
 ( Size of array data in bytes )
 : bytes ( a -- n ) dup >type @ >esize swap >count @ * ;
+( To string / array )
+: range ( a -- a n ) dup >count @ ;
 
 ( Create an uninitialized array )
 : array ( n type -- a )
@@ -69,9 +71,12 @@ create array-sizes   cell , 1 , cell , 4 ,
 
 ( Stack manipulation )
 : adrop ( a: a -- ) apop unref ;
+: a2drop ( a: a a -- ) adrop adrop ;
 : anip ( a: a b -- b ) apop apop unref apush ;
 : adup ( a: a -- a a ) top ref apush ;
 : aswap ( a: a b -- b a ) apop apop swap apush apush ;
+: aover ( a: a b -- a b a ) apop apop ref dup apush swap apush apush ;
+: a2dup ( a: a b -- a b a b ) aover aover ;
 
 ( Index into the top of the stack )
 : a@ ( n a: a -- a: a ) cells top + @ ref adrop apush ;
@@ -90,7 +95,7 @@ create array-sizes   cell , 1 , cell , 4 ,
 ( Convert integer array to floats )
 : n>f
    top >count @ REAL array
-   under top top >count @ 0 ?do over @ s>f dup sf! sfloat+ >r cell+ r> loop 2drop anip ;
+   under top range 0 ?do over @ s>f dup sf! sfloat+ >r cell+ r> loop 2drop anip ;
 
 ( Force integers to real. )
 : binuminal
