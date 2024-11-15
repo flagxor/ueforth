@@ -1,4 +1,16 @@
-#! /usr/bin/env ueforth
+\ Copyright 2024 Bradley D. Nelson
+\
+\ Licensed under the Apache License, Version 2.0 (the "License");
+\ you may not use this file except in compliance with the License.
+\ You may obtain a copy of the License at
+\
+\     http://www.apache.org/licenses/LICENSE-2.0
+\
+\ Unless required by applicable law or agreed to in writing, software
+\ distributed under the License is distributed on an "AS IS" BASIS,
+\ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+\ See the License for the specific language governing permissions and
+\ limitations under the License.
 
 needs arrays.fs
 
@@ -21,12 +33,13 @@ s" DICTIONARY" _s aconstant DICT
 : }}   ]] ;
 
 : space? ( ch -- f ) dup 8 = over 10 = or over 13 = or swap 32 = or ;
-: whitespace    begin token space? while skip repeat ;
+: <whitespace>    begin token space? while skip repeat ;
+
 : expect ( a n -- ) for aft dup c@ token = assert 1+ skip then next drop ;
 : sliteral ( a n -- ) postpone $@ dup , zplace ;
 : e:   bl parse sliteral postpone expect ; immediate
 
-: escaped
+: <escaped>
    e: \
    token skip case
      [char] " of [char] " _c catenate endof
@@ -35,17 +48,17 @@ s" DICTIONARY" _s aconstant DICT
      [char] b of 8 _c catenate endof
      [char] n of nl _c catenate endof
      [char] r of 13 _c catenate endof
-     [char] t of 8 _c catenate endof
+     [char] t of 9 _c catenate endof
      [char] u of 255 _c catenate skip skip skip skip endof
      -1 throw
    endcase
 ;
 
-: jstring
+: <string>
    e: " s" " _s
    begin token [char] " <> while
      token [char] \ = if
-       escaped
+       <escaped>
      else
        token _c catenate
        skip
@@ -54,31 +67,31 @@ s" DICTIONARY" _s aconstant DICT
    e: "
 ;
 
-defer jvalue
+defer <value>
 
-: jobject
-   e: { whitespace
+: <object>
+   e: { <whitespace>
    DICT box
    begin
      token [char] } = if skip exit then
-     jstring box whitespace e: : whitespace jvalue box
+     <string> box <whitespace> e: : <whitespace> <value> box
      catenate box catenate
      token [char] } = if skip exit then
-     e: , whitespace
+     e: , <whitespace>
    again
    e: }
 ;
 
 : digit? ( -- f ) token [char] 0 >= token [char] 9 <= and ;
-: jdigit   token [char] 0 - skip ;
-: jinteger   digit? assert jdigit
-             begin digit? while 10 * jdigit + repeat ;
-: jfraction   digit? assert 10 * jdigit + >r 1- r>
-              begin digit? while 10 * jdigit + >r 1- r> repeat ;
-: jnumber
+: <digit>   token [char] 0 - skip ;
+: <integer>   digit? assert <digit>
+              begin digit? while 10 * <digit> + repeat ;
+: <fraction>   digit? assert 10 * <digit> + >r 1- r>
+               begin digit? while 10 * <digit> + >r 1- r> repeat ;
+: <number>
   token [char] - = if skip -1 else 1 then
-  token [char] 0 = if skip 0 else jinteger then 0 swap
-  token [char] . = if skip jfraction then
+  token [char] 0 = if skip 0 else <integer> then 0 swap
+  token [char] . = if skip <fraction> then
   swap >r * r>
   token [char] e = token [char] E = or if
     skip
@@ -87,44 +100,62 @@ defer jvalue
     else
       token [char] + = if skip then 1
     then
-    jinteger * +
+    <integer> * +
   then
   dup if 10e s>f f** s>f f* _f else drop _i then
 ;
 
-: jarray
-   e: [ whitespace
+: <array>
+   e: [ <whitespace>
    0 MIXED array
    begin
      token [char] ] = if skip exit then
-     jvalue box catenate whitespace
+     <value> box catenate <whitespace>
      token [char] ] = if skip exit then
-     e: , whitespace
+     e: , <whitespace>
    again
 ;
 
 :noname
-   whitespace
+   <whitespace>
    token case
-     [char] " of jstring endof
-     [char] { of jobject endof
-     [char] [ of jarray endof
+     [char] " of <string> endof
+     [char] { of <object> endof
+     [char] [ of <array> endof
      [char] t of e: true s" true" _s endof
      [char] f of e: false s" false" _s endof
      [char] n of e: null s" null" _s endof
-     jnumber
+     <number>
    endcase
-   whitespace
-; is jvalue
+   <whitespace>
+; is <value>
 
-: json> ( a -- a ) top top >count @ in jvalue anip ;
+: json> ( a -- a ) top top >count @ in <value> anip ;
 
 : butlast? ( n -- f ) top >count @ 1- <> ;
+
+: escaped ( a n -- a: a )
+  _s" "
+  0 ?do
+    dup i + c@
+    case
+      [char] " of _s" \" ,c [char] " _c ,c endof
+      [char] / of _s" \/" ,c endof
+      [char] \ of _s" \\" ,c endof
+      8 of _s" \b" ,c endof
+      nl of _s" \n" ,c endof
+      13 of _s" \r" ,c endof
+      9 of _s" \t" ,c endof
+      dup _c ,c
+    endcase
+  loop
+  drop
+;
 
 : >json ( a: a -- a )
   top >type @ case
     MIXED of
-      top >count @ 1 > if top @ DICT top @ adrop = else 0 then if
+      top >count @ 1 > if top @ DICT top adrop = else 0 then if
         _s" {" >a top >count @ 1 ?do
           adup i a@ 0 a@ recurse _s" :" ,c a> aswap ,c >a
           adup i a@ 1 a@ recurse a> aswap ,c >a
@@ -137,7 +168,7 @@ defer jvalue
         loop a> _s" ]" ,c
       then
     endof
-    STRING of [char] " _c >a top top >count @ a> _s ,c [char] " _c ,c endof
+    STRING of [char] " _c >a top top >count @ a> escaped ,c [char] " _c ,c endof
     INTEGER of
       _s" " >a
       top >count @ 0 ?do
