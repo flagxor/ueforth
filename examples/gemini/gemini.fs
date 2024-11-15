@@ -32,37 +32,45 @@ vocabulary gemini also json also arrays also gemini definitions
    }}
 ;
 
-r| What's the "time"?| askit >json a. cr cr
-r| What's the "time"?| askit _s" contents" dict@ 0 a@ _s" parts" dict@ 0 a@ _s" text" dict@ >json a. cr
+: reply-text ( a: a -- a )
+  json> _s" candidates" dict@ 0 a@ _s" content" dict@ _s" parts" dict@ 0 a@ _s" text" dict@
+;
 
-0 [IF]
-_s" sample.txt" slurp json> _s" candidates" dict@ 0 a@ _s" content" dict@ _s" parts" dict@ 0 a@ _s" text" dict@ a.
+: 0,c ( a -- a\0 ) 0 _c ,c ;
 
-HTTPClient
+DEFINED? HTTPClient [IF]
+
+_s" /spiffs/gemini_cert" slurp 0,c aconstant cacert
+
+_s" https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="
+  _s" /spiffs/gemini_key" slurp json> _s" key" dict@ ,c 0,c aconstant url
+
+also HTTPClient
 NetworkClientSecure.new constant nclient
+cacert top adrop nclient NetworkClientSecure.setCACert
 
-: 2constant create , , does> dup cell+ @ swap @ ;
+: doquery ( a -- n )
+  HTTPClient.new { session }
+  url top adrop nclient session HTTPClient.beginNC 0= throw
+  1 session HTTPClient.setFollowRedirects
+  10 session HTTPClient.setRedirectLimit
+  0 session HTTPClient.setReuse
+  z" POST" top session HTTPClient.sendRequest adrop 200 <> throw
+  session HTTPClient.getStreamPtr { result }
+  begin result NetworkClient.available while
+    pad 1024 result NetworkClient.available min result NetworkClient.readBytes
+    pad swap type
+  repeat
+  session HTTPClient.delete
+  cr
+;
 
-s" /spiffs/gemini_cert" slurp-file drop constant cacert
-s" /spiffs/gemini_url" slurp-file drop constant url
-s" /spiffs/question" slurp-file 2constant question
+: ask
+  nl parse askit >json doquery
+  top 3 + top >count @ 3 - _s anip reply-text a. cr
+;
 
-cacert nclient NetworkClientSecure.setCACert
-." loaded cert:" cr
-cacert z>s type cr
-
-HTTPClient.new constant session
-." created session" cr
-." URL: " url z>s type cr
-url nclient session HTTPClient.beginNC ." beginNC: " . cr
-1 session HTTPClient.setFollowRedirects
-10 session HTTPClient.setRedirectLimit
-." set follow redirects and limit of 10" cr
-." question: " question type
-z" POST" question session HTTPClient.sendRequest ." POSTED: " . cr
-
-session HTTPClient.getStreamPtr constant result
-result NetworkClient.available ." available: " dup . cr
+previous
 
 [THEN]
 

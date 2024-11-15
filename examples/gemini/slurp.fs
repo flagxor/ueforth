@@ -18,8 +18,7 @@ also arrays
 
 : slurp ( a: filename -- a: content )
   top range r/o open-file throw >r adrop
-  r@ file-size throw ( sz )
-  STRING array
+  r@ file-size throw STRING array
   top range r@ read-file throw drop
   r> close-file throw
 ;
