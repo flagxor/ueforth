@@ -132,15 +132,19 @@ defer <value>
    again
 ;
 
+s" null" _s aconstant null
+s" true" _s aconstant true
+s" false" _s aconstant false
+
 :noname
    <whitespace>
    token case
      [char] " of <string> endof
      [char] { of <object> endof
      [char] [ of <array> endof
-     [char] t of e: true s" true" _s endof
-     [char] f of e: false s" false" _s endof
-     [char] n of e: null s" null" _s endof
+     [char] t of e: true true endof
+     [char] f of e: false false endof
+     [char] n of e: null null endof
      <number>
    endcase
    <whitespace>
@@ -185,7 +189,12 @@ defer <value>
         loop a> _s" ]" ,c
       then
     endof
-    STRING of [char] " _c >a top range a> escaped ,c [char] " _c ,c endof
+    STRING of
+      top null top adrop = if exit then
+      top true top adrop = if exit then
+      top false top adrop = if exit then
+      [char] " _c >a top range a> escaped ,c [char] " _c ,c
+    endof
     INTEGER of
       _s" " >a
       top >count @ 0 ?do
