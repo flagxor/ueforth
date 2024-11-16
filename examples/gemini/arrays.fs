@@ -35,7 +35,7 @@ variable arp   arstack arp !
 1 constant STRING
 2 constant INTEGER
 3 constant REAL
-create array-sizes   cell , 1 , cell , 4 ,
+create array-sizes   cell , 1 , cell , sfloat ,
 : >esize ( type -- n ) cells array-sizes + @ ;
 
 ( ref n type ^data... )
@@ -50,7 +50,7 @@ create array-sizes   cell , 1 , cell , 4 ,
 : range ( a -- a n ) dup >count @ ;
 
 ( Create an uninitialized array )
-: array ( n type -- a )
+: array ( n type -- a: a )
    2dup >esize * header-size + allocate throw header-size + apush
    top >type !   top >count !   0 top >ref ! ;
 
