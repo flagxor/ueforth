@@ -18,13 +18,14 @@ needs slurp.fs
 
 vocabulary gemini also json also arrays also gemini definitions
 
-: askit { a n -- a }
+: askit ( a: a -- a )
+   >a
    {{
      [[ _s" contents" [[
        {{
          [[ _s" parts" [[
            {{
-             [[ _s" text" a n _s ]]
+             [[ _s" text" a> ]]
            }}
          ]] ]]
        }}
@@ -49,25 +50,49 @@ also HTTPClient
 NetworkClientSecure.new constant nclient
 cacert top adrop nclient NetworkClientSecure.setCACert
 
-: doquery ( a -- a )
+: doquery ( a -- n )
   HTTPClient.new { session }
   url top adrop nclient session HTTPClient.beginNC 0= throw
   1 session HTTPClient.setFollowRedirects
   10 session HTTPClient.setRedirectLimit
   0 session HTTPClient.setReuse
-  z" POST" top session HTTPClient.sendRequest adrop 200 <> throw
+  z" POST" top range session HTTPClient.sendRequest adrop 200 <> throw
   session HTTPClient.getStreamPtr { result }
+  _s" "
   begin result NetworkClient.available while
-    pad 1024 result NetworkClient.available min result NetworkClient.readBytes
-    pad swap type
+    result NetworkClient.available STRING array
+    top range result NetworkClient.readBytes drop ,c
   repeat
   session HTTPClient.delete
+  cr
 ;
 
+: snipped ( a -- a ) top 3 + top >count @ 3 - _s anip ;
+
 : ask
-  nl parse askit >json doquery
-  top 3 + top >count @ 3 - _s anip reply-text a. cr
+  nl parse _s askit >json doquery
+  snipped reply-text a. cr ;
+
+: askjson ( a -- a )
+   >a {{
+     [[ _s" contents" [[
+       {{
+         [[ _s" parts" [[
+           {{
+             [[ _s" text" a> ]]
+           }}
+         ]] ]]
+       }}
+     ]] ]]
+     [[ _s" generationConfig" {{
+       [[ _s" response_mime_type" _s" application/json" ]]
+     }} ]]
+   }}
 ;
+
+: asklist ( a -- a )
+  _s"  using this JSON schema: list[str]" ,c askjson >json doquery
+  snipped reply-text json> ;
 
 previous
 
