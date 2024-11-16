@@ -49,7 +49,7 @@ also HTTPClient
 NetworkClientSecure.new constant nclient
 cacert top adrop nclient NetworkClientSecure.setCACert
 
-: doquery ( a -- n )
+: doquery ( a -- a )
   HTTPClient.new { session }
   url top adrop nclient session HTTPClient.beginNC 0= throw
   1 session HTTPClient.setFollowRedirects
@@ -62,7 +62,6 @@ cacert top adrop nclient NetworkClientSecure.setCACert
     pad swap type
   repeat
   session HTTPClient.delete
-  cr
 ;
 
 : ask

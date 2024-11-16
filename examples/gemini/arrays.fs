@@ -38,7 +38,7 @@ variable arp   arstack arp !
 create array-sizes   cell , 1 , cell , 4 ,
 : >esize ( type -- n ) cells array-sizes + @ ;
 
-\ ref n ^type data...
+( ref n type ^data... )
 3 cells constant header-size
 : >type ( a -- a ) -1 cells + ;
 : >count ( a -- a ) -2 cells + ;
