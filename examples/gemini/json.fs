@@ -28,6 +28,10 @@ variable inlength
    insource @ c@ 1 insource +! -1 inlength +! ;
 ' ingetchar is getchar
 
+s" null" _s aconstant null
+s" true" _s aconstant true
+s" false" _s aconstant false
+
 s" DICTIONARY" _s aconstant DICT
 : {{   [[ DICT ;
 : }}   ]] ;
@@ -44,7 +48,7 @@ s" DICTIONARY" _s aconstant DICT
     a2dup i a@ 0 a@ as= if i a@ 1 a@ anip unloop exit then
   loop
   a2drop
-  _s" "
+  null
 ;
 
 : space? ( ch -- f ) dup 8 = over 10 = or over 13 = or swap 32 = or ;
@@ -131,10 +135,6 @@ defer <value>
      e: , <whitespace>
    again
 ;
-
-s" null" _s aconstant null
-s" true" _s aconstant true
-s" false" _s aconstant false
 
 :noname
    <whitespace>
