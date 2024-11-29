@@ -16,6 +16,9 @@ windows definitions
 also structures
 also internals
 
+( Windows handles bottom out as void pointers. )
+: HANDLE   ptr ;
+
 z" User32.dll" dll User32
 
 z" MessageBoxA" 4 User32 MessageBoxA
@@ -29,16 +32,16 @@ z" MessageBoxA" 4 User32 MessageBoxA
 
 z" RegisterClassA" 1 User32 RegisterClassA
 struct WINDCLASSA
-  i16 field ->style
-  ptr field ->lpfnWndProc
-  i32 field ->cbClsExtra
-  i32 field ->cbWndExtra
-  ptr field ->hInstance
-  ptr field ->hIcon
-  ptr field ->hCursor
-  ptr field ->hbrBackground
-  ptr field ->lpszMenuName
-  ptr field ->lpszClassName
+     i16 field ->style
+     ptr field ->lpfnWndProc
+     i32 field ->cbClsExtra
+     i32 field ->cbWndExtra
+  HANDLE field ->hInstance
+  HANDLE field ->hIcon
+  HANDLE field ->hCursor
+  HANDLE field ->hbrBackground
+     ptr field ->lpszMenuName
+     ptr field ->lpszClassName
 
 z" ShowWindow" 2 User32 ShowWindow
 0 constant SW_HIDE
@@ -111,13 +114,13 @@ z" PeekMessageA" 5 User32 PeekMessageA
 z" TranslateMessage" 1 User32 TranslateMessage
 z" DispatchMessageA" 1 User32 DispatchMessageA
 struct MSG
-    ptr field ->hwnd
-    i32 field ->message
-    i16 field ->wParam
-    i32 field ->lParam
-    i32 field ->time
-  POINT field ->pt
-    i32 field ->lPrivate
+  HANDLE field ->hwnd
+     i32 field ->message
+     i16 field ->wParam
+     i32 field ->lParam
+     i32 field ->time
+   POINT field ->pt
+     i32 field ->lPrivate
 0 constant PM_NOREMOVE
 1 constant PM_REMOVE
 2 constant PM_NOYIELD
@@ -126,12 +129,12 @@ z" GetDC" 1 User32 GetDC
 z" BeginPaint" 2 User32 BeginPaint
 z" EndPaint" 2 User32 EndPaint
 struct PAINTSTRUCT
-   ptr field ->hdc
-   i32 field ->fErase
-  RECT field ->rcPaint
-   i32 field ->fRestore
-   i32 field ->fIncUpdate
-    32 field ->rgbReserved
+  HANDLE field ->hdc
+     i32 field ->fErase
+    RECT field ->rcPaint
+     i32 field ->fRestore
+     i32 field ->fIncUpdate
+      32 field ->rgbReserved  ( 32 bytes )
 
 z" FillRect" 3 User32 FillRect
 z" PostQuitMessage" 1 User32 PostQuitMessage
