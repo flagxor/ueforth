@@ -83,7 +83,7 @@ StructureNotifyMask or constant EVENT-MASK
   xevent [ xany ] ->type sl@ to xevent-type
   Expose xevent-type = if
     [ xexposure ]
-    xevent ->count @ 0= if
+    xevent ->count sl@ 0= if
       EXPOSED to event
       exit
     then

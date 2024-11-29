@@ -104,6 +104,7 @@ struct RECT
   i32 field ->top
   i32 field ->right
   i32 field ->bottom
+z" SetRect" 5 User32 SetRect
 
 z" GetMessageA" 4 User32 GetMessageA
 z" PeekMessageA" 5 User32 PeekMessageA

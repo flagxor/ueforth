@@ -33,10 +33,7 @@ create ps PAINTSTRUCT allot
 0 255 0 RGB CreateSolidBrush constant green
 
 create side RECT allot
-0 side ->left l!
-0 side ->top l!
-200 side ->right l!
-100 side ->bottom l!
+side 0 0 200 100 SetRect
 
 : MyWindowProc { hwnd msg w l }
   WM_DESTROY msg = if

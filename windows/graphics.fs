@@ -35,12 +35,12 @@ cell allocate throw to backbuffer
   backbuffer w h * 4* resize throw to backbuffer
   backbuffer w h * 4* 255 fill
   binfo BITMAPINFO erase
-  BITMAPINFOHEADER binfo ->bmiHeader ->biSize !
-  w binfo ->bmiHeader ->biWidth !
-  h negate binfo ->bmiHeader ->biHeight !
-  1 binfo ->bmiHeader ->biPlanes !
-  32 binfo ->bmiHeader ->biBitCount !
-  BI_RGB binfo ->bmiHeader ->biCompression !
+  BITMAPINFOHEADER binfo ->bmiHeader ->biSize l!
+  w binfo ->bmiHeader ->biWidth l!
+  h negate binfo ->bmiHeader ->biHeight l!
+  1 binfo ->bmiHeader ->biPlanes w!
+  32 binfo ->bmiHeader ->biBitCount w!
+  BI_RGB binfo ->bmiHeader ->biCompression l!
   RESIZED to event
 ;
 
@@ -161,7 +161,7 @@ also windows
   event FINISHED = if exit then
   IDLE to event
   msgbuf NULL 0 0 PM_REMOVE PeekMessageA if
-    WM_QUIT msgbuf ->message @ = if
+    WM_QUIT msgbuf ->message ul@ = if
       FINISHED to event
       exit
     then
