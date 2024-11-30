@@ -31,8 +31,9 @@ variable last-struct
 : struct ( "name" ) 1 0 typer latestxt >body last-struct !
                     1 last-align ! ;
 : align-by ( a n -- a ) 1- dup >r + r> invert and ;
+: max! ( n a -- ) swap over @ max swap ! ;
 : struct-align ( n -- )
-  dup last-struct @ cell+ @ max last-struct @ cell+ !
+  dup last-struct @ cell+ max!
   last-struct @ @ swap align-by last-struct @ ! ;
 : field ( n "name" )
   last-align @ struct-align

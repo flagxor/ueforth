@@ -55,9 +55,9 @@ z" XFillRectangle" 7 xlib XFillRectangle ( a n n n n n n -- void )
 
 32 cells constant xevent-size
 
-: win ( n "name" ) long ;
-: time ( n "name" ) long ;
-: bool ( n "name" ) i32 ;
+: win   long ;
+: time   long ;
+: bool   i32 ;
 
 vocabulary xany  also xany definitions
 struct XAnyEvent

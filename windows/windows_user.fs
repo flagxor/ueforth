@@ -129,12 +129,12 @@ z" GetDC" 1 User32 GetDC
 z" BeginPaint" 2 User32 BeginPaint
 z" EndPaint" 2 User32 EndPaint
 struct PAINTSTRUCT
-  HANDLE field ->hdc
-     i32 field ->fErase
-    RECT field ->rcPaint
-     i32 field ->fRestore
-     i32 field ->fIncUpdate
-      32 field ->rgbReserved  ( 32 bytes )
+   HANDLE field ->hdc
+      i32 field ->fErase
+     RECT field ->rcPaint
+      i32 field ->fRestore
+      i32 field ->fIncUpdate
+  32 i8 * field ->rgbReserved
 
 z" FillRect" 3 User32 FillRect
 z" PostQuitMessage" 1 User32 PostQuitMessage
