@@ -134,7 +134,7 @@ struct PAINTSTRUCT
      RECT field ->rcPaint
       i32 field ->fRestore
       i32 field ->fIncUpdate
-  32 i8 * field ->rgbReserved
+  32 u8 * field ->rgbReserved
 
 z" FillRect" 3 User32 FillRect
 z" PostQuitMessage" 1 User32 PostQuitMessage

@@ -15,7 +15,7 @@
 ( Expand Graphics for Windows )
 
 graphics internals definitions
-also windows
+also windows also structures
 
 z" GrfClass" constant GrfClassName
 z" uEforth" constant GrfWindowTitle
@@ -35,12 +35,12 @@ cell allocate throw to backbuffer
   backbuffer w h * 4* resize throw to backbuffer
   backbuffer w h * 4* 255 fill
   binfo BITMAPINFO erase
-  BITMAPINFOHEADER binfo ->bmiHeader ->biSize l!
-  w binfo ->bmiHeader ->biWidth l!
-  h negate binfo ->bmiHeader ->biHeight l!
-  1 binfo ->bmiHeader ->biPlanes w!
-  32 binfo ->bmiHeader ->biBitCount w!
-  BI_RGB binfo ->bmiHeader ->biCompression l!
+  BITMAPINFOHEADER binfo ->bmiHeader !field ->biSize
+  w binfo ->bmiHeader !field ->biWidth
+  h negate binfo ->bmiHeader !field ->biHeight
+  1 binfo ->bmiHeader !field ->biPlanes
+  32 binfo ->bmiHeader !field ->biBitCount
+  BI_RGB binfo ->bmiHeader !field ->biCompression
   RESIZED to event
 ;
 
@@ -119,6 +119,7 @@ cell allocate throw to backbuffer
 graphics definitions
 also internals
 also windows
+also structures
 
 : window { width height }
   width 0< { fullscreen }
@@ -128,11 +129,11 @@ also windows
   1 1 rescale
 
   pad WINDCLASSA erase
-    WindowProcShim pad ->lpfnWndProc !
-    hinstance pad ->hInstance !
-    GrfClassName pad ->lpszClassName !
-    NULL IDC_ARROW LoadCursorA pad ->hCursor !
-    hinstance IDI_MAIN_ICON LoadIconA pad ->hIcon !
+    WindowProcShim pad !field ->lpfnWndProc
+    hinstance pad !field ->hInstance
+    GrfClassName pad !field ->lpszClassName
+    NULL IDC_ARROW LoadCursorA pad !field ->hCursor
+    hinstance IDI_MAIN_ICON LoadIconA pad !field ->hIcon
   pad RegisterClassA to GrfClass
 
   0 GrfClass GrfWindowTitle WS_OVERLAPPEDWINDOW
@@ -161,7 +162,7 @@ also windows
   event FINISHED = if exit then
   IDLE to event
   msgbuf NULL 0 0 PM_REMOVE PeekMessageA if
-    WM_QUIT msgbuf ->message ul@ = if
+    WM_QUIT msgbuf @field ->message = if
       FINISHED to event
       exit
     then

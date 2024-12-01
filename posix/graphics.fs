@@ -57,8 +57,8 @@ StructureNotifyMask or constant EVENT-MASK
 
 : update-mouse
   [ xbutton ]
-  xevent ->x sl@ to mouse-x
-  xevent ->y sl@ to mouse-y
+  xevent @field ->x to mouse-x
+  xevent @field ->y to mouse-y
 ;
 
 : update-key
@@ -80,10 +80,10 @@ StructureNotifyMask or constant EVENT-MASK
 
 : update-event
   IDLE to event
-  xevent [ xany ] ->type sl@ to xevent-type
+  xevent [ xany ] @field ->type to xevent-type
   Expose xevent-type = if
     [ xexposure ]
-    xevent ->count sl@ 0= if
+    xevent @field ->count 0= if
       EXPOSED to event
       exit
     then
@@ -91,7 +91,7 @@ StructureNotifyMask or constant EVENT-MASK
   ConfigureNotify xevent-type = if
     RESIZED to event
     [ xconfigure ]
-    xevent ->width sl@ xevent ->height sl@ image-resize
+    xevent @field ->width xevent @field ->height image-resize
     exit
   then
   KeyPress xevent-type = if
@@ -110,7 +110,7 @@ StructureNotifyMask or constant EVENT-MASK
     PRESSED to event
     update-mouse
     ( uses carnal knowledge )
-    [ xbutton ] 256 xevent ->button sl@ - to last-key
+    [ xbutton ] 256 xevent @field ->button - to last-key
     1 last-key key-state!
     exit
   then
@@ -118,7 +118,7 @@ StructureNotifyMask or constant EVENT-MASK
     RELEASED to event
     update-mouse
     ( uses carnal knowledge )
-    [ xbutton ] 256 xevent ->button sl@ - to last-key
+    [ xbutton ] 256 xevent @field ->button - to last-key
     0 last-key key-state!
     exit
   then

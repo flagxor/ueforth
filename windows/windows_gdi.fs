@@ -46,10 +46,10 @@ $80000013 constant DC_PEN
 
 z" StretchDIBits" 13 Gdi32 StretchDIBits
 struct RGBQUAD
-  i8 field ->rgbBlue
-  i8 field ->rgbGreen
-  i8 field ->rgbRed
-  i8 field ->rgbReserved
+  u8 field ->rgbBlue
+  u8 field ->rgbGreen
+  u8 field ->rgbRed
+  u8 field ->rgbReserved
 struct BITMAPINFOHEADER
   i16 field ->biSize
   i32 field ->biWidth

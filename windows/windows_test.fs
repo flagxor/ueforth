@@ -12,7 +12,7 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-also windows also internals
+also windows also internals also structures
 
 z" MyClass" constant MyClassName
 z" Test Window" constant MyWindowTitle
@@ -20,11 +20,11 @@ z" Test Window" constant MyWindowTitle
 NULL GetModuleHandleA constant hinst
 
 pad WINDCLASSA erase
-  WindowProcShim pad ->lpfnWndProc !
-  hinst pad ->hInstance !
-  MyClassName pad ->lpszClassName !
-  NULL IDC_ARROW LoadCursorA pad ->hCursor !
-  hinst IDI_MAIN_ICON LoadIconA pad ->hIcon !
+  WindowProcShim pad !field ->lpfnWndProc
+  hinst pad !field ->hInstance
+  MyClassName pad !field ->lpszClassName
+  NULL IDC_ARROW LoadCursorA pad !field ->hCursor
+  hinst IDI_MAIN_ICON LoadIconA pad !field ->hIcon
 pad RegisterClassA constant myclass
 
 create ps PAINTSTRUCT allot
@@ -42,8 +42,8 @@ side 0 0 200 100 SetRect
   then
   WM_PAINT msg = if
     hwnd ps BeginPaint drop
-    ps ->hdc @ ps ->rcPaint orange FillRect drop
-    ps ->hdc @ side green FillRect drop
+    ps @field ->hdc ps ->rcPaint orange FillRect drop
+    ps @field ->hdc side green FillRect drop
     hwnd ps EndPaint drop
     0 exit
   then
@@ -61,7 +61,7 @@ hwnd SetForegroundWindow drop
 create mymsg msg allot
 : pump
   begin mymsg NULL 0 0 GetMessageA while
-    \ mymsg ->message @ WM_>name type cr
+    \ mymsg @field ->message WM_>name type cr
     mymsg TranslateMessage drop
     mymsg DispatchMessageA drop
   repeat

@@ -60,3 +60,48 @@ e: test-forth-structure
   0 t3 5 =assert
   0 t4 14 =assert
 ;e
+
+e: test-structure-accessors
+  also structures
+  struct foo
+    i8 field ->a
+    u8 field ->b
+    i16 field ->c
+    u16 field ->d
+    i32 field ->e
+    u32 field ->f
+    ptr field ->g
+  pad foo erase
+
+  127 pad !field ->a
+  255 pad !field ->b
+  32767 pad !field ->c
+  65535 pad !field ->d
+  2147483647 pad !field ->e
+  4294967295 pad !field ->f
+  1234 pad !field ->g
+
+  127 pad @field ->a =assert
+  255 pad @field ->b =assert
+  32767 pad @field ->c =assert
+  65535 pad @field ->d =assert
+  2147483647 pad @field ->e =assert
+  4294967295 pad @field ->f =assert
+  1234 pad @field ->g =assert
+
+  -128 pad !field ->a
+  0 pad !field ->b
+  -32768 pad !field ->c
+  0 pad !field ->d
+  -2147483648 pad !field ->e
+  0 pad !field ->f
+  1234 pad !field ->g
+
+  -128 pad @field ->a =assert
+  0 pad @field ->b =assert
+  -32768 pad @field ->c =assert
+  0 pad @field ->d =assert
+  -2147483648 pad @field ->e =assert
+  0 pad @field ->f =assert
+  1234 pad @field ->g =assert
+;e
