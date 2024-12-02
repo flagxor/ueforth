@@ -18,6 +18,13 @@ also internals
 
 ( Windows handles bottom out as void pointers. )
 : HANDLE   ptr ;
+: DWORD   u32 ;
+: WINLONG   i32 ;
+: UINT   u32 ;
+: WPARAM   ptr ;
+: LPARAM   ptr ;
+: WINBOOL   i32 ;
+: WINWORD   u16 ;
 
 z" User32.dll" dll User32
 
@@ -32,7 +39,7 @@ z" MessageBoxA" 4 User32 MessageBoxA
 
 z" RegisterClassA" 1 User32 RegisterClassA
 struct WINDCLASSA
-     i16 field ->style
+    UINT field ->style
      ptr field ->lpfnWndProc
      i32 field ->cbClsExtra
      i32 field ->cbWndExtra
@@ -99,14 +106,14 @@ $400000 constant DefaultInstance
 $80000000 constant CW_USEDEFAULT
 
 struct POINT
-  i32 field ->x
-  i32 field ->y
+  WINLONG field ->x
+  WINLONG field ->y
 
 struct RECT
-  i32 field ->left
-  i32 field ->top
-  i32 field ->right
-  i32 field ->bottom
+  WINLONG field ->left
+  WINLONG field ->top
+  WINLONG field ->right
+  WINLONG field ->bottom
 z" SetRect" 5 User32 SetRect
 
 z" GetMessageA" 4 User32 GetMessageA
@@ -115,12 +122,12 @@ z" TranslateMessage" 1 User32 TranslateMessage
 z" DispatchMessageA" 1 User32 DispatchMessageA
 struct MSG
   HANDLE field ->hwnd
-     i32 field ->message
-     i16 field ->wParam
-     i32 field ->lParam
-     i32 field ->time
+    UINT field ->message
+  WPARAM field ->wParam
+  LPARAM field ->lParam
+   DWORD field ->time
    POINT field ->pt
-     i32 field ->lPrivate
+   DWORD field ->lPrivate
 0 constant PM_NOREMOVE
 1 constant PM_REMOVE
 2 constant PM_NOYIELD
@@ -130,10 +137,10 @@ z" BeginPaint" 2 User32 BeginPaint
 z" EndPaint" 2 User32 EndPaint
 struct PAINTSTRUCT
    HANDLE field ->hdc
-      i32 field ->fErase
+  WINBOOL field ->fErase
      RECT field ->rcPaint
-      i32 field ->fRestore
-      i32 field ->fIncUpdate
+  WINBOOL field ->fRestore
+  WINBOOL field ->fIncUpdate
   32 u8 * field ->rgbReserved
 
 z" FillRect" 3 User32 FillRect

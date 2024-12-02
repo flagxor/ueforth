@@ -51,17 +51,17 @@ struct RGBQUAD
   u8 field ->rgbRed
   u8 field ->rgbReserved
 struct BITMAPINFOHEADER
-  i16 field ->biSize
-  i32 field ->biWidth
-  i32 field ->biHeight
-  i16 field ->biPlanes
-  i16 field ->biBitCount
-  i32 field ->biCompression
-  i32 field ->biSizeImage
-  i32 field ->biXPelsPerMeter
-  i32 field ->biYPelsPerMeter
-  i32 field ->biClrUsed
-  i32 field ->biClrImportant
+    DWORD field ->biSize
+  WINLONG field ->biWidth
+  WINLONG field ->biHeight
+  WINWORD field ->biPlanes
+  WINWORD field ->biBitCount
+    DWORD field ->biCompression
+    DWORD field ->biSizeImage
+  WINLONG field ->biXPelsPerMeter
+  WINLONG field ->biYPelsPerMeter
+    DWORD field ->biClrUsed
+    DWORD field ->biClrImportant
 struct BITMAPINFO
   BITMAPINFOHEADER field ->bmiHeader
            RGBQUAD field ->bmiColors
