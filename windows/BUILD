@@ -29,7 +29,7 @@ Importation('$dst/gen/windows_boot_extra.h', '$src/windows/windows_boot_extra.fs
 Alias('win32', ' '.join([
   ForthTest('$dst/tests/win32_all_tests.out',
             '$dst/windows/uEf32.exe', '$src/common/all_tests.fs',
-            interp='wine'),
+            interp='wineconsole --backend=curses'),
 ]))
 CompileW32('$dst/windows/uEf32.obj', '$src/windows/main.c',
            implicit=['$dst/gen/windows_boot.h',
@@ -42,7 +42,7 @@ LinkW32('$dst/windows/uEf32.exe',
 Alias('win64', ' '.join([
   ForthTest('$dst/tests/win64_all_tests.out',
             '$dst/windows/uEf64.exe', '$src/common/all_tests.fs',
-            interp='wine'),
+            interp='wineconsole --backend=curses'),
 ]))
 CompileW64('$dst/windows/uEf64.obj', '$src/windows/main.c',
            implicit=['$dst/gen/windows_boot.h',
