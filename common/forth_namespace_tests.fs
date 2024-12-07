@@ -680,6 +680,9 @@ e: check-esp32-builtins
   check-files-dir-reverse
   out: dacWrite 
   out: MDNS.begin 
+  out: MDNS.addService 
+  out: MDNS.setInstanceName 
+  out: MDNS.addServiceTxt 
 ;e
 
 e: check-esp32-bindings
