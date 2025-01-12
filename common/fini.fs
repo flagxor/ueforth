@@ -21,5 +21,6 @@ transfer forth
 ( Move heap to save point, with a gap. )
 setup-saving-base
 forth
-execute ( assumes an xt for autoboot is on the dstack )
+( assumes an xt for autoboot is on the dstack )
+execute
 ok
