@@ -86,7 +86,7 @@ if (!globalObj.write) {
     document.head.appendChild(meta);
   }
 
-  AddMeta('apple-mobile-web-app-capable', 'yes');
+  AddMeta('mobile-web-app-capable', 'yes');
   AddMeta('apple-mobile-web-app-status-bar-style', 'black-translucent');
   AddMeta('viewport', 'width=device-width, initial-scale=1.0, ' +
                       'maximum-scale=1.0, user-scalable=no, minimal-ui');
@@ -186,7 +186,7 @@ if (!globalObj.write) {
     line.style.margin = '0px';
     if (context.cy < 0) {
       context.terminal.appendChild(line);
-    } else {
+    } else if (context.cy + 1 >= context.lines.length) {
       context.terminal.insertBefore(line, context.lines[context.cy].nextSibling);
     }
     context.cx = 0;  // implicit cr
@@ -194,7 +194,9 @@ if (!globalObj.write) {
       context.dirty[context.cy] = 1;
     }
     ++context.cy;
-    context.lines.splice(context.cy, 0, [line, []]);
+    if (context.cy >= context.lines.length) {
+      context.lines.splice(context.cy, 0, [line, []]);
+    }
     context.dirty[context.cy] = 1;
   };
 
@@ -247,6 +249,15 @@ if (!globalObj.write) {
     } else if (code == '[H') {
       context.cx = 0;
       context.cy = 0;
+    } else if (m = code.match(/\[;([0-9]+)H/)) {
+      context.cx = parseInt(m[1]) - 1;
+    } else if (m = code.match(/\[([0-9]+)H/)) {
+      context.cy = parseInt(m[1]) - 1;
+    } else if (m = code.match(/\[([0-9]+);H/)) {
+      context.cy = parseInt(m[1]) - 1;
+    } else if (m = code.match(/\[([0-9]+);([0-9]+)H/)) {
+      context.cy = parseInt(m[1]) - 1;
+      context.cx = parseInt(m[2]) - 1;
     } else if (code == '[0m') {
       context.attrib = [DEFAULT_FG, DEFAULT_BG];
     } else if (m = code.match(/\[38;5;([0-9]+)m/)) {
@@ -284,7 +295,7 @@ if (!globalObj.write) {
       context.cx = Math.max(0, context.cx - 1);
     } else if (ch === 13) {
       context.lines[context.cy][1].splice(
-          context.cx++, 1, [context.attrib[0], context.attrib[1]]);
+          context.cx++, 1, [context.attrib[0], context.attrib[1], 32]);
       context.cx = 0;
     } else {
       context.lines[context.cy][1].splice(
