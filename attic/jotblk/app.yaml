@@ -1,0 +1,17 @@
+runtime: python39
+
+default_expiration: "10m"
+
+handlers:
+- url: /
+  static_files: static/index.html
+  upload: static/index.html
+  secure: always
+
+- url: /static
+  static_dir: static
+  secure: always
+
+- url: /io
+  script: main.app
+  secure: always
