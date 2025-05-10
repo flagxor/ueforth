@@ -184,11 +184,15 @@ function Update() {
   ctx.textBaseline = 'middle';
   ctx.save();
   ctx.scale(canvas.width / 64 , canvas.height / 17);
-  for (var j = 0; j < 16; ++j) {
-    for (var i = 0; i < 64; ++i) {
-      if (pos === i + j * 64) {
-        ctx.fillStyle = '#750';
-        ctx.fillRect(i, j, 1, 1);
+  ctx.fillStyle = '#750';
+  if (window.onkeydown === Login) {
+    ctx.fillRect(10, 0, 1, 1);
+  } else {
+    for (var j = 0; j < 16; ++j) {
+      for (var i = 0; i < 64; ++i) {
+        if (pos === i + j * 64) {
+          ctx.fillRect(i, j, 1, 1);
+        }
       }
     }
   }
@@ -197,11 +201,15 @@ function Update() {
   var w = m.width;
   var h = m.fontBoundingBoxAscent + m.fontBoundingBoxDescent;
   ctx.scale(1 / w, 1 / h);
-  for (var j = 0; j < 16; ++j) {
-    for (var i = 0; i < 64; ++i) {
-      var ch = String.fromCharCode(blocks[i + j * 64 + scr * 1024]);
-      ctx.fillStyle = '#fb0';
-      ctx.fillText(ch, (i + 0.5) * w, (j + 0.5) * h);
+  ctx.fillStyle = '#fb0';
+  if (window.onkeydown === Login) {
+    ctx.fillText('password:', 0.5 * w * 9, 0.5 * h);
+  } else {
+    for (var j = 0; j < 16; ++j) {
+      for (var i = 0; i < 64; ++i) {
+        var ch = String.fromCharCode(blocks[i + j * 64 + scr * 1024]);
+        ctx.fillText(ch, (i + 0.5) * w, (j + 0.5) * h);
+      }
     }
   }
   ctx.fillStyle = '#750';

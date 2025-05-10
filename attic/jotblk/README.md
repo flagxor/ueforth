@@ -18,3 +18,5 @@ And separately (to run a webserver on http://localhost:8080):
 ```
 ./run.sh
 ```
+
+Before use, type password. Default is: xyzzy
