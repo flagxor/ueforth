@@ -272,7 +272,7 @@ function Print() {
   content += '<!DOCTYPE html>\n';
   for (var i = start; i <= end; i++) {
     content += '<pre style="border: 1px solid; display: inline-block;">\n';
-    content += BlockString(i, true);
+    content += BlockString(i, true).replaceAll('<', '&lt;');
     content += '<hr/>' + i;
     content += '</pre><br/>\n';
   }
