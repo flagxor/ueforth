@@ -27,43 +27,25 @@ limitations under the License.
 
 <h2>Download</h2>
 
-<h3>STABLE RELEASE</h3>
 <p>
-<a href="https://eforth.storage.googleapis.com/releases/uEf64-{{STABLE_VERSION}}.exe">uEf64-{{STABLE_VERSION}}.exe</a>
-   - Window 64-bit EXE µEforth<br/>
-   <i>Version: {{STABLE_VERSION}} (Stable)</i>
+µEforth for Windows</h1>
+Unfortunately, Window Defender's heuristics falsely identify uEforth.exe builds as malware.
+And recently Google Cloud also started identifying them as abuse.
+As a result, I've removed hosting of them.
 </p>
 
-<h3>LONG TERM STABLE RELEASE</h3>
 <p>
-<a href="https://eforth.storage.googleapis.com/releases/uEf64-{{OLD_STABLE_VERSION}}.exe">uEf64-{{OLD_STABLE_VERSION}}.exe</a>
-   - Window 64-bit EXE µEforth<br/>
-   <i>Version: {{OLD_STABLE_VERSION}} (Long-term Stable)</i>
-</p>
-
-<h3>Beta Release</h3>
-<p>
-<a href="https://eforth.storage.googleapis.com/releases/uEf64-{{VERSION}}.exe">uEf64-{{VERSION}}.exe</a>
-   - Window 64-bit EXE µEforth<br/>
-   <i>Version: {{VERSION}} (Beta)</i>
+Instead build as follows (using the Windows Subsystem for Linux):
+<pre>
+sudo apt install ninja-build
+git clone https://github.com/flagxor/ueforth
+cd ueforth
+./configure.py
+ninja
+</pre>
 </p>
 
 <hr/>
-
-<p>
-<b>NOTE: 32-bit builds are no longer published. They can still be built from source.
-</p>
-
-<hr/>
-
-<p>
-<a href="https://eforth.storage.googleapis.com/releases/archive.html" target="_blank">Release Archive</a>
-  - Prior Releases
-</p>
-<p>
-<a href="https://github.com/flagxor/ueforth" target="_blank">http://github.com/flagxor/ueforth</a>
-  - Complete Unprocessed Source Code
-</p>
 
 <h2>µEforth</h2>
 
