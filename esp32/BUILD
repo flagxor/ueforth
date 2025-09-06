@@ -76,7 +76,7 @@ ESP32_ZIP_FILES += [
 
 # Zip it.
 ESP32_FILES += [
-  Zip('$dst/esp32/ESP32forth.zip', ESP32_ZIP_FILES, base='$dst/esp32/ESP32forth'),
+  Zip('$dst/esp32/ESP32forth.zip', ESP32_ZIP_FILES, base='$dst/esp32'),
 ]
 
 # Simulator.
