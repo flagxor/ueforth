@@ -35,7 +35,7 @@ static Adafruit_SSD1306 *oled_display = 0;
   YV(oled, OledNew, oled_display = new Adafruit_SSD1306(n2, n1, &Wire, n0); DROPn(3)) \
   YV(oled, OledDelete, delete oled_display) \
   YV(oled, OledBegin, n0 = oled_display->begin(n1, n0); NIP) \
-  YV(oled, OledHOME, oled_display->setCursor(0,0); DROP) \
+  YV(oled, OledHOME, oled_display->setCursor(0, 0)) \
   YV(oled, OledCLS, oled_display->clearDisplay()) \
   YV(oled, OledTextc, oled_display->setTextColor(n0); DROP) \
   YV(oled, OledPrintln, oled_display->println(c0); DROP) \
@@ -45,14 +45,14 @@ static Adafruit_SSD1306 *oled_display = 0;
   YV(oled, OledPrint, oled_display->write(c0); DROP) \
   YV(oled, OledInvert, oled_display->invertDisplay(n0); DROP) \
   YV(oled, OledTextsize, oled_display->setTextSize(n0); DROP) \
-  YV(oled, OledSetCursor, oled_display->setCursor(n1,n0); DROPn(2)) \
-  YV(oled, OledPixel, oled_display->drawPixel(n2, n1, n0); DROPn(2)) \
-  YV(oled, OledDrawL, oled_display->drawLine(n4, n3, n2, n1, n0); DROPn(4)) \
-  YV(oled, OledCirc, oled_display->drawCircle(n3,n2, n1, n0); DROPn(3)) \
-  YV(oled, OledCircF, oled_display->fillCircle(n3, n2, n1, n0); DROPn(3)) \
-  YV(oled, OledRect, oled_display->drawRect(n4, n3, n2, n1, n0); DROPn(4)) \
-  YV(oled, OledRectF, oled_display->fillRect(n4, n3, n2, n1, n0); DROPn(3)) \
-  YV(oled, OledRectR, oled_display->drawRoundRect(n5, n4, n3, n2, n1, n0); DROPn(5)) \
-  YV(oled, OledRectRF, oled_display->fillRoundRect(n5, n4, n3, n2, n1, n0 ); DROPn(5))
+  YV(oled, OledSetCursor, oled_display->setCursor(n1, n0); DROPn(2)) \
+  YV(oled, OledPixel, oled_display->drawPixel(n2, n1, n0); DROPn(3)) \
+  YV(oled, OledDrawL, oled_display->drawLine(n4, n3, n2, n1, n0); DROPn(5)) \
+  YV(oled, OledCirc, oled_display->drawCircle(n3, n2, n1, n0); DROPn(4)) \
+  YV(oled, OledCircF, oled_display->fillCircle(n3, n2, n1, n0); DROPn(4)) \
+  YV(oled, OledRect, oled_display->drawRect(n4, n3, n2, n1, n0); DROPn(5)) \
+  YV(oled, OledRectF, oled_display->fillRect(n4, n3, n2, n1, n0); DROPn(5)) \
+  YV(oled, OledRectR, oled_display->drawRoundRect(n5, n4, n3, n2, n1, n0); DROPn(6)) \
+  YV(oled, OledRectRF, oled_display->fillRoundRect(n5, n4, n3, n2, n1, n0); DROPn(6))
 
 #include "gen/esp32_oled.h"

@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
 #undef Z
   } else if (argc == 2 && strcmp(argv[1], "dict") == 0) {
 #define V(name) \
-    printf("  Create(\"" #name "-builtins\", %d);\n", BUILTIN_FORK, OP_DOCREATE); \
+    printf("  Create(\"" #name "-builtins\", %d);\n", BUILTIN_FORK); \
     printf("  COMMA(%d);\n", VOC_ ## name);
     VOCABULARY_LIST
 #undef V
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
     #define G_SYS 256
     printf("  const g_sys = %d;\n", G_SYS);
     #define EMITSYS(name) \
-    printf("  const g_sys_%s = %d;\n", #name, 256 + 4 * (((cell_t *) &g_sys->name) - (cell_t*) g_sys));
+    printf("  const g_sys_%s = %d;\n", #name, 256 + 4 * (int) (((cell_t *) &g_sys->name) - (cell_t*) g_sys));
     EMITSYS(heap);
     EMITSYS(current);
     EMITSYS(context);

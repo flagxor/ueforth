@@ -42,7 +42,6 @@ CFLAGS_MINIMIZE = [
   '-s',
   '-DUEFORTH_MINIMAL',
   '-fno-exceptions',
-  '-ffreestanding',
   '-fno-stack-protector',
   '-fomit-frame-pointer',
   '-fno-ident',
@@ -136,7 +135,7 @@ def DetectWindowsTools(args):
       sys.stderr.write('Windows %LOCALAPPDATA% not available, Windows support disabled.\n')
     return
   LOCALAPPDATA = LOCALAPPDATAR.replace('C:/', '/mnt/c/')
-  ARDUINO_CLI = LOCALAPPDATA + '/Programs/arduino-ide/resources/app/lib/backend/resources/arduino-cli.exe'
+  ARDUINO_CLI = LSQ(LOCALAPPDATA + '/Programs/*rduino*/resources/app/lib/backend/resources/arduino-cli.exe')
   WINTMP = LOCALAPPDATA + '/Temp'
   WINTMPR = LOCALAPPDATAR + '/Temp'
   PROGFILES = '/mnt/c/Program Files'
