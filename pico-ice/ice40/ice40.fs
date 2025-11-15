@@ -1,4 +1,4 @@
-\ Copyright 2023 Bradley D. Nelson
+\ Copyright 2025 Bradley D. Nelson
 \
 \ Licensed under the Apache License, Version 2.0 (the "License");
 \ you may not use this file except in compliance with the License.
@@ -12,12 +12,5 @@
 \ See the License for the specific language governing permissions and
 \ limitations under the License.
 
-needs ../common/phase1.fs
-needs allocation.fs
-needs ../common/phase2.fs
-needs ../common/tasks.fs
-needs ../common/streams.fs
-needs platform.fs
-needs ice40/ice40.fs
-needs autoboot.fs
-needs ../common/fini.fs
+needs ice40_synthesis.fs
+needs ice40_storage.fs

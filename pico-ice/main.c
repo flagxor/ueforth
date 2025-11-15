@@ -29,9 +29,9 @@
 #include "common/calls.h"
 
 #ifndef UEFORTH_SIM
-# define HEAP_SIZE (100 * 1024)
+# define HEAP_SIZE (150 * 1024)
 #else
-# define HEAP_SIZE (200 * 1024)
+# define HEAP_SIZE (300 * 1024)
 #endif
 #define STACK_CELLS (4 * 1024)
 
