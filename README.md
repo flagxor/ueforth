@@ -2,6 +2,8 @@
 
 This EForth inspired implementation of Forth is bootstraped from a minimalist C kernel.
 
+Compiled site documentation at [https://eforth.appspot.com](https://eforth.appspot.com/)
+
 ## Building from Source
 
 To build from source:
