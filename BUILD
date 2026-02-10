@@ -13,7 +13,7 @@
 # limitations under the License.
 
 SetVersions(
-    version='7.0.7.21',
+    version='7.0.7.22',
     stable='7.0.6.19',
     old_stable='7.0.5.4')
 
