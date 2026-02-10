@@ -72,6 +72,8 @@ ESP32_ZIP_FILES += [
   Esp32Optional('http-client', '$src/esp32/optional/http-client/http-client.h', []),
   Esp32Optional('spi-flash', '$src/esp32/optional/spi-flash/spi-flash.h',
                 [('spi-flash', '$src/esp32/optional/spi-flash/spi-flash.fs')], very_optional=True),
+  Esp32Optional('espnow', '$src/esp32/optional/espnow/espnow.h',
+                [('espnow', '$src/esp32/optional/espnow/espnow.fs')]),
 ]
 
 # Zip it.

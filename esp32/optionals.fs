@@ -53,3 +53,7 @@ internals DEFINED? HTTPClient-builtins [IF]
   transfer HTTPClient-builtins
   forth definitions
 [THEN] forth
+
+internals DEFINED? espnow-source [IF]
+  espnow-source evaluate
+[THEN] forth

@@ -29,6 +29,7 @@
 #define OPTIONAL_RMT_VOCABULARY
 #define OPTIONAL_SPI_FLASH_VOCABULARY
 #define OPTIONAL_HTTP_CLIENT_VOCABULARY
+#define OPTIONAL_ESPNOW_VOCABULARY
 
 static cell_t *simulated(cell_t *sp, const char *op);
 

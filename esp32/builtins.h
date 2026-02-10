@@ -92,6 +92,14 @@
 #  define OPTIONAL_HTTP_CLIENT_SUPPORT
 # endif
 
+// Hook to pull in optional ESPNOW support.
+# if __has_include("espnow.h")
+#  include "espnow.h"
+# else
+#  define OPTIONAL_ESPNOW_VOCABULARY
+#  define OPTIONAL_ESPNOW_SUPPORT
+# endif
+
 static cell_t ResizeFile(cell_t fd, cell_t size);
 
 #endif
@@ -129,7 +137,8 @@ static cell_t ResizeFile(cell_t fd, cell_t size);
   OPTIONAL_RMT_SUPPORT \
   OPTIONAL_SERIAL_BLUETOOTH_SUPPORT \
   OPTIONAL_SPI_FLASH_SUPPORT \
-  OPTIONAL_HTTP_CLIENT_SUPPORT
+  OPTIONAL_HTTP_CLIENT_SUPPORT \
+  OPTIONAL_ESPNOW_SUPPORT
 
 #define REQUIRED_MEMORY_SUPPORT \
   YV(internals, MALLOC, SET malloc(n0)) \
