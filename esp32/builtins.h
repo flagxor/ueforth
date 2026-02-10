@@ -431,6 +431,8 @@ static cell_t FromIP(IPAddress ip) {
   XV(WiFi, "WiFi.status", WIFI_STATUS, PUSH WiFi.status()) \
   XV(WiFi, "WiFi.macAddress", WIFI_MAC_ADDRESS, WiFi.macAddress(b0); DROP) \
   XV(WiFi, "WiFi.localIP", WIFI_LOCAL_IPS, PUSH FromIP(WiFi.localIP())) \
+  XV(WiFi, "WiFi.gatewayIP", WIFI_GATEWAY_IPS, PUSH FromIP(WiFi.gatewayIP())) \
+  XV(WiFi, "WiFi.subnetMask", WIFI_SUBNET_MASKS, PUSH FromIP(WiFi.subnetMask())) \
   XV(WiFi, "WiFi.mode", WIFI_MODE, WiFi.mode((wifi_mode_t) n0); DROP) \
   XV(WiFi, "WiFi.setTxPower", WIFI_SET_TX_POWER, WiFi.setTxPower((wifi_power_t) n0); DROP) \
   XV(WiFi, "WiFi.getTxPower", WIFI_GET_TX_POWER, PUSH WiFi.getTxPower()) \

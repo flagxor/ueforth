@@ -464,12 +464,14 @@ FILE-SIZE ( fh -- n ior )
 <h5>WiFi</h5>
 These words are inside the <code>WiFi</code> vocabulary.
 <pre>
-WiFi.config ( ip dns gateway subnet -- )   Packaged a.b.c.d little-endian
+WiFi.config ( ip gateway subnet dns -- )   Packaged a.b.c.d little-endian
 Wifi.begin ( ssid-z password-z -- )
 Wifi.disconnect ( -- )
 WiFi.status ( -- n )
 WiFi.macAddress ( a -- )
 WiFi.localIP ( -- ip )
+WiFi.gatewayIP ( -- ip )
+WiFi.subnetMask ( -- ip )
 WiFi.mode ( mode -- ) WIFI_MODE_NULL WIFI_MODE_STA WIFI_MODE_AP WIFI_MODE_APSTA
 WiFi.setTxPower ( powerx4 -- )   Set power x4
 WiFi.getTxPower ( -- powerx4 )   Get power x4
