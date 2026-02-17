@@ -17,6 +17,11 @@ defer type
 defer key
 defer key?
 defer terminate
+
+( Hooks for prompt )
+defer prompt
+
+( Core I/O )
 : bye   0 terminate ;
 : emit ( n -- ) >r rp@ 1 type rdrop ;
 : space bl emit ;   : cr 13 emit nl emit ;
@@ -69,7 +74,7 @@ variable hld
 variable echo -1 echo !   variable arrow -1 arrow !  0 value wascr
 : *emit ( n -- ) dup 13 = if drop cr else emit then ;
 : ?echo ( n -- ) echo @ if *emit else drop then ;
-: ?arrow.   arrow @ if >r >r raw.s r> r> ." --> " then ;
+: ?arrow.   arrow @ if ." --> " then ;
 : *key ( -- n )
   begin
     key
@@ -104,7 +109,7 @@ sp0 'stack-cells @ 2 3 */ cells + constant sp-limit
            sp-limit sp@ < if ." STACK OVERFLOW " -3 throw then ;
 
 ( REPL )
-: prompt   ."  ok" cr ;
+: default-prompt   ."  ok" cr raw.s ;  ' default-prompt is prompt
 : evaluate-buffer   begin >in @ #tib @ < while ?stack +evaluate1 repeat ?stack ;
 : evaluate ( a n -- ) 'tib @ >r #tib @ >r >in @ >r
                       #tib ! 'tib ! 0 >in ! evaluate-buffer

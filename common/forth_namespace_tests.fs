@@ -58,7 +58,6 @@ e: check-highlevel-floats
 e: check-boot
   out: quit 
   out: evaluate 
-  out: prompt 
   out: refill 
   out: tib 
   out: accept 
@@ -95,6 +94,7 @@ e: check-boot
   out: space 
   out: emit 
   out: bye 
+  out: prompt 
   out: terminate 
   out: key? 
   out: key 

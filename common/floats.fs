@@ -40,10 +40,12 @@ internals definitions
                 precision for aft fdup f>s 10 mod [char] 0 + hold 0.1e f* then next
                 [char] . hold fdrop f>s #s ;
 forth definitions internals
-
 : #fs ( r -- ) fdup f0< if fnegate #f+s [char] - hold else #f+s then ;
 : f. ( r -- ) <# #fs #> type space ;
-: f.s   ." <" fdepth n. ." > "
-        fdepth 0 max for aft fp@ r@ sfloats - sf@ f. then next ;
-
+internals definitions
+: rawf.s   fdepth 0 max for aft fp@ r@ sfloats - sf@ f. then next ;
+: default-fprompt default-prompt fdepth if ."  F: " rawf.s then ;
+' default-fprompt is prompt
+forth definitions internals
+: f.s   ." <" fdepth n. ." > " rawf.s ;
 forth definitions
