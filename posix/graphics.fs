@@ -19,6 +19,7 @@ graphics definitions
 : window r|
 
 also x11
+also structures
 forth graphics internals definitions
 also posix also x11
 
