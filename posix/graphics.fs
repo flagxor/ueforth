@@ -18,8 +18,8 @@ graphics definitions
 
 : window r|
 
-also x11
 also structures
+also x11
 forth graphics internals definitions
 also posix also x11
 
