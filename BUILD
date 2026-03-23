@@ -13,9 +13,8 @@
 # limitations under the License.
 
 SetVersions(
-    version='7.0.8.0',
-    stable='7.0.6.19',
-    old_stable='7.0.5.4')
+    version='7.0.8.1',
+    stable='7.0.8.0')
 
 Include('posix')
 Include('windows')
