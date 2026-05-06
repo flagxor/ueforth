@@ -74,6 +74,9 @@ ESP32_ZIP_FILES += [
                 [('spi-flash', '$src/esp32/optional/spi-flash/spi-flash.fs')], very_optional=True),
   Esp32Optional('espnow', '$src/esp32/optional/espnow/espnow.h',
                 [('espnow', '$src/esp32/optional/espnow/espnow.fs')]),
+  Esp32Optional('ble-scan', '$src/esp32/optional/ble-scan/ble-scan.h',
+                [('ble-scan', '$src/esp32/optional/ble-scan/ble-scan.fs')],
+                very_optional=True),
 ]
 
 # Zip it.
