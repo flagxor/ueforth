@@ -1,6 +1,10 @@
-runtime: python39
+runtime: python313
 
 default_expiration: "10m"
+
+automatic_scaling:
+  min_instances: 0
+  max_instances: 1
 
 handlers:
 - url: /

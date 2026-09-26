@@ -32,6 +32,9 @@ var ForthKeyPress = null;
 var forth_added = false;
 var ueforth = null;
 
+const BACKGROUND = '#282828';
+const FOREGROUND = '#33ff33';  // 100%
+
 document.body.style.overflow = 'hidden';
 document.body.style.margin = '0';
 document.body.style.border = '0';
@@ -177,42 +180,37 @@ function Paste() {
 
 function Update() {
   SpaceIt();
-  ctx.fillStyle = 'black';
+  ctx.fillStyle = BACKGROUND;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.font = '16px consolas, Monaco, monospace';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.save();
-  ctx.scale(canvas.width / 64 , canvas.height / 17);
-  ctx.fillStyle = '#750';
-  if (window.onkeydown === Login) {
-    ctx.fillRect(10, 0, 1, 1);
-  } else {
-    for (var j = 0; j < 16; ++j) {
-      for (var i = 0; i < 64; ++i) {
-        if (pos === i + j * 64) {
-          ctx.fillRect(i, j, 1, 1);
-        }
-      }
-    }
-  }
+  ctx.scale(canvas.width / 68 , canvas.height / 18);
+  ctx.translate(2, 0.5);
+  ctx.fillStyle = FOREGROUND;
+  ctx.fillRect(0, 0, 64, 1);
+  // Draw Cursor
+  ctx.fillStyle = Math.floor(pos / 64) == 0 ? BACKGROUND : FOREGROUND;
+  ctx.fillRect(pos % 64, Math.floor(pos / 64), 1, 1);
   ctx.save();
   var m = ctx.measureText('W');
   var w = m.width;
   var h = m.fontBoundingBoxAscent + m.fontBoundingBoxDescent;
   ctx.scale(1 / w, 1 / h);
-  ctx.fillStyle = '#fb0';
-  if (window.onkeydown === Login) {
-    ctx.fillText('password:', 0.5 * w * 9, 0.5 * h);
-  } else {
-    for (var j = 0; j < 16; ++j) {
-      for (var i = 0; i < 64; ++i) {
-        var ch = String.fromCharCode(blocks[i + j * 64 + scr * 1024]);
-        ctx.fillText(ch, (i + 0.5) * w, (j + 0.5) * h);
+  for (var j = 0; j < 16; ++j) {
+    for (var i = 0; i < 64; ++i) {
+      var ii = i + j * 64;
+      if ((j == 0) ^ (ii == pos)) {
+        ctx.fillStyle = BACKGROUND;
+      } else {
+        ctx.fillStyle = FOREGROUND;
       }
+      var ch = String.fromCharCode(blocks[ii + scr * 1024]);
+      ctx.fillText(ch, (i + 0.5) * w, (j + 0.5) * h);
     }
   }
-  ctx.fillStyle = '#750';
+  ctx.fillStyle = FOREGROUND;
   ctx.textAlign = 'right';
   var info = '';
   if (flags[scr] & DIRTY) {
@@ -222,7 +220,7 @@ function Update() {
     info += 'L ';
   }
   info += scr;
-  ctx.fillText(info, 63.5 * w, 16.5 * h);
+  ctx.fillText(info, 64 * w, 16.5 * h);
   ctx.restore();
   ctx.restore();
 }
@@ -272,7 +270,10 @@ function Print() {
   content += '<!DOCTYPE html>\n';
   for (var i = start; i <= end; i++) {
     content += '<pre style="border: 1px solid; display: inline-block;">\n';
-    content += BlockString(i, true).replaceAll('<', '&lt;');
+    var text = BlockString(i, true);
+    content += text.substr(0, 65);
+    content += '<hr/>';
+    content += text.substr(65);
     content += '<hr/>' + i;
     content += '</pre><br/>\n';
   }
@@ -363,12 +364,15 @@ function Type(ch) {
 }
 
 function Key(e) {
-  if (e.ctrlKey && keymap['^' + e.key]) {
-    keymap['^' + e.key](e);
-  } else if (e.shiftKey && keymap['+' + e.key]) {
-    keymap['+' + e.key](e);
-  } else if (keymap[e.key]) {
-    keymap[e.key](e);
+  var code = e.key;
+  if (e.ctrlKey) {
+    code = '^' + code;
+  }
+  if (e.shiftKey) {
+    code = '+' + code;
+  }
+  if (keymap[code]) {
+    keymap[code](e);
   } else if (e.key.length == 1 && !e.ctrlKey) {
     Type(e.key.charCodeAt(0));
   } else {
@@ -385,6 +389,8 @@ function Login(e) {
   } else if (e.key == 'Enter') {
     window.onkeydown = Key;
     MaybeLoad().then(function() {
+      pos = 0;
+      Update();
       Eval(63);
     });
   } else if (e.key.length == 1) {
@@ -533,10 +539,17 @@ function ToggleForth() {
 function Init() {
   keymap['Delete'] = Delete;
   keymap['Backspace'] = Backspace;
+  keymap['+Backspace'] = Backspace;
   keymap['PageUp'] = function() { Adjust(-1); };
   keymap['PageDown'] = function() { Adjust(1); };
   keymap['+PageUp'] = function() { Adjust(-16); };
   keymap['+PageDown'] = function() { Adjust(16); };
+  keymap['^ArrowUp'] = keymap['PageUp'];
+  keymap['^ArrowDown'] = keymap['PageDown'];
+  keymap['+^ArrowUp'] = keymap['+PageUp'];
+  keymap['+^ArrowDown'] = keymap['+PageDown'];
+  keymap['^u'] = keymap['PageUp'];
+  keymap['^d'] = keymap['PageDown'];
   keymap['Home'] = Home;
   keymap['End'] = End;
   keymap['Enter'] = Enter;
@@ -563,6 +576,10 @@ function Init() {
 
   window.addEventListener('resize', Resize);
   window.onkeydown = Login;
+  var msg = 'pass: ';
+  for (var i = 0; i < msg.length; i++) {
+    blocks[pos++] = msg.charCodeAt(i);
+  }
   Resize();
 }
 Init();

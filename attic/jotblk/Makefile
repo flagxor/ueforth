@@ -10,3 +10,7 @@ setup:
 
 datastore:
 	echo "Run: . dstore.sh"
+
+sync:
+	cp static/* ~/src/ueforth/attic/jotblk/static/
+	cp Makefile *.sh *.py *.yaml ~/src/ueforth/attic/jotblk/
