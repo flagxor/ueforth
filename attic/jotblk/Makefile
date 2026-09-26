@@ -13,4 +13,4 @@ datastore:
 
 sync:
 	cp static/* ~/src/ueforth/attic/jotblk/static/
-	cp Makefile *.sh *.py *.yaml ~/src/ueforth/attic/jotblk/
+	cp Makefile *.md *.sh *.py *.yaml ~/src/ueforth/attic/jotblk/
