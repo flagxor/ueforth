@@ -304,7 +304,7 @@ if (!globalObj.write) {
   };
 
   context.Update = function() {
-    const CURSOR = String.fromCharCode(0x2592);
+    const CURSOR = String.fromCharCode(0x2588);
     var count = 0;
     for (var y in context.dirty) {
       ++count;
