@@ -16,9 +16,9 @@ web definitions
 
 : web-type ( a n -- ) web-type-raw if pause then ;
 ' web-type is type
-: web-key ( -- n ) begin pause web-key-raw dup 0< 0= if exit then drop again ;
+: web-key ( -- n ) begin pause? if pause else yield then web-key-raw dup 0< 0= if exit then drop again ;
 ' web-key is key
-: web-key? ( -- f ) pause web-key?-raw ;
+: web-key? ( -- f ) pause? if pause else yield then web-key?-raw ;
 ' web-key? is key?
 ' web-terminate is terminate
 
@@ -68,7 +68,7 @@ web definitions
   r> r> session? removeItem
 ;
 
-: yielding  begin 50 ms yield again ;
+: yielding  begin pause yield again ;
 ' yielding 10 10 task yielding-task
 yielding-task start-task
 
