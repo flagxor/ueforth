@@ -33,3 +33,66 @@ internals definitions
 ' autoexec ( leave on the stack for fini.fs )
 
 forth definitions
+
+forth definitions
+internals
+\ dump tool
+: dump ( addr len -- )
+    cr cr ." --addr---  "
+    ." 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F  ------chars-----"
+    2dup + { END_ADDR }             \ store latest address to dump
+    swap { START_ADDR }             \ store START address to dump
+    START_ADDR 16 / 16 * { 0START_ADDR } \ calc. addr for loop start
+    16 / 1+ { LINES }
+    base @ { myBASE }               \ save current base
+    hex
+    \ outer loop
+    LINES 0 do
+        0START_ADDR i 16 * +        \ calc start address for current line
+        cr <# # # # #  [char] - hold # # # # #> type
+        space space     \ and display address
+        \ first inner loop, display bytes
+        16 0 do
+            \ calculate real address
+            0START_ADDR j 16 * i + +
+            ca@ <# # # #> type space \ display byte in format: NN
+        loop 
+        space
+        \ second inner loop, display chars
+        16 0 do
+            \ calculate real address
+            0START_ADDR j 16 * i + +
+            \ display char if code in interval 32-127
+            ca@     dup 32 < over 127 > or
+            if      drop [char] . emit
+            else    emit
+            then
+        loop 
+    loop
+    myBASE base !               \ restore current base
+    cr cr
+  ;
+
+create crlf 13 C, 10 C,
+: RECORDFILE  ( "filename" "filecontents" "<EOF>" -- )
+    bl parse
+    W/O CREATE-FILE throw >R
+    BEGIN
+        tib #tib accept
+        tib over
+        S" <EOF>" startswith?
+        DUP IF
+            swap drop
+        ELSE
+            swap
+            tib swap
+            R@ WRITE-FILE throw
+            crlf 1+ 1 R@ WRITE-FILE throw
+        THEN
+    UNTIL
+    R> CLOSE-FILE throw
+;
+: MAIN ( -- )
+    s" /spiffs/main.fs"       included
+  ;
+
